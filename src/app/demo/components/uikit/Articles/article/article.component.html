@@ -4,17 +4,16 @@
             <p-toast></p-toast>
             <p-toolbar styleClass="mb-4">
                 <ng-template pTemplate="left">
-                    <div class="my-2">
-
-                        <button pButton pRipple label="Ajouter" icon="pi pi-plus" class="p-button-success mr-2"
-                                (click)="showDialogCreate()"></button>
-                        <button pButton pRipple label="Supprimer" icon="pi pi-trash" class="p-button-danger"
-                                (click)="deleteSelectedArticles()"
-                                [disabled]="!selectedArticles || !selectedArticles.length"></button>
-                    </div>
+                <div class="my-2">
+                    <button pButton pRipple label="Ajouter" icon="pi pi-plus" class="p-button-success mr-2"
+                            (click)="showDialogCreate()"></button>
+                    <button pButton pRipple label="Supprimer" icon="pi pi-trash" class="p-button-danger"
+                            (click)="deleteSelectedArticles()"></button>
+                </div>
+                </ng-template>
+                <ng-template pTemplate="right">
                     <div class="col-2 float-end d-flex d-inline "  >
-                        <p-avatar  *ngIf="displayfacture" class="float-end" icon="pi pi-book" pBadge styleClass="mr-5" [value]="articles.length+''" size="large" [style]="{ 'background-color': '#b9c7ce', color: '#1a1717' }"></p-avatar>
-                        <i class="bi bi-boxes" style="font-size: 1rem"></i>
+                        <p-avatar  *ngIf="displayusers" class="float-end" icon="pi pi-bars" pBadge styleClass="mr-5" [value]="articles.length+''" size="large" [style]="{ 'background-color': '#b9c7ce', color: '#1a1717' }"></p-avatar>
                     </div>
                 </ng-template>
 

@@ -13,10 +13,9 @@
                     </div>
                 </ng-template>
                 <ng-template pTemplate="right">
-                    <p-fileUpload mode="basic" accept="image/*" [maxFileSize]="1000000" label="Import"
-                                  chooseLabel="Import" class="mr-2 inline-block"></p-fileUpload>
-                    <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help"
-                            (click)="dt.exportCSV()"></button>
+                    <div class="col-2 float-end d-flex d-inline "  >
+                        <p-avatar  *ngIf="displayusers" class="float-end" icon="pi pi-box" pBadge styleClass="mr-5" [value]="produits.length+''" size="large" [style]="{ 'background-color': '#b9c7ce', color: '#1a1717' }"></p-avatar>
+                    </div>
                 </ng-template>
             </p-toolbar>
 

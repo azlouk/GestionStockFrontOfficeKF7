@@ -28,6 +28,8 @@ import {ImageModule} from "primeng/image";
 import {GalleriaModule} from "primeng/galleria";
 import {File} from "../../../../../models/File";
 import {log} from "@angular-devkit/build-angular/src/builders/ssr-dev-server";
+import {AvatarModule} from "primeng/avatar";
+import {BadgeModule} from "primeng/badge";
 
 @Component({
   selector: 'app-produits',
@@ -57,7 +59,9 @@ import {log} from "@angular-devkit/build-angular/src/builders/ssr-dev-server";
         DialogModule,
         ImageModule,
         NgIf,
-        GalleriaModule
+        GalleriaModule,
+        AvatarModule,
+        BadgeModule
     ],
   templateUrl: './produits.component.html',
   styleUrl: './produits.component.scss'
