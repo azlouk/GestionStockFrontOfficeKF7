@@ -86,7 +86,7 @@
                                 [responsiveOptions]="responsiveOptions"
                                 [containerStyle]="{ 'max-width': '640px' }">
                                 <ng-template pTemplate="item" let-item>
-                                    <img [src]="item"  style="width: 100%; display: block;" />
+                                    <img [src]="item"  sstyle="width: 80%; height: 80%; display: block;" />
 
                                 </ng-template>
                             </p-galleria>
@@ -113,7 +113,7 @@
                                 <button pButton pRipple icon="pi pi-pencil"
                                         class="p-button-rounded p-button-success mr-2"
                                         (click)="modifierProduit(product.id)"></button>
-                                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
                                         (click)="supprimerProduit(product.id)"></button>
                             </div>
                         </td>

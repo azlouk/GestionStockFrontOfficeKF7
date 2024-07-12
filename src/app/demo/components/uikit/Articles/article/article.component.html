@@ -16,15 +16,7 @@
                         <p-avatar  *ngIf="displayusers" class="float-end" icon="pi pi-bars" pBadge styleClass="mr-5" [value]="articles.length+''" size="large" [style]="{ 'background-color': '#b9c7ce', color: '#1a1717' }"></p-avatar>
                     </div>
                 </ng-template>
-
-<!--                <ng-template pTemplate="right">-->
-<!--                    <p-fileUpload mode="basic" accept="image/*" [maxFileSize]="1000000" label="Import"-->
-<!--                                  chooseLabel="Import" class="mr-2 inline-block"></p-fileUpload>-->
-<!--                    <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help"-->
-<!--                            (click)="dt.exportCSV()"></button>-->
-<!--                </ng-template>-->
             </p-toolbar>
-
             <p-table #dt [value]="articles" responsiveLayout="scroll" [rows]="10"
                      [globalFilterFields]="['nom','description','unite']" [paginator]="true"
                      [rowsPerPageOptions]="[5,10,20,30,50]" [showCurrentPageReport]="true"
@@ -58,7 +50,6 @@
                         <th pSortableColumn="description">Description
                             <p-sortIcon field="description"></p-sortIcon>
                         </th>
-
                         <th pSortableColumn="unite">Unite
                             <p-sortIcon field="unite"></p-sortIcon>
                         </th>
@@ -86,7 +77,7 @@
                                 <button pButton pRipple icon="pi pi-pencil"
                                         class="p-button-rounded p-button-success mr-2"
                                         (click)="editArticle(article)"></button>
-                                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
                                         (click)="removeArticle(article)"></button>
                             </div>
                         </td>

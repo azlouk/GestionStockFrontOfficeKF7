@@ -43,28 +43,17 @@
                                                    [severity]="getSeverity(product)"></p-tag>
                                         </div>
                                         <div class="surface-50 flex justify-content-center border-round ">
-
-                                      
-                                                <img [src]="loadFileByProduct(product)" style="width: 80%; height: 80%; display: block;" />
-
-
-
-
-
-
-
-
+                                                <img [src]="loadFileByProduct(product)" style="width: 110px; height: 80px; display: block; border-radius:4px" />
                                         </div>
                                         <div class="pt-4">
-                                            <div class="flex flex-row justify-content-between align-items-start gap-2">
+                                            <div class="flex flex-column justify-content-between align-items-start gap-2">
                                                 <div>
                                                     <div class="text-lg font-medium text-900 mt-1"><i
                                                         class="pi pi-pi pi-tag text-blue-500"></i>{{ product.nom }}
                                                     </div>
                                                 </div>
-                                                <div class="surface-100 p-1" style="border-radius: 30px">
-                                                    <div
-                                                        class="surface-0 flex align-items-center gap-3 justify-content-center py-1 px-2"
+                                                <div class="surface-100 p-1 justify-content-center" style="border-radius: 30px">
+                                                    <div  class="surface-0 flex align-items-center gap-3 justify-content-center py-1 px-2"
                                                         style="border-radius: 30px; box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.04), 0px 1px 2px 0px rgba(0, 0, 0, 0.06)">
                                                                 <span
                                                                     class="text-900 font-medium">{{ product.qantite }}

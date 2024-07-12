@@ -16,7 +16,7 @@ import {Button} from "primeng/button";
 import {CalendarModule} from "primeng/calendar";
 import {ListboxModule} from "primeng/listbox";
 import {TableModule} from "primeng/table";
-import {DecimalPipe} from "@angular/common";
+import {CommonModule, DecimalPipe} from "@angular/common";
 import {InputNumberModule} from "primeng/inputnumber";
 import {MessagesModule} from "primeng/messages";
 import {CanvasComponent} from "../../canvas/canvas.component";
@@ -34,7 +34,8 @@ import {DropdownModule} from "primeng/dropdown";
         InputNumberModule,
         MessagesModule,
         CanvasComponent,
-        DropdownModule
+        DropdownModule,
+        CommonModule
     ],
   templateUrl: './facture-ajout.component.html',
   styleUrl: './facture-ajout.component.scss'
@@ -98,6 +99,7 @@ export class FactureAjoutComponent implements OnInit{
         this.getAllProvider();
         this.getAllProduits()
         this.getAllDepots();
+        console.table(this.produitsFactures)
     }
 
     getAllDepots() {
@@ -127,7 +129,6 @@ export class FactureAjoutComponent implements OnInit{
     getAllProduits(){
         this.produitService.getProduits().subscribe((value :any)=>{
             this.produits=value ;
-            // console.error(""+new JsonPipe().transform(this.produits))
         })
     }
 
@@ -262,7 +263,6 @@ export class FactureAjoutComponent implements OnInit{
     }
 
     calculeFactureTotal() {
-
         this.newFacture.montant=0;
         this.produitsFactures.forEach(value => {
             if(value.quantite>value.produit.qantite)
@@ -278,6 +278,8 @@ export class FactureAjoutComponent implements OnInit{
                 value.montantTotal = value.quantite * (value.produit.prixGros+ value.produit.gainGros)
                 console.log(value.montantTotal);
             }
+            console.log("produits factures",value.produit)
+
         })
     }
 
@@ -295,7 +297,6 @@ export class FactureAjoutComponent implements OnInit{
             if(this.produitsFactures[foundp].quantite< this.produitsFactures[foundp].produit.qantite) {
                 this.produitsFactures[foundp].quantite += 1;
                 this.calculeFactureTotal();
-                //  alert(this.produitsFactures[foundp].produit.nom)
 
             }
         }else {

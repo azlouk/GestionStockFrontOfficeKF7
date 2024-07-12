@@ -2,15 +2,15 @@ import {Produit} from "./produit";
 
 export class LigneFacture {
     private _id: number;
-    private _referance: string='';
-    private _produit: Produit=new Produit();
+    private _referance: string;
+    private _produit: Produit;
     private _quantite: number;
     private _montantTotal: number;
 
-    constructor(id?: number,  quantite?: number, montantTotal?:number) {
+    constructor(id?: number,  quantite?: number, montantTotal?:number, produit?:Produit) {
         this._id = id || 0;
         //this._referance = referance || '';
-        // this._produit = produit || new Produit();
+         this._produit = produit || new Produit();
         this._quantite = quantite || 0;
         this._montantTotal = montantTotal || 0;
     }
