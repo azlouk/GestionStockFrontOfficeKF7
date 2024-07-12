@@ -1,0 +1,157 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <div class="my-2">
+
+                        <button pButton pRipple label="Ajouter" icon="pi pi-plus" class="p-button-success mr-2"
+                                (click)="showDialogCreate()"></button>
+                        <button pButton pRipple label="Supprimer" icon="pi pi-trash" class="p-button-danger"
+                                (click)="deleteSelectedAricles()"
+                                [disabled]="!selectedDepots || !selectedDepots.length"></button>
+                    </div>
+                    <div class="col-2 float-end d-flex d-inline "  >
+                        <p-avatar  *ngIf="displayusers " class="float-end" icon="pi pi-book" pBadge styleClass="mr-5" [value]="depots.length+''" size="large" [style]="{ 'background-color': '#b9c7ce', color: '#1a1717' }"></p-avatar>
+                        <i class="bi bi-boxes" style="font-size: 1rem"></i>
+                    </div>
+                </ng-template>
+
+
+            </p-toolbar>
+
+            <p-table #dt [value]="depots" responsiveLayout="scroll" [rows]="10"
+                     [globalFilterFields]="['code','nom','description','capitale','adresse','responsable']" [paginator]="true"
+                     [rowsPerPageOptions]="[10,20,30]" [showCurrentPageReport]="true"
+                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                     selectionMode="multiple" [rowHover]="true" dataKey="id">
+                <ng-template pTemplate="caption">
+
+                    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+
+                        <h5 class="m-0">Gestion des Depot</h5>
+
+                        <span class="block mt-2 md:mt-0 p-input-icon-left">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Recherche..."
+                       class="w-full sm:w-auto"/>
+            </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 3rem">
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <th pSortableColumn="code">Code
+                            <p-sortIcon field="code"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="nom">Nom
+                            <p-sortIcon field="nom"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="description">Description
+                            <p-sortIcon field="description"></p-sortIcon>
+                        </th>
+
+                        <th pSortableColumn="capitale">Capitale
+                            <p-sortIcon field="capitale"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="adresse">Adresse
+                            <p-sortIcon field="adresse"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="responsable">Responsable
+                            <p-sortIcon field="responsable"></p-sortIcon>
+                        </th>
+                        <th></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-depot >
+                    <tr >
+                        <td>
+                            <p-tableCheckbox [value]="depot"></p-tableCheckbox>
+                        </td>
+                        <td style="width:14%; min-width:10rem;"><span class="p-column-title">Code</span>{{ depot.id }}
+                        </td>
+
+                        <td style="width:14%; min-width:10rem;"><span class="p-column-title">Nom</span>{{ depot.nom }}
+                        </td>
+
+                        <td style="width:14%; min-width:10rem;"><span
+                            class="p-column-title">Description</span>{{ depot.description }}</td>
+
+                        <td style="width:14%; min-width:8rem;"><span
+                            class="p-column-title">Capitale</span>{{ depot.capitale }}</td>
+
+
+                        <td style="width:14%; min-width:8rem;"><span
+                            class="p-column-title">Adresse</span>{{ depot.adresse }}</td>
+
+
+                        <td style="width:14%; min-width:8rem;"><span
+                            class="p-column-title">Responsable</span>{{ depot.responsable.lastname }}</td>
+
+                        <td>
+                            <div class="flex">
+                                <button pButton pRipple icon="pi pi-pencil"
+                                        class="p-button-rounded p-button-success mr-2"
+                                        (click)="editDepot(depot)"></button>
+                                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                                        (click)="removeDepot(depot.id)"></button>
+                            </div>
+                        </td>
+
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>
+<p-dialog [(visible)]="depotDialog" [style]="{height: '550px',width: '500px'}" header="Depot Details" [modal]="true"
+          class="p-fluid">
+    <ng-template pTemplate="content">
+
+            <label class=" block mb-2"> Selectioner le responsable </label>
+            <p-dropdown
+                [options]="listReponsable"
+                [(ngModel)]="depot.responsable.firstname"
+                optionLabel="firstname"
+                filterBy="nom"
+                [showClear]="true"
+                placeholder="Select Responsable">
+
+            </p-dropdown>
+        <div class="field">
+            <label for="name">Nom</label>
+            <input type="text" pInputText id="name" [(ngModel)]="depot.nom" required autofocus
+                   [ngClass]="{'ng-invalid ng-dirty' : submitted && !depot.nom}"/>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !depot.nom">nom est requis.</small>
+        </div>
+        <div class="field">
+            <label for="description">Description</label>
+            <textarea id="description" pInputTextarea [(ngModel)]="depot.description" required rows="3"
+                      cols="20"></textarea>
+        </div>
+        <div class="field">
+            <label for="capitale">Capitale</label>
+            <input type="text" pInputText id="capitale" [(ngModel)]="depot.capitale" required autofocus
+                   [ngClass]="{'ng-invalid ng-dirty' : submitted && !depot.capitale}"/>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !depot.capitale">La capitale est requise.</small>
+        </div>
+        <div class="field">
+            <label for="adresse">Adresse</label>
+            <input type="text" pInputText id="adresse" [(ngModel)]="depot.adresse" required autofocus
+                   [ngClass]="{'ng-invalid ng-dirty' : submitted && !depot.adresse}"/>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !depot.adresse">adresse is required.</small>
+        </div>
+
+
+
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="ajouterDepot()"></button>
+    </ng-template>
+</p-dialog>
+

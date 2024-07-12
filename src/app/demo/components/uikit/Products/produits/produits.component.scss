@@ -1,0 +1,15 @@
+.instock {
+    border-radius: 5px;
+    font-weight: bold;
+    background-color: #7ede7e;
+}
+
+.lowstock {
+    font-weight: bold;    border-radius: 5px;
+    background-color: #deb468;
+}
+
+.outofstock {
+    border-radius: 5px;
+    background-color: #d77777;
+    font-weight: bold;}

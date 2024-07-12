@@ -1,0 +1,127 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <div class="my-2">
+                        <button pButton pRipple label="Ajouter" icon="pi pi-plus" class="p-button-success mr-2"
+                                (click)="newProduit()"></button>
+                        <button pButton pRipple label="Supprimer" icon="pi pi-trash" class="p-button-danger"
+                                (click)="deleteSelectedProducts()"
+                                [disabled]="!selectedProducts || !selectedProducts.length"></button>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="right">
+                    <p-fileUpload mode="basic" accept="image/*" [maxFileSize]="1000000" label="Import"
+                                  chooseLabel="Import" class="mr-2 inline-block"></p-fileUpload>
+                    <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help"
+                            (click)="dt.exportCSV()"></button>
+                </ng-template>
+            </p-toolbar>
+
+            <p-table #dt [value]="produits" responsiveLayout="scroll" [rows]="10"
+                     [globalFilterFields]="['id','nom','description','quantite','article.nom']" [paginator]="true"
+                     [rowsPerPageOptions]="[5,10,20,30]" [showCurrentPageReport]="true"
+                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                     selectionMode="multiple" [rowHover]="true" dataKey="id">
+                <ng-template pTemplate="caption">
+                    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                        <h5 class="m-0">gestion des produits</h5>
+                        <span class="block mt-2 md:mt-0 p-input-icon-left">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..."
+                       class="w-full sm:w-auto"/>
+            </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 3rem">
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <th pSortableColumn="id">Code
+                            <p-sortIcon field="id"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="nom">Nom
+                            <p-sortIcon field="nom"></p-sortIcon>
+                        </th>
+                        <th>Image</th>
+                        <th pSortableColumn="prixUnitaire">Prix
+                            <p-sortIcon field="prixUnitaire"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="article.nom">Article
+                            <p-sortIcon field="article.nom"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="qantite">Quantité
+                            <p-sortIcon field="qantite"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="inventoryStatus">Etat de Stock
+                            <p-sortIcon field="inventoryStatus"></p-sortIcon>
+                        </th>
+                        <th></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-product>
+                    <tr>
+                        <td>
+                            <p-tableCheckbox [value]="product"></p-tableCheckbox>
+                        </td>
+                        <td style="width:14%; min-width:10rem;"><span class="p-column-title">Code</span>{{ product.id }}
+                        </td>
+                        <td style="width:14%; min-width:10rem;"><span class="p-column-title">Nom</span>{{ product.nom }}
+                        </td>
+                        <td style="width:14%;">
+                            <span class="p-column-title">Image</span>
+
+                            <ng-template pTemplate="item" [ngIf]="loadFileByProduct(product).length == 0">
+                                <img [src]="" style="width: 80%; height: 80%; display: block;" />
+                            </ng-template>
+
+                            <p-galleria
+                                [value]="loadFileByProduct(product)"
+                                [numVisible]="5"
+                                [circular]="true"
+                                [showItemNavigators]="true"
+                                [showThumbnails]="false"
+                                [responsiveOptions]="responsiveOptions"
+                                [containerStyle]="{ 'max-width': '640px' }">
+                                <ng-template pTemplate="item" let-item>
+                                    <img [src]="item"  style="width: 100%; display: block;" />
+
+                                </ng-template>
+                            </p-galleria>
+                        </td>
+                        <td style="width:14%; min-width:8rem;"><span
+                            class="p-column-title">Prix</span>{{ (product.prixUnitaire + product.gainUnitaire) | currency:'TND':'TND ' }}
+                        </td>
+                        <td style="width:14%; min-width:10rem;"><span
+                            class="p-column-title">Article</span>{{product.article.nom }}</td>
+                        <td style="width:14%; min-width: 10rem;"><span
+                            class="p-column-title">Quantité</span>{{product.qantite}}
+                        </td>
+                        <td style="width:14%; min-width: 10rem;"><span class="p-column-title">Etat de Stock</span>
+                            <span [ngClass]="{
+                            'instock': product.qantite > product.levelstock,
+                            'lowstock': product.qantite > 0 && product.qantite <= product.levelstock,
+                            'outofstock': product.qantite == 0}">
+                                {{ product.qantite > product.levelstock ? 'INSTOCK' : product.qantite == 0 ? 'OUTOFSTOCK' : 'LOWSTOCK' }}
+                            </span>
+
+                        </td>
+                        <td>
+                            <div class="flex">
+                                <button pButton pRipple icon="pi pi-pencil"
+                                        class="p-button-rounded p-button-success mr-2"
+                                        (click)="modifierProduit(product.id)"></button>
+                                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                                        (click)="supprimerProduit(product.id)"></button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>
+
