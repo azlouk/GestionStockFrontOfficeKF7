@@ -25,6 +25,7 @@ export class LigneFactureComponent implements OnInit {
     @ViewChild('searchInput') searchInput!: ElementRef;
     @ViewChild('ajouterProduitButton') ajouterProduitButton!: ElementRef;
 
+
     ngOnInit(): void {
         this.getAllProduits() ;
         console.log("Produits", this.produits)

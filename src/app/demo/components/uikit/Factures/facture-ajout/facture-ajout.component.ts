@@ -15,19 +15,27 @@ import {getUserDecodeID} from "../../../../../../main";
 import {Button} from "primeng/button";
 import {CalendarModule} from "primeng/calendar";
 import {ListboxModule} from "primeng/listbox";
-import {TableModule} from "primeng/table";
+import {Table, TableModule} from "primeng/table";
 import {CommonModule, DecimalPipe} from "@angular/common";
 import {InputNumberModule} from "primeng/inputnumber";
 import {MessagesModule} from "primeng/messages";
 import {CanvasComponent} from "../../canvas/canvas.component";
 import {DropdownModule} from "primeng/dropdown";
+import {DialogModule} from "primeng/dialog";
+import {MultiSelectModule} from "primeng/multiselect";
+import {SliderModule} from "primeng/slider";
+import {CardModule} from "primeng/card";
+import {RippleModule} from "primeng/ripple";
+import {InputSwitchModule} from "primeng/inputswitch";
+import {ToggleButtonModule} from "primeng/togglebutton";
+import {InputTextModule} from "primeng/inputtext";
 @Component({
   selector: 'app-facture-ajout',
   standalone: true,
     imports: [
         ReactiveFormsModule,
         FormsModule,
-         CalendarModule,
+        CalendarModule,
         ListboxModule,
         TableModule,
         DecimalPipe,
@@ -35,7 +43,15 @@ import {DropdownModule} from "primeng/dropdown";
         MessagesModule,
         CanvasComponent,
         DropdownModule,
-        CommonModule
+        CommonModule,
+        DialogModule,
+        MultiSelectModule,
+        SliderModule,
+        CardModule,
+        RippleModule,
+        InputSwitchModule,
+        ToggleButtonModule,
+        InputTextModule
     ],
   templateUrl: './facture-ajout.component.html',
   styleUrl: './facture-ajout.component.scss'
@@ -57,9 +73,20 @@ export class FactureAjoutComponent implements OnInit{
     composantBVisible = false;
     utilisateursTransporteur:User[]=[];
     produitsFactures: LigneFacture[]=[];
+    ligneProduits : Produit [] = [];
+    activityValues: number[] = [0, 100];
+
     selectedDepot: any=null;
     idDepot : number =0;
     idClient : number=0;
+    visible: boolean = false;
+
+    showDialog() {
+        this.visible = true;
+    }
+    clear(table: Table) {
+        table.clear();
+    }
     constructor(
         private cdr: ChangeDetectorRef,
         private factureService: FactureService,
@@ -68,7 +95,6 @@ export class FactureAjoutComponent implements OnInit{
         private produitService: ProduitService,
         private router:Router,
         private formBuilder: FormBuilder,
-        // private modalService: NgbModal
 
     ) {
         this.produitsFactures=[]
@@ -99,7 +125,9 @@ export class FactureAjoutComponent implements OnInit{
         this.getAllProvider();
         this.getAllProduits()
         this.getAllDepots();
-        console.table(this.produitsFactures)
+    }
+    toggleComposantB() {
+        this.composantBVisible = !this.composantBVisible;
     }
 
     getAllDepots() {
@@ -109,7 +137,13 @@ export class FactureAjoutComponent implements OnInit{
             //console.log('List of services:', this.services);
         });
     }
-
+    filtrerProduits(recherche: string) {
+        console.log(recherche)
+        this.produitsFiltres = this.produits.filter((produit:Produit) => {
+            return produit.nom.includes(recherche)||
+                produit.dataqr.includes(recherche)
+        });
+    }
     getAllUsers(){
         this.userService.getUsersClient().subscribe((value :User[])=>{
             this.utilisateurs=value
@@ -129,97 +163,103 @@ export class FactureAjoutComponent implements OnInit{
     getAllProduits(){
         this.produitService.getProduits().subscribe((value :any)=>{
             this.produits=value ;
+            // console.error(""+new JsonPipe().transform(this.produits))
         })
     }
 
     createNewFacture(): void {
         this.newFacture.lignesFacture = this.produitsFactures;
-        if(this.newFacture.depot.id==0){
-            Swal.fire({
-                title:'Erreur',
-                icon:'error',
-                text:'Aucun Dépot a été séléctionner au facture'
-            })
+
+        // Validation des champs obligatoires
+        if (!this.validateFacture()) {
+            return;
         }
-        else if(this.newFacture.lignesFacture.length==0){
-            Swal.fire({
-                title:'Erreur',
-                icon:'error',
-                text:'Aucun produit a été Ajouté au facture'
-            })
 
-        }else if(this.newFacture.client.id==0 && this.newFacture.typeFacture !=='FACTURE_ACHAT'){
-            Swal.fire({
-                title:'Erreur',
-                icon:'error',
-                text:'Aucun client a été Ajouté au facture'
-            })
+        // Affichage du contenu de la facture dans la console
+        console.log('Contenu de la facture à enregistrer :', this.newFacture);
 
-        }else if(this.newFacture.provider.id==0 && this.newFacture.typeFacture=='FACTURE_ACHAT'){
-            Swal.fire({
-                title:'Erreur',
-                icon:'error',
-                text:'Aucun fournisseur a été Ajouté au facture'
-            })
-        }else if(this.newFacture.transporteur.id==0){
-            Swal.fire({
-                title:'Erreur',
-                icon:'error',
-                text:'Aucun transporteur a été Ajouté au facture'
-            })
+        // Configuration de SweetAlert avec des boutons personnalisés
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: "btn btn-success ml-2",
+                cancelButton: "btn btn-danger"
+            },
+            buttonsStyling: false
+        });
 
-        }else {
-            const swalWithBootstrapButtons = Swal.mixin({
-                customClass: {
-                    confirmButton: "btn btn-success ml-2",
-                    cancelButton: "btn btn-danger "
-                },
-                buttonsStyling: false
-            });
+        // Demande de confirmation pour le paiement de la facture
+        swalWithBootstrapButtons
+            .fire({
+                title: "Cette facture est payée ?",
+                text: "Vous ne pourrez pas revenir en arrière !",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Oui, payée",
+                cancelButtonText: "Non",
+                reverseButtons: true
+            })
+            .then((result) => {
+                this.newFacture.paye = result.isConfirmed;
 
-            swalWithBootstrapButtons
-                .fire({
-                    title: "Cette facture est payée ?",
-                    text: "Vous ne pourrez pas revenir en arrière !",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonText: "Oui , payée ",
-                    cancelButtonText: "Non , ",
-                    reverseButtons: true
-                })
-                .then((result) => {
-                    if (result.isConfirmed) {
-                        this.newFacture.paye = true;
-                    } else if (result.dismiss === Swal.DismissReason.cancel) {
-                        this.newFacture.paye = false;
+                // Appel à l'API pour ajouter la facture
+                this.factureService.addFacture(this.newFacture).subscribe(
+                    (response) => {
+                        swalWithBootstrapButtons.fire({
+                            title: "Enregistrement",
+                            text: "Votre facture est bien enregistrée",
+                            icon: "success"
+                        });
+                        this.router.navigate(['/uikit/facture']);
+                    },
+                    (error) => {
+                        this.newFacture = new Facture();
+                        this.router.navigate(['uikit/add-facture']);
+                        console.error('API error:', error);
                     }
+                );
+                this.resetForm();
+            });
+    }
 
-
-
-                    console.log(JSON.stringify(this.newFacture))
-                    this.factureService.addFacture(this.newFacture).subscribe(
-                        (response) => {
-                            console.log('provider:', response.provider);
-                            swalWithBootstrapButtons.fire({
-                                title: "Enregistrement",
-                                text: "votre facture est bien enregistré",
-                                icon: "success"
-                            });
-
-                            this.router.navigate(['/factures'])
-                        },
-                        (error) => {
-                            this.newFacture=new Facture() ;
-                            this.router.navigate(['/add-facture'])
-                            console.error('API error:', error);
-                        }
-                    );
-                    this.resetForm();
-                });
-
+// Fonction de validation des champs de la facture
+    validateFacture(): boolean {
+        if (this.newFacture.depot.id == 0) {
+            Swal.fire({
+                title: 'Erreur',
+                icon: 'error',
+                text: 'Aucun Dépot n\'a été sélectionné pour la facture'
+            });
+            return false;
+        } else if (this.newFacture.lignesFacture.length == 0) {
+            Swal.fire({
+                title: 'Erreur',
+                icon: 'error',
+                text: 'Aucun produit n\'a été ajouté à la facture'
+            });
+            return false;
+        } else if (this.newFacture.client.id == 0 && this.newFacture.typeFacture !== 'FACTURE_ACHAT') {
+            Swal.fire({
+                title: 'Erreur',
+                icon: 'error',
+                text: 'Aucun client n\'a été ajouté à la facture'
+            });
+            return false;
+        } else if (this.newFacture.provider.id == 0 && this.newFacture.typeFacture == 'FACTURE_ACHAT') {
+            Swal.fire({
+                title: 'Erreur',
+                icon: 'error',
+                text: 'Aucun fournisseur n\'a été ajouté à la facture'
+            });
+            return false;
+        } else if (this.newFacture.transporteur.id == 0) {
+            Swal.fire({
+                title: 'Erreur',
+                icon: 'error',
+                text: 'Aucun transporteur n\'a été ajouté à la facture'
+            });
+            return false;
         }
-
-
+        return true;
     }
 
     resetForm(): void {
@@ -253,7 +293,6 @@ export class FactureAjoutComponent implements OnInit{
             this.userService.addUser(newUser);
             this.userService.getUsers()
             this.userForm.reset();
-            // this.modalService.dismissAll(this.modalService);
             console.log("new user", newUser)
         }
     }
@@ -263,6 +302,7 @@ export class FactureAjoutComponent implements OnInit{
     }
 
     calculeFactureTotal() {
+
         this.newFacture.montant=0;
         this.produitsFactures.forEach(value => {
             if(value.quantite>value.produit.qantite)
@@ -278,8 +318,6 @@ export class FactureAjoutComponent implements OnInit{
                 value.montantTotal = value.quantite * (value.produit.prixGros+ value.produit.gainGros)
                 console.log(value.montantTotal);
             }
-            console.log("produits factures",value.produit)
-
         })
     }
 
@@ -297,6 +335,7 @@ export class FactureAjoutComponent implements OnInit{
             if(this.produitsFactures[foundp].quantite< this.produitsFactures[foundp].produit.qantite) {
                 this.produitsFactures[foundp].quantite += 1;
                 this.calculeFactureTotal();
+                //  alert(this.produitsFactures[foundp].produit.nom)
 
             }
         }else {
@@ -328,5 +367,33 @@ export class FactureAjoutComponent implements OnInit{
     returnBack() {
         this.factureService.returnBack();
     }
+    addToFacture(produitInterface: Produit) {
+        // Vérifier si le produit existe déjà dans la facture
+        const existingProduct = this.produitsFactures.find(product => product.produit.id === produitInterface.id);
+        if (existingProduct) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Produit déjà dans la facture',
+                text: 'Ce produit est déjà dans la facture !',
+                confirmButtonText: 'OK'
+            });
+        } else {
+            // si le produit n'existe pas creer une nouvelle ligne de facture
+
+            const ligneFacture: LigneFacture = new LigneFacture();
+            ligneFacture.produit = produitInterface;
+            ligneFacture.quantite = 1;
+            ligneFacture.montantTotal = 0;
+            this.produitsFactures.push(ligneFacture);
+            Swal.fire({
+                icon: 'success',
+                title: 'Produit ajouté à la facture',
+                text: 'Le produit a été ajouté avec succès à la facture !',
+                confirmButtonText: 'OK'
+            });
+        }
+    }
+
+
 }
 

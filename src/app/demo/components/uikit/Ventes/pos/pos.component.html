@@ -25,9 +25,9 @@
             <input type="text" class="float-end m-2" pInputText [(ngModel)]="searchText"   (input)="dv.filter(searchText)" placeholder="Rechercher par Nom ou Code à barre..." (click)="changeFocusSearch()"  />
                    <i class="pi pi-spin pi-box text-success"></i>
             </span>
-                    <p-dataView #dv [value]="produits" [layout]="layout" [paginator]="true" [rows]="12" [loading]="loading"
+                    <p-dataView #dv  [layout]="layout" [paginator]="true" [rows]="12" [loading]="loading"
                                 [rowsPerPageOptions]="[6,12,18,24,30 ]"  [filterBy]="'nom,dataqr,subdataqr,dateFabrication,dateExpiration,description,qantite,prixUnitaire,gainGros,minQuantiteGros,article.nom,article.id'">
-                        <ng-template pTemplate="grid" let-produits>
+                        <ng-template pTemplate="grid" >
                             <div class="grid grid-nogutter">
                                 <div class="col-12 sm:col-12 md:col-6 xl:col-2 p-2" *ngFor="let
                                 product of produits">
@@ -35,8 +35,7 @@
                                         class="p-2 border-3 surface-border surface-card border-round flex flex-column ">
                                         <div class="flex flex-row justify-content-between ">
                                             <div><i class="pi pi-pi pi-tags text-blue-500"></i>
-                                                <span
-                                                    class="font-medium text-secondary text-sm">{{ product.article.nom }}</span>
+                                                <span class="font-medium text-secondary text-sm">{{ product.article.nom }}</span>
                                             </div>
                                             <p-tag class="font-medium text-secondary text-sm"
                                                    [value]="getStockLabel(product)"

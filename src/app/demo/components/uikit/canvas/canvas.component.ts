@@ -83,7 +83,7 @@ export class CanvasComponent implements OnInit{
                 confirmButtonText: 'OK'
             });
         } else {
-            //this.produitsFactures.push(p);
+            this.produitsFactures.push(p);
             this.onMessage.emit(p);
 
             // console.log(this.produitsFactures)
