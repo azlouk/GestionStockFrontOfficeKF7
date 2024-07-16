@@ -23,8 +23,6 @@ export class User {
     password: string;
     passwordConfirm: string;
     passwordConfirm1: string;
-    soldeClient! : number;
-    typeClient !: string;
     authentifications:any[]=[] ;
     userSelected:boolean=false;
     permission:IPermission[]=[];
