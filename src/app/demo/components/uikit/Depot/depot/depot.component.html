@@ -43,11 +43,14 @@
                         <th style="width: 3rem">
                             <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                         </th>
-                        <th pSortableColumn="code">Code
-                            <p-sortIcon field="code"></p-sortIcon>
+                        <th pSortableColumn="id">Code
+                            <p-sortIcon field="id"></p-sortIcon>
                         </th>
                         <th pSortableColumn="nom">Nom
                             <p-sortIcon field="nom"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="tel">Telephone
+                            <p-sortIcon field="tel"></p-sortIcon>
                         </th>
                         <th pSortableColumn="description">Description
                             <p-sortIcon field="description"></p-sortIcon>
@@ -74,6 +77,8 @@
                         </td>
 
                         <td style="width:14%; min-width:10rem;"><span class="p-column-title">Nom</span>{{ depot.nom }}
+                        </td>
+                        <td style="width:14%; min-width:10rem;"><span class="p-column-title">Telephone</span>{{ depot.tel }}
                         </td>
 
                         <td style="width:14%; min-width:10rem;"><span
@@ -113,7 +118,7 @@
             <label class=" block mb-2"> Selectioner le responsable </label>
             <p-dropdown
                 [options]="listReponsable"
-                [(ngModel)]="depot.responsable.firstname"
+                [(ngModel)]="depot.responsable"
                 optionLabel="firstname"
                 filterBy="nom"
                 [showClear]="true"
@@ -127,6 +132,12 @@
             <small class="ng-dirty ng-invalid" *ngIf="submitted && !depot.nom">nom est requis.</small>
         </div>
         <div class="field">
+            <label for="telephone">Telephone</label>
+            <input type="text" pInputText id="telephone" [(ngModel)]="depot.tel" required autofocus
+                   [ngClass]="{'ng-invalid ng-dirty' : submitted && !depot.tel}"/>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !depot.tel">Le telephone est requise.</small>
+        </div>
+        <div class="field">
             <label for="description">Description</label>
             <textarea id="description" pInputTextarea [(ngModel)]="depot.description" required rows="3"
                       cols="20"></textarea>
@@ -137,6 +148,7 @@
                    [ngClass]="{'ng-invalid ng-dirty' : submitted && !depot.capitale}"/>
             <small class="ng-dirty ng-invalid" *ngIf="submitted && !depot.capitale">La capitale est requise.</small>
         </div>
+
         <div class="field">
             <label for="adresse">Adresse</label>
             <input type="text" pInputText id="adresse" [(ngModel)]="depot.adresse" required autofocus

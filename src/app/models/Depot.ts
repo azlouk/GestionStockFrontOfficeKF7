@@ -12,7 +12,7 @@ export class Depot {
      factures: Facture[];
 
 
-    constructor(_id: number=0, _nom: string="", _adresse: string="", _tel: number=0, _capitale: number=0, _description: string="", _responsable=new User(), _factures: Facture[]=[]) {
+    constructor(_id: number=0, _nom: string="", _adresse: string="", _tel: number=0, _capitale: number=0, _description: string="", _responsable:User=new User(), _factures: Facture[]=[]) {
         this.id = _id;
         this.nom = _nom;
         this.adresse = _adresse;

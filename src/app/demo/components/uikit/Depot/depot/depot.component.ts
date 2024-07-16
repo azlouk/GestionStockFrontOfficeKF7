@@ -139,7 +139,7 @@ export class DepotComponent implements OnInit{
                     (response: any) => {
                         console.log("response :"+response)
                         if (response) {
-                            this.getAllDepots();
+                            this.refrech();0
                             Swal.fire('Supprimé', response.message, 'success');
                         } else {
                             Swal.fire('Erreur', 'La suppression a réussi, mais aucun message de confirmation n\'a été reçu.', 'error');
@@ -154,6 +154,8 @@ export class DepotComponent implements OnInit{
                 Swal.fire('Annulé', 'La suppression a été annulée', 'info');
             }
         });
+
+
     }
 
     ChangeView() {
@@ -197,6 +199,8 @@ export class DepotComponent implements OnInit{
 
     refrech() {
         this.getAllDepots()
+        this.router.navigate(['/uikit/depots']);
+
     }
 
     showDialogCreate() {
@@ -207,6 +211,8 @@ export class DepotComponent implements OnInit{
     }
     public hideDialog() {
         this.depotDialog = false;
+        this.refrech();
+
     }
 
     public deleteSelectedAricles() {
@@ -214,33 +220,35 @@ export class DepotComponent implements OnInit{
     }
 
     ajouterDepot() {
+        if (this.depot.nom) {
+            console.log(new JsonPipe().transform(this.depot))
 
-        console.log('nouveauDepot :',this.depot)
-
-        this.submitted = true;
-        this.showDialogCreate();
-        if (this.depot.nom && this.depot.adresse && this.depot.tel && this.depot.capitale && this.depot.description ) {
-
-            // this.depot.responsable={id:this.SelectedResponsableId}
             this.depotService.addDepot(this.depot).subscribe(value => {
-                console.log("Res of Add depot :"+ new JsonPipe().transform(value))
+                console.log("Res of Add depot :"+ value)
+                Swal.fire('Succès', 'Le dêpot a été ajouté avec succès !', 'success');
+
             }); // Ajout du produit via le service
             this.depot = new Depot(0,'', '', 0, 0, ''); // Réinitialisation du formulaire après l'ajout
-            Swal.fire('Succès', 'Le dêpot a été ajouté avec succès !', 'success');
-            console.log('nouveauDepot :',this.depot)
+            console.log('nouveauResponsableId :',this.depot.responsable.id)
+            if (Response) {
+                this.refrech();
+            }
 
-            this.router.navigate(['/depot']);
 
         } else {
             Swal.fire('Erreur', 'Veuillez remplir tous les champs', 'error');
+            console.log('nouveauDepot :',this.depot)
+
         }
-
-
         this.hideDialog();
+
     }
 
 
     public editDepot(depot: any) {
+        this.depotDialog=true
+        this.depot = depot;
+        this.refrech();
 
     }
 }

@@ -123,18 +123,17 @@ export class DepotService {
             return new Observable<any>();
         }
     }
-    addDepot(nouveauDepot : Depot):Observable<boolean> {
-        const token = getToken();
-        console.log("Call Function Depot Add : " +JSON.stringify(nouveauDepot))
-        console.log(token)
 
+    addDepot(nouveauDepot : Depot):Observable<any> {
+        const token = getToken();
+        console.log(token)
         if (token) {
             // Ajouter le token à l'en-tête de la requête
             const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type", "application/json; charset=utf8");
 
-            return this.http.post<boolean>(`${this.api}/create`,nouveauDepot,{headers});
+            return this.http.post<any>(`${this.api}/createDto`,nouveauDepot,{headers});
         }else {
-            return new Observable<boolean>();
+            return new Observable<any>();
         }
 
     }
