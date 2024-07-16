@@ -142,10 +142,10 @@ export class FactureComponent implements OnInit{
     }
 
     goToFactureDetails(id: number): void {
-        this.router.navigate(['facture/', id]);
+        this.router.navigate(['uikit/facture/', id]);
     }
     editFacture(id:number){
-        this.router.navigate(['edit-facture/', id]) ;
+        this.router.navigate(['uikit/update-facture/', id]) ;
     }
 
     addFacture(){

@@ -1,7 +1,7 @@
 import {Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild} from '@angular/core';
 import Swal from "sweetalert2";
-import {Produit} from "../../../../models/produit";
-import {ProduitService} from "../../../../layout/service/produit.service";
+import {Produit} from "../../../../../models/produit";
+import {ProduitService} from "../../../../../layout/service/produit.service";
 import {JsonPipe} from "@angular/common";
 import {Router} from "@angular/router";
 

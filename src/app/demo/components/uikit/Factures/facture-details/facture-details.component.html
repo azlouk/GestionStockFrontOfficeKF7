@@ -1,0 +1,95 @@
+<!-- facture.component.html -->
+<div class="grid p-card">
+    <div class="col-12 " #factureContent>
+        <div class="flex justify-content-between align-items-center m-8">
+            <div class="p-grid justify-content-center align-items-center">
+                <div class="p-col font-bold">
+                    <h3>{{ facture.provider.firstname + " " + facture.provider.lastname }}</h3>
+                </div>
+                <div class="p-col">{{ facture.provider.adresse }}</div>
+                <div class="p-col">{{ facture.provider.telephone }}</div>
+            </div>
+            <div class="center">
+                <h3>LOGO</h3>
+            </div>
+            <div>
+                <h3>{{ facture.typeFacture == 'FACTURE_VENTE' ? 'Facture de vente' : "Facture d'Achat" }}</h3>
+            </div>
+        </div>
+        <div class="flex justify-content-between align-items-center m-8 border-1 border-round p-2 ">
+            <div class="p-grid justify-content-center align-items-center ">
+                <div class="font-bold">
+                    <h3>Facturé à:</h3>
+                    <h3>{{ facture.client.firstname + " " + facture.client.lastname }}</h3>
+                    <div class="p-col">{{ facture.client.adresse }}</div>
+                    <div class="p-col">{{ facture.client.telephone }}</div>
+                </div>
+            </div>
+            <div class="font-bold">
+                <h3>Livré par:</h3>
+                <h3>{{ facture.transporteur.firstname + " " + facture.transporteur.lastname }}</h3>
+                <div class="p-col">{{ facture.transporteur.adresse }}</div>
+                <div class="p-col">{{ facture.transporteur.telephone }}</div>
+            </div>
+            <div class="font-bold">
+                <h3>{{ facture.reference }}</h3>
+                <div class="p-col">{{ facture.date }}</div>
+                <div class="p-col">Date: {{ facture.client.telephone }}</div>
+            </div>
+        </div>
+        <div class="m-8">
+            <p-table
+                    [value]="facture.lignesFacture"
+                    styleClass="p-datatable-gridlines"
+                    [tableStyle]="{ 'min-width': '50rem' }">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Code</th>
+                        <th>Nom</th>
+                        <th>Quantité</th>
+                        <th>Prix</th>
+                        <th>Total produit</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-l>
+                    <tr>
+                        <td>{{ l.id }}</td>
+                        <td>{{ l.produit.nom }}</td>
+                        <td>{{ l.quantite }}</td>
+                        <td>{{ l.produit.prixUnitaire + l.produit.gainUnitaire }}</td>
+                        <td>{{ (l.produit.prixUnitaire + l.produit.gainUnitaire) * l.quantite }}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            <div class="p-card" style="width: 33%; float: right;">
+                <p-table [value]="[facture]" class="p-datatable-custom">
+                    <ng-template pTemplate="body" let-facture>
+                        <tr>
+                            <td class="xl:font-bold p-2">Total HT</td>
+                            <td class="font-bold">{{ facture.montant | currency:'':'TND ' }}</td>
+                        </tr>
+                        <tr>
+                            <td class="xl:font-bold p-2">Réglement</td>
+                            <td class="font-bold">{{ facture.reglement | currency:'':'TND ' }}</td>
+                        </tr>
+                        <tr>
+                            <td class="xl:font-bold p-2">TVA</td>
+                            <td class="font-bold">{{ facture.reglement | currency:'':'% ' }}</td>
+                        </tr>
+                        <tr>
+                            <td class="xl:font-bold p-2">Somme Total</td>
+                            <td class="font-bold">{{ facture.montant | currency:'':'TND ' }}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+
+        </div>
+        <p class="font-bold m-5" style="position: absolute; bottom: 0; right: 50%;">Signature & Cachet</p>
+
+    </div>
+    <div class="flex justify-content-end align-items-end col-12 p-4">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="returnBack()"></button>
+        <button pButton pRipple label="Imprimer" icon="pi pi-print" class="p-button-text" (click)="printFacture()"></button>
+    </div>
+</div>

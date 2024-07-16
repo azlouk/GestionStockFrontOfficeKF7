@@ -133,7 +133,13 @@ export class FactureService {
                     "dateFabrication": value.produit.dateFabrication,
                     "dateExpiration": value.produit.dateExpiration,
                     "taxe": value.produit.taxe,
-                    "filesList": filesListes
+                    "filesList": filesListes,
+                    "article": {
+                        "id":value.produit.article.id,
+                        "nom":value.produit.article.nom,
+                        "description":value.produit.article.description,
+                        "unite":value.produit.article.unite,
+                    }
                 },
                 "quantite": value.quantite,
                 "montantTotal": value.montantTotal
@@ -227,7 +233,13 @@ export class FactureService {
                     "dateFabrication":value.produit.dateFabrication,
                     "dateExpiration":value.produit.dateExpiration,
                     "taxe":value.produit.taxe,
-                    "filesList": filesListes
+                    "filesList": filesListes,
+                    "article": {
+                        "id":value.produit.article.id,
+                        "nom":value.produit.article.nom,
+                        "description":value.produit.article.description,
+                        "unite":value.produit.article.unite,
+                    }
                 },
                 "quantite": value.quantite,
                 "montantTotal": value.montantTotal,

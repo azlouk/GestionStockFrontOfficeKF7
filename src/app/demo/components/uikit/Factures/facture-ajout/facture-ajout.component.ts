@@ -10,7 +10,7 @@ import {FactureService} from "../../../../../layout/service/facture.service";
 import {DepotService} from "../../../../../layout/service/depot.service";
 import {UserService} from "../../../../../layout/service/user.service";
 import {ProduitService} from "../../../../../layout/service/produit.service";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {getUserDecodeID} from "../../../../../../main";
 import {Button} from "primeng/button";
 import {CalendarModule} from "primeng/calendar";
@@ -93,6 +93,7 @@ export class FactureAjoutComponent implements OnInit{
         private depotService: DepotService,
         private userService: UserService,
         private produitService: ProduitService,
+        private route: ActivatedRoute,
         private router:Router,
         private formBuilder: FormBuilder,
 
@@ -110,22 +111,57 @@ export class FactureAjoutComponent implements OnInit{
         this.newFacture.dateCreation=new Date() ;
     }
 
-    ngOnInit(): void {
-        this.newFacture.typeFacture=factureType.SORTIE
-        console.log(this.newFacture.typeFacture)
-        this.calculeFactureTotal()
-        this.dateSysteme = new Date();
-        this.depotService.getDepotByIdRes(getUserDecodeID().id).subscribe((value:Depot) => {
-            this.newFacture.depot=value
-            // console.log(this.newFacture.depot)
-        },error => {
-        });
-        this.getAllUsers();
-        this.getAllTrans();
-        this.getAllProvider();
-        this.getAllProduits()
-        this.getAllDepots();
+    async ngOnInit(): Promise<void> {
+        const id = this.route.snapshot.paramMap.get('id');
+        try {
+            if (id) {
+                const facture = await this.factureService.getFactureById(Number(id)).toPromise();
+                this.newFacture = facture;
+                this.newFacture.dateCreation = new Date(facture.dateCreation);
+                this.newFacture.date = new Date(facture.date);
+
+                if (Array.isArray(facture.lignesFacture)) {
+                    this.produitsFactures = facture.lignesFacture;
+                } else {
+                    console.warn("Facture _lignesFacture is not an array or is undefined", facture.lignesFacture);
+                }
+            }
+
+            this.newFacture.typeFacture = factureType.SORTIE;
+            this.calculeFactureTotal();
+            this.dateSysteme = new Date();
+
+            const userId = getUserDecodeID().id;
+            console.log("Utilisateur ID: ", userId);
+
+            this.depotService.getDepotByIdRes(userId).subscribe(
+                (value: Depot) => {
+                    if (value) {
+                        console.log("Dépôt récupéré :", value);
+                        this.newFacture.depot = value;
+                    } else {
+                        console.warn("Dépôt est null ou indéfini :", value);
+                    }
+                },
+                (error) => {
+                    console.error("Erreur lors de la récupération du dépôt :", error);
+                }
+            );
+
+            this.getAllUsers();
+            this.getAllTrans();
+            this.getAllProvider();
+            this.getAllProduits();
+            this.getAllDepots();
+
+            console.log("Facture récupérée !!", this.newFacture);
+        } catch (error) {
+            console.error("Erreur lors du chargement des données :", error);
+        }
     }
+
+
+
     toggleComposantB() {
         this.composantBVisible = !this.composantBVisible;
     }
@@ -201,6 +237,77 @@ export class FactureAjoutComponent implements OnInit{
             .then((result) => {
                 this.newFacture.paye = result.isConfirmed;
 
+                if (this.newFacture.id) {
+                    // Mise à jour de la facture existante
+                    this.factureService.updateFacture(this.newFacture).subscribe(
+                        (response) => {
+                            swalWithBootstrapButtons.fire({
+                                title: "Mise à jour",
+                                text: "Votre facture a été mise à jour avec succès",
+                                icon: "success"
+                            });
+                            this.router.navigate(['/uikit/facture']);
+                        },
+                        (error) => {
+                            console.error('API error:', error);
+                        }
+                    );
+                } else {
+                    // Création d'une nouvelle facture
+                    this.factureService.addFacture(this.newFacture).subscribe(
+                        (response) => {
+                            swalWithBootstrapButtons.fire({
+                                title: "Enregistrement",
+                                text: "Votre facture est bien enregistrée",
+                                icon: "success"
+                            });
+                            this.router.navigate(['/uikit/facture']);
+                        },
+                        (error) => {
+                            this.newFacture = new Facture();
+                            this.router.navigate(['uikit/add-facture']);
+                            console.error('API error:', error);
+                        }
+                    );
+                }
+                this.resetForm();
+            });
+    }
+
+
+    /*createNewFacture(): void {
+        this.newFacture.lignesFacture = this.produitsFactures;
+        // Validation des champs obligatoires
+        if (!this.validateFacture()) {
+            return;
+        }
+
+        // Affichage du contenu de la facture dans la console
+        console.log('Contenu de la facture à enregistrer :', this.newFacture);
+
+        // Configuration de SweetAlert avec des boutons personnalisés
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: "btn btn-success ml-2",
+                cancelButton: "btn btn-danger"
+            },
+            buttonsStyling: false
+        });
+
+        // Demande de confirmation pour le paiement de la facture
+        swalWithBootstrapButtons
+            .fire({
+                title: "Cette facture est payée ?",
+                text: "Vous ne pourrez pas revenir en arrière !",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Oui, payée",
+                cancelButtonText: "Non",
+                reverseButtons: true
+            })
+            .then((result) => {
+                this.newFacture.paye = result.isConfirmed;
+
                 // Appel à l'API pour ajouter la facture
                 this.factureService.addFacture(this.newFacture).subscribe(
                     (response) => {
@@ -219,7 +326,7 @@ export class FactureAjoutComponent implements OnInit{
                 );
                 this.resetForm();
             });
-    }
+    }*/
 
 // Fonction de validation des champs de la facture
     validateFacture(): boolean {
@@ -265,14 +372,7 @@ export class FactureAjoutComponent implements OnInit{
     resetForm(): void {
         this.newFacture = new Facture();
     }
-
-
     closeResult = '';
-
-
-
-
-
     // insertion nouvel client
     RolesData: any=RoleEnum.CLIENT;
     Tax : any=19;
@@ -320,9 +420,6 @@ export class FactureAjoutComponent implements OnInit{
             }
         })
     }
-
-
-
     parentMessage:Produit =new Produit();
 
     receiveMessage(message: Produit) {
