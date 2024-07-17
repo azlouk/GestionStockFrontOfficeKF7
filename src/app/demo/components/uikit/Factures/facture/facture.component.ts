@@ -16,7 +16,7 @@ import {InputTextModule} from "primeng/inputtext";
 import {InputTextareaModule} from "primeng/inputtextarea";
 import {NgClass, NgIf} from "@angular/common";
 import {PrimeTemplate} from "primeng/api";
-import {Ripple} from "primeng/ripple";
+import {Ripple, RippleModule} from "primeng/ripple";
 import {ToastModule} from "primeng/toast";
 import {ToolbarModule} from "primeng/toolbar";
 import {SliderModule} from "primeng/slider";
@@ -44,7 +44,8 @@ import {ColumnFilterFormElement} from "primeng/table/table";
         TagModule,
         MultiSelectModule,
         SplitButtonModule,
-        NgClass
+        NgClass,
+        RippleModule
     ],
   templateUrl: './facture.component.html',
   styleUrl: './facture.component.scss'

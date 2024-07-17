@@ -20,7 +20,7 @@ import {getTitleTicket, getToken, getUserDecodeID, setTitleTicket, setVentes} fr
 import Swal from "sweetalert2";
 import {ProduitService} from "../../../../../layout/service/produit.service";
 import {VenteService} from "../../../../../layout/service/vente.service";
-import {CurrencyPipe, DatePipe, JsonPipe, NgClass, NgForOf, NgIf} from "@angular/common";
+import {CommonModule, CurrencyPipe, DatePipe, JsonPipe, NgClass, NgForOf, NgIf} from "@angular/common";
 import {Router} from "@angular/router";
 import {User} from "../../../../../models/user";
 import {forkJoin} from "rxjs/internal/observable/forkJoin";
@@ -78,7 +78,8 @@ import {environment} from "../../../../../../environments/environment";
         CardModule,
         TagModule,
         RatingModule,
-        ToolbarModule
+        ToolbarModule,
+        CommonModule
     ],
     templateUrl: './pos.component.html',
     styleUrl: './pos.component.scss'
@@ -211,6 +212,7 @@ export class POSComponent implements OnInit,OnDestroy {
             this.produitService.SaveVente(this.selectedVente).subscribe(value => {
                 if (value) {
                     this.clearVente();
+                    this.getAllProduits()
                     this.showTopCenter("Votre Vente est bien enregistré ")
                     if (this.selectedVente.isPrint) {
                         Swal.fire({

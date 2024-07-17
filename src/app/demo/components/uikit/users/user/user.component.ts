@@ -18,28 +18,30 @@ import {ToolbarModule} from "primeng/toolbar";
 import {FileUploadModule} from "primeng/fileupload";
 import {AvatarModule} from "primeng/avatar";
 import {BadgeModule} from "primeng/badge";
+import {RippleModule} from "primeng/ripple";
 @Component({
   selector: 'app-user',
   standalone: true,
-  imports: [
-      ButtonModule,
-      CurrencyPipe,
-      DatePipe,
-      DropdownModule,
-      InputTextModule,
-      MultiSelectModule,
-      ProgressBarModule,
-      SharedModule,
-      SliderModule,
-      TableModule,
-      FormsModule,
-      ToastModule,
-      ToolbarModule,
-      FileUploadModule,
-      AvatarModule,
-      BadgeModule,
-      NgIf
-  ],
+    imports: [
+        ButtonModule,
+        CurrencyPipe,
+        DatePipe,
+        DropdownModule,
+        InputTextModule,
+        MultiSelectModule,
+        ProgressBarModule,
+        SharedModule,
+        SliderModule,
+        TableModule,
+        FormsModule,
+        ToastModule,
+        ToolbarModule,
+        FileUploadModule,
+        AvatarModule,
+        BadgeModule,
+        NgIf,
+        RippleModule
+    ],
   templateUrl: './user.component.html',
   styleUrl: './user.component.scss'
 })
@@ -166,6 +168,7 @@ export class UserComponent {
 
     refrech() {
         this.getAllUsers();
+        //this.router.navigate(['/uikit/Users']);
     }
     clear(table: Table) {
         table.clear();

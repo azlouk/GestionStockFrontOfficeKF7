@@ -200,7 +200,6 @@ export class DepotComponent implements OnInit{
     refrech() {
         this.getAllDepots()
         this.router.navigate(['/uikit/depots']);
-
     }
 
     showDialogCreate() {

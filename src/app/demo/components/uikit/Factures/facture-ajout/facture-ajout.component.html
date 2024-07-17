@@ -302,10 +302,10 @@
             </p-table>
         </div>
 
-        <div class="form-row flex-column float-end  p-5     shadow-lg bg-body-tertiary " style="margin: 60px" >
+        <div class="form-row flex-column float-end  p-5 bg-body-tertiary " style="margin: 60px" >
             <div class="col flex-auto p-2">
                 <label class="block font-bold mb-2 PrimaryColorTitle" >Réglement : </label>
-                <p-inputNumber [(ngModel)]="newFacture.montant" inputId="currency-us" mode="currency" currency="TND" locale="en-US"> </p-inputNumber>
+                <p-inputNumber [(ngModel)]="newFacture.reglement"  inputId="currency-us" mode="currency" currency="TND" locale="en-US"> </p-inputNumber>
             </div>
             <div class="flex-auto p-2">
                 <label class="font-bold block mb-2 PrimaryColorTitle" >Tax : </label>
@@ -313,7 +313,7 @@
             </div>
             <div class="flex-auto p-2">
                 <label class="block font-bold mb-2PrimaryColorTitle " >Total : </label>
-                <label class="text-danger fs-3 fw-bold text-center shadow-lg rounded-3 p-2" >{{newFacture.montant|number}}</label>
+                <label class="text-danger fs-3 fw-bold text-center rounded-3 p-2" >{{newFacture.montant|number}}</label>
             </div>
         </div>
     </ng-template>

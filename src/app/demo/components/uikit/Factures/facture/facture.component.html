@@ -3,24 +3,21 @@
         <div class=" p-flex p-flex-column mb-3 position-relative">
             <div class="justify-content-between align-items-center">
                 <div class=" p-flex p-flex-column mb-3 position-relative">
+                    <p-toolbar styleClass="mb-4">
+                        <ng-template pTemplate="left">
+                            <div class="my-2">
+                                <button pButton pRipple label="Ajouter" icon="pi pi-file-plus" class="p-button-success p-button-outlined mr-2"
+                                        (click)="addFacture()"></button>
+                                <button pButton pRipple label="Actualiser" icon="pi pi-refresh" class="p-button-primary p-button-outlined"
+                                        (click)="refrech()"></button>
 
-                    <p-toolbar>
-                        <div class="p-toolbar-group-start">
-                            <p-button label="Actualiser" styleClass="p-button-raised p-button-text" (click)="refrech()">
-                                <i class="bi bi-arrow-repeat " style="font-size: 1rem"></i>
-                            </p-button>
-                        </div>
-<!--                        <div class="p-toolbar-group-center">-->
-<!--        <span class="p-input-icon-left">-->
-<!--            <i class="pi pi-search"></i>-->
-<!--            <input pInputText placeholder="Search"/>-->
-<!--        </span>-->
-<!--                        </div>-->
-                        <div class="p-toolbar-group-end">
-                            <p-button label="Save" icon="pi pi-check" label="Ajouter Facture"
-                                      styleClass="p-button-raised p-button-text p-button-success"
-                                      (click)="addFacture()"></p-button>
-                        </div>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="right">
+                            <div class="col-2 float-end d-flex d-inline "  >
+                                <p-avatar  class="float-end" icon="pi pi-file" pBadge styleClass="mr-5" [value]="Facturefilred.length+''" size="large" [style]="{ 'background-color': '#b9c7ce', color: '#1a1717' }"></p-avatar>
+                            </div>
+                        </ng-template>
                     </p-toolbar>
 
                     <!-----------------------------------------------------newTableSort--------------------------------------------------------------------n-->

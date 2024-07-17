@@ -32,7 +32,9 @@ export class FactureDetailsComponent implements OnInit {
   @ViewChild('factureContent') factureContent!: ElementRef;
   constructor(
       private factureService: FactureService,
-      private route: ActivatedRoute
+      private produitService : ProduitService,
+      private route: ActivatedRoute,
+      private router : Router,
   ) {}
 
   ngOnInit(): void {
@@ -47,7 +49,7 @@ export class FactureDetailsComponent implements OnInit {
   }
 
   returnBack(): void {
-    // Implémentez la logique pour retourner en arrière
+    this.factureService.returnBack()
   }
 
   saveFacture(): void {
@@ -56,11 +58,58 @@ export class FactureDetailsComponent implements OnInit {
 
   printFacture() {
     const printContent = this.factureContent.nativeElement.innerHTML;
-    const originalContent = document.body.innerHTML;
 
-    document.body.innerHTML = printContent;
-    window.print();
-    document.body.innerHTML = originalContent;
+    // Créer un iframe temporaire
+    const iframe = document.createElement('iframe');
+    document.body.appendChild(iframe);
+
+    // Positionner l'iframe hors de vue
+    iframe.style.position = 'absolute';
+    iframe.style.width = '0';
+    iframe.style.height = '0';
+    iframe.style.border = 'none';
+
+    const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+    if (iframeDoc) {
+      iframeDoc.open();
+
+      // Copier les styles de la page
+      const styleSheets = Array.from(document.styleSheets)
+          .map(styleSheet => {
+            try {
+              return Array.from(styleSheet.cssRules)
+                  .map(rule => rule.cssText)
+                  .join('\n');
+            } catch (e) {
+              console.warn('Access to stylesheet is restricted', e);
+              return '';
+            }
+          })
+          .join('\n');
+
+      // Écrire le contenu et les styles dans l'iframe
+      iframeDoc.write(`
+      <html>
+        <head>
+          <title>Facture</title>
+          <style>${styleSheets}</style>
+        </head>
+        <body>${printContent}</body>
+      </html>
+    `);
+      iframeDoc.close();
+
+      // Attendre que le contenu soit chargé et imprimer
+      iframe.onload = () => {
+        iframe.contentWindow?.focus();
+        iframe.contentWindow?.print();
+        document.body.removeChild(iframe);
+      };
+    }
   }
+
+
+
+
 }
 

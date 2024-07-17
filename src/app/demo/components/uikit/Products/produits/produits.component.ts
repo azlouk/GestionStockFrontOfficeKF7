@@ -32,8 +32,8 @@ import {AvatarModule} from "primeng/avatar";
 import {BadgeModule} from "primeng/badge";
 
 @Component({
-  selector: 'app-produits',
-  standalone: true,
+    selector: 'app-produits',
+    standalone: true,
     imports: [
         ButtonModule,
         DataViewModule,
@@ -63,13 +63,13 @@ import {BadgeModule} from "primeng/badge";
         AvatarModule,
         BadgeModule
     ],
-  templateUrl: './produits.component.html',
-  styleUrl: './produits.component.scss'
+    templateUrl: './produits.component.html',
+    styleUrl: './produits.component.scss'
 })
 export class ProduitsComponent implements OnInit {
 
 
-      imageUrl=""
+    imageUrl=""
 
     idd?: number;
     produits: Produit[] = [];
@@ -107,7 +107,7 @@ export class ProduitsComponent implements OnInit {
         this.produitService.getProduits().subscribe(
             (value: Produit[]) => {
                 this.produits = value;
-                 console.log(new JsonPipe().transform( this.produits))
+                console.log(new JsonPipe().transform( this.produits))
                 this.loadingdata = false;
 
 
@@ -176,7 +176,7 @@ export class ProduitsComponent implements OnInit {
             product.files.forEach((file: File) => {
                 if (file && file.path) {
 
-                     this.imageUrl = `http://localhost:8081/img/${file.name}`;
+                    this.imageUrl = `http://localhost:8081/img/${file.name}`;
 
                     let safeUrl = this.sanitizer.bypassSecurityTrustUrl(this.imageUrl);
                     safeImages.push(safeUrl);
@@ -209,4 +209,9 @@ export class ProduitsComponent implements OnInit {
     }
 
     protected readonly JSON = JSON;
+
+    refresh() {
+        this.getAllProduits();
+        this.router.navigate(['/uikit/produits']);
+    }
 }

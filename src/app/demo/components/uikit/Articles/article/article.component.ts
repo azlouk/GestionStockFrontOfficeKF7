@@ -229,4 +229,8 @@ export class ArticleComponent implements OnInit {
         this.deleteProductsDialog = true;
 
     }
+
+    refresh() {
+        this.getAllArticles()
+    }
 }

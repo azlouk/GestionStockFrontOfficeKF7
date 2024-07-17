@@ -5,10 +5,12 @@
             <p-toolbar styleClass="mb-4">
                 <ng-template pTemplate="left">
                 <div class="my-2">
-                    <button pButton pRipple label="Ajouter" icon="pi pi-plus" class="p-button-success mr-2"
+                    <button pButton pRipple label="Ajouter" icon="pi pi-plus" class="p-button-success p-button-outlined mr-2"
                             (click)="showDialogCreate()"></button>
-                    <button pButton pRipple label="Supprimer" icon="pi pi-trash" class="p-button-danger"
-                            (click)="deleteSelectedArticles()"></button>
+                    <button pButton pRipple label="Actualiser" icon="pi pi-refresh" class="p-button-primary p-button-outlined"
+                            (click)="refresh()"></button>
+                    <!--<button pButton pRipple label="Supprimer" icon="pi pi-trash" class="p-button-danger"
+                            (click)="deleteSelectedArticles()"></button>-->
                 </div>
                 </ng-template>
                 <ng-template pTemplate="right">

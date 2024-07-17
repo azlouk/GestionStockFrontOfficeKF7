@@ -5,11 +5,10 @@
             <p-toolbar styleClass="mb-4">
                 <ng-template pTemplate="left">
                     <div class="my-2">
-                        <button pButton pRipple label="Ajouter" icon="pi pi-plus" class="p-button-success mr-2"
+                        <button pButton pRipple label="Ajouter" icon="pi pi-plus" class="p-button-success p-button-outlined mr-2"
                                 (click)="newProduit()"></button>
-                        <button pButton pRipple label="Supprimer" icon="pi pi-trash" class="p-button-danger"
-                                (click)="deleteSelectedProducts()"
-                                [disabled]="!selectedProducts || !selectedProducts.length"></button>
+                        <button pButton pRipple label="Actualiser" icon="pi pi-refresh" class="p-button-primary p-button-outlined"
+                                (click)="refresh()"></button>
                     </div>
                 </ng-template>
                 <ng-template pTemplate="right">
@@ -78,26 +77,26 @@
                             </ng-template>
 
                             <p-galleria
-                                [value]="loadFileByProduct(product)"
-                                [numVisible]="5"
-                                [circular]="true"
-                                [showItemNavigators]="true"
-                                [showThumbnails]="false"
-                                [responsiveOptions]="responsiveOptions"
-                                [containerStyle]="{ 'max-width': '640px' }">
+                                    [value]="loadFileByProduct(product)"
+                                    [numVisible]="5"
+                                    [circular]="true"
+                                    [showItemNavigators]="true"
+                                    [showThumbnails]="false"
+                                    [responsiveOptions]="responsiveOptions"
+                                    [containerStyle]="{ 'max-width': '640px' }">
                                 <ng-template pTemplate="item" let-item>
-                                    <img [src]="item"  sstyle="width: 80%; height: 80%; display: block;" />
+                                    <img [src]="item"  style="width: 100%; display: block;" />
 
                                 </ng-template>
                             </p-galleria>
                         </td>
                         <td style="width:14%; min-width:8rem;"><span
-                            class="p-column-title">Prix</span>{{ (product.prixUnitaire + product.gainUnitaire) | currency:'TND':'TND ' }}
+                                class="p-column-title">Prix</span>{{ (product.prixUnitaire + product.gainUnitaire) | currency:'TND':'TND ' }}
                         </td>
                         <td style="width:14%; min-width:10rem;"><span
-                            class="p-column-title">Article</span>{{product.article.nom }}</td>
+                                class="p-column-title">Article</span>{{product.article.nom }}</td>
                         <td style="width:14%; min-width: 10rem;"><span
-                            class="p-column-title">Quantité</span>{{product.qantite}}
+                                class="p-column-title">Quantité</span>{{product.qantite}}
                         </td>
                         <td style="width:14%; min-width: 10rem;"><span class="p-column-title">Etat de Stock</span>
                             <span [ngClass]="{
@@ -113,7 +112,7 @@
                                 <button pButton pRipple icon="pi pi-pencil"
                                         class="p-button-rounded p-button-success mr-2"
                                         (click)="modifierProduit(product.id)"></button>
-                                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
+                                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
                                         (click)="supprimerProduit(product.id)"></button>
                             </div>
                         </td>
@@ -123,4 +122,3 @@
         </div>
     </div>
 </div>
-
