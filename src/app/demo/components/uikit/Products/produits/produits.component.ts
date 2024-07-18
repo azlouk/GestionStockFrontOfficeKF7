@@ -185,25 +185,6 @@ export class ProduitsComponent implements OnInit {
         }
         return safeImages;
     }
-    //
-    // getFileName(filePath: string): string {
-    //     // Séparez le chemin en parties en utilisant le séparateur de dossier
-    //     const parts = filePath.split('\\');
-    //     // Renvoyez le dernier élément du tableau, qui est normalement le nom du fichier
-    //     return parts[parts.length - 1];
-    // }
-
-    // createSafeImageUrl(filePath: string): SafeResourceUrl {
-    //     const fileName = this.getFileName(filePath);
-    //     const imageUrl = `http://localhost:8081/img/${fileName}`;
-    //     return this.sanitizer.bypassSecurityTrustUrl(imageUrl);
-    // }
-    //
-    // getFileName(filePath: string): string {
-    //     const parts = filePath.split(/[\\\/]/);
-    //     return parts[parts.length - 1];
-    // }
-
     deleteSelectedProducts() {
         this.deleteProductsDialog = true;
     }
