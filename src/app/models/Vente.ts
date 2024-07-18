@@ -23,6 +23,7 @@ export class Vente {
                 _isPrint? :boolean) {
         this.id = _id || 0;
         this.dateVente = _dateVente || new Date().toString();
+        // this.dateVente = _dateVente || new Date();
         this.nomClient = _nomClient;
         this.total = _total;
         this.reglement = _reglement;

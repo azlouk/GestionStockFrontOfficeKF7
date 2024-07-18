@@ -12,6 +12,8 @@ import {DialogModule} from "primeng/dialog";
 import {ToolbarModule} from "primeng/toolbar";
 import {AvatarModule} from "primeng/avatar";
 import {BadgeModule} from "primeng/badge";
+import {RippleModule} from "primeng/ripple";
+import {Router} from "@angular/router";
 
 
 
@@ -27,6 +29,8 @@ import {BadgeModule} from "primeng/badge";
         DialogModule,
         DatePipe,
         CommonModule,
+        RippleModule,
+        CommonModule,
         ToolbarModule,
         AvatarModule,
         BadgeModule
@@ -40,7 +44,7 @@ export class LigneVenteComponent implements OnInit {
     searchTerm: string='';
     showTable : boolean= false;
     displayusers: boolean=true;
-    constructor(private venteService: VenteService) { this.displayusers=true; }
+    constructor(private venteService: VenteService,private router: Router,) { this.displayusers=true; }
 
     ngOnInit(): void {
         this.loadVentes();
@@ -88,6 +92,9 @@ export class LigneVenteComponent implements OnInit {
     //     }
     //   );
     // }
+    goToClotures(): void {
+        this.router.navigate(['/uikit/cloture']); // Redirection vers la page de modification avec l'ID du produit
+    }
     getSeverity(status: string) {
         switch (status) {
             case 'INSTOCK':
