@@ -9,6 +9,8 @@ import {InputNumberModule} from "primeng/inputnumber";
 import {ButtonModule} from "primeng/button";
 import {TableModule} from "primeng/table";
 import {DialogModule} from "primeng/dialog";
+import {RippleModule} from "primeng/ripple";
+import {Router} from "@angular/router";
 
 
 
@@ -23,7 +25,8 @@ import {DialogModule} from "primeng/dialog";
         CurrencyPipe,
         DialogModule,
         DatePipe,
-        CommonModule
+        CommonModule,
+        RippleModule
     ],
   templateUrl: './ligne-vente.component.html',
   styleUrl: './ligne-vente.component.scss'
@@ -34,7 +37,7 @@ export class LigneVenteComponent implements OnInit {
     searchTerm: string='';
     showTable : boolean= false;
     displayusers: boolean=true;
-    constructor(private venteService: VenteService) { this.displayusers=true; }
+    constructor(private venteService: VenteService,private router: Router,) { this.displayusers=true; }
 
     ngOnInit(): void {
         this.loadVentes();
@@ -82,6 +85,9 @@ export class LigneVenteComponent implements OnInit {
     //     }
     //   );
     // }
+    goToClotures(): void {
+        this.router.navigate(['/uikit/cloture']); // Redirection vers la page de modification avec l'ID du produit
+    }
     getSeverity(status: string) {
         switch (status) {
             case 'INSTOCK':

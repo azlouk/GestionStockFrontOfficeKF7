@@ -207,7 +207,7 @@ export class POSComponent implements OnInit,OnDestroy {
             this.selectedVente.employer=new User(getUserDecodeID().id)
             const nameclient=this.selectedVente.nomClient
             this.selectedVente.nomClient=getTitleTicket();
-
+            this.selectedVente.dateVente=new Date().toString();
             this.produitService.SaveVente(this.selectedVente).subscribe(value => {
                 if (value) {
                     this.clearVente();
@@ -664,7 +664,6 @@ export class POSComponent implements OnInit,OnDestroy {
     saveCloture() {
         this.cloture.employer.id = getUserDecodeID().id;
         this.cloture.dateCloture = new Date();
-
         this.clotureService.SaveCloture(this.cloture).subscribe(
             value => {
                 // console.log(value);

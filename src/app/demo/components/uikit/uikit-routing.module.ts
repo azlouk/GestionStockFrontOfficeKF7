@@ -12,6 +12,7 @@ import { LigneVenteComponent } from './Ventes/ligne-vente/ligne-vente.component'
 import { CaisseComponent } from './Ventes/caisse/caisse.component';
 import { UpdateUserComponent } from './users/update-user/update-user.component';
 import { UserComponent } from './users/user/user.component'
+import {ClotureComponent} from "./cloture/cloture.component";
 @NgModule({
     imports: [RouterModule.forChild([
 
@@ -27,9 +28,11 @@ import { UserComponent } from './users/user/user.component'
         { path: 'article', component:ArticleComponent },
         { path: 'caisse', component:CaisseComponent },
         { path: 'facture', component:FactureComponent },
+        { path: 'cloture', component:ClotureComponent },
         { path: 'add-facture', component:FactureAjoutComponent },
         { path: 'menu', data: { breadcrumb: 'Menu' }, loadChildren: () => import('./menus/menus.module').then(m => m.MenusModule) },
         { path: '**', redirectTo: '/notfound' },
+
 
     ])],
     exports: [RouterModule]

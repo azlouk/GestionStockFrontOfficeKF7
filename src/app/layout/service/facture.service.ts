@@ -130,7 +130,14 @@ export class FactureService {
                     "gainUnitaire": value.produit.gainUnitaire,
                     "gainGros": value.produit.prixGros,
                     "minQuantiteGros": value.produit.minQuantiteGros,
+                    "article": {
+                        "id":value.produit.article.id,
+                        "nom":value.produit.article.nom,
+                        "description":value.produit.article.description,
+                        "unite":value.produit.article.unite,
+                    },
                     "dateFabrication": value.produit.dateFabrication,
+
                     "dateExpiration": value.produit.dateExpiration,
                     "taxe": value.produit.taxe,
                     "filesList": filesListes

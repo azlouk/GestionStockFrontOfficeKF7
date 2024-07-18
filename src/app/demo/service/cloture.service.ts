@@ -140,6 +140,19 @@ export class ClotureService {
         }
 
     }
+    getCloturesFiltrer(id:number): Observable<any[]> {
+        const token = getToken();
+        console.log(token)
+
+        if (token) {
+            // Ajouter le token à l'en-tête de la requête
+            const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type", "application/json; charset=utf8");
+
+            return this.http.get<any[]>(`${this.api + `/cloture/getVentesClotureFiltrer/${id}`}`, {headers});
+        } else {
+            return new Observable<any[]>();
+        }
+    }
 
 
 }
