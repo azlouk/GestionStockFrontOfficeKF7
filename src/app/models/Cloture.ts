@@ -1,79 +1,79 @@
-import { Tranche } from './Tranche';
+import {Tranche} from './Tranche';
 import {Employer} from "./employer";
 
-export class Cloture  {
-     id: number;
+export class Cloture {
+    id: number;
     etatCloture: boolean = true;
     dateCloture: Date;
     montantClotureValide: number;
     montantClotureEspece: number;
-     employer: Employer;
-     tranche: Tranche;
+    employer: Employer;
+    tranche: Tranche;
 
-    constructor(id: number=0, etatCloture: boolean=false, dateCloture: Date=new  Date(), montantClotureValide: number=0, montantClotureEspece: number=0, employer: Employer=new Employer(), tranche: Tranche=new Tranche()) {
-        this.id = id;
-        this.etatCloture = etatCloture;
-        this.dateCloture = dateCloture;
-        this.montantClotureValide = montantClotureValide;
-        this.montantClotureEspece = montantClotureEspece;
-        this.employer = employer;
-        this.tranche = tranche;
+
+    constructor(_id?: number, _etatCloture?: boolean, _dateCloture?: Date, _montantClotureValide?: number, _montantClotureEspece?: number, _employer?: Employer, _tranche?: Tranche) {
+        this.id = _id || 0;
+        this.etatCloture = _etatCloture || false;
+        this.dateCloture = _dateCloture || new Date();
+        this.montantClotureValide = _montantClotureValide || 0;
+        this.montantClotureEspece = _montantClotureEspece || 0;
+        this.employer = _employer || new Employer();
+        this.tranche = _tranche || new Tranche();
     }
 
-
-    public get _id(): number {
+    get _id(): number {
         return this.id;
     }
 
-    public set _id(value: number) {
+    set _id(value: number) {
         this.id = value;
     }
 
-    public get _etatCloture(): boolean {
+    get _etatCloture(): boolean {
         return this.etatCloture;
     }
 
-    public set _etatCloture(value: boolean) {
+    set _etatCloture(value: boolean) {
         this.etatCloture = value;
     }
 
-    public get _dateCloture(): Date {
+    get _dateCloture(): Date {
         return this.dateCloture;
     }
 
-    public set _dateCloture(value: Date) {
+    set _dateCloture(value: Date) {
         this.dateCloture = value;
     }
 
-    public get _montantClotureValide(): number {
+    get _montantClotureValide(): number {
         return this.montantClotureValide;
     }
 
-    public set _montantClotureValide(value: number) {
+    set _montantClotureValide(value: number) {
         this.montantClotureValide = value;
     }
 
-    public get _montantClotureEspece(): number {
+    get _montantClotureEspece(): number {
         return this.montantClotureEspece;
     }
 
-    public set _montantClotureEspece(value: number) {
+    set _montantClotureEspece(value: number) {
         this.montantClotureEspece = value;
     }
 
-    public get _employer(): Employer {
+    get _employer(): Employer {
         return this.employer;
     }
 
-    public set _employer(value: Employer) {
+    set _employer(value: Employer) {
         this.employer = value;
     }
 
-    public get _tranche(): Tranche {
+    get _tranche(): Tranche {
         return this.tranche;
     }
 
-    public set _tranche(value: Tranche) {
+    set _tranche(value: Tranche) {
         this.tranche = value;
     }
 }

@@ -29,164 +29,160 @@ export interface FactureInterface{
     reglement : number;
 }
 export class Facture {
-    private _id: number
-    private _reference: string
-    private _lignesFacture: LigneFacture []
-    private _montant: number
-    private _montantTaxe : number
-    private _date: Date
-    private _dateCreation: Date
-    private _typeFacture:factureType
-    private _client: User
-    private _transporteur:User
-    private _provider:User
-    private _depot: Depot
-    private _tranche: Tranche[] | Tranche
-    private _paye: boolean
-    private _reglement : number;
+    id: number
+    reference: string
+    lignesFacture: LigneFacture []
+    montant: number
+    montantTaxe : number
+    date: Date
+    dateCreation: Date
+    typeFacture:factureType
+    client: User
+    transporteur:User
+    provider:User
+    depot: Depot
+    tranche: Tranche[] | Tranche
+    paye: boolean
+    reglement : number;
 
-    constructor(id?: number , reference?: string, quantite?: number, ligneFacture?: LigneFacture[], prixUnitaire?: number, montant?: number, montantTaxe? : number,reglement?:number, date?: Date, dateCreation? :Date, facturetype?: factureType, client?: User,transporteur?:User,provider?:User, depot?: Depot,tranche?:Tranche[], payee? : boolean) {
-        this._id = id || 0;
-        this._reference = reference || '';
-        this._lignesFacture = ligneFacture || [];
-        this._montant = montant || 0;
-        this._montantTaxe = montantTaxe || 0;
-        this._reglement = reglement ||0;
-        this._date = date || new Date();
-        this._dateCreation = dateCreation || new Date();
-        this._typeFacture = facturetype || factureType.VIDE;
-        this._client = client || new User();
-        this._transporteur = transporteur || new User();
-        this._provider=provider|| new User(),
-            this._depot = depot || new Depot();
-        this._tranche = tranche || new Tranche();
-        this._paye= payee || false;
+
+    constructor(_id?: number, _reference?: string, _lignesFacture?: LigneFacture[], _montant?: number, _montantTaxe?: number, _date?: Date, _dateCreation?: Date, _typeFacture?: factureType, _client?: User, _transporteur?: User, _provider?: User, _depot?: Depot, _tranche?: Tranche[] | Tranche, _paye?: boolean, _reglement?: number) {
+        this.id = _id || 0  ;
+        this.reference = _reference || '';
+        this.lignesFacture = _lignesFacture || [];
+        this.montant = _montant || 0;
+        this.montantTaxe = _montantTaxe || 0;
+        this.date = _date || new Date;
+        this.dateCreation = _dateCreation || new Date();
+        this.typeFacture = _typeFacture || factureType.ENTREE;
+        this.client = _client || new User();
+        this.transporteur = _transporteur || new User();
+        this.provider = _provider || new User();
+        this.depot = _depot || new Depot();
+        this.tranche = _tranche || new Tranche();
+        this.paye = _paye || false;
+        this.reglement = _reglement || 0;
     }
 
-
-    get id(): number {
-        return this._id;
+    get _id(): number {
+        return this.id;
     }
 
-    set id(value: number) {
-        this._id = value;
+    set _id(value: number) {
+        this.id = value;
     }
 
-    get reference(): string {
-        return this._reference;
+    get _reference(): string {
+        return this.reference;
     }
 
-    set reference(value: string) {
-        this._reference = value;
+    set _reference(value: string) {
+        this.reference = value;
     }
 
-
-    get lignesFacture(): LigneFacture[] {
-        return this._lignesFacture;
+    get _lignesFacture(): LigneFacture[] {
+        return this.lignesFacture;
     }
 
-    set lignesFacture(value: LigneFacture[]) {
-        this._lignesFacture = value;
+    set _lignesFacture(value: LigneFacture[]) {
+        this.lignesFacture = value;
     }
 
-    get montant(): number {
-        return this._montant;
+    get _montant(): number {
+        return this.montant;
     }
 
-    set montant(value: number) {
-        this._montant = value;
+    set _montant(value: number) {
+        this.montant = value;
     }
 
-    get montantTaxe(): number {
-        return this._montantTaxe;
+    get _montantTaxe(): number {
+        return this.montantTaxe;
     }
 
-    set montantTaxe(value: number) {
-        this._montantTaxe = value;
+    set _montantTaxe(value: number) {
+        this.montantTaxe = value;
     }
 
-    get reglement(): number {
-        return this._reglement;
+    get _date(): Date {
+        return this.date;
     }
 
-    set reglement(value: number) {
-        this._reglement = value;
+    set _date(value: Date) {
+        this.date = value;
     }
 
-    get date(): Date {
-        return this._date;
+    get _dateCreation(): Date {
+        return this.dateCreation;
     }
 
-    set date(value: Date) {
-        this._date = value;
+    set _dateCreation(value: Date) {
+        this.dateCreation = value;
     }
 
-
-    get dateCreation(): Date {
-        return this._dateCreation;
+    get _typeFacture(): factureType {
+        return this.typeFacture;
     }
 
-    set dateCreation(value: Date) {
-        this._dateCreation = value;
+    set _typeFacture(value: factureType) {
+        this.typeFacture = value;
     }
 
-    get typeFacture(): factureType {
-        return this._typeFacture;
+    get _client(): User {
+        return this.client;
     }
 
-    set typeFacture(value: factureType) {
-        this._typeFacture = value;
+    set _client(value: User) {
+        this.client = value;
     }
 
-    get client(): User {
-        return this._client;
+    get _transporteur(): User {
+        return this.transporteur;
     }
 
-    set client(value: User) {
-        this._client = value;
+    set _transporteur(value: User) {
+        this.transporteur = value;
     }
 
-    get transporteur(): User {
-        return this._transporteur;
+    get _provider(): User {
+        return this.provider;
     }
 
-    set transporteur(value: User) {
-        this._transporteur = value;
+    set _provider(value: User) {
+        this.provider = value;
     }
 
-    get provider(): User {
-        return this._provider;
+    get _depot(): Depot {
+        return this.depot;
     }
 
-    set provider(value: User) {
-        this._provider = value;
+    set _depot(value: Depot) {
+        this.depot = value;
     }
 
-    get depot(): Depot {
-        return this._depot;
+    get _tranche(): Tranche[] | Tranche {
+        return this.tranche;
     }
 
-    set depot(value: Depot) {
-        this._depot = value;
+    set _tranche(value: Tranche[] | Tranche) {
+        this.tranche = value;
     }
 
-    get tranche(): Tranche[] | Tranche {
-        return this._tranche;
+    get _paye(): boolean {
+        return this.paye;
     }
 
-    set tranche(value: Tranche[] | Tranche) {
-        this._tranche = value;
+    set _paye(value: boolean) {
+        this.paye = value;
     }
 
-
-    get paye(): boolean {
-        return this._paye;
+    get _reglement(): number {
+        return this.reglement;
     }
 
-    set paye(value: boolean) {
-        this._paye = value;
+    set _reglement(value: number) {
+        this.reglement = value;
     }
-
     // getTotalFactureUnitaire(): number {
     //     let
     //         total : number = 0 ;
@@ -196,12 +192,12 @@ export class Facture {
     //     return total ;
     // }
     getSommeTranches(): number {
-        if (Array.isArray(this._tranche)) {
+        if (Array.isArray(this.tranche)) {
             // If _tranche is an array, calculate the sum
-            return this._tranche.reduce((sum, tranche) => sum + tranche.montantTranche, 0);
+            return this.tranche.reduce((sum, tranche) => sum + tranche._montantTranche, 0);
         } else if (this._tranche instanceof Tranche) {
             // If _tranche is a single object, return its montant
-            return this._tranche.montantTranche;
+            return this.tranche._montantTranche;
         } else {
             // If _tranche is neither an array nor an object, return 0
             return 0;

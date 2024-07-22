@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import Swal from "sweetalert2";
 import {Facture, factureType} from "../../../../../models/Facture";
 import {Depot} from "../../../../../models/Depot";
@@ -29,6 +29,7 @@ import {RippleModule} from "primeng/ripple";
 import {InputSwitchModule} from "primeng/inputswitch";
 import {ToggleButtonModule} from "primeng/togglebutton";
 import {InputTextModule} from "primeng/inputtext";
+import {Tranche} from "../../../../../models/Tranche";
 @Component({
   selector: 'app-facture-ajout',
   standalone: true,
@@ -57,7 +58,7 @@ import {InputTextModule} from "primeng/inputtext";
   styleUrl: './facture-ajout.component.scss'
 })
 export class FactureAjoutComponent implements OnInit{
-    // newFacture = new Facture(0, '', 0, [],0, 0,0, 0,new Date(),new Date(), factureType.SORTIE, new User(0,'','','',0,'',undefined,''),new Depot(1,'','',0,0,''));
+    @Input() showRetourButton: boolean = true;
     newFacture = new Facture();
     depots: Depot[] = [];
     produits: Produit[] = [];
@@ -65,6 +66,8 @@ export class FactureAjoutComponent implements OnInit{
     utilisateursClients : User[] = [];
     providers : User[]=[];
     produitsFiltres :Produit[];
+    tranches: Tranche[] = [];
+    newTranche: Tranche = new Tranche();
     rechercheProduit: string = '';
     userForm: FormGroup;
     roles = Object.values(RoleEnum);
@@ -80,6 +83,8 @@ export class FactureAjoutComponent implements OnInit{
     idDepot : number =0;
     idClient : number=0;
     visible: boolean = false;
+    root: string;
+    showButtun: boolean = true;
 
     showDialog() {
         this.visible = true;
@@ -112,6 +117,7 @@ export class FactureAjoutComponent implements OnInit{
     }
 
     async ngOnInit(): Promise<void> {
+        this.updateRootFromCurrentPath();
         const id = this.route.snapshot.paramMap.get('id');
         try {
             if (id) {
@@ -210,30 +216,27 @@ export class FactureAjoutComponent implements OnInit{
         if (!this.validateFacture()) {
             return;
         }
-
-        // Affichage du contenu de la facture dans la console
         console.log('Contenu de la facture à enregistrer :', this.newFacture);
-
         // Configuration de SweetAlert avec des boutons personnalisés
         const swalWithBootstrapButtons = Swal.mixin({
             customClass: {
                 confirmButton: "btn btn-success ml-2",
-                cancelButton: "btn btn-danger"
+                cancelButton: "btn btn-danger",
+                popup: "swal2-zindex",
             },
             buttonsStyling: false
         });
 
         // Demande de confirmation pour le paiement de la facture
-        swalWithBootstrapButtons
-            .fire({
-                title: "Cette facture est payée ?",
-                text: "Vous ne pourrez pas revenir en arrière !",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonText: "Oui, payée",
-                cancelButtonText: "Non",
-                reverseButtons: true
-            })
+        Swal.fire({
+            title: "Cette facture est payée ?",
+            text: "Vous ne pourrez pas revenir en arrière !",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Oui, payée",
+            cancelButtonText: "Non",
+            reverseButtons: true
+        })
             .then((result) => {
                 this.newFacture.paye = result.isConfirmed;
 
@@ -245,8 +248,9 @@ export class FactureAjoutComponent implements OnInit{
                                 title: "Mise à jour",
                                 text: "Votre facture a été mise à jour avec succès",
                                 icon: "success"
+                            }).then(() => {
+                                this.confirmRedirect();
                             });
-                            this.router.navigate(['/uikit/facture']);
                         },
                         (error) => {
                             console.error('API error:', error);
@@ -256,12 +260,13 @@ export class FactureAjoutComponent implements OnInit{
                     // Création d'une nouvelle facture
                     this.factureService.addFacture(this.newFacture).subscribe(
                         (response) => {
-                            swalWithBootstrapButtons.fire({
+                            Swal.fire({
                                 title: "Enregistrement",
                                 text: "Votre facture est bien enregistrée",
                                 icon: "success"
+                            }).then(() => {
+                                this.confirmRedirect();
                             });
-                            this.router.navigate(['/uikit/facture']);
                         },
                         (error) => {
                             this.newFacture = new Facture();
@@ -274,59 +279,23 @@ export class FactureAjoutComponent implements OnInit{
             });
     }
 
-
-    /*createNewFacture(): void {
-        this.newFacture.lignesFacture = this.produitsFactures;
-        // Validation des champs obligatoires
-        if (!this.validateFacture()) {
-            return;
-        }
-
-        // Affichage du contenu de la facture dans la console
-        console.log('Contenu de la facture à enregistrer :', this.newFacture);
-
-        // Configuration de SweetAlert avec des boutons personnalisés
-        const swalWithBootstrapButtons = Swal.mixin({
-            customClass: {
-                confirmButton: "btn btn-success ml-2",
-                cancelButton: "btn btn-danger"
-            },
-            buttonsStyling: false
+    confirmRedirect(): void {
+        Swal.fire({
+            title: "Redirection",
+            text: "Voulez-vous être redirigé vers la liste des factures ?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "Oui",
+            cancelButtonText: "Non"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                this.router.navigate(['/uikit/facture']);
+            }
         });
+    }
 
-        // Demande de confirmation pour le paiement de la facture
-        swalWithBootstrapButtons
-            .fire({
-                title: "Cette facture est payée ?",
-                text: "Vous ne pourrez pas revenir en arrière !",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonText: "Oui, payée",
-                cancelButtonText: "Non",
-                reverseButtons: true
-            })
-            .then((result) => {
-                this.newFacture.paye = result.isConfirmed;
 
-                // Appel à l'API pour ajouter la facture
-                this.factureService.addFacture(this.newFacture).subscribe(
-                    (response) => {
-                        swalWithBootstrapButtons.fire({
-                            title: "Enregistrement",
-                            text: "Votre facture est bien enregistrée",
-                            icon: "success"
-                        });
-                        this.router.navigate(['/uikit/facture']);
-                    },
-                    (error) => {
-                        this.newFacture = new Facture();
-                        this.router.navigate(['uikit/add-facture']);
-                        console.error('API error:', error);
-                    }
-                );
-                this.resetForm();
-            });
-    }*/
+
 
 // Fonction de validation des champs de la facture
     validateFacture(): boolean {
@@ -490,7 +459,22 @@ export class FactureAjoutComponent implements OnInit{
             });
         }
     }
+    private updateRootFromCurrentPath(): void {
+        this.root = this.router.url; // Récupère le chemin actuel
+        this.updateShowButtun();
+    }
 
+    // Fonction pour mettre à jour showButtun en fonction de la valeur de root
+    private updateShowButtun(): void {
+        this.showButtun = !this.root.includes('caisse');
+    }
 
+    addTranche() {
+        
+    }
+
+    removeTranche() {
+        
+    }
 }
 

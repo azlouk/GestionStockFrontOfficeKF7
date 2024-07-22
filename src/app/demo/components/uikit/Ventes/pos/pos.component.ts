@@ -50,6 +50,7 @@ import {Cloture} from "../../../../../models/Cloture";
 import {File} from "../../../../../models/File";
 import {GalleriaModule} from "primeng/galleria";
 import {environment} from "../../../../../../environments/environment";
+import {RippleModule} from "primeng/ripple";
 
 @Component({
     selector: 'app-pos',
@@ -79,7 +80,8 @@ import {environment} from "../../../../../../environments/environment";
         TagModule,
         RatingModule,
         ToolbarModule,
-        CommonModule
+        CommonModule,
+        RippleModule
     ],
     templateUrl: './pos.component.html',
     styleUrl: './pos.component.scss'

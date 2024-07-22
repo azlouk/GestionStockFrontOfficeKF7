@@ -47,12 +47,9 @@
                                                  [src]="loadFileByProduct(product)|| defaultImageUrl" [alt]="">
                                         </div>
                                         <div class="pt-4">
-                                            <div class="flex flex-row justify-content-between align-items-start gap-2">
-                                                <div>
-                                                    <div class="text-lg font-medium text-900 mt-1"><i
-                                                            class="pi pi-pi pi-tag text-blue-500"></i>{{ product.nom }}
+                                            <div class=" justify-content-between align-items-start gap-2">
+                                                    <div class="text-lg font-medium text-900 mt-1"><i class="pi pi-pi pi-tag text-blue-500"></i>{{ product.nom }}
                                                     </div>
-                                                </div>
                                                 <div class="surface-100 p-1" style="border-radius: 30px">
                                                     <div
                                                             class="surface-0 flex align-items-center gap-3 justify-content-center py-1 px-2"
@@ -67,18 +64,17 @@
                                                 <span
                                                         class="text-2xl font-semibold"> TND {{ product.prixUnitaire + product.gainUnitaire }}</span>
                                                 <div class="flex justify-content-between mt-4">
-                                                    <p-button icon="pi pi-shopping-cart"
-                                                              class="flex-auto md:flex-initial white-space-nowrap"
-                                                              (click)="addProductToSale(product)"/>
-                                                    <p-button icon="pi pi-eye" [outlined]="true"
-                                                              (click)="op.toggle($event)"/>
+                                                    <button pButton pRipple icon="pi pi-cart-plus" class="p-button-rounded p-button-outlined p-button-warning"
+                                                            (click)="addProductToSale(product)"></button>
+                                                    <button pButton pRipple icon="pi pi pi-eye" class="p-button-rounded p-button-outlined"
+                                                            (click)="op.toggle($event)"></button>
                                                 </div>
                                                 <p-overlayPanel #op>
                                                     <div class=" card1">
                                                         <div class="flex flex-row justify-content-between ">
-                                                            <div><i class="pi pi-pi pi-tags text-blue-500"></i>
+                                                            <div><i class="pi pi-tags text-primary-600"></i>
                                                                 <span
-                                                                        class="font-medium text-secondary text-sm">{{ product.article.nom }}</span>
+                                                                        class="font-bold text-primary-600 text-2xl"> {{ product.article.nom }}</span>
                                                             </div>
                                                             <p-tag class="font-medium text-secondary text-sm"
                                                                    [value]="getStockLabel(product)"
@@ -89,8 +85,7 @@
                                                             <img *ngIf="afficherImage"
                                                                  [src]="loadFileByProduct(product)|| defaultImageUrl"
                                                                  [alt]="product.nom" class="w-5 shadow-2 my-3 mx-0"/>
-                                                            <div class="text-2xl font-bold">{{product.nom}}</div>
-
+                                                            <div class="text-2xl font-bold"> <i class="pi pi-tag text-primary-600"></i> {{product.nom}}</div>
                                                             <div class="text-2xl font-bold">
                                                                                     <span class="text-900 font-medium">Quantité: {{ product.qantite +getUnite(product)}}
                                                                                        </span>
@@ -100,7 +95,7 @@
                                                                                        </span>
                                                             </div>
                                                             <div class="text-2xl font-bold">
-                                                                                    <span class="text-900 font-medium">Code à barre: {{ product.dataqr}}
+                                                                                    <span class="text-900 font-medium"><i class="pi pi-barcode" style="color: #0523cc;"></i>  {{ product.dataqr}}
                                                                                        </span>
                                                             </div>
                                                             <div class="mb-3"> description: {{product.description}}
@@ -109,7 +104,7 @@
                                                         <div
                                                                 class="flex align-items-center justify-content-between footer">
                                                             <span
-                                                                    class="text-2xl font-semibold">{{product.prixUnitaire + product.gainUnitaire}}
+                                                                    class="text-2xl font-semibold text-red-400">{{product.prixUnitaire + product.gainUnitaire}}
                                                                 TND</span>
                                                             <p-button icon="pi pi-shopping-cart"
                                                                       class="flex-auto md:flex-initial white-space-nowrap"
@@ -166,6 +161,7 @@
                                     <p-button
                                             styleClass="p-button-rounded p-button-danger p-button-text p-button-raised"
                                             icon="pi pi-trash" (click)="supprimerProduit(i)"></p-button>
+
                                 </td>
                             </tr>
                         </ng-template>

@@ -13,7 +13,8 @@ import { CaisseComponent } from './Ventes/caisse/caisse.component';
 import { UpdateUserComponent } from './users/update-user/update-user.component';
 import { UserComponent } from './users/user/user.component'
 import {FactureDetailsComponent} from "./Factures/facture-details/facture-details.component";
-import {ClotureComponent} from "./cloture/cloture.component";
+import {ClotureComponent} from "./Ventes/cloture/cloture.component";
+
 @NgModule({
     imports: [RouterModule.forChild([
 

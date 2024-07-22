@@ -1,74 +1,67 @@
 import {User} from "./user";
 
 export class  Tranche{
-    private _id : number;
-    private _description : string;
-    private _dateEcheance : Date;
-    private _montantTranche: number;
-    private _user : User;
-    private _statutPayement : boolean;
+     id : number;
+     description : string;
+     dateEcheance : Date;
+     montantTranche: number;
+     user : User;
+     statutPayement : boolean;
 
-    constructor(id?:number,
-                description?: string,
-                dateEcheance?: Date,
-                montantTranche?: number,
-                user?: User,
-                statutPayement? : boolean) {
-        this._id = id || 0;
-        this._description = description || '';
-        this._dateEcheance = dateEcheance || new Date();
-        this._montantTranche = montantTranche || 0;
-        this._user = user || new User();
-        this._statutPayement = statutPayement ||false;
+    constructor(_id?: number, _description?: string, _dateEcheance?: Date, _montantTranche?: number, _user?: User, _statutPayement?: boolean) {
+        this.id = _id || 0;
+        this.description = _description || '';
+        this.dateEcheance = _dateEcheance || new Date();
+        this.montantTranche = _montantTranche || 0;
+        this.user = _user || new User();
+        this.statutPayement = _statutPayement || false;
     }
 
-
-    get id(): number {
-        return this._id;
+    get _id(): number {
+        return this.id;
     }
 
-    set id(value: number) {
-        this._id = value;
+    set _id(value: number) {
+        this.id = value;
     }
 
-    get description(): string {
-        return this._description;
+    get _description(): string {
+        return this.description;
     }
 
-    set description(value: string) {
-        this._description = value;
+    set _description(value: string) {
+        this.description = value;
     }
 
-    get dateEcheance(): Date {
-        return this._dateEcheance;
+    get _dateEcheance(): Date {
+        return this.dateEcheance;
     }
 
-    set dateEcheance(value: Date) {
-        this._dateEcheance = value;
+    set _dateEcheance(value: Date) {
+        this.dateEcheance = value;
     }
 
-    get montantTranche(): number {
-        return this._montantTranche;
+    get _montantTranche(): number {
+        return this.montantTranche;
     }
 
-    set montantTranche(value: number) {
-        this._montantTranche = value;
+    set _montantTranche(value: number) {
+        this.montantTranche = value;
     }
 
-
-    get user(): User {
-        return this._user;
+    get _user(): User {
+        return this.user;
     }
 
-    set user(value: User) {
-        this._user = value;
+    set _user(value: User) {
+        this.user = value;
     }
 
-    get statutPayement(): boolean {
-        return this._statutPayement;
+    get _statutPayement(): boolean {
+        return this.statutPayement;
     }
 
-    set statutPayement(value: boolean) {
-        this._statutPayement = value;
+    set _statutPayement(value: boolean) {
+        this.statutPayement = value;
     }
 }

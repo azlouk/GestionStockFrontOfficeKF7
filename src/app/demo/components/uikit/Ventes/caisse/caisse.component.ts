@@ -30,6 +30,9 @@ import {InputTextModule} from "primeng/inputtext";
 import {ToggleButtonModule} from "primeng/togglebutton";
 import {AutoFocusModule} from "primeng/autofocus";
 import {Cloture} from "../../../../../models/Cloture";
+import {SidebarModule} from "primeng/sidebar";
+import {FactureComponent} from "../../Factures/facture/facture.component";
+import {FactureAjoutComponent} from "../../Factures/facture-ajout/facture-ajout.component";
 
 @Component({
     selector: 'app-caisse',
@@ -51,7 +54,7 @@ import {Cloture} from "../../../../../models/Cloture";
         BadgeModule,
         InputGroupModule,
         InputGroupAddonModule, InputTextModule, TableModule,
-        CommonModule, ToggleButtonModule, AutoFocusModule
+        CommonModule, ToggleButtonModule, AutoFocusModule, SidebarModule, FactureComponent, FactureAjoutComponent
     ],
     templateUrl: './caisse.component.html',
     styleUrl: './caisse.component.scss'
@@ -207,6 +210,12 @@ export class CaisseComponent implements OnInit{
 
 
         switch (event.key) {
+            case 'F1':
+                this.focusIndex = 1;
+                console.log(`Focus set to Button 0`);
+                this.sidebarVisibleFacture = true;
+
+                break;
             case 'F2':
                 this.focusIndex = 2;
                 event.preventDefault();
@@ -295,6 +304,11 @@ export class CaisseComponent implements OnInit{
     onButtonClick(index: number): void {
 
         switch (index) {
+            case 1 :
+                this.focusIndex = 1;
+                this.sidebarVisibleFacture=true
+                break;
+
             case 2:
                 this.focusIndex = 2;
 
@@ -689,4 +703,5 @@ export class CaisseComponent implements OnInit{
 
 
     protected readonly top = top;
+    sidebarVisibleFacture: boolean=false;
 }

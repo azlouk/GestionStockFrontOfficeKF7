@@ -107,9 +107,5 @@ export class FactureDetailsComponent implements OnInit {
       };
     }
   }
-
-
-
-
 }
 
