@@ -14,7 +14,7 @@ export class  Tranche{
         this.dateEcheance = _dateEcheance || new Date();
         this.montantTranche = _montantTranche || 0;
         this.user = _user || new User();
-        this.statutPayement = _statutPayement || false;
+        this.statutPayement = _statutPayement || true;
     }
 
     get _id(): number {

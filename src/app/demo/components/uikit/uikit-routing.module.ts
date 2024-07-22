@@ -14,6 +14,7 @@ import { UpdateUserComponent } from './users/update-user/update-user.component';
 import { UserComponent } from './users/user/user.component'
 import {FactureDetailsComponent} from "./Factures/facture-details/facture-details.component";
 import {ClotureComponent} from "./Ventes/cloture/cloture.component";
+import {TrancheComponent} from "./tranche/tranche.component";
 
 @NgModule({
     imports: [RouterModule.forChild([
@@ -33,6 +34,7 @@ import {ClotureComponent} from "./Ventes/cloture/cloture.component";
         { path: 'cloture', component:ClotureComponent },
         { path: 'add-facture', component:FactureAjoutComponent },
         { path: 'update-facture/:id', component:FactureAjoutComponent },
+        { path: 'tranches', component:TrancheComponent },
         { path: 'facture/:id', component:FactureDetailsComponent },
         { path: 'menu', data: { breadcrumb: 'Menu' }, loadChildren: () => import('./menus/menus.module').then(m => m.MenusModule) },
         { path: '**', redirectTo: '/notfound' },

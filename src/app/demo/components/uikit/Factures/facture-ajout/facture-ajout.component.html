@@ -44,12 +44,24 @@
         <div class=" flex card">
             <div class="p-field col-2 p-md-6 d-flex  ">
                 <label class="text-primary  font-bold pi pi-user">Transporteur </label>
-                <p-listbox [options]="utilisateursTransporteur" [(ngModel)]="newFacture.transporteur" optionLabel="firstname" [filter]="true" [style]="{ width: '12rem' , height:'8rem' }" ></p-listbox>
-                    <div class="switch-label m-2">
-                    <button pButton type="button" class="btn btn-outline-success mr-5" routerLink="/add-user">
-                        Ajouter Utilisateur
-                    </button>
-                    </div>
+                <p-dropdown
+                        [options]="utilisateursTransporteur"
+                        [(ngModel)]="newFacture.transporteur"
+                        optionLabel="firstname"
+                        [filter]="true"
+                        placeholder="Select a City" />
+                <div class=" flex justify-content-center">
+                    <button *ngIf="showButtun" pButton pRipple label="Ajouter" icon="pi pi-user-plus" class="p-button-text" (click)="addUser()"></button>
+                    <p-dialog
+                            header="Ajouter Utilisateur"
+                            [modal]="true"
+                            [(visible)]="showAddUser"
+                            [style]="{ width: '100rem' }"
+                            [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+                            [maximizable]="true">
+                        <app-ajout-user></app-ajout-user>
+                    </p-dialog>
+                </div>
             </div>
             <div class="p-field col-9 p-md-6" >
             <p-table *ngIf="newFacture.transporteur.id !== 0" [value]="[newFacture.transporteur]">
@@ -75,7 +87,13 @@
         <div class=" flex card" *ngIf="newFacture.typeFacture!=='FACTURE_ACHAT'">
             <div class="p-field col-2 p-md-6 d-flex">
                 <label class="text-primary-600  font-bold pi pi-user ">Client </label>
-                <p-listbox [options]="utilisateurs" [(ngModel)]="newFacture.client" optionLabel="firstname" [filter]="true" [style]="{ width: '12rem' , height:'8rem' }" ></p-listbox>
+                <p-dropdown
+                        [options]="utilisateurs"
+                        [(ngModel)]="newFacture.client"
+                        optionLabel="firstname"
+                        [filter]="true"
+                        placeholder="Select a City" />
+
             </div>
             <div class="p-field col-9 p-md-6">
                 <p-table *ngIf="newFacture.client.id !== 0" [value]="[newFacture.client]" class="p-datatable table table-striped table-hover">
@@ -128,7 +146,7 @@
         </div>
         <div class="  row m-2">
             <div class="card flex justify-content-center">
-                <p-button (onClick)="showDialog()" label="Ajouter Produit" />
+                <p-button icon="pi pi-plus" (onClick)="showDialog()" label="Sélectionner Produit" />
                 <p-dialog
                         header="Header"
                         [modal]="true"
@@ -271,8 +289,8 @@
             <p-table [value]="produitsFactures" [scrollable]="true" scrollHeight="400px">
                 <ng-template pTemplate="header">
                     <tr>
-                        <th pSortableColumn="id" style="width:20%">Nom Produits <p-sortIcon field="id"></p-sortIcon></th>
-                        <th pSortableColumn="nom" style="width:20%">Quantité <p-sortIcon field="nom"></p-sortIcon></th>
+                        <th pSortableColumn="nom" style="width:20%">Nom Produits <p-sortIcon field="nom"></p-sortIcon></th>
+                        <th pSortableColumn="qantite" style="width:20%">Quantité <p-sortIcon field="qantite"></p-sortIcon></th>
                         <th   style="width:20%">Prix (TND) </th>
                         <th pSortableColumn="price" style="width:20%">Total (TND) <p-sortIcon field="price"></p-sortIcon></th>
                         <th style="width:20%">   </th>
@@ -301,19 +319,6 @@
                 </ng-template>
             </p-table>
         </div>
-        <div class="p-field p-mt-3">
-            <div class="flex justify-content-between align-items-center">
-                <label class="text-primary-600 font-bold"><i class="pi pi-money-bill"></i> Ajout Tranches</label>
-                <button pButton type="button" class="btn btn-outline-primary" (click)="addTranche()">Ajouter une Tranche</button>
-            </div>
-            <div  class="p-field p-mt-2">
-                <label>Montant Tranche</label>
-                <input pInputText [(ngModel)]="newFacture.tranche.montantTranche" placeholder="Montant">
-                <label>Date de paiement</label>
-                <p-calendar [(ngModel)]="newFacture.tranche.dateEcheance" [showIcon]="true"></p-calendar>
-                <button pButton type="button" class="btn btn-danger p-ml-2" (click)="removeTranche()">Supprimer</button>
-            </div>
-        </div>
         <div class="form-row flex-column float-end  p-5 bg-body-tertiary " style="margin: 60px" >
             <div class="col flex-auto p-2">
                 <label class="block font-bold mb-2 PrimaryColorTitle" >Réglement : </label>
@@ -328,6 +333,54 @@
                 <label class="text-danger fs-3 fw-bold text-center rounded-3 p-2" >{{newFacture.montant|number}}</label>
             </div>
         </div>
+
+        <div class="flex card">
+            <button pButton pRipple label="Add" icon="pi pi-plus" class="p-button-text" (click)="AddTrancheToNewFacture()"></button>
+            <div class="p-field col-3 p-md-6 d-flex">
+                <label class="text-primary-600 font-bold">Description de la tranche</label>
+                <input pInputText type="text" [(ngModel)]="Newtranche.description" placeholder="Description" />
+            </div>
+            <div class="p-field col-3 p-md-6 d-flex">
+                <label class="text-primary-600 font-bold">Montant de la tranche</label>
+                <p-inputNumber [(ngModel)]="Newtranche.montantTranche" mode="currency" currency="TND" locale="en-US"></p-inputNumber>
+            </div>
+            <div class="p-field col-3 p-md-6 d-flex">
+                <label class="text-primary-600 font-bold">Date d'échéance</label>
+                <p-calendar [(ngModel)]="Newtranche.dateEcheance" [showIcon]="true"></p-calendar>
+            </div>
+            <div class="p-field col-3 p-md-6 d-flex ">
+                <div class="switch-label m-2">
+                    <label class="text-primary-600 font-bold">État de paiement</label>
+                </div>
+                <p-button
+                        label="{{Newtranche.statutPayement ? ' payé' : 'non payé' }}"
+                        icon="{{ Newtranche.statutPayement ? 'pi pi-times' : 'pi pi-check' }}"
+                        class="p-button-secondary"
+                        (click)="Newtranche.statutPayement= !Newtranche.statutPayement">
+                </p-button>
+            </div>
+        </div>
+        <!-- Tableau pour afficher les tranches ajoutées -->
+        <p-table [value]="newFacture.tranche" [tableStyle]="{ 'min-width': '50rem' }">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>ID</th>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Montant</th>
+                    <th>Status</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-tr>
+                <tr>
+                    <td>{{ tr.id }}</td>
+                    <td>{{ tr.dateEcheance | date :'dd-MM-yyyy'}}</td>
+                    <td>{{ tr.description }}</td>
+                    <td>{{ tr.montantTranche }}</td>
+                    <td>{{ tr.statutPayement }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
     </ng-template>
 
 

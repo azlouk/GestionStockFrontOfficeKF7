@@ -30,6 +30,7 @@ import {InputSwitchModule} from "primeng/inputswitch";
 import {ToggleButtonModule} from "primeng/togglebutton";
 import {InputTextModule} from "primeng/inputtext";
 import {Tranche} from "../../../../../models/Tranche";
+import {AjoutUserComponent} from "../../users/ajout-user/ajout-user.component";
 @Component({
   selector: 'app-facture-ajout',
   standalone: true,
@@ -52,7 +53,8 @@ import {Tranche} from "../../../../../models/Tranche";
         RippleModule,
         InputSwitchModule,
         ToggleButtonModule,
-        InputTextModule
+        InputTextModule,
+        AjoutUserComponent
     ],
   templateUrl: './facture-ajout.component.html',
   styleUrl: './facture-ajout.component.scss'
@@ -67,7 +69,7 @@ export class FactureAjoutComponent implements OnInit{
     providers : User[]=[];
     produitsFiltres :Produit[];
     tranches: Tranche[] = [];
-    newTranche: Tranche = new Tranche();
+
     rechercheProduit: string = '';
     userForm: FormGroup;
     roles = Object.values(RoleEnum);
@@ -78,14 +80,13 @@ export class FactureAjoutComponent implements OnInit{
     produitsFactures: LigneFacture[]=[];
     ligneProduits : Produit [] = [];
     activityValues: number[] = [0, 100];
-
     selectedDepot: any=null;
     idDepot : number =0;
     idClient : number=0;
     visible: boolean = false;
     root: string;
     showButtun: boolean = true;
-
+    showAddUser: boolean = false;
     showDialog() {
         this.visible = true;
     }
@@ -165,8 +166,6 @@ export class FactureAjoutComponent implements OnInit{
             console.error("Erreur lors du chargement des données :", error);
         }
     }
-
-
 
     toggleComposantB() {
         this.composantBVisible = !this.composantBVisible;
@@ -279,6 +278,44 @@ export class FactureAjoutComponent implements OnInit{
             });
     }
 
+
+    saveFacture() {
+        if (this.newFacture.id) {
+            this.factureService.updateFacture(this.newFacture).subscribe(
+                (response) => {
+                    Swal.fire({
+                        title: "Mise à jour",
+                        text: "Votre facture a été mise à jour avec succès",
+                        icon: "success"
+                    }).then(() => {
+                        this.confirmRedirect();
+                    });
+                },
+                (error) => {
+                    console.error('API error:', error);
+                }
+            );
+        } else {
+            this.factureService.addFacture(this.newFacture).subscribe(
+                (response) => {
+                    Swal.fire({
+                        title: "Enregistrement",
+                        text: "Votre facture est bien enregistrée",
+                        icon: "success"
+                    }).then(() => {
+                        this.confirmRedirect();
+                    });
+                },
+                (error) => {
+                    this.newFacture = new Facture();
+                    this.router.navigate(['uikit/add-facture']);
+                    console.error('API error:', error);
+                }
+            );
+        }
+        this.resetForm();
+    }
+
     confirmRedirect(): void {
         Swal.fire({
             title: "Redirection",
@@ -294,10 +331,6 @@ export class FactureAjoutComponent implements OnInit{
         });
     }
 
-
-
-
-// Fonction de validation des champs de la facture
     validateFacture(): boolean {
         if (this.newFacture.depot.id == 0) {
             Swal.fire({
@@ -371,7 +404,6 @@ export class FactureAjoutComponent implements OnInit{
     }
 
     calculeFactureTotal() {
-
         this.newFacture.montant=0;
         this.produitsFactures.forEach(value => {
             if(value.quantite>value.produit.qantite)
@@ -421,6 +453,9 @@ export class FactureAjoutComponent implements OnInit{
         }
     }
 
+    getreglemnt() {
+        this.newFacture.reglement = this.newFacture.montant
+    }
     changeType() {
         this.newFacture.typeFacture = this.newFacture.typeFacture === factureType.SORTIE
             ? factureType.ENTREE
@@ -434,7 +469,6 @@ export class FactureAjoutComponent implements OnInit{
         this.factureService.returnBack();
     }
     addToFacture(produitInterface: Produit) {
-        // Vérifier si le produit existe déjà dans la facture
         const existingProduct = this.produitsFactures.find(product => product.produit.id === produitInterface.id);
         if (existingProduct) {
             Swal.fire({
@@ -458,6 +492,8 @@ export class FactureAjoutComponent implements OnInit{
                 confirmButtonText: 'OK'
             });
         }
+        this.calculeFactureTotal()
+        this.getreglemnt()
     }
     private updateRootFromCurrentPath(): void {
         this.root = this.router.url; // Récupère le chemin actuel
@@ -465,16 +501,24 @@ export class FactureAjoutComponent implements OnInit{
     }
 
     // Fonction pour mettre à jour showButtun en fonction de la valeur de root
+    Newtranche: Tranche=new Tranche();
     private updateShowButtun(): void {
         this.showButtun = !this.root.includes('caisse');
     }
 
-    addTranche() {
-        
-    }
 
     removeTranche() {
         
+    }
+
+    AddTrancheToNewFacture() {
+        this.Newtranche.user=new User()
+        this.newFacture.tranche.push(this.Newtranche);
+        this.Newtranche=new Tranche()
+    }
+
+    addUser() {
+        this.showAddUser=true
     }
 }
 

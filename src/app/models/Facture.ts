@@ -41,12 +41,12 @@ export class Facture {
     transporteur:User
     provider:User
     depot: Depot
-    tranche: Tranche[] | Tranche
+    tranche: Tranche[]
     paye: boolean
     reglement : number;
+private restePayer : number
 
-
-    constructor(_id?: number, _reference?: string, _lignesFacture?: LigneFacture[], _montant?: number, _montantTaxe?: number, _date?: Date, _dateCreation?: Date, _typeFacture?: factureType, _client?: User, _transporteur?: User, _provider?: User, _depot?: Depot, _tranche?: Tranche[] | Tranche, _paye?: boolean, _reglement?: number) {
+    constructor(_id?: number, _reference?: string, _lignesFacture?: LigneFacture[], _montant?: number, _montantTaxe?: number, _date?: Date, _dateCreation?: Date, _typeFacture?: factureType, _client?: User, _transporteur?: User, _provider?: User, _depot?: Depot, _tranche?: Tranche[] , _paye?: boolean, _reglement?: number ,_restePayer?:number) {
         this.id = _id || 0  ;
         this.reference = _reference || '';
         this.lignesFacture = _lignesFacture || [];
@@ -59,9 +59,10 @@ export class Facture {
         this.transporteur = _transporteur || new User();
         this.provider = _provider || new User();
         this.depot = _depot || new Depot();
-        this.tranche = _tranche || new Tranche();
+        this.tranche = _tranche || [];
         this.paye = _paye || false;
         this.reglement = _reglement || 0;
+        this.restePayer = _restePayer || 0
     }
 
     get _id(): number {
@@ -160,11 +161,11 @@ export class Facture {
         this.depot = value;
     }
 
-    get _tranche(): Tranche[] | Tranche {
+    get _tranche(): Tranche[] {
         return this.tranche;
     }
 
-    set _tranche(value: Tranche[] | Tranche) {
+    set _tranche(value: Tranche[] ) {
         this.tranche = value;
     }
 
@@ -183,7 +184,16 @@ export class Facture {
     set _reglement(value: number) {
         this.reglement = value;
     }
-    // getTotalFactureUnitaire(): number {
+
+    get _restePayer(): number {
+        return this.restePayer;
+    }
+
+    set _restePayer(value: number) {
+        this.restePayer = value;
+    }
+
+// getTotalFactureUnitaire(): number {
     //     let
     //         total : number = 0 ;
     //     this.ligneFacture.forEach((value :Produit) => {
@@ -191,16 +201,17 @@ export class Facture {
     //     }) ;
     //     return total ;
     // }
+
     getSommeTranches(): number {
         if (Array.isArray(this.tranche)) {
             // If _tranche is an array, calculate the sum
             return this.tranche.reduce((sum, tranche) => sum + tranche._montantTranche, 0);
-        } else if (this._tranche instanceof Tranche) {
-            // If _tranche is a single object, return its montant
-            return this.tranche._montantTranche;
         } else {
             // If _tranche is neither an array nor an object, return 0
             return 0;
         }
+    }
+    updateRestePayer(): void {
+        this.restePayer = this.montant - this.getSommeTranches();
     }
 }

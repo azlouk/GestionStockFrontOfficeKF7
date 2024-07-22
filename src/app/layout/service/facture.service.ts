@@ -62,118 +62,7 @@ export class FactureService {
         return typeKeys.map(key => factureType[key]);
     }
 
-//   addFacture(idClient: number, idDepot: number, newFacture: Facture): Observable<Facture> {
-//     const token = getToken();
-//     const headers = new HttpHeaders({
-//       'Authorization': `Bearer ${token}`,
-//       'Content-Type': 'application/json'
-//     });
-//
-//     // Log the newFacture before making the HTTP request
-//     console.log(newFacture);
-//     let ligneFact:any[]=[];
-//     newFacture.ligneFacture.forEach(value => {
-//       ligneFact.push(  {
-//         "produit": {
-//           "id" :value.produit.id
-//         },
-//         "quantite": value.quantite,
-//         "montantTotal": value.montantTotal
-//       })
-//     })
-//     const fact ={
-//       "reference": newFacture.reference,
-//       "date":this.datePipe.transform(newFacture.date,'yyyy-MM-dd'),
-//       "montant": newFacture.montant,
-//       "paye": newFacture.payee,
-//       "reglement": newFacture.reglement,
-//       "montantTaxe": newFacture.montantTaxe,
-//       "typeFacture": newFacture.facturetype,
-//       "lignesFacture": ligneFact
-//     }
-//     // Corrected URL with proper concatenation
-//     const url = `${this.api}/add/${idClient}/${idDepot}`;
-// console.error(new JsonPipe().transform(fact))
-//     return this.http.post<Facture>(url, fact, { headers });
-//   }
-    // @ts-ignore
-/*
-    addFacture(newFacture: Facture): Observable<Facture> {
-        const token = getToken();
-        const headers = new HttpHeaders({
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-        });
-        let filesListes: any[] = [];
-        newFacture.lignesFacture.forEach((value) => {
-            value.produit.files.forEach((file) => {
-                filesListes.push({
-                    "id": file.id,
-                    "name": file.name,
-                    "type": file.type,
-                    "path": file.path
-                });
-            });
-        });
 
-
-        let ligneFact: any[] = [];
-        newFacture.lignesFacture.forEach(value => {
-            ligneFact.push({
-                "produit": {
-                    "id": value.produit.id,
-                    "qantite": value.produit.qantite,
-                    "nom": value.produit.nom,
-                    "prixUnitaire": value.produit.prixUnitaire,
-                    "prixGros": value.produit.prixGros,
-                    "description": value.produit.description,
-                    "dataqr": value.produit.dataqr,
-                    "gainUnitaire": value.produit.gainUnitaire,
-                    "gainGros": value.produit.prixGros,
-                    "minQuantiteGros": value.produit.minQuantiteGros,
-                    "article": {
-                        "id":value.produit.article.id,
-                        "nom":value.produit.article.nom,
-                        "description":value.produit.article.description,
-                        "unite":value.produit.article.unite,
-                    },
-                    "dateFabrication": value.produit.dateFabrication,
-                    "dateExpiration": value.produit.dateExpiration,
-                    "taxe": value.produit.taxe,
-                    "filesList": filesListes,
-                },
-                "quantite": value.quantite,
-                "montantTotal": value.montantTotal
-            })
-        })
-        const fact = {
-            "reference": newFacture.reference,
-            "date": this.datePipe.transform(newFacture.date, 'yyyy-MM-dd'),
-            "montant": newFacture.montant,
-            "paye": newFacture.paye,
-            "reglement": newFacture.reglement,
-            "montantTaxe": newFacture.montantTaxe,
-            "typeFacture": newFacture.typeFacture,
-            "lignesFacture": ligneFact,
-            "client": {
-                "id": newFacture.client.id
-            },
-            "transporteur": {
-                "id": newFacture.transporteur.id
-                // "role":newFacture.transporteur.role
-            },
-            "provider": {
-                "id": newFacture.provider.id
-            },
-            "depot": {
-                "id": newFacture.depot.id
-            },
-        }
-        console.log(fact);
-        const url = `${this.api}/create`;
-        return this.http.post<Facture>(url, fact, {headers});
-    }
-*/
 
     addFacture(newFacture: Facture): Observable<Facture> {
         const token = getToken();
@@ -245,15 +134,12 @@ export class FactureService {
             "depot": {
                 "id": newFacture.depot.id
             },
-            "tranche": Array.isArray(newFacture.tranche) ? newFacture.tranche.map(tr => ({
+            "tranches":newFacture.tranche.map(tr => ({
                 "id": tr.id,
-                "nom": tr.montantTranche,
-                "description": tr.description
-            })) : {
-                "id": newFacture.tranche.id,
-                "nom": newFacture.tranche.montantTranche,
-                "description": newFacture.tranche.description
-            }
+                "montantTranche": tr.montantTranche,
+                "description": tr.description,
+                'user':null,
+            }))
         };
 
         console.log(fact);
