@@ -41,12 +41,12 @@ export class Facture {
     transporteur:User
     provider:User
     depot: Depot
-    tranche: Tranche[]
+    tranches: Tranche[]
     paye: boolean
     reglement : number;
-private restePayer : number
+    restePayer : number
 
-    constructor(_id?: number, _reference?: string, _lignesFacture?: LigneFacture[], _montant?: number, _montantTaxe?: number, _date?: Date, _dateCreation?: Date, _typeFacture?: factureType, _client?: User, _transporteur?: User, _provider?: User, _depot?: Depot, _tranche?: Tranche[] , _paye?: boolean, _reglement?: number ,_restePayer?:number) {
+    constructor(_id?: number, _reference?: string, _lignesFacture?: LigneFacture[], _montant?: number, _montantTaxe?: number, _date?: Date, _dateCreation?: Date, _typeFacture?: factureType, _client?: User, _transporteur?: User, _provider?: User, _depot?: Depot, _tranches?: Tranche[] , _paye?: boolean, _reglement?: number ,_restePayer?:number) {
         this.id = _id || 0  ;
         this.reference = _reference || '';
         this.lignesFacture = _lignesFacture || [];
@@ -59,7 +59,7 @@ private restePayer : number
         this.transporteur = _transporteur || new User();
         this.provider = _provider || new User();
         this.depot = _depot || new Depot();
-        this.tranche = _tranche || [];
+        this.tranches = _tranches || [];
         this.paye = _paye || false;
         this.reglement = _reglement || 0;
         this.restePayer = _restePayer || 0
@@ -161,12 +161,12 @@ private restePayer : number
         this.depot = value;
     }
 
-    get _tranche(): Tranche[] {
-        return this.tranche;
+    get _tranches(): Tranche[] {
+        return this.tranches;
     }
 
-    set _tranche(value: Tranche[] ) {
-        this.tranche = value;
+    set _tranches(value: Tranche[] ) {
+        this.tranches = value;
     }
 
     get _paye(): boolean {
@@ -203,9 +203,9 @@ private restePayer : number
     // }
 
     getSommeTranches(): number {
-        if (Array.isArray(this.tranche)) {
+        if (Array.isArray(this.tranches)) {
             // If _tranche is an array, calculate the sum
-            return this.tranche.reduce((sum, tranche) => sum + tranche._montantTranche, 0);
+            return this.tranches.reduce((sum, tranche) => sum + tranche._montantTranche, 0);
         } else {
             // If _tranche is neither an array nor an object, return 0
             return 0;

@@ -4,7 +4,7 @@ import {Facture, factureType} from "../../../../../models/Facture";
 import {Depot} from "../../../../../models/Depot";
 import {Produit} from "../../../../../models/produit";
 import {RoleEnum, User} from "../../../../../models/user";
-import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
+import {FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
  import {LigneFacture} from "../../../../../models/LigneFacture";
 import {FactureService} from "../../../../../layout/service/facture.service";
 import {DepotService} from "../../../../../layout/service/depot.service";
@@ -31,6 +31,8 @@ import {ToggleButtonModule} from "primeng/togglebutton";
 import {InputTextModule} from "primeng/inputtext";
 import {Tranche} from "../../../../../models/Tranche";
 import {AjoutUserComponent} from "../../users/ajout-user/ajout-user.component";
+import {TrancheService} from "../../../../../layout/service/tranche.service";
+import {Article} from "../../../../../models/Article";
 @Component({
   selector: 'app-facture-ajout',
   standalone: true,
@@ -73,7 +75,6 @@ export class FactureAjoutComponent implements OnInit{
     rechercheProduit: string = '';
     userForm: FormGroup;
     roles = Object.values(RoleEnum);
-    dateSysteme: Date = new Date();
     autoReference: boolean = true;
     composantBVisible = false;
     utilisateursTransporteur:User[]=[];
@@ -99,6 +100,7 @@ export class FactureAjoutComponent implements OnInit{
         private depotService: DepotService,
         private userService: UserService,
         private produitService: ProduitService,
+        private trancheService : TrancheService,
         private route: ActivatedRoute,
         private router:Router,
         private formBuilder: FormBuilder,
@@ -124,9 +126,6 @@ export class FactureAjoutComponent implements OnInit{
             if (id) {
                 const facture = await this.factureService.getFactureById(Number(id)).toPromise();
                 this.newFacture = facture;
-                this.newFacture.dateCreation = new Date(facture.dateCreation);
-                this.newFacture.date = new Date(facture.date);
-
                 if (Array.isArray(facture.lignesFacture)) {
                     this.produitsFactures = facture.lignesFacture;
                 } else {
@@ -136,25 +135,7 @@ export class FactureAjoutComponent implements OnInit{
 
             this.newFacture.typeFacture = factureType.SORTIE;
             this.calculeFactureTotal();
-            this.dateSysteme = new Date();
-
-            const userId = getUserDecodeID().id;
-            console.log("Utilisateur ID: ", userId);
-
-            this.depotService.getDepotByIdRes(userId).subscribe(
-                (value: Depot) => {
-                    if (value) {
-                        console.log("Dépôt récupéré :", value);
-                        this.newFacture.depot = value;
-                    } else {
-                        console.warn("Dépôt est null ou indéfini :", value);
-                    }
-                },
-                (error) => {
-                    console.error("Erreur lors de la récupération du dépôt :", error);
-                }
-            );
-
+            this.getAllTranches();
             this.getAllUsers();
             this.getAllTrans();
             this.getAllProvider();
@@ -191,6 +172,12 @@ export class FactureAjoutComponent implements OnInit{
             // console.log(new JsonPipe().transform(this.utilisateurs) )
         })
     }
+    getAllTranches(){
+        this.trancheService.getTranches().subscribe((value :Tranche[])=>{
+            this.tranches=value
+            // console.log(new JsonPipe().transform(this.tranches) )
+        })
+    }
     getAllTrans(){
         this.userService.getUsersTransporteur().subscribe((value :User[])=>{
             this.utilisateursTransporteur=value
@@ -210,7 +197,6 @@ export class FactureAjoutComponent implements OnInit{
 
     createNewFacture(): void {
         this.newFacture.lignesFacture = this.produitsFactures;
-
         // Validation des champs obligatoires
         if (!this.validateFacture()) {
             return;
@@ -243,7 +229,7 @@ export class FactureAjoutComponent implements OnInit{
                     // Mise à jour de la facture existante
                     this.factureService.updateFacture(this.newFacture).subscribe(
                         (response) => {
-                            swalWithBootstrapButtons.fire({
+                            Swal.fire({
                                 title: "Mise à jour",
                                 text: "Votre facture a été mise à jour avec succès",
                                 icon: "success"
@@ -374,30 +360,7 @@ export class FactureAjoutComponent implements OnInit{
     resetForm(): void {
         this.newFacture = new Facture();
     }
-    closeResult = '';
-    // insertion nouvel client
-    RolesData: any=RoleEnum.CLIENT;
-    Tax : any=19;
 
-
-    onSubmit(): void {
-        if (this.userForm.valid) {
-            const userData = this.userForm.value;
-            const newUser = new User(
-                userData.id, // Générez l'ID de l'utilisateur
-                userData.nom,
-                userData.prenom,
-                userData.email,
-                userData.tel,
-                userData.address,
-                userData.role,
-            );
-            this.userService.addUser(newUser);
-            this.userService.getUsers()
-            this.userForm.reset();
-            console.log("new user", newUser)
-        }
-    }
     deleteProduct(p: LigneFacture): void {
         this.produitsFactures=this.produitsFactures.filter(value => value.produit.id!==p.produit.id)
         this.calculeFactureTotal();
@@ -421,29 +384,6 @@ export class FactureAjoutComponent implements OnInit{
             }
         })
     }
-    parentMessage:Produit =new Produit();
-
-    receiveMessage(message: Produit) {
-        const lignFacture:LigneFacture=new LigneFacture(Date.now(),1,0) ;
-        lignFacture.produit=message ;
-        // this.newFacture.ligneFacture.push(lignFacture);
-        const foundp:number=this.produitsFactures.findIndex(value => value.produit.id===message.id)
-        //  alert(foundp)
-        if(foundp!==-1 ){
-            if(this.produitsFactures[foundp].quantite< this.produitsFactures[foundp].produit.qantite) {
-                this.produitsFactures[foundp].quantite += 1;
-                this.calculeFactureTotal();
-                //  alert(this.produitsFactures[foundp].produit.nom)
-
-            }
-        }else {
-            this.produitsFactures.push(lignFacture)
-            this.calculeFactureTotal();
-
-        }
-        // alert(JSON.stringify(message))
-        // alert('Received message in parent:'+ new JsonPipe().transform(message));
-    }
 
     getPrixCalculate(l: LigneFacture):number {
         if(l.quantite<l.produit.minQuantiteGros) {
@@ -451,10 +391,6 @@ export class FactureAjoutComponent implements OnInit{
         } else {
             return  l.produit.prixGros+l.produit.gainGros ;
         }
-    }
-
-    getreglemnt() {
-        this.newFacture.reglement = this.newFacture.montant
     }
     changeType() {
         this.newFacture.typeFacture = this.newFacture.typeFacture === factureType.SORTIE
@@ -464,7 +400,6 @@ export class FactureAjoutComponent implements OnInit{
         this.cdr.detectChanges();
         console.log(this.newFacture.typeFacture)
     }
-
     returnBack() {
         this.factureService.returnBack();
     }
@@ -493,7 +428,6 @@ export class FactureAjoutComponent implements OnInit{
             });
         }
         this.calculeFactureTotal()
-        this.getreglemnt()
     }
     private updateRootFromCurrentPath(): void {
         this.root = this.router.url; // Récupère le chemin actuel
@@ -505,16 +439,59 @@ export class FactureAjoutComponent implements OnInit{
     private updateShowButtun(): void {
         this.showButtun = !this.root.includes('caisse');
     }
-
-
-    removeTranche() {
-        
-    }
-
     AddTrancheToNewFacture() {
         this.Newtranche.user=new User()
-        this.newFacture.tranche.push(this.Newtranche);
+        this.newFacture.tranches.push(this.Newtranche);
         this.Newtranche=new Tranche()
+    }
+    updateTrancheLocal(updatedTranche: Tranche, index: number) {
+        if (index > -1) {
+            // Mettre à jour la tranche localement
+            this.newFacture.tranches[index] = updatedTranche;
+            Swal.fire({
+                title: "Mis à jour !",
+                text: "La tranche a été mise à jour localement.",
+                icon: "success"
+            });
+        }
+    }
+    deleteTrancheNewFacture(index: number) {
+        if (index > -1) {
+            const trancheToRemove = this.newFacture.tranches[index];
+            this.removeTranche(trancheToRemove, index);
+        }
+    }
+    removeTranche(tranche: Tranche, index: number) {
+        Swal.fire({
+            title: "Es-tu sûr ?",
+            text: "Vous ne pourrez pas revenir en arrière !",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Oui, supprimez-le !"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                this.trancheService.deleteTranche(tranche.id).subscribe({
+                    next: () => {
+                        Swal.fire({
+                            title: "Supprimé !",
+                            text: "Votre tranche a été supprimée.",
+                            icon: "success"
+                        });
+                        // Mettre à jour la liste locale après la suppression réussie
+                        this.newFacture.tranches.splice(index, 1);
+                    },
+                    error: (err) => {
+                        Swal.fire({
+                            title: "Erreur !",
+                            text: "Il y a eu un problème lors de la suppression.",
+                            icon: "error"
+                        });
+                    }
+                });
+            }
+        });
     }
 
     addUser() {

@@ -127,8 +127,6 @@ export class ArticleComponent implements OnInit {
 
             }
         });
-
-
     }
 
     editArticle(article: Article) {

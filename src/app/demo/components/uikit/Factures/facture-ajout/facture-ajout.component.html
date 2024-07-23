@@ -290,52 +290,44 @@
                 <ng-template pTemplate="header">
                     <tr>
                         <th pSortableColumn="nom" style="width:20%">Nom Produits <p-sortIcon field="nom"></p-sortIcon></th>
-                        <th pSortableColumn="qantite" style="width:20%">Quantité <p-sortIcon field="qantite"></p-sortIcon></th>
-                        <th   style="width:20%">Prix (TND) </th>
+                        <th pSortableColumn="quantite" style="width:20%">Quantité <p-sortIcon field="quantite"></p-sortIcon></th>
+                        <th style="width:20%">Prix (TND)</th>
                         <th pSortableColumn="price" style="width:20%">Total (TND) <p-sortIcon field="price"></p-sortIcon></th>
-                        <th style="width:20%">   </th>
+                        <th style="width:20%"></th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-l>
-                    <tr >
-
+                    <tr>
+                        <td>{{ l.produit.nom }}</td>
                         <td>
-                            {{l.produit.nom}}
+                            <p-inputNumber class="text-center" id="{{ l.produit.id }}" [(ngModel)]="l.quantite" [max]="l.produit.qantite" (ngModelChange)="calculeFactureTotal()" name="quantiteProduit"></p-inputNumber>
                         </td>
+                        <td class="fw-bold fs-4 text-red-600">{{ getPrixCalculate(l) | number }}</td>
+                        <td class="fw-bold fs-3 text-black" >{{ getPrixCalculate(l) * l.quantite | number }}</td>
                         <td>
-                            <input class="text-center" id="{{l.produit.id}}" type="number"  [(ngModel)]="l.quantite" [max]="l.produit.qantite"   (change)="calculeFactureTotal()" name="quantiteProduit">
-                        </td>
-
-                        <td class="fw-bold fs-4  text-red-600">
-                            {{getPrixCalculate(l)|number}}
-                        </td>
-                        <td class="fw-bold fs-3 text-black">
-                            {{getPrixCalculate(l)*l.quantite|number}}
-                        </td>
-                        <td>
-                            <p-button icon="pi pi-trash" [rounded]="true" severity="danger" [outlined]="true" (click)="deleteProduct(l)" />
+                            <p-button icon="pi pi-trash" [rounded]="true" severity="danger" [outlined]="true" (click)="deleteProduct(l)"></p-button>
                         </td>
                     </tr>
                 </ng-template>
             </p-table>
         </div>
-        <div class="form-row flex-column float-end  p-5 bg-body-tertiary " style="margin: 60px" >
-            <div class="col flex-auto p-2">
-                <label class="block font-bold mb-2 PrimaryColorTitle" >Réglement : </label>
+        <div class="flex flex-row float-end  p-5 bg-body-tertiary " style="margin: 60px" >
+            <div class="flex-auto p-2 col-4">
+                <label class="font-bold block m-2 text-primary-600" >Tax : </label>
+                <p-inputNumber [(ngModel)]="newFacture.montantTaxe"  [disabled]="false" inputId="percent" prefix="%"> </p-inputNumber>
+            </div>
+            <div class="flex flex-column col-4">
+                <label class="block font-bold mb-2PrimaryColorTitle ml-2" >Total : </label>
+                <label class="text-red-600 font-bold text-center text-2xl rounded-3 m-2 card col-10" > {{newFacture.montant+newFacture.montant*newFacture.montantTaxe/100|number}} TND</label>
+            </div>
+            <div class="col flex-auto p-2 col-4">
+                <label class="block font-bold  m-2 text-primary-600" >Réglement : </label>
                 <p-inputNumber [(ngModel)]="newFacture.reglement"  inputId="currency-us" mode="currency" currency="TND" locale="en-US"> </p-inputNumber>
             </div>
-            <div class="flex-auto p-2">
-                <label class="font-bold block mb-2 PrimaryColorTitle" >Tax : </label>
-                <p-inputNumber [(ngModel)]="newFacture.montantTaxe" [disabled]="false" inputId="percent" prefix="%"> </p-inputNumber>
-            </div>
-            <div class="flex-auto p-2">
-                <label class="block font-bold mb-2PrimaryColorTitle " >Total : </label>
-                <label class="text-danger fs-3 fw-bold text-center rounded-3 p-2" >{{newFacture.montant|number}}</label>
-            </div>
-        </div>
 
-        <div class="flex card">
-            <button pButton pRipple label="Add" icon="pi pi-plus" class="p-button-text" (click)="AddTrancheToNewFacture()"></button>
+        </div>
+        <div class="flex card col-12">
+        <div class="flex  col-11">
             <div class="p-field col-3 p-md-6 d-flex">
                 <label class="text-primary-600 font-bold">Description de la tranche</label>
                 <input pInputText type="text" [(ngModel)]="Newtranche.description" placeholder="Description" />
@@ -360,8 +352,10 @@
                 </p-button>
             </div>
         </div>
+        <button pButton pRipple label="Add" icon="pi pi-plus" class="p-button-text" (click)="AddTrancheToNewFacture()"></button>
+        </div>
         <!-- Tableau pour afficher les tranches ajoutées -->
-        <p-table [value]="newFacture.tranche" [tableStyle]="{ 'min-width': '50rem' }">
+        <p-table [value]="newFacture.tranches" [tableStyle]="{ 'min-width': '50rem' }">
             <ng-template pTemplate="header">
                 <tr>
                     <th>ID</th>
@@ -369,21 +363,23 @@
                     <th>Description</th>
                     <th>Montant</th>
                     <th>Status</th>
+                    <th></th>
                 </tr>
             </ng-template>
-            <ng-template pTemplate="body" let-tr>
+            <ng-template pTemplate="body" let-tr let-index="rowIndex">
                 <tr>
                     <td>{{ tr.id }}</td>
-                    <td>{{ tr.dateEcheance | date :'dd-MM-yyyy'}}</td>
+                    <td>{{ tr.dateEcheance | date :'dd-MM-yyyy' }}</td>
                     <td>{{ tr.description }}</td>
                     <td>{{ tr.montantTranche }}</td>
                     <td>{{ tr.statutPayement }}</td>
+                    <td>
+                        <p-button icon="pi pi-trash" [rounded]="true" severity="danger" [outlined]="true" (click)="deleteTrancheNewFacture(index)"></p-button>
+                    </td>
                 </tr>
             </ng-template>
         </p-table>
     </ng-template>
-
-
     <ng-template pTemplate="footer" >
         <div class="flex justify-content-end align-items-end">
             <button *ngIf="showButtun" pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="returnBack()"></button>

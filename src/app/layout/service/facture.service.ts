@@ -134,10 +134,12 @@ export class FactureService {
             "depot": {
                 "id": newFacture.depot.id
             },
-            "tranches":newFacture.tranche.map(tr => ({
+            "tranches":newFacture.tranches.map(tr => ({
                 "id": tr.id,
+                "dateEcheance":tr.dateEcheance,
                 "montantTranche": tr.montantTranche,
                 "description": tr.description,
+                "statutPayement": tr.statutPayement,
                 'user':null,
             }))
         };
@@ -241,8 +243,15 @@ export class FactureService {
             },
             "depot":{
                 "id":newFacture.depot.id
-            }
-        }
+            },
+            "tranches":newFacture.tranches.map(tr => ({
+                "id": tr.id,
+                "dateEcheance":tr.dateEcheance,
+                "montantTranche": tr.montantTranche,
+                "description": tr.description,
+                'user':null,
+            }))
+        };
         console.log("data :"+new JsonPipe().transform(fact));
         const url = `${this.api}/update`;
         return this.http.put<Facture>(url, fact, { headers });
