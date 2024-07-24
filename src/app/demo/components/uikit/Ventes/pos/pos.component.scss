@@ -7,3 +7,17 @@
 .footer{
     padding-bottom: 2px;
 }
+.p-button-lg {
+    font-size: 1.5rem; // Taille du texte du bouton
+    height: 4rem; // Hauteur du bouton
+    width: 25%; // Largeur du bouton
+}
+
+.p-card {
+    .p-d-flex {
+        .p-button {
+            // Styles pour les boutons dans le card
+            @extend .p-button-lg;
+        }
+    }
+}

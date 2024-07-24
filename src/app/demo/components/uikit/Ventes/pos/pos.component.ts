@@ -721,10 +721,7 @@ export class POSComponent implements OnInit,OnDestroy {
 
 
     calculatorInput(value: string) {
-
         try {
-
-
             // console.log("Value Data : "+this.calculateValue)
             // console.log("Data pressed: "+value)
             if(this.calculateValue=='0'){
@@ -977,6 +974,12 @@ export class POSComponent implements OnInit,OnDestroy {
     protected readonly Date = Date;
     filter(searchText: string) {
 
+    }
+
+    changeFocusCal() {
+        this.focusReg=false;
+        this.focusFrais=false ;
+        this.focusRecherche=false ;
     }
 
     protected readonly Vente = Vente;

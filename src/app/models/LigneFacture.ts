@@ -2,17 +2,19 @@ import {Produit} from "./produit";
 
 export class LigneFacture {
     private _id: number;
-    private _referance: string;
     private _produit: Produit;
     private _quantite: number;
     private _montantTotal: number;
+    private _prixAchat : number;
+    private _prixVente : number;
 
-    constructor(id?: number,  quantite?: number, montantTotal?:number, produit?:Produit) {
+    constructor(id?: number,  quantite?: number, montantTotal?:number, produit?:Produit,prixAchat?:number, prixVente?: number ) {
         this._id = id || 0;
-        //this._referance = referance || '';
          this._produit = produit || new Produit();
         this._quantite = quantite || 0;
         this._montantTotal = montantTotal || 0;
+        this._prixAchat = prixAchat || 0;
+        this._prixVente = prixVente || 0;
     }
 
 
@@ -22,14 +24,6 @@ export class LigneFacture {
 
     set id(value: number) {
         this._id = value;
-    }
-
-    get referance(): string {
-        return this._referance;
-    }
-
-    set referance(value: string) {
-        this._referance = value;
     }
 
     get produit(): Produit {
@@ -48,7 +42,6 @@ export class LigneFacture {
         this._quantite = value;
     }
 
-
     get montantTotal(): number {
         return this._montantTotal;
     }
@@ -57,5 +50,11 @@ export class LigneFacture {
         this._montantTotal = value;
     }
 
-// Add getters and setters if needed
+    get prixAchat(): number {
+        return this._prixAchat;
+    }
+
+    set prixAchat(value: number) {
+        this._prixAchat = value;
+    }
 }

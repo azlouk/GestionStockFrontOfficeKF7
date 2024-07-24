@@ -1,7 +1,8 @@
 <p-card>
     <ng-template pTemplate="header" >
         <div class="flex justify-content-between align-items-center ">
-            <div>        <h2 class="text-blue-600 font-bold m-3">Ajouter une nouvelle Facture</h2>
+            <div>
+                <h2 class="text-primary-600 font-bold m-3">Ajouter une nouvelle Facture</h2>
             </div>
             <p-button
                     *ngIf="showButtun"
@@ -13,45 +14,41 @@
     </ng-template>
 
     <ng-template pTemplate="content">
-        <div class=" flex card">
-            <div class="p-field col-3 p-md-6 d-flex ">
-                <div class="switch-label m-2">
-                    <label >Dépôt</label>
+        <div class="p-grid card flex justify-content-between">
+            <div class="p-col-12 p-md-6 d-flex align-items-center">
+                <div class="switch-label mb-2 font-bold">
+                    <label>Dépôt</label>
                 </div>
                 <p-dropdown [options]="depots" optionLabel="nom" placeholder="Sélectionner dépôt" [(ngModel)]="newFacture.depot"></p-dropdown>
             </div>
-            <div class="p-field col-3 p-md-6 d-flex ">
-                <div class="switch-label m-2">
-                    <i class="pi pi-file"></i><span>Type facture</span>
+            <div class="p-col-12 p-md-6 d-flex align-items-center">
+                <div class="switch-label mb-2 font-bold">
+                    <label>Réference facture</label>
                 </div>
-                <div class="switch-toggle ml-2">
-                    <p-toggleButton [ngModel]="this.newFacture.typeFacture !=='FACTURE_ACHAT'"  (onChange)="changeType()" id="toggleType"  onLabel="VENTE" offLabel="ACHAT"></p-toggleButton>
-                </div>
+                <input pInputText type="text" [(ngModel)]="newFacture.reference" name="reference" placeholder="Exemple : FACT-00001">
             </div>
-            <div class="p-field col-3 p-md-6 d-flex">
-                <div class="switch-label m-2">
-                    <label>Date  facture</label>
+            <div class="p-col-12 p-md-6 d-flex align-items-center">
+                <div class="switch-label mb-2 font-bold">
+                    <label>Date facture</label>
                 </div>
                 <p-calendar [(ngModel)]="newFacture.date" [showIcon]="true"></p-calendar>
             </div>
-            <div class="p-field col-3 p-md-6 d-flex" >
-                <div class="switch-label m-2">
-                    <label>Réference achat (Option)</label>
+            <div class="p-col-12 p-md-6 d-flex align-items-center">
+                <div class="switch-label mb-2 font-bold">
+                    <i class="pi pi-file"></i><span>Type facture</span>
                 </div>
-                <input pInputText type="text" [(ngModel)]="newFacture.reference" name="reference" placeholder="Exemple : FACT-00001" >
+                <div class="switch-toggle p-ml-2">
+                    <p-toggleButton [ngModel]="newFacture.typeFacture !== 'FACTURE_ACHAT'" (onChange)="changeType()" id="toggleType" onLabel="VENTE" offLabel="ACHAT"></p-toggleButton>
+                </div>
             </div>
         </div>
-        <div class=" flex card">
-            <div class="p-field col-2 p-md-6 d-flex  ">
-                <label class="text-primary  font-bold pi pi-user">Transporteur </label>
-                <p-dropdown
-                        [options]="utilisateursTransporteur"
-                        [(ngModel)]="newFacture.transporteur"
-                        optionLabel="firstname"
-                        [filter]="true"
-                        placeholder="Select a City" />
+
+        <div class="card">
+            <div class="justify-content-between flex">
+                <h3 class="font-bold">Sélectionner Utilisateurs</h3>
+                <button *ngIf="showButtun" pButton pRipple label="Ajouter" icon="pi pi-user-plus" class="p-button-text p-button-success mb-2" (click)="addUser()"></button>
+            </div>
                 <div class=" flex justify-content-center">
-                    <button *ngIf="showButtun" pButton pRipple label="Ajouter" icon="pi pi-user-plus" class="p-button-text" (click)="addUser()"></button>
                     <p-dialog
                             header="Ajouter Utilisateur"
                             [modal]="true"
@@ -62,112 +59,137 @@
                         <app-ajout-user></app-ajout-user>
                     </p-dialog>
                 </div>
-            </div>
-            <div class="p-field col-9 p-md-6" >
-            <p-table *ngIf="newFacture.transporteur.id !== 0" [value]="[newFacture.transporteur]">
-                <ng-template pTemplate="header">
-                    <tr class="fs-5" style="--bs-table-color: #0056b3">
-                        <th>Nom</th>
-                        <th>Prénom</th>
-                        <th>Email</th>
-                        <th>Téléphone</th>
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-transporteur>
-                    <tr>
-                        <td>{{ transporteur.firstname }}</td>
-                        <td>{{ transporteur.lastname }}</td>
-                        <td>{{ transporteur.email }}</td>
-                        <td>{{ transporteur.telephone }}</td>
-                    </tr>
-                </ng-template>
-            </p-table>
-            </div>
-        </div>
-        <div class=" flex card" *ngIf="newFacture.typeFacture!=='FACTURE_ACHAT'">
-            <div class="p-field col-2 p-md-6 d-flex">
-                <label class="text-primary-600  font-bold pi pi-user ">Client </label>
-                <p-dropdown
-                        [options]="utilisateurs"
-                        [(ngModel)]="newFacture.client"
-                        optionLabel="firstname"
-                        [filter]="true"
-                        placeholder="Select a City" />
 
-            </div>
-            <div class="p-field col-9 p-md-6">
-                <p-table *ngIf="newFacture.client.id !== 0" [value]="[newFacture.client]" class="p-datatable table table-striped table-hover">
-                    <ng-template pTemplate="header">
-                        <tr class="fs-5" style="--bs-table-color: #0056b3">
-                            <th>Nom</th>
-                            <th>Prénom</th>
-                            <th>Email</th>
-                            <th>Téléphone</th>
-                        </tr>
-                    </ng-template>
-                    <ng-template pTemplate="body" let-client>
-                        <tr>
-                            <td>{{ client.firstname }}</td>
-                            <td>{{ client.lastname }}</td>
-                            <td>{{ client.email }}</td>
-                            <td>{{ client.telephone }}</td>
-                        </tr>
-                    </ng-template>
-                </p-table>
-            </div>
-        </div>
-        <div class=" flex card" *ngIf="newFacture.typeFacture=='FACTURE_ACHAT'">
-            <div class="p-field col-2 d-flex">
-                <label class="text-primary-600  font-bold pi pi-user p-2">Fournisseur </label>
-                <p-listbox [options]="providers" [(ngModel)]="newFacture.provider" optionLabel="firstname" [filter]="true" [style]="{ width: '12rem' , height:'8rem' }" ></p-listbox>
-            </div>
-            <div  class="p-field col-9">
-                <p-table *ngIf="newFacture.provider.id != 0" [value]="[newFacture.provider]" class="p-datatable table table-striped table-hover">
-                    <ng-template pTemplate="header">
-                        <tr class="fs-5" style="--bs-table-color: #0056b3">
-                            <th>Nom</th>
-                            <th>Prénom</th>
-                            <th>Email</th>
-                            <th>Téléphone</th>
-                        </tr>
-                    </ng-template>
-                    <ng-template pTemplate="body" let-provider>
-                        <tr>
-                            <td>{{ provider.firstname }}</td>
-                            <td>{{ provider.lastname }}</td>
-                            <td>{{ provider.email }}</td>
-                            <td>{{ provider.telephone }}</td>
-                        </tr>
-                    </ng-template>
-                </p-table>
-                <br>
+            <div class="p-grid p-align-start p-justify-between">
+                <div class="p-col-12 p-md-6 card p-mb-3">
+                    <div class="p-grid p-fluid">
+                        <div class="p-col-12 p-md-6 p-mb-3 ">
+                            <label class="text-primary font-bold pi pi-user mb-2">Transporteur</label>
+                            <p-dropdown
+                                    [options]="utilisateursTransporteur"
+                                    [(ngModel)]="newFacture.transporteur"
+                                    optionLabel="firstname"
+                                    [filter]="true"
+                                    placeholder="Sélectionner Transporteur"></p-dropdown>
+                        </div>
+                        <div class="p-col-12 p-md-12">
+                            <p-table *ngIf="newFacture.transporteur.id !== 0" [value]="[newFacture.transporteur]">
+                                <ng-template pTemplate="header">
+                                    <tr class="fs-5" style="--bs-table-color: #0056b3">
+                                        <th>Nom</th>
+                                        <th>Prénom</th>
+                                        <th>Email</th>
+                                        <th>Téléphone</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-transporteur>
+                                    <tr>
+                                        <td>{{ transporteur.firstname }}</td>
+                                        <td>{{ transporteur.lastname }}</td>
+                                        <td>{{ transporteur.email }}</td>
+                                        <td>{{ transporteur.telephone }}</td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-col-12 p-md-6 card p-mb-3 " *ngIf="newFacture.typeFacture!=='FACTURE_ACHAT'">
+                    <div class="p-grid p-fluid">
+                        <div class="p-col-12 p-md-6 p-mb-3">
+                            <label class="text-primary-600 font-bold pi pi-user mb-2">Client</label>
+                            <p-dropdown
+                                    [options]="utilisateurs"
+                                    [(ngModel)]="newFacture.client"
+                                    optionLabel="firstname"
+                                    [filter]="true"
+                                    placeholder="Sélectionner Client"></p-dropdown>
+                        </div>
+                        <div class="p-col-12 p-md-12">
+                            <p-table *ngIf="newFacture.client.id !== 0" [value]="[newFacture.client]" class="p-datatable table table-striped table-hover">
+                                <ng-template pTemplate="header">
+                                    <tr class="fs-5" style="--bs-table-color: #0056b3">
+                                        <th>Nom</th>
+                                        <th>Prénom</th>
+                                        <th>Email</th>
+                                        <th>Téléphone</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-client>
+                                    <tr>
+                                        <td>{{ client.firstname }}</td>
+                                        <td>{{ client.lastname }}</td>
+                                        <td>{{ client.email }}</td>
+                                        <td>{{ client.telephone }}</td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-col-12 p-md-6 card p-mb-3" *ngIf="newFacture.typeFacture=='FACTURE_ACHAT'">
+                    <div class="p-grid p-fluid">
+                        <div class="p-col-12 p-md-6 p-mb-3">
+                            <label class="text-primary-600 font-bold pi pi-user mb-2">Fournisseur</label>
+                            <p-dropdown
+                                    [options]="providers"
+                                    [(ngModel)]="newFacture.provider"
+                                    optionLabel="firstname"
+                                    [filter]="true"
+                                    placeholder="Sélectionner Fournisseur"></p-dropdown>
+                        </div>
+                        <div class="p-col-12 p-md-12">
+                            <p-table *ngIf="newFacture.provider.id != 0" [value]="[newFacture.provider]" class="p-datatable table table-striped table-hover">
+                                <ng-template pTemplate="header">
+                                    <tr class="fs-5" style="--bs-table-color: #0056b3">
+                                        <th>Nom</th>
+                                        <th>Prénom</th>
+                                        <th>Email</th>
+                                        <th>Téléphone</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-provider>
+                                    <tr>
+                                        <td>{{ provider.firstname }}</td>
+                                        <td>{{ provider.lastname }}</td>
+                                        <td>{{ provider.email }}</td>
+                                        <td>{{ provider.telephone }}</td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>
+                </div>
             </div>
 
         </div>
         <div class="  row m-2">
-            <div class="card flex justify-content-center">
-                <p-button icon="pi pi-plus" (onClick)="showDialog()" label="Sélectionner Produit" />
-                <p-dialog
-                        header="Header"
-                        [modal]="true"
-                        [(visible)]="visible"
-                        [style]="{ width: '100rem' }"
-                        [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
-                        [maximizable]="true">
+            <div class="card flex-column justify-content-center">
+                <h3 class="font-bold ">Sélectionner Produits</h3>
                     <p-table
                         #dt1
                         [value]="produits"
                         dataKey="id"
-                        [rows]="10"
-                        [showCurrentPageReport]="true"
-                        [rowsPerPageOptions]="[10, 25, 50,100,250,500]"
-                        [paginator]="true"
+                        scrollable="true"
+                        scrollHeight="25rem"
                         currentPageReportTemplate="Affichage de {first} à {last} des entrées {totalRecords} "
                         [globalFilterFields]="['nom', 'description', 'dataqr', 'dateF','dateF','dateE']"
                     >
                         <ng-template pTemplate="caption">
                             <div class="flex">
-                                <button pButton label="Effacer" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
+                                <button pButton label="Effacer" class="p-button-outlined p-button-warning" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
+                                <button pButton label="Ajouter" class="p-button-outlined p-button-success ml-2" icon="pi pi-plus" (click)="addProduit()"></button>
+                                <button pButton pRipple label="Actualiser" icon="pi pi-refresh" class="p-button-primary p-button-outlined ml-2"
+                                        (click)="refresh()"></button>
+                                <p-dialog
+                                        header="Ajouter Produit"
+                                        [modal]="true"
+                                        [(visible)]="showAddProduit"
+                                        [style]="{ width: '100rem' }"
+                                        [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+                                        [maximizable]="true">
+                                    <app-produit-ajout></app-produit-ajout>
+                                </p-dialog>
                                 <span class="p-input-icon-left ml-auto">
                     <i class="pi pi-search"></i>
                     <input pInputText type="text" [(ngModel)]="rechercheProduit" (input)="dt1.filterGlobal(rechercheProduit, 'contains')" placeholder="Rechercher ici ..." />
@@ -281,37 +303,37 @@
                             </tr>
                         </ng-template>
                     </p-table>
-
-                </p-dialog>
+                <h3 class="font-bold text-primary-600 mt-2">Produits facture</h3>
+                <div class="form-row m-4 mt-5 " >
+                    <p-table [value]="produitsFactures" [scrollable]="true" scrollHeight="400px">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th pSortableColumn="nom" style="width:20%">Nom Produits <p-sortIcon field="nom"></p-sortIcon></th>
+                                <th pSortableColumn="quantite" style="width:20%">Quantité <p-sortIcon field="quantite"></p-sortIcon></th>
+                                <th style="width:20%">Prix (TND)</th>
+                                <th pSortableColumn="price" style="width:20%">Total (TND) <p-sortIcon field="price"></p-sortIcon></th>
+                                <th style="width:20%"></th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-l>
+                            <tr>
+                                <td>{{ l.produit.nom }}</td>
+                                <td>
+                                    <p-inputNumber class="text-center" id="{{ l.produit.id }}" [(ngModel)]="l.quantite" [max]="l.produit.qantite" (ngModelChange)="calculeFactureTotal()" name="quantiteProduit"></p-inputNumber>
+                                </td>
+                                <td class="fw-bold fs-4 text-red-600">{{ getPrixCalculate(l) | number }}</td>
+                                <td class="fw-bold fs-3 text-black" >{{ getPrixCalculate(l) * l.quantite | number }}</td>
+                                <td>
+                                    <p-button icon="pi pi-trash" [rounded]="true" severity="danger" [outlined]="true" (click)="deleteProduct(l)"></p-button>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
             </div>
         </div>
-        <div class="form-row m-4 mt-5 " >
-            <p-table [value]="produitsFactures" [scrollable]="true" scrollHeight="400px">
-                <ng-template pTemplate="header">
-                    <tr>
-                        <th pSortableColumn="nom" style="width:20%">Nom Produits <p-sortIcon field="nom"></p-sortIcon></th>
-                        <th pSortableColumn="quantite" style="width:20%">Quantité <p-sortIcon field="quantite"></p-sortIcon></th>
-                        <th style="width:20%">Prix (TND)</th>
-                        <th pSortableColumn="price" style="width:20%">Total (TND) <p-sortIcon field="price"></p-sortIcon></th>
-                        <th style="width:20%"></th>
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-l>
-                    <tr>
-                        <td>{{ l.produit.nom }}</td>
-                        <td>
-                            <p-inputNumber class="text-center" id="{{ l.produit.id }}" [(ngModel)]="l.quantite" [max]="l.produit.qantite" (ngModelChange)="calculeFactureTotal()" name="quantiteProduit"></p-inputNumber>
-                        </td>
-                        <td class="fw-bold fs-4 text-red-600">{{ getPrixCalculate(l) | number }}</td>
-                        <td class="fw-bold fs-3 text-black" >{{ getPrixCalculate(l) * l.quantite | number }}</td>
-                        <td>
-                            <p-button icon="pi pi-trash" [rounded]="true" severity="danger" [outlined]="true" (click)="deleteProduct(l)"></p-button>
-                        </td>
-                    </tr>
-                </ng-template>
-            </p-table>
-        </div>
-        <div class="flex flex-row float-end  p-5 bg-body-tertiary " style="margin: 60px" >
+
+        <div class="card flex flex-row float-end  p-5 bg-body-tertiary " style="margin: 60px" >
             <div class="flex-auto p-2 col-4">
                 <label class="font-bold block m-2 text-primary-600" >Tax : </label>
                 <p-inputNumber [(ngModel)]="newFacture.montantTaxe"  [disabled]="false" inputId="percent" prefix="%"> </p-inputNumber>
@@ -326,36 +348,56 @@
             </div>
 
         </div>
-        <div class="flex card col-12">
-        <div class="flex  col-11">
-            <div class="p-field col-3 p-md-6 d-flex">
+        <div class="card flex-column">
+            <h3 class="font-bold text-primary-600">Ajouter tranches </h3>
+            <div class="flex col-12 justify-content-between align-items-center">
+            <div class="p-field flex flex-column gap-2">
                 <label class="text-primary-600 font-bold">Description de la tranche</label>
                 <input pInputText type="text" [(ngModel)]="Newtranche.description" placeholder="Description" />
             </div>
-            <div class="p-field col-3 p-md-6 d-flex">
+            <div class="p-field flex flex-column gap-2">
                 <label class="text-primary-600 font-bold">Montant de la tranche</label>
                 <p-inputNumber [(ngModel)]="Newtranche.montantTranche" mode="currency" currency="TND" locale="en-US"></p-inputNumber>
             </div>
-            <div class="p-field col-3 p-md-6 d-flex">
+            <div class="p-field flex flex-column gap-2">
                 <label class="text-primary-600 font-bold">Date d'échéance</label>
                 <p-calendar [(ngModel)]="Newtranche.dateEcheance" [showIcon]="true"></p-calendar>
             </div>
-            <div class="p-field col-3 p-md-6 d-flex ">
-                <div class="switch-label m-2">
+            <div class="p-field  flex flex-column gap-2">
+
                     <label class="text-primary-600 font-bold">État de paiement</label>
+                <div class="p-d-flex p-ai-center">
+                    <p-radioButton
+                            name="paymentStatus"
+                            value="true"
+                            [(ngModel)]="Newtranche.statutPayement"
+                            inputId="paid"
+                            ></p-radioButton>
+                    <label [for]="Newtranche.statutPayement" class="ml-2" class="ml-2 font-bold text-green-600">Payé
+                    </label>
+
+                    <p-radioButton
+                            name="paymentStatus"
+                            value="false"
+                            [(ngModel)]="Newtranche.statutPayement"
+                            inputId="notPaid"
+                            ></p-radioButton>
+                    <label [for]="Newtranche.statutPayement" class="ml-2 font-bold text-red-600">Non Payé
+                    </label>
+
                 </div>
-                <p-button
-                        label="{{Newtranche.statutPayement ? ' payé' : 'non payé' }}"
-                        icon="{{ Newtranche.statutPayement ? 'pi pi-times' : 'pi pi-check' }}"
-                        class="p-button-secondary"
-                        (click)="Newtranche.statutPayement= !Newtranche.statutPayement">
-                </p-button>
+
+
+
             </div>
+
+                <div class="">
+                    <button pButton pRipple label="Add" icon="pi pi-plus" class="p-button-text p-button-success p-button-outlined" (click)="AddTrancheToNewFacture()"></button>
+                </div>
         </div>
-        <button pButton pRipple label="Add" icon="pi pi-plus" class="p-button-text" (click)="AddTrancheToNewFacture()"></button>
         </div>
         <!-- Tableau pour afficher les tranches ajoutées -->
-        <p-table [value]="newFacture.tranches" [tableStyle]="{ 'min-width': '50rem' }">
+        <p-table *ngIf="newFacture.tranches && newFacture.tranches.length > 0" [value]="newFacture.tranches" [tableStyle]="{ 'min-width': '50rem' }">
             <ng-template pTemplate="header">
                 <tr>
                     <th>ID</th>

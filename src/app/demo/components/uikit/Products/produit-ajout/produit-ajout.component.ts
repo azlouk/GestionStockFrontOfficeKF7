@@ -78,6 +78,8 @@ export class ProduitAjoutComponent implements OnInit{
     SearchArticle: string='';
     articles: Article[]=[];
     selectedArticle: Article=new Article();
+    root: string;
+    showButtunprod: boolean = true;
 
 
 
@@ -90,6 +92,7 @@ export class ProduitAjoutComponent implements OnInit{
 
     }
     async ngOnInit(): Promise<void> {
+        this.updateRootFromCurrentPath();
         const id = this.route.snapshot.paramMap.get('id');
         try {
             if (id) {
@@ -161,7 +164,6 @@ export class ProduitAjoutComponent implements OnInit{
                 icon: "error"
             });
         } else if (this.newProduct.minQuantiteGros == null || this.newProduct.minQuantiteGros >= this.newProduct.qantite) {
-            console.log(this.newProduct.qantite)
             Swal.fire({
                 title: "Quantité invalide!",
                 text: "Quantité min gros doit être inférieure Quantité actuelle SVP !",
@@ -170,42 +172,58 @@ export class ProduitAjoutComponent implements OnInit{
         } else {
             this.newProduct.subdataqr = this.subdataqr.map((value: CodeModel) => value.code);
 
-            if (this.newProduct.id) {
-                this.produitService.modifierProduit(this.newProduct, this.uploadedFiles).subscribe(
-                    response => {
-                        if (response) {
-                            this.newProduct = new Produit(); // Réinitialisation du formulaire après la mise à jour
-                            Swal.fire('Succès', 'Le produit a été mis à jour avec succès', 'success');
-                            this.router.navigate(['/uikit/produits']);
-                        } else {
-                            Swal.fire('Erreur Duplication', 'Code Barre Ou QR Existe déjà', 'error');
+            const saveProduct = () => {
+                if (this.newProduct.id) {
+                    this.produitService.modifierProduit(this.newProduct, this.uploadedFiles).subscribe(
+                        response => {
+                            if (response) {
+                                this.newProduct = new Produit(); // Réinitialisation du formulaire après la mise à jour
+                                Swal.fire('Succès', 'Le produit a été mis à jour avec succès', 'success');
+                            } else {
+                                Swal.fire('Erreur Duplication', 'Code Barre Ou QR Existe déjà', 'error');
+                            }
+                        },
+                        error => {
+                            console.error('Erreur lors de la mise à jour du produit :', error);
+                            Swal.fire('Erreur', 'Une erreur s\'est produite lors de la mise à jour du produit', 'error');
                         }
-                    },
-                    error => {
-                        console.error('Erreur lors de la mise à jour du produit :', error);
-                        Swal.fire('Erreur', 'Une erreur s\'est produite lors de la mise à jour du produit', 'error');
-                    }
-                );
-            } else {
-                // Add new product
-                this.produitService.addProduit(this.newProduct, this.uploadedFiles).subscribe(
-                    response => {
-                        if (response) {
-                            this.newProduct = new Produit(); // Réinitialisation du formulaire après l'ajout
-                            Swal.fire('Succès', 'Le produit a été ajouté avec succès', 'success');
-                            this.router.navigate(['/uikit/produits']);
-                        } else {
-                            Swal.fire('Erreur Duplication', 'Code Barre Ou QR Existe déjà', 'error');
+                    );
+                } else {
+                    this.produitService.addProduit(this.newProduct, this.uploadedFiles).subscribe(
+                        response => {
+                            if (response) {
+                                this.newProduct = new Produit(); // Réinitialisation du formulaire après l'ajout
+                                Swal.fire('Succès', 'Le produit a été ajouté avec succès', 'success');
+                            } else {
+                                Swal.fire('Erreur Duplication', 'Code Barre Ou QR Existe déjà', 'error');
+                            }
+                        },
+                        error => {
+                            console.error('Erreur lors de l\'ajout du produit :', error);
+                            Swal.fire('Erreur', 'Une erreur s\'est produite lors de l\'ajout du produit', 'error');
                         }
-                    },
-                    error => {
-                        console.error('Erreur lors de l\'ajout du produit :', error);
-                        Swal.fire('Erreur', 'Une erreur s\'est produite lors de l\'ajout du produit', 'error');
-                    }
-                );
-            }
+                    );
+                }
+            };
+
+            Swal.fire({
+                title: 'Confirmation',
+                text: "Voulez-vous rediriger vers la liste des produits après la sauvegarde ?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Oui',
+                cancelButtonText: 'Non'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    saveProduct();
+                    this.router.navigate(['/uikit/produits']);
+                } else {
+                    saveProduct();
+                }
+            });
         }
     }
+
 
 
 
@@ -418,6 +436,15 @@ export class ProduitAjoutComponent implements OnInit{
     clearFiles() {
         this.uploadedFiles=[] ;
     }
+    private updateShowButtun(): void {
+        this.showButtunprod = !this.root.includes('add-facture');
+    }
+    private updateRootFromCurrentPath(): void {
+        this.root = this.router.url; // Récupère le chemin actuel
+        this.updateShowButtun();
+        console.log("root",this.root)
+    }
+
 
 
     protected readonly EventEmitter = EventEmitter;

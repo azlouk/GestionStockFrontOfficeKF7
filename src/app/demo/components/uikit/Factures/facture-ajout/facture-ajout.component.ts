@@ -19,7 +19,6 @@ import {Table, TableModule} from "primeng/table";
 import {CommonModule, DecimalPipe} from "@angular/common";
 import {InputNumberModule} from "primeng/inputnumber";
 import {MessagesModule} from "primeng/messages";
-import {CanvasComponent} from "../../canvas/canvas.component";
 import {DropdownModule} from "primeng/dropdown";
 import {DialogModule} from "primeng/dialog";
 import {MultiSelectModule} from "primeng/multiselect";
@@ -33,6 +32,8 @@ import {Tranche} from "../../../../../models/Tranche";
 import {AjoutUserComponent} from "../../users/ajout-user/ajout-user.component";
 import {TrancheService} from "../../../../../layout/service/tranche.service";
 import {Article} from "../../../../../models/Article";
+import {ProduitAjoutComponent} from "../../Products/produit-ajout/produit-ajout.component";
+import {RadioButtonModule} from "primeng/radiobutton";
 @Component({
   selector: 'app-facture-ajout',
   standalone: true,
@@ -45,7 +46,6 @@ import {Article} from "../../../../../models/Article";
         DecimalPipe,
         InputNumberModule,
         MessagesModule,
-        CanvasComponent,
         DropdownModule,
         CommonModule,
         DialogModule,
@@ -56,7 +56,9 @@ import {Article} from "../../../../../models/Article";
         InputSwitchModule,
         ToggleButtonModule,
         InputTextModule,
-        AjoutUserComponent
+        AjoutUserComponent,
+        ProduitAjoutComponent,
+        RadioButtonModule
     ],
   templateUrl: './facture-ajout.component.html',
   styleUrl: './facture-ajout.component.scss'
@@ -84,13 +86,12 @@ export class FactureAjoutComponent implements OnInit{
     selectedDepot: any=null;
     idDepot : number =0;
     idClient : number=0;
-    visible: boolean = false;
     root: string;
     showButtun: boolean = true;
     showAddUser: boolean = false;
-    showDialog() {
-        this.visible = true;
-    }
+    showAddProduit: boolean = false;
+
+
     clear(table: Table) {
         table.clear();
     }
@@ -496,6 +497,13 @@ export class FactureAjoutComponent implements OnInit{
 
     addUser() {
         this.showAddUser=true
+    }
+    addProduit() {
+        this.showAddProduit=true
+    }
+
+    refresh() {
+        this.getAllProduits()
     }
 }
 

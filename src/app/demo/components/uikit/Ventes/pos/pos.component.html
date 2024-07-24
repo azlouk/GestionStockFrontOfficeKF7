@@ -175,6 +175,41 @@
                         </ng-template>
                     </p-table>
                 </div>
+                <p-card class="p-m-4">
+                    <div class="p-d-flex p-flex-column p-p-2">
+                        <div class="p-d-flex p-flex-wrap">
+                            <button pButton pRipple label="C" class="p-button-text p-button-rounded p-button-lg p-button-danger p-col-3 p-mb-2" (click)="calculatorInput('C')"></button>
+                            <button pButton pRipple label="CC" class="p-button-text p-button-rounded p-button-lg p-button-danger p-col-3 p-mb-2" (click)="calculatorInput('CC')"></button>
+                            <button pButton pRipple icon="pi pi-arrow-left" class="p-button-text p-button-rounded p-button-danger p-button-lg p-col-3 p-mb-2" (click)="calculatorInput('R')"></button>
+                            <button pButton pRipple label="/" class="p-button-text p-button-rounded p-button-success p-button-lg p-col-3 p-mb-2" (click)="calculatorInput('/')"></button>
+                        </div>
+                        <div class="p-d-flex p-flex-wrap">
+                            <button pButton pRipple label="7" class="p-button-text p-button-rounded p-button-lg p-col-3 p-mb-2" (click)="calculatorInput('7')"></button>
+                            <button pButton pRipple label="8" class="p-button-text p-button-rounded p-button-lg p-col-3 p-mb-2" (click)="calculatorInput('8')"></button>
+                            <button pButton pRipple label="9" class="p-button-text p-button-rounded p-button-lg p-col-3 p-mb-2" (click)="calculatorInput('9')"></button>
+                            <button pButton pRipple label="*" class="p-button-text p-button-rounded p-button-success p-button-lg p-col-3 p-mb-2" (click)="calculatorInput('*')"></button>
+                        </div>
+                        <div class="p-d-flex p-flex-wrap">
+                            <button pButton pRipple label="4" class="p-button-text p-button-rounded p-button-lg p-col-3 p-mb-2" (click)="calculatorInput('4')"></button>
+                            <button pButton pRipple label="5" class="p-button-text p-button-rounded p-button-lg p-col-3 p-mb-2" (click)="calculatorInput('5')"></button>
+                            <button pButton pRipple label="6" class="p-button-text p-button-rounded p-button-lg p-col-3 p-mb-2" (click)="calculatorInput('6')"></button>
+                            <button pButton pRipple label="-" class="p-button-text p-button-rounded p-button-success p-button-lg p-col-3 p-mb-2" (click)="calculatorInput('-')"></button>
+                        </div>
+                        <div class="p-d-flex p-flex-wrap">
+                            <button pButton pRipple label="1" class="p-button-text p-button-rounded p-button-lg p-col-3 p-mb-2" (click)="calculatorInput('1')"></button>
+                            <button pButton pRipple label="2" class="p-button-text p-button-rounded p-button-lg p-col-3 p-mb-2" (click)="calculatorInput('2')"></button>
+                            <button pButton pRipple label="3" class="p-button-text p-button-rounded p-button-lg p-col-3 p-mb-2" (click)="calculatorInput('3')"></button>
+                            <button pButton pRipple label="+" class="p-button-text p-button-rounded p-button-success p-button-lg p-col-3 p-mb-2" (click)="calculatorInput('+')"></button>
+                        </div>
+                        <div class="p-d-flex p-flex-wrap">
+                            <button pButton pRipple label="00" class="p-button-text p-button-rounded p-button-lg p-col-6 p-mb-2" (click)="calculatorInput('00')"></button>
+                            <button pButton pRipple label="0" class="p-button-text p-button-rounded p-button-lg p-col-6 p-mb-2" (click)="calculatorInput('0')"></button>
+                            <button pButton pRipple label="," class="p-button-text p-button-rounded p-button-lg p-col-6 p-mb-2" (click)="calculatorInput('.')"></button>
+                            <button pButton pRipple label="=" class="p-button-text p-button-rounded p-button-success p-button-lg p-col-6 p-mb-2" (click)="calculatorInput('=')"></button>
+                        </div>
+                    </div>
+                </p-card>
+
             </div>
         </div>
     </div>

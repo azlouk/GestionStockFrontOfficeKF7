@@ -109,7 +109,10 @@ export class FactureService {
                     "filesList": filesListes,
                 },
                 "quantite": value.quantite,
-                "montantTotal": value.montantTotal
+                "montantTotal": value.montantTotal,
+                "prixVente": value.produit.prixUnitaire+value.produit.gainUnitaire,
+                "prixAchat": value.produit.prixUnitaire,
+
             });
         });
 
@@ -218,6 +221,8 @@ export class FactureService {
                 },
                 "quantite": value.quantite,
                 "montantTotal": value.montantTotal,
+                "prixVente": value.produit.prixUnitaire+value.produit.gainUnitaire,
+                "prixAchat": value.produit.prixUnitaire,
                 "id":value.id
             })
         })
@@ -300,7 +305,6 @@ export class FactureService {
     exist(tableName:String) {
         const token = getToken();
         console.log(token)
-
         if (token) {
             // Ajouter le token à l'en-tête de la requête
             const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type", "application/json; charset=utf8");
@@ -309,16 +313,13 @@ export class FactureService {
                     "id": getUserDecodeID().id
                 },
                 "tableName": tableName,
-
             }
             this.http.post<boolean>(environment.apiUrl + '/permission/checkpermission', data, { headers }).subscribe(value => {
                 this.permission=value ;
                 console.log("=======1111111>><>>>>>> "+new JsonPipe().transform(this.permission=value));
             })
-
         }else {
             this.permission =false ;
-
         }
     }
 }
