@@ -2,25 +2,19 @@
     <div class=" d-flex flex-column mb-3 position-relative">
         <p-toolbar>
             <ng-template pTemplate="left">
-                <p-button class="m-2" label="Actualiser" icon="pi pi-refresh"
-                          styleClass="p-button-raised p-button-text p-button-outlined" (click)="refrech()"></p-button>
-                <p-button icon="pi pi-key" routerLink="/cloture" styleClass="p-button-outlined p-button-primary"
-                          label="Clotures"></p-button>
-                <button pButton pRipple label="Liste Clotures" icon="pi pi-bookmark-fill
-" class="p-button-success mr-2"
-                        (click)="goToClotures()"></button>
-
+                <button pRipple pButton class="m-2" label="Actualiser" icon="pi pi-refresh"
+                          styleClass="p-button-raised p-button-outlined" (click)="refrech()"></button>
+                <button pButton pRipple icon="pi pi-key" (click)="goToClotures()" Class="p-button-outlined p-button-primary"
+                        label="Clotures"></button>
             </ng-template>
             <ng-template pTemplate="right">
-                <p-button icon="pi pi-eye" (click)="toggleTable()" styleClass="p-button-outlined p-button-primary  "
+                <p-button icon="pi pi-eye" (click)="toggleTable()" styleClass="p-button-outlined  "
                           label="Afficher listes ventes"></p-button>
                 <p-avatar *ngIf="displayusers " class="m-2" icon="pi pi-shopping-cart" pBadge styleClass="mr-5"
                           [value]="ventes.length+''" size="large"
                           [style]="{ 'background-color': '#b9c7ce', color: '#1a1717' }"></p-avatar>
             </ng-template>
-
         </p-toolbar>
-
         <div class="row  m-2  p-2 ">
             <div class="text-3xl font-bold">Total Ventes</div>
             <div class="text-3xl text-green-500 w-25 shadow-1 m-2 p-2">

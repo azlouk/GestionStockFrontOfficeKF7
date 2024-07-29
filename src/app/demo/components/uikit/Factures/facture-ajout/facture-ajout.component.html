@@ -4,17 +4,11 @@
             <div>
                 <h2 class="text-primary-600 font-bold m-3">Ajouter une nouvelle Facture</h2>
             </div>
-            <p-button
-                    *ngIf="showButtun"
-                    icon="pi pi-times"
-                    (click)="returnBack()"
-                    styleClass="p-button-rounded p-button-danger p-button-text p-button-raised">
-            </p-button>
         </div>
     </ng-template>
 
     <ng-template pTemplate="content">
-        <div class="p-grid card flex justify-content-between">
+        <div class="p-grid card flex justify-content-between ">
             <div class="p-col-12 p-md-6 d-flex align-items-center">
                 <div class="switch-label mb-2 font-bold">
                     <label>Dépôt</label>
@@ -43,7 +37,7 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="card bg-gray-100">
             <div class="justify-content-between flex">
                 <h3 class="font-bold">Sélectionner Utilisateurs</h3>
                 <button *ngIf="showButtun" pButton pRipple label="Ajouter" icon="pi pi-user-plus" class="p-button-text p-button-success mb-2" (click)="addUser()"></button>
@@ -60,120 +54,130 @@
                     </p-dialog>
                 </div>
 
-            <div class="p-grid p-align-start p-justify-between">
-                <div class="p-col-12 p-md-6 card p-mb-3">
-                    <div class="p-grid p-fluid">
-                        <div class="p-col-12 p-md-6 p-mb-3 ">
-                            <label class="text-primary font-bold pi pi-user mb-2">Transporteur</label>
-                            <p-dropdown
-                                    [options]="utilisateursTransporteur"
-                                    [(ngModel)]="newFacture.transporteur"
-                                    optionLabel="firstname"
-                                    [filter]="true"
-                                    placeholder="Sélectionner Transporteur"></p-dropdown>
-                        </div>
-                        <div class="p-col-12 p-md-12">
-                            <p-table *ngIf="newFacture.transporteur.id !== 0" [value]="[newFacture.transporteur]">
-                                <ng-template pTemplate="header">
-                                    <tr class="fs-5" style="--bs-table-color: #0056b3">
-                                        <th>Nom</th>
-                                        <th>Prénom</th>
-                                        <th>Email</th>
-                                        <th>Téléphone</th>
-                                    </tr>
-                                </ng-template>
-                                <ng-template pTemplate="body" let-transporteur>
-                                    <tr>
-                                        <td>{{ transporteur.firstname }}</td>
-                                        <td>{{ transporteur.lastname }}</td>
-                                        <td>{{ transporteur.email }}</td>
-                                        <td>{{ transporteur.telephone }}</td>
-                                    </tr>
-                                </ng-template>
-                            </p-table>
-                        </div>
-                    </div>
-                </div>
-                <div class="p-col-12 p-md-6 card p-mb-3 " *ngIf="newFacture.typeFacture!=='FACTURE_ACHAT'">
-                    <div class="p-grid p-fluid">
-                        <div class="p-col-12 p-md-6 p-mb-3">
-                            <label class="text-primary-600 font-bold pi pi-user mb-2">Client</label>
-                            <p-dropdown
-                                    [options]="utilisateurs"
-                                    [(ngModel)]="newFacture.client"
-                                    optionLabel="firstname"
-                                    [filter]="true"
-                                    placeholder="Sélectionner Client"></p-dropdown>
-                        </div>
-                        <div class="p-col-12 p-md-12">
-                            <p-table *ngIf="newFacture.client.id !== 0" [value]="[newFacture.client]" class="p-datatable table table-striped table-hover">
-                                <ng-template pTemplate="header">
-                                    <tr class="fs-5" style="--bs-table-color: #0056b3">
-                                        <th>Nom</th>
-                                        <th>Prénom</th>
-                                        <th>Email</th>
-                                        <th>Téléphone</th>
-                                    </tr>
-                                </ng-template>
-                                <ng-template pTemplate="body" let-client>
-                                    <tr>
-                                        <td>{{ client.firstname }}</td>
-                                        <td>{{ client.lastname }}</td>
-                                        <td>{{ client.email }}</td>
-                                        <td>{{ client.telephone }}</td>
-                                    </tr>
-                                </ng-template>
-                            </p-table>
+            <div class="flex p-align-start p-justify-between gap-4 p-3">
+                <div class="col-6 p-md-6 p-card   p-mb-3">
+                    <div class="card-content">
+                        <div class="p-grid p-fluid">
+                            <div class="col-6 p-md-6 p-mb-3">
+                                <label class="text-primary font-bold pi pi-user mb-2">Transporteur</label>
+                                <p-dropdown
+                                        [options]="utilisateursTransporteur"
+                                        [(ngModel)]="newFacture.transporteur"
+                                        optionLabel="firstname"
+                                        [filter]="true"
+                                        placeholder="Sélectionner Transporteur"></p-dropdown>
+                            </div>
+                            <div class="p-col-12 p-md-12">
+                                <p-table *ngIf="newFacture.transporteur.id !== 0" [value]="[newFacture.transporteur]">
+                                    <ng-template pTemplate="header">
+                                        <tr class="fs-5" style="--bs-table-color: #0056b3">
+                                            <th>Nom</th>
+                                            <th>Prénom</th>
+                                            <th>Email</th>
+                                            <th>Téléphone</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-transporteur>
+                                        <tr>
+                                            <td>{{ transporteur.firstname }}</td>
+                                            <td>{{ transporteur.lastname }}</td>
+                                            <td>{{ transporteur.email }}</td>
+                                            <td>{{ transporteur.telephone }}</td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="p-col-12 p-md-6 card p-mb-3" *ngIf="newFacture.typeFacture=='FACTURE_ACHAT'">
-                    <div class="p-grid p-fluid">
-                        <div class="p-col-12 p-md-6 p-mb-3">
-                            <label class="text-primary-600 font-bold pi pi-user mb-2">Fournisseur</label>
-                            <p-dropdown
-                                    [options]="providers"
-                                    [(ngModel)]="newFacture.provider"
-                                    optionLabel="firstname"
-                                    [filter]="true"
-                                    placeholder="Sélectionner Fournisseur"></p-dropdown>
+
+                <div class="col-6 p-md-6 p-card  p-mb-3" *ngIf="newFacture.typeFacture!=='FACTURE_ACHAT'">
+                    <div class="card-content">
+                        <div class="p-grid p-fluid">
+                            <div class="col-6 p-md-6 p-mb-3">
+                                <label class="text-primary-600 font-bold pi pi-user mb-2">Client</label>
+                                <p-dropdown
+                                        [options]="utilisateurs"
+                                        [(ngModel)]="newFacture.client"
+                                        optionLabel="firstname"
+                                        [filter]="true"
+                                        placeholder="Sélectionner Client"></p-dropdown>
+                            </div>
+                            <div class="p-col-12 p-md-12">
+                                <p-table *ngIf="newFacture.client.id !== 0" [value]="[newFacture.client]">
+                                    <ng-template pTemplate="header">
+                                        <tr class="fs-5" style="--bs-table-color: #0056b3">
+                                            <th>Nom</th>
+                                            <th>Prénom</th>
+                                            <th>Email</th>
+                                            <th>Téléphone</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-client>
+                                        <tr>
+                                            <td>{{ client.firstname }}</td>
+                                            <td>{{ client.lastname }}</td>
+                                            <td>{{ client.email }}</td>
+                                            <td>{{ client.telephone }}</td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </div>
                         </div>
-                        <div class="p-col-12 p-md-12">
-                            <p-table *ngIf="newFacture.provider.id != 0" [value]="[newFacture.provider]" class="p-datatable table table-striped table-hover">
-                                <ng-template pTemplate="header">
-                                    <tr class="fs-5" style="--bs-table-color: #0056b3">
-                                        <th>Nom</th>
-                                        <th>Prénom</th>
-                                        <th>Email</th>
-                                        <th>Téléphone</th>
-                                    </tr>
-                                </ng-template>
-                                <ng-template pTemplate="body" let-provider>
-                                    <tr>
-                                        <td>{{ provider.firstname }}</td>
-                                        <td>{{ provider.lastname }}</td>
-                                        <td>{{ provider.email }}</td>
-                                        <td>{{ provider.telephone }}</td>
-                                    </tr>
-                                </ng-template>
-                            </p-table>
+                    </div>
+                </div>
+
+                <div class="col-6 p-md-6 p-card p-mb-3" *ngIf="newFacture.typeFacture=='FACTURE_ACHAT'">
+                    <div class="card-content">
+                        <div class="p-grid p-fluid">
+                            <div class="col-6 p-md-6 p-mb-3">
+                                <label class="text-primary-600 font-bold pi pi-user mb-2">Fournisseur</label>
+                                <p-dropdown
+                                        [options]="providers"
+                                        [(ngModel)]="newFacture.provider"
+                                        optionLabel="firstname"
+                                        [filter]="true"
+                                        placeholder="Sélectionner Fournisseur"></p-dropdown>
+                            </div>
+                            <div class="p-col-12 p-md-12">
+                                <p-table *ngIf="newFacture.provider.id !== 0" [value]="[newFacture.provider]">
+                                    <ng-template pTemplate="header">
+                                        <tr style="--bs-table-color: #0056b3">
+                                            <th>Nom</th>
+                                            <th>Prénom</th>
+                                            <th>Email</th>
+                                            <th>Téléphone</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-provider>
+                                        <tr>
+                                            <td>{{ provider.firstname }}</td>
+                                            <td>{{ provider.lastname }}</td>
+                                            <td>{{ provider.email }}</td>
+                                            <td>{{ provider.telephone }}</td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
+
         </div>
-        <div class="  row m-2">
-            <div class="card flex-column justify-content-center">
-                <h3 class="font-bold ">Sélectionner Produits</h3>
+        <p-messages></p-messages>
+        <div class="flex p-5 card gap-3 justify-content-center bg-gray-100">
+            <div class="p-card  col-5 justify-content-center">
+                <h4 class="font-bold ">Sélectionner Produits</h4>
                     <p-table
                         #dt1
                         [value]="produits"
                         dataKey="id"
                         scrollable="true"
-                        scrollHeight="25rem"
+                        scrollHeight="20rem"
                         currentPageReportTemplate="Affichage de {first} à {last} des entrées {totalRecords} "
-                        [globalFilterFields]="['nom', 'description', 'dataqr', 'dateF','dateF','dateE']"
+                        [globalFilterFields]="['nom', 'description', 'dataqr', 'dateF','dateE']"
                     >
                         <ng-template pTemplate="caption">
                             <div class="flex">
@@ -198,25 +202,25 @@
                         </ng-template>
                         <ng-template pTemplate="header">
                             <tr>
-                                <th style="min-width:15rem">
+                                <th style="min-width:6rem">
                                     <div class="flex align-items-center">
                                         Nom
                                         <p type="text" field="nom" display="menu"></p>
                                     </div>
                                 </th>
-                                <th style="min-width:15rem">
+                                <th style="min-width:6rem">
                                     <div class="flex align-items-center">
                                         Description
                                         <p type="text" field="description" display="menu"></p>
                                     </div>
                                 </th>
-                                <th style="min-width:15rem">
+                                <th style="min-width:6rem">
                                     <div class="flex align-items-center">
                                         Code
                                         <p type="text" field="dataqr" display="menu"></p>
                                     </div>
                                 </th>
-                                <th style="min-width:15rem">
+                                <th style="min-width:6rem">
                                     <div class="flex align-items-center">
                                         Quantité
                                         <p field="Quantite" matchMode="in" display="menu"></p>
@@ -236,26 +240,9 @@
                                                 </ng-template>
                                             </p-multiSelect>
                                         </ng-template>
-
-
                                     </div>
-
-                                <th style="min-width:10rem">
+                                <th style="min-width:7rem" >
                                     <div class="flex align-items-center">
-                                        Date Fabrication
-                                        <p type="date" field="dateF" display="menu"></p>
-                                    </div>
-                                </th>
-                                <th style="min-width:10rem">
-                                    <div class="flex align-items-center">
-                                        Date Expiration
-                                        <p type="numeric" field="dateE" display="menu" currency="USD"></p>
-                                    </div>
-                                </th>
-
-                                <th style="min-width:10rem" >
-                                    <div class="flex align-items-center">
-
                                         <p field="activity" matchMode="between" display="menu"> </p>
                                         <ng-template pTemplate="filter" let-filter="filterCallback">
                                             <p-slider [ngModel]="activityValues" [range]="true" (onSlideEnd)="filter($event.values)" styleClass="m-3"></p-slider>
@@ -286,14 +273,8 @@
                                     {{ ProduitInter.qantite }}
 
                                 </td>
-                                <td class="text-break">
-                                    {{ ProduitInter.dateFabrication | date: 'MM/dd/yyyy' }}
-                                </td>
-                                <td class="text-break">
-                                    {{ ProduitInter.dateExpiration | date: 'MM/dd/yyyy' }}
-                                </td>
                                 <td class="align-items-center">
-                                    <p-button label="Ajouter" (click)="addToFacture(ProduitInter)" icon="pi pi-check"></p-button>
+                                    <button pButton pRipple label="Ajouter" icon="pi pi-plus" class="p-button-text p-button-success mb-2" (click)="addToFacture(ProduitInter)"></button>
                                 </td>
                             </tr>
                         </ng-template>
@@ -303,9 +284,11 @@
                             </tr>
                         </ng-template>
                     </p-table>
-                <h3 class="font-bold text-primary-600 mt-2">Produits facture</h3>
-                <div class="form-row m-4 mt-5 " >
-                    <p-table [value]="produitsFactures" [scrollable]="true" scrollHeight="400px">
+            </div>
+
+            <div class=" p-card col-7 justify-content-center" >
+                    <h3 class="font-bold  mt-2">Produits facture</h3>
+                    <p-table [value]="produitsFactures" [scrollable]="true" scrollHeight="24rem">
                         <ng-template pTemplate="header">
                             <tr>
                                 <th pSortableColumn="nom" style="width:20%">Nom Produits <p-sortIcon field="nom"></p-sortIcon></th>
@@ -328,28 +311,35 @@
                                 </td>
                             </tr>
                         </ng-template>
+                        <ng-template pTemplate="emptymessage" >
+                            <tr>
+                                <td colspan="5">
+                                    <p-message severity="error" text="Aucun produit n'a été ajouté à votre facture !"
+                                               [style.padding-left]="'28%'"></p-message>
+                                </td>
+                            </tr>
+                        </ng-template>
                     </p-table>
                 </div>
-            </div>
         </div>
 
-        <div class="card flex flex-row float-end  p-5 bg-body-tertiary " style="margin: 60px" >
-            <div class="flex-auto p-2 col-4">
-                <label class="font-bold block m-2 text-primary-600" >Tax : </label>
+        <div class="card flex align-items-center  justify-content-between" >
+            <div class="  ">
+                <label class="font-bold text-2xl block m-2" >Tax : </label>
                 <p-inputNumber [(ngModel)]="newFacture.montantTaxe"  [disabled]="false" inputId="percent" prefix="%"> </p-inputNumber>
             </div>
-            <div class="flex flex-column col-4">
-                <label class="block font-bold mb-2PrimaryColorTitle ml-2" >Total : </label>
+            <div class="flex flex-column col-4 ">
+                <label class="block font-bold mb-2PrimaryColorTitle ml-2 text-2xl" >Total : </label>
                 <label class="text-red-600 font-bold text-center text-2xl rounded-3 m-2 card col-10" > {{newFacture.montant+newFacture.montant*newFacture.montantTaxe/100|number}} TND</label>
+
             </div>
-            <div class="col flex-auto p-2 col-4">
-                <label class="block font-bold  m-2 text-primary-600" >Réglement : </label>
+            <div class=" ">
+                <label class="block font-bold text-2xl m-2" >Réglement : </label>
                 <p-inputNumber [(ngModel)]="newFacture.reglement"  inputId="currency-us" mode="currency" currency="TND" locale="en-US"> </p-inputNumber>
             </div>
-
         </div>
         <div class="card flex-column">
-            <h3 class="font-bold text-primary-600">Ajouter tranches </h3>
+            <h3 class="font-bold">Ajouter tranches </h3>
             <div class="flex col-12 justify-content-between align-items-center">
             <div class="p-field flex flex-column gap-2">
                 <label class="text-primary-600 font-bold">Description de la tranche</label>
@@ -384,44 +374,44 @@
                             ></p-radioButton>
                     <label [for]="Newtranche.statutPayement" class="ml-2 font-bold text-red-600">Non Payé
                     </label>
-
                 </div>
-
-
-
             </div>
 
                 <div class="">
                     <button pButton pRipple label="Add" icon="pi pi-plus" class="p-button-text p-button-success p-button-outlined" (click)="AddTrancheToNewFacture()"></button>
                 </div>
         </div>
+            <!-- Tableau pour afficher les tranches ajoutées -->
+            <div class="mt-4 p-2 bg-gray-100">
+                <p-table *ngIf="newFacture.tranches && newFacture.tranches.length > 0" [value]="newFacture.tranches" [tableStyle]="{ 'min-width': '50rem' }">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>ID</th>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Montant</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-tr let-index="rowIndex">
+                        <tr>
+                            <td>{{ tr.id }}</td>
+                            <td>{{ tr.dateEcheance | date :'dd-MM-yyyy' }}</td>
+                            <td>{{ tr.description }}</td>
+                            <td>{{ tr.montantTranche }}</td>
+                            <td>{{ tr.statutPayement }}</td>
+                            <td>
+                                <p-button icon="pi pi-trash" [rounded]="true" severity="danger" [outlined]="true" (click)="deleteTrancheNewFacture(index)"></p-button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
         </div>
-        <!-- Tableau pour afficher les tranches ajoutées -->
-        <p-table *ngIf="newFacture.tranches && newFacture.tranches.length > 0" [value]="newFacture.tranches" [tableStyle]="{ 'min-width': '50rem' }">
-            <ng-template pTemplate="header">
-                <tr>
-                    <th>ID</th>
-                    <th>Date</th>
-                    <th>Description</th>
-                    <th>Montant</th>
-                    <th>Status</th>
-                    <th></th>
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-tr let-index="rowIndex">
-                <tr>
-                    <td>{{ tr.id }}</td>
-                    <td>{{ tr.dateEcheance | date :'dd-MM-yyyy' }}</td>
-                    <td>{{ tr.description }}</td>
-                    <td>{{ tr.montantTranche }}</td>
-                    <td>{{ tr.statutPayement }}</td>
-                    <td>
-                        <p-button icon="pi pi-trash" [rounded]="true" severity="danger" [outlined]="true" (click)="deleteTrancheNewFacture(index)"></p-button>
-                    </td>
-                </tr>
-            </ng-template>
-        </p-table>
+
     </ng-template>
+
     <ng-template pTemplate="footer" >
         <div class="flex justify-content-end align-items-end">
             <button *ngIf="showButtun" pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="returnBack()"></button>

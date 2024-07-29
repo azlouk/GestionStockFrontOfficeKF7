@@ -34,6 +34,8 @@ import {TrancheService} from "../../../../../layout/service/tranche.service";
 import {Article} from "../../../../../models/Article";
 import {ProduitAjoutComponent} from "../../Products/produit-ajout/produit-ajout.component";
 import {RadioButtonModule} from "primeng/radiobutton";
+import {MessageService} from "primeng/api";
+import {MessageModule} from "primeng/message";
 @Component({
   selector: 'app-facture-ajout',
   standalone: true,
@@ -58,20 +60,21 @@ import {RadioButtonModule} from "primeng/radiobutton";
         InputTextModule,
         AjoutUserComponent,
         ProduitAjoutComponent,
-        RadioButtonModule
+        RadioButtonModule,
+        MessageModule
     ],
   templateUrl: './facture-ajout.component.html',
   styleUrl: './facture-ajout.component.scss'
 })
-export class FactureAjoutComponent implements OnInit{
+export class FactureAjoutComponent implements OnInit {
     @Input() showRetourButton: boolean = true;
     newFacture = new Facture();
     depots: Depot[] = [];
     produits: Produit[] = [];
     utilisateurs: User[] = [];
-    utilisateursClients : User[] = [];
-    providers : User[]=[];
-    produitsFiltres :Produit[];
+    utilisateursClients: User[] = [];
+    providers: User[] = [];
+    produitsFiltres: Produit[];
     tranches: Tranche[] = [];
 
     rechercheProduit: string = '';
@@ -79,13 +82,13 @@ export class FactureAjoutComponent implements OnInit{
     roles = Object.values(RoleEnum);
     autoReference: boolean = true;
     composantBVisible = false;
-    utilisateursTransporteur:User[]=[];
-    produitsFactures: LigneFacture[]=[];
-    ligneProduits : Produit [] = [];
+    utilisateursTransporteur: User[] = [];
+    produitsFactures: LigneFacture[] = [];
+    ligneProduits: Produit [] = [];
     activityValues: number[] = [0, 100];
-    selectedDepot: any=null;
-    idDepot : number =0;
-    idClient : number=0;
+    selectedDepot: any = null;
+    idDepot: number = 0;
+    idClient: number = 0;
     root: string;
     showButtun: boolean = true;
     showAddUser: boolean = false;
@@ -95,20 +98,21 @@ export class FactureAjoutComponent implements OnInit{
     clear(table: Table) {
         table.clear();
     }
+
     constructor(
         private cdr: ChangeDetectorRef,
         private factureService: FactureService,
         private depotService: DepotService,
         private userService: UserService,
         private produitService: ProduitService,
-        private trancheService : TrancheService,
+        private trancheService: TrancheService,
         private route: ActivatedRoute,
-        private router:Router,
+        private router: Router,
         private formBuilder: FormBuilder,
-
+        private messageService: MessageService
     ) {
-        this.produitsFactures=[]
-        this.produitsFiltres=[]
+        this.produitsFactures = []
+        this.produitsFiltres = []
         this.userForm = this.formBuilder.group({
             nom: ['', Validators.required],
             prenom: ['', Validators.required],
@@ -117,7 +121,7 @@ export class FactureAjoutComponent implements OnInit{
             address: ['', Validators.required],
             role: ['', Validators.required],
         });
-        this.newFacture.dateCreation=new Date() ;
+        this.newFacture.dateCreation = new Date();
     }
 
     async ngOnInit(): Promise<void> {
@@ -160,38 +164,44 @@ export class FactureAjoutComponent implements OnInit{
             //console.log('List of services:', this.services);
         });
     }
+
     filtrerProduits(recherche: string) {
         console.log(recherche)
-        this.produitsFiltres = this.produits.filter((produit:Produit) => {
-            return produit.nom.includes(recherche)||
+        this.produitsFiltres = this.produits.filter((produit: Produit) => {
+            return produit.nom.includes(recherche) ||
                 produit.dataqr.includes(recherche)
         });
     }
-    getAllUsers(){
-        this.userService.getUsersClient().subscribe((value :User[])=>{
-            this.utilisateurs=value
+
+    getAllUsers() {
+        this.userService.getUsersClient().subscribe((value: User[]) => {
+            this.utilisateurs = value
             // console.log(new JsonPipe().transform(this.utilisateurs) )
         })
     }
-    getAllTranches(){
-        this.trancheService.getTranches().subscribe((value :Tranche[])=>{
-            this.tranches=value
+
+    getAllTranches() {
+        this.trancheService.getTranches().subscribe((value: Tranche[]) => {
+            this.tranches = value
             // console.log(new JsonPipe().transform(this.tranches) )
         })
     }
-    getAllTrans(){
-        this.userService.getUsersTransporteur().subscribe((value :User[])=>{
-            this.utilisateursTransporteur=value
+
+    getAllTrans() {
+        this.userService.getUsersTransporteur().subscribe((value: User[]) => {
+            this.utilisateursTransporteur = value
         })
     }
-    getAllProvider(){
-        this.userService.getUsersProviders().subscribe((value :User[])=>{
-            this.providers=value
+
+    getAllProvider() {
+        this.userService.getUsersProviders().subscribe((value: User[]) => {
+            this.providers = value
         })
     }
-    getAllProduits(){
-        this.produitService.getProduits().subscribe((value :any)=>{
-            this.produits=value ;
+
+    getAllProduits() {
+        this.produitService.getProduits().subscribe((value: any) => {
+            this.produits = value;
             // console.error(""+new JsonPipe().transform(this.produits))
         })
     }
@@ -363,36 +373,36 @@ export class FactureAjoutComponent implements OnInit{
     }
 
     deleteProduct(p: LigneFacture): void {
-        this.produitsFactures=this.produitsFactures.filter(value => value.produit.id!==p.produit.id)
+        this.produitsFactures = this.produitsFactures.filter(value => value.produit.id !== p.produit.id)
         this.calculeFactureTotal();
     }
 
     calculeFactureTotal() {
-        this.newFacture.montant=0;
+        this.newFacture.montant = 0;
         this.produitsFactures.forEach(value => {
-            if(value.quantite>value.produit.qantite)
-            {
-                value.quantite=value.produit.qantite ;
+            if (value.quantite > value.produit.qantite) {
+                value.quantite = value.produit.qantite;
             }
-            if(value.quantite<value.produit.minQuantiteGros) {
+            if (value.quantite < value.produit.minQuantiteGros) {
                 this.newFacture.montant += value.quantite * (value.produit.prixUnitaire + value.produit.gainUnitaire);
-                value.montantTotal=value.quantite * (value.produit.prixUnitaire + value.produit.gainUnitaire);
+                value.montantTotal = value.quantite * (value.produit.prixUnitaire + value.produit.gainUnitaire);
                 console.log(value.montantTotal);
-            }      else {
-                this.newFacture.montant+=value.quantite * (value.produit.prixGros+ value.produit.gainGros) ;
-                value.montantTotal = value.quantite * (value.produit.prixGros+ value.produit.gainGros)
+            } else {
+                this.newFacture.montant += value.quantite * (value.produit.prixGros + value.produit.gainGros);
+                value.montantTotal = value.quantite * (value.produit.prixGros + value.produit.gainGros)
                 console.log(value.montantTotal);
             }
         })
     }
 
-    getPrixCalculate(l: LigneFacture):number {
-        if(l.quantite<l.produit.minQuantiteGros) {
+    getPrixCalculate(l: LigneFacture): number {
+        if (l.quantite < l.produit.minQuantiteGros) {
             return l.produit.prixUnitaire + l.produit.gainUnitaire;
         } else {
-            return  l.produit.prixGros+l.produit.gainGros ;
+            return l.produit.prixGros + l.produit.gainGros;
         }
     }
+
     changeType() {
         this.newFacture.typeFacture = this.newFacture.typeFacture === factureType.SORTIE
             ? factureType.ENTREE
@@ -401,50 +411,45 @@ export class FactureAjoutComponent implements OnInit{
         this.cdr.detectChanges();
         console.log(this.newFacture.typeFacture)
     }
+
     returnBack() {
         this.factureService.returnBack();
     }
+
     addToFacture(produitInterface: Produit) {
         const existingProduct = this.produitsFactures.find(product => product.produit.id === produitInterface.id);
         if (existingProduct) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Produit déjà dans la facture',
-                text: 'Ce produit est déjà dans la facture !',
-                confirmButtonText: 'OK'
-            });
+            this.messageService.add({severity:'warn', summary:'Produit déjà dans la facture', detail:'Ce produit est déjà dans la facture !',life: 1500});
         } else {
-            // si le produit n'existe pas creer une nouvelle ligne de facture
-
+            // si le produit n'existe pas créer une nouvelle ligne de facture
             const ligneFacture: LigneFacture = new LigneFacture();
             ligneFacture.produit = produitInterface;
             ligneFacture.quantite = 1;
             ligneFacture.montantTotal = 0;
             this.produitsFactures.push(ligneFacture);
-            Swal.fire({
-                icon: 'success',
-                title: 'Produit ajouté à la facture',
-                text: 'Le produit a été ajouté avec succès à la facture !',
-                confirmButtonText: 'OK'
-            });
+            this.messageService.add({severity:'success', summary:'Produit ajouté à la facture', detail:'Le produit a été ajouté avec succès à la facture !',life: 1000});
         }
-        this.calculeFactureTotal()
+        this.calculeFactureTotal();
     }
+
     private updateRootFromCurrentPath(): void {
         this.root = this.router.url; // Récupère le chemin actuel
         this.updateShowButtun();
     }
 
     // Fonction pour mettre à jour showButtun en fonction de la valeur de root
-    Newtranche: Tranche=new Tranche();
+    Newtranche: Tranche = new Tranche();
+
     private updateShowButtun(): void {
         this.showButtun = !this.root.includes('caisse');
     }
+
     AddTrancheToNewFacture() {
-        this.Newtranche.user=new User()
+        this.Newtranche.user = new User()
         this.newFacture.tranches.push(this.Newtranche);
-        this.Newtranche=new Tranche()
+        this.Newtranche = new Tranche()
     }
+
     updateTrancheLocal(updatedTranche: Tranche, index: number) {
         if (index > -1) {
             // Mettre à jour la tranche localement
@@ -456,12 +461,14 @@ export class FactureAjoutComponent implements OnInit{
             });
         }
     }
+
     deleteTrancheNewFacture(index: number) {
         if (index > -1) {
             const trancheToRemove = this.newFacture.tranches[index];
             this.removeTranche(trancheToRemove, index);
         }
     }
+
     removeTranche(tranche: Tranche, index: number) {
         Swal.fire({
             title: "Es-tu sûr ?",
@@ -496,14 +503,16 @@ export class FactureAjoutComponent implements OnInit{
     }
 
     addUser() {
-        this.showAddUser=true
+        this.showAddUser = true
     }
+
     addProduit() {
-        this.showAddProduit=true
+        this.showAddProduit = true
     }
 
     refresh() {
         this.getAllProduits()
     }
+
 }
 

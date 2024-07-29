@@ -26,7 +26,7 @@
                    <i class="pi pi-spin pi-box text-success"></i>
             </span>
                     <p-dataView #dv [value]="produits" [layout]="layout" [paginator]="true" [rows]="12" [loading]="loading"
-                                [rowsPerPageOptions]="[6,12,18,24,30 ]"  [filterBy]="'nom,dataqr,subdataqr,dateFabrication,dateExpiration,description,qantite,prixUnitaire,gainGros,minQuantiteGros,article.nom,article.id'">
+                                [rowsPerPageOptions]="[6,12,18,24,30,42 ]"  [filterBy]="'nom,dataqr,subdataqr,dateFabrication,dateExpiration,description,qantite,prixUnitaire,gainGros,minQuantiteGros,article.nom,article.id'">
                         <ng-template pTemplate="grid" let-produits>
                             <div class="grid grid-nogutter">
                                 <div class="col-12 sm:col-12 md:col-6 xl:col-2 p-2" *ngFor="let product of produits">
@@ -64,13 +64,13 @@
                                                 <span
                                                         class="text-2xl font-semibold"> TND {{ product.prixUnitaire + product.gainUnitaire }}</span>
                                                 <div class="flex justify-content-between mt-4">
-                                                    <button pButton pRipple icon="pi pi-cart-plus" class="p-button-rounded p-button-outlined p-button-warning"
+                                                    <button pButton pRipple icon="pi pi-cart-plus" class="p-button-rounded p-button-outlined p-button-success"
                                                             (click)="addProductToSale(product)"></button>
                                                     <button pButton pRipple icon="pi pi pi-eye" class="p-button-rounded p-button-outlined"
                                                             (click)="op.toggle($event)"></button>
                                                 </div>
-                                                <p-overlayPanel #op>
-                                                    <div class=" card1">
+                                                <p-overlayPanel #op >
+                                                    <div class=" card"  style="width: 250px;">
                                                         <div class="flex flex-row justify-content-between ">
                                                             <div><i class="pi pi-tags text-primary-600"></i>
                                                                 <span
@@ -106,9 +106,8 @@
                                                             <span
                                                                     class="text-2xl font-semibold text-red-400">{{product.prixUnitaire + product.gainUnitaire}}
                                                                 TND</span>
-                                                            <p-button icon="pi pi-shopping-cart"
-                                                                      class="flex-auto md:flex-initial white-space-nowrap"
-                                                                      (click)="addProductToSale(product)"/>
+                                                            <button pButton pRipple icon="pi pi-cart-plus" class="p-button-rounded p-button-outlined p-button-success"
+                                                                    (click)="addProductToSale(product)"></button>
                                                         </div>
                                                     </div>
                                                 </p-overlayPanel>

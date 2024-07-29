@@ -489,7 +489,7 @@ export class POSComponent implements OnInit,OnDestroy {
     updatePrixVente(ligneVente: LigneVente): void {
         const produit = ligneVente.produit;
         if (ligneVente.venteQty >= produit.minQuantiteGros) {
-            ligneVente.prixVente = produit.prixGros + produit.gainGros;
+            ligneVente.prixVente = produit.prixUnitaire + produit.gainGros;
         } else {
             ligneVente.prixVente = produit.prixUnitaire + produit.gainUnitaire;
         }
