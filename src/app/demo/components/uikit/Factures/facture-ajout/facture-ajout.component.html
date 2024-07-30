@@ -1,4 +1,7 @@
+
 <p-card>
+    <p-confirmDialog></p-confirmDialog>
+    <p-toast></p-toast>
     <ng-template pTemplate="header" >
         <div class="flex justify-content-between align-items-center ">
             <div>
@@ -8,7 +11,7 @@
     </ng-template>
 
     <ng-template pTemplate="content">
-        <div class="p-grid card flex justify-content-between ">
+        <div class="p-grid card flex justify-content-between bg-orange-50">
             <div class="p-col-12 p-md-6 d-flex align-items-center">
                 <div class="switch-label mb-2 font-bold">
                     <label>Dépôt</label>
@@ -40,7 +43,11 @@
         <div class="card bg-gray-100">
             <div class="justify-content-between flex">
                 <h3 class="font-bold">Sélectionner Utilisateurs</h3>
-                <button *ngIf="showButtun" pButton pRipple label="Ajouter" icon="pi pi-user-plus" class="p-button-text p-button-success mb-2" (click)="addUser()"></button>
+                <div>
+                    <button pButton pRipple label="Actualiser" icon="pi pi-refresh" class="p-button-text p-button-primary mb-2" (click)="refreshUser()"></button>
+                    <button  pButton pRipple label="Ajouter" icon="pi pi-user-plus" class="p-button-text p-button-success mb-2" (click)="addUser()"></button>
+                </div>
+
             </div>
                 <div class=" flex justify-content-center">
                     <p-dialog
@@ -163,10 +170,7 @@
                     </div>
                 </div>
             </div>
-
-
         </div>
-        <p-messages></p-messages>
         <div class="flex p-5 card gap-3 justify-content-center bg-gray-100">
             <div class="p-card  col-5 justify-content-center">
                 <h4 class="font-bold ">Sélectionner Produits</h4>
@@ -183,8 +187,7 @@
                             <div class="flex">
                                 <button pButton label="Effacer" class="p-button-outlined p-button-warning" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
                                 <button pButton label="Ajouter" class="p-button-outlined p-button-success ml-2" icon="pi pi-plus" (click)="addProduit()"></button>
-                                <button pButton pRipple label="Actualiser" icon="pi pi-refresh" class="p-button-primary p-button-outlined ml-2"
-                                        (click)="refresh()"></button>
+                                <button pButton pRipple label="Actualiser" icon="pi pi-refresh" class="p-button-primary p-button-outlined ml-2" (click)="refresh()"></button>
                                 <p-dialog
                                         header="Ajouter Produit"
                                         [modal]="true"
@@ -294,7 +297,7 @@
                                 <th pSortableColumn="nom" style="width:20%">Nom Produits <p-sortIcon field="nom"></p-sortIcon></th>
                                 <th pSortableColumn="quantite" style="width:20%">Quantité <p-sortIcon field="quantite"></p-sortIcon></th>
                                 <th style="width:20%">Prix (TND)</th>
-                                <th pSortableColumn="price" style="width:20%">Total (TND) <p-sortIcon field="price"></p-sortIcon></th>
+                                <th pSortableColumn="montantTotal" style="width:20%">Total (TND) <p-sortIcon field="price"></p-sortIcon></th>
                                 <th style="width:20%"></th>
                             </tr>
                         </ng-template>
@@ -302,7 +305,7 @@
                             <tr>
                                 <td>{{ l.produit.nom }}</td>
                                 <td>
-                                    <p-inputNumber class="text-center" id="{{ l.produit.id }}" [(ngModel)]="l.quantite" [max]="l.produit.qantite" (ngModelChange)="calculeFactureTotal()" name="quantiteProduit"></p-inputNumber>
+                                    <p-inputNumber class="text-center" id="{{ l.produit.id }}" [(ngModel)]="l.quantite" [max]="newFacture.typeFacture == 'FACTURE_VENTE' ? l.produit.qantite : null" (ngModelChange)="calculeFactureTotal()" name="quantiteProduit"></p-inputNumber>
                                 </td>
                                 <td class="fw-bold fs-4 text-red-600">{{ getPrixCalculate(l) | number }}</td>
                                 <td class="fw-bold fs-3 text-black" >{{ getPrixCalculate(l) * l.quantite | number }}</td>
@@ -382,8 +385,8 @@
                 </div>
         </div>
             <!-- Tableau pour afficher les tranches ajoutées -->
-            <div class="mt-4 p-2 bg-gray-100">
-                <p-table *ngIf="newFacture.tranches && newFacture.tranches.length > 0" [value]="newFacture.tranches" [tableStyle]="{ 'min-width': '50rem' }">
+            <div class="mt-4 p-2 bg-gray-100"  *ngIf="newFacture.tranches && newFacture.tranches.length > 0">
+                <p-table  [value]="newFacture.tranches" [tableStyle]="{ 'min-width': '50rem' }">
                     <ng-template pTemplate="header">
                         <tr>
                             <th>ID</th>
@@ -409,9 +412,7 @@
                 </p-table>
             </div>
         </div>
-
     </ng-template>
-
     <ng-template pTemplate="footer" >
         <div class="flex justify-content-end align-items-end">
             <button *ngIf="showButtun" pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="returnBack()"></button>

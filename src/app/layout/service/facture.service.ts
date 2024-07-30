@@ -14,6 +14,7 @@ import {User} from "../../models/user";
 import {map} from "rxjs/operators";
 import {UserService} from "./user.service";
 import {TrancheService} from "./tranche.service";
+import {ConfirmationService, MessageService} from "primeng/api";
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +30,8 @@ export class FactureService {
     constructor(private depotService: DepotService,
                 private userService: UserService,
                 private http : HttpClient,
+                private confirmationService:ConfirmationService,
+                private messageService : MessageService,
                 private produitService: ProduitService,
                 private trancheService: TrancheService,
                 private router : Router,
@@ -119,7 +122,7 @@ export class FactureService {
         const fact = {
             "reference": newFacture.reference,
             "date": this.datePipe.transform(newFacture.date, 'yyyy-MM-dd'),
-            "montant": newFacture.montant,
+            "montant": newFacture.montant+newFacture.montant*newFacture.montantTaxe/100,
             "paye": newFacture.paye,
             "reglement": newFacture.reglement,
             "montantTaxe": newFacture.montantTaxe,
@@ -230,7 +233,7 @@ export class FactureService {
             "id":newFacture.id,
             "reference": newFacture.reference,
             "date":this.datePipe.transform(newFacture.date,'yyyy-MM-dd'),
-            "montant": newFacture.montant,
+            "montant": newFacture.montant+newFacture.montant*newFacture.montantTaxe/100,
             "paye": newFacture.paye,
             "reglement": newFacture.reglement,
             "montantTaxe": newFacture.montantTaxe,
@@ -278,6 +281,27 @@ export class FactureService {
                 })
             );
     }
+   /* returnBack() {
+        this.confirmationService.confirm({
+            header: 'Êtes-vous sûr?',
+            message: 'Vous ne pourrez pas revenir en arrière !',
+            icon: 'pi pi-exclamation-triangle',
+            acceptLabel: 'Oui',
+            rejectLabel: 'Annuler',
+            acceptButtonStyleClass: 'p-button-outlined p-button-danger',
+            rejectButtonStyleClass: 'p-button-outlined p-button-secondary',
+            accept: () => {
+                this.router.navigate(['/uikit/facture']);
+            },
+            reject: () => {
+                this.messageService.add({
+                    severity: 'info',
+                    summary: 'Annulation',
+                    detail: 'Le retour a été annulé.'
+                });
+            }
+        });
+    }*/
 
     returnBack() {
         Swal.fire({

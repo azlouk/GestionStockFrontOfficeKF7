@@ -27,7 +27,7 @@ import {PaginatorModule} from "primeng/paginator";
         DatePipe,ConfirmationService,MessageService,
         { provide: LocationStrategy, useClass: PathLocationStrategy },
         CountryService, CustomerService, EventService, IconService, NodeService,
-        PhotoService, ProductService
+        PhotoService, ProductService,
     ],
     bootstrap: [AppComponent],
 })

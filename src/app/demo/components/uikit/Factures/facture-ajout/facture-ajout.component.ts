@@ -1,5 +1,4 @@
 import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
-import Swal from "sweetalert2";
 import {Facture, factureType} from "../../../../../models/Facture";
 import {Depot} from "../../../../../models/Depot";
 import {Produit} from "../../../../../models/produit";
@@ -11,8 +10,6 @@ import {DepotService} from "../../../../../layout/service/depot.service";
 import {UserService} from "../../../../../layout/service/user.service";
 import {ProduitService} from "../../../../../layout/service/produit.service";
 import {ActivatedRoute, Router} from "@angular/router";
-import {getUserDecodeID} from "../../../../../../main";
-import {Button} from "primeng/button";
 import {CalendarModule} from "primeng/calendar";
 import {ListboxModule} from "primeng/listbox";
 import {Table, TableModule} from "primeng/table";
@@ -34,8 +31,10 @@ import {TrancheService} from "../../../../../layout/service/tranche.service";
 import {Article} from "../../../../../models/Article";
 import {ProduitAjoutComponent} from "../../Products/produit-ajout/produit-ajout.component";
 import {RadioButtonModule} from "primeng/radiobutton";
-import {MessageService} from "primeng/api";
+import {ConfirmationService, MessageService} from "primeng/api";
 import {MessageModule} from "primeng/message";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {ToastModule} from "primeng/toast";
 @Component({
   selector: 'app-facture-ajout',
   standalone: true,
@@ -61,7 +60,9 @@ import {MessageModule} from "primeng/message";
         AjoutUserComponent,
         ProduitAjoutComponent,
         RadioButtonModule,
-        MessageModule
+        MessageModule,
+        ConfirmDialogModule,
+        ToastModule
     ],
   templateUrl: './facture-ajout.component.html',
   styleUrl: './facture-ajout.component.scss'
@@ -109,7 +110,8 @@ export class FactureAjoutComponent implements OnInit {
         private route: ActivatedRoute,
         private router: Router,
         private formBuilder: FormBuilder,
-        private messageService: MessageService
+        private messageService: MessageService,
+        private confirmationService: ConfirmationService
     ) {
         this.produitsFactures = []
         this.produitsFiltres = []
@@ -208,168 +210,99 @@ export class FactureAjoutComponent implements OnInit {
 
     createNewFacture(): void {
         this.newFacture.lignesFacture = this.produitsFactures;
+
         // Validation des champs obligatoires
         if (!this.validateFacture()) {
             return;
         }
+
         console.log('Contenu de la facture à enregistrer :', this.newFacture);
-        // Configuration de SweetAlert avec des boutons personnalisés
-        const swalWithBootstrapButtons = Swal.mixin({
-            customClass: {
-                confirmButton: "btn btn-success ml-2",
-                cancelButton: "btn btn-danger",
-                popup: "swal2-zindex",
+
+        this.confirmationService.confirm({
+            header: "Cette facture est payée ?",
+            message: "Vous ne pourrez pas revenir en arrière !",
+            icon: "pi pi-exclamation-triangle",
+            acceptIcon: 'pi pi-check mr-2',
+            rejectIcon: 'pi pi-times mr-2',
+            rejectButtonStyleClass: 'p-button-sm',
+            acceptButtonStyleClass: 'p-button-outlined p-button-sm',
+            accept: () => {
+                this.newFacture.paye = true;
+                this.saveFacture();
             },
-            buttonsStyling: false
-        });
-
-        // Demande de confirmation pour le paiement de la facture
-        Swal.fire({
-            title: "Cette facture est payée ?",
-            text: "Vous ne pourrez pas revenir en arrière !",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Oui, payée",
-            cancelButtonText: "Non",
-            reverseButtons: true
-        })
-            .then((result) => {
-                this.newFacture.paye = result.isConfirmed;
-
-                if (this.newFacture.id) {
-                    // Mise à jour de la facture existante
-                    this.factureService.updateFacture(this.newFacture).subscribe(
-                        (response) => {
-                            Swal.fire({
-                                title: "Mise à jour",
-                                text: "Votre facture a été mise à jour avec succès",
-                                icon: "success"
-                            }).then(() => {
-                                this.confirmRedirect();
-                            });
-                        },
-                        (error) => {
-                            console.error('API error:', error);
-                        }
-                    );
-                } else {
-                    // Création d'une nouvelle facture
-                    this.factureService.addFacture(this.newFacture).subscribe(
-                        (response) => {
-                            Swal.fire({
-                                title: "Enregistrement",
-                                text: "Votre facture est bien enregistrée",
-                                icon: "success"
-                            }).then(() => {
-                                this.confirmRedirect();
-                            });
-                        },
-                        (error) => {
-                            this.newFacture = new Facture();
-                            this.router.navigate(['uikit/add-facture']);
-                            console.error('API error:', error);
-                        }
-                    );
-                }
-                this.resetForm();
-            });
-    }
-
-
-    saveFacture() {
-        if (this.newFacture.id) {
-            this.factureService.updateFacture(this.newFacture).subscribe(
-                (response) => {
-                    Swal.fire({
-                        title: "Mise à jour",
-                        text: "Votre facture a été mise à jour avec succès",
-                        icon: "success"
-                    }).then(() => {
-                        this.confirmRedirect();
-                    });
-                },
-                (error) => {
-                    console.error('API error:', error);
-                }
-            );
-        } else {
-            this.factureService.addFacture(this.newFacture).subscribe(
-                (response) => {
-                    Swal.fire({
-                        title: "Enregistrement",
-                        text: "Votre facture est bien enregistrée",
-                        icon: "success"
-                    }).then(() => {
-                        this.confirmRedirect();
-                    });
-                },
-                (error) => {
-                    this.newFacture = new Facture();
-                    this.router.navigate(['uikit/add-facture']);
-                    console.error('API error:', error);
-                }
-            );
-        }
-        this.resetForm();
-    }
-
-    confirmRedirect(): void {
-        Swal.fire({
-            title: "Redirection",
-            text: "Voulez-vous être redirigé vers la liste des factures ?",
-            icon: "question",
-            showCancelButton: true,
-            confirmButtonText: "Oui",
-            cancelButtonText: "Non"
-        }).then((result) => {
-            if (result.isConfirmed) {
-                this.router.navigate(['/uikit/facture']);
+            reject: () => {
+                this.newFacture.paye = false;
+                this.saveFacture();
             }
         });
     }
 
+    private saveFacture() {
+        if (this.newFacture.id) {
+            // Mise à jour de la facture existante
+            this.factureService.updateFacture(this.newFacture).subscribe(
+                (response) => {
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: 'Enregistrement',
+                        detail: 'Votre facture est bien enregistrée'
+                    });
+
+                    // Attendez que le toast disparaisse avant de rediriger
+                    setTimeout(() => {
+                        this.router.navigate(['uikit/facture']);
+                    }, 1000);
+                },
+                (error) => {
+                    console.error('Erreur de mise à jour:', error);
+                }
+            );
+        } else {
+            // Création d'une nouvelle facture
+            this.factureService.addFacture(this.newFacture).subscribe(
+                (response) => {
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: 'Enregistrement',
+                        detail: 'Votre facture est bien enregistrée'
+                    });
+
+                    // Attendez que le toast disparaisse avant de rediriger
+                    setTimeout(() => {
+                        this.router.navigate(['uikit/facture']);
+                    }, 1000);
+                },
+                (error) => {
+                    console.error('Erreur de création:', error);
+                }
+            );
+        }
+
+        this.resetForm();
+    }
+
+    private resetForm() {
+        // Réinitialisez le formulaire ici si nécessaire
+        this.newFacture = new Facture();
+    }
     validateFacture(): boolean {
         if (this.newFacture.depot.id == 0) {
-            Swal.fire({
-                title: 'Erreur',
-                icon: 'error',
-                text: 'Aucun Dépot n\'a été sélectionné pour la facture'
-            });
+            this.messageService.add({severity:'error', summary:'Erreur', detail:'Aucun Dépot n\'a été sélectionné pour la facture'});
             return false;
         } else if (this.newFacture.lignesFacture.length == 0) {
-            Swal.fire({
-                title: 'Erreur',
-                icon: 'error',
-                text: 'Aucun produit n\'a été ajouté à la facture'
-            });
+            this.messageService.add({severity:'error', summary:'Erreur', detail:'Aucun produit n\'a été sélectionné pour la facture'});
             return false;
         } else if (this.newFacture.client.id == 0 && this.newFacture.typeFacture !== 'FACTURE_ACHAT') {
-            Swal.fire({
-                title: 'Erreur',
-                icon: 'error',
-                text: 'Aucun client n\'a été ajouté à la facture'
-            });
+            this.messageService.add({severity:'error', summary:'Erreur', detail:'Aucun client n\'a été sélectionné pour la facture'});
             return false;
         } else if (this.newFacture.provider.id == 0 && this.newFacture.typeFacture == 'FACTURE_ACHAT') {
-            Swal.fire({
-                title: 'Erreur',
-                icon: 'error',
-                text: 'Aucun fournisseur n\'a été ajouté à la facture'
-            });
+            this.messageService.add({severity:'error', summary:'Erreur', detail:'Aucun Fournisseur n\'a été sélectionné pour la facture'});
             return false;
         } else if (this.newFacture.transporteur.id == 0) {
-            Swal.fire({
-                title: 'Erreur',
-                icon: 'error',
-                text: 'Aucun transporteur n\'a été ajouté à la facture'
-            });
+            this.messageService.add({severity:'error', summary:'Erreur', detail:'Aucun transporteur n\'a été sélectionné pour la facture'});
             return false;
         }
         return true;
-    }
-
-    resetForm(): void {
-        this.newFacture = new Facture();
     }
 
     deleteProduct(p: LigneFacture): void {
@@ -454,10 +387,10 @@ export class FactureAjoutComponent implements OnInit {
         if (index > -1) {
             // Mettre à jour la tranche localement
             this.newFacture.tranches[index] = updatedTranche;
-            Swal.fire({
-                title: "Mis à jour !",
-                text: "La tranche a été mise à jour localement.",
-                icon: "success"
+            this.messageService.add({
+                severity: 'success',
+                summary: 'Mis à jour !',
+                detail: 'La tranche a été mise à jour localement.'
             });
         }
     }
@@ -470,34 +403,29 @@ export class FactureAjoutComponent implements OnInit {
     }
 
     removeTranche(tranche: Tranche, index: number) {
-        Swal.fire({
-            title: "Es-tu sûr ?",
-            text: "Vous ne pourrez pas revenir en arrière !",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Oui, supprimez-le !"
-        }).then((result) => {
-            if (result.isConfirmed) {
+        this.confirmationService.confirm({
+            message: "Vous ne pourrez pas revenir en arrière !",
+            header: "Es-tu sûr ?",
+            icon: "pi pi-exclamation-triangle",
+            acceptLabel: "Oui, supprimez-le !",
+            rejectLabel: "Non",
+            acceptButtonStyleClass: "custom-accept-button",
+            rejectButtonStyleClass: "custom-reject-button",
+            accept: () => {
                 this.trancheService.deleteTranche(tranche.id).subscribe({
                     next: () => {
-                        Swal.fire({
-                            title: "Supprimé !",
-                            text: "Votre tranche a été supprimée.",
-                            icon: "success"
-                        });
+                        this.messageService.add({ severity: 'success', summary: 'Supprimé', detail: 'Votre tranche a été supprimée!', life: 1000 });
                         // Mettre à jour la liste locale après la suppression réussie
                         this.newFacture.tranches.splice(index, 1);
                     },
                     error: (err) => {
-                        Swal.fire({
-                            title: "Erreur !",
-                            text: "Il y a eu un problème lors de la suppression.",
-                            icon: "error"
-                        });
+                        this.messageService.add({ severity: 'error', summary: 'Erreur', detail: 'Il y a eu un problème lors de la suppression.', life: 1000 });
                     }
                 });
+
+            },
+            reject: () => {
+                this.messageService.add({ severity: 'error', summary: 'Annuler', detail: 'La supprission de tranche est annuler!.', life: 1000 });
             }
         });
     }
@@ -511,8 +439,12 @@ export class FactureAjoutComponent implements OnInit {
     }
 
     refresh() {
-        this.getAllProduits()
+        this.getAllProduits();
+    }
+    refreshUser(){
+        this.getAllUsers();
     }
 
+    protected readonly factureType = factureType;
 }
 

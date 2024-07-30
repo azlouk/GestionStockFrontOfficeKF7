@@ -6,8 +6,8 @@
                 <div class="p-col font-bold">
                     <h3>{{ facture.provider.firstname + " " + facture.provider.lastname }}</h3>
                 </div>
-                <div class="p-col"><i class="pi pi-map-marker"></i>{{ facture.provider.adresse }}</div>
-                <div class="p-col"><i class="pi pi-phone"></i>{{ facture.provider.telephone }}</div>
+                <div class="p-col">Adresse: {{ facture.provider.adresse }}</div>
+                <div class="p-col">TEl: {{ facture.provider.telephone }}</div>
             </div>
             <div class="center">
                 <h3>LOGO</h3>
@@ -21,20 +21,20 @@
                 <div class="font-bold">
                     <h3>Facturé à:</h3>
                     <h3>{{ facture.client.firstname + " " + facture.client.lastname }}</h3>
-                    <div class="p-col"> <i class="pi pi-map-marker"></i>{{ facture.client.adresse }}</div>
-                    <div class="p-col"> <i class="pi pi-phone"></i> {{ facture.client.telephone }}</div>
+                    <div class="p-col">Adresse: {{ facture.client.adresse }}</div>
+                    <div class="p-col">TEL: {{ facture.client.telephone }}</div>
                 </div>
             </div>
             <div class="font-bold">
                 <h3>Livré par:</h3>
                 <h3>{{ facture.transporteur.firstname + " " + facture.transporteur.lastname }}</h3>
-                <div class="p-col"><i class="pi pi-map-marker"></i> {{ facture.transporteur.adresse }}</div>
-                <div class="p-col"><i class="pi pi-phone"></i> {{ facture.transporteur.telephone }}</div>
+                <div class="p-col">Adresse: {{ facture.transporteur.adresse }}</div>
+                <div class="p-col">TEL: {{facture.transporteur.telephone }}</div>
             </div>
             <div class="font-bold">
                 <h3>{{ facture.reference }}</h3>
-                <div class="p-col"><i class="pi pi-calendar"></i>{{ facture.date }}</div>
-                <div class="p-col"><i class="pi pi-phone"></i> {{ facture.client.telephone }}</div>
+                <div class="p-col">Date:{{ facture.date }}</div>
+                <div class="p-col">TEL: {{ facture.client.telephone }}</div>
             </div>
         </div>
         <div class="m-8">
@@ -66,19 +66,19 @@
                     <ng-template pTemplate="body" let-facture>
                         <tr>
                             <td class="xl:font-bold p-2">Total HT</td>
-                            <td class="font-bold">{{ facture.montant | currency:'':'TND ' }}</td>
-                        </tr>
-                        <tr>
-                            <td class="xl:font-bold p-2">Réglement</td>
-                            <td class="font-bold">{{ facture.reglement | currency:'':'TND ' }}</td>
+                            <td class="font-bold">{{ facture.montant-facture.montant*facture.montantTaxe/100 | currency:'':'TND ' }}</td>
                         </tr>
                         <tr>
                             <td class="xl:font-bold p-2">TVA</td>
                             <td class="font-bold">{{ facture.montantTaxe | currency:'':'% ' }}</td>
                         </tr>
                         <tr>
+                            <td class="xl:font-bold p-2">Réglement</td>
+                            <td class="font-bold">{{ facture.reglement | currency:'':'TND ' }}</td>
+                        </tr>
+                        <tr>
                             <td class="text-2xl text-red-600 font-bold p-2">Total à payer</td>
-                            <td class="text-2xl text-red-600 font-bold">{{ facture.montant+facture.montantTaxe*facture.montant/100 | currency:'':'TND ' }}</td>
+                            <td class="text-2xl text-red-600 font-bold">{{ facture.montant | currency:'':'TND ' }}</td>
                         </tr>
                     </ng-template>
                 </p-table>
