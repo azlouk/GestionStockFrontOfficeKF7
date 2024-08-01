@@ -1,0 +1,160 @@
+<div class="col-lg pe-4 ps-4 card-forms m-1" style="min-width: 900px">
+    <div class="d-flex flex-column mb-3 position-relative">
+        <div class="card flex align-items-center gap-3">
+            <div>
+                <button pButton pRipple label="Actualiser" Class="p-button-raised p-button-text" (click)="refrech()">
+                    <i class="bi bi-arrow-repeat" style="font-size: 1rem"></i>
+                </button>
+            </div>
+            <div>
+                <span class="p-input-icon-left" style="justify-content: flex-end;">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" [(ngModel)]="searchTerm" (input)="dtCloture.filterGlobal(searchTerm, 'contains')"
+                    placeholder="Rechercher ... " class="p-inputtext"/>
+                </span>
+            </div>
+
+        </div>
+        <div class="row m-2 shadow-lg p-2">
+            <div>
+                <p-table #dtCloture [scrollable]="true" [value]="clotures"
+                         [globalFilterFields]="['cloture.id','cloture.montantClotureValide']"
+                         [rows]="10"
+                         [showCurrentPageReport]="true"
+                         [rowsPerPageOptions]="[10, 25, 50]"
+                         [loading]="loading"
+                         [lazy]="true"
+                         [paginator]="true">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th pSortableColumn="id" style="width: 10%; color:#0056b3">
+                                <p-sortIcon field="id"></p-sortIcon>
+                                ID
+                            </th>
+                            <th pSortableColumn="dateCloture" style="width: 20%; color:#0056b3">
+                                <p-sortIcon field="dateCloture"></p-sortIcon>
+                                Date de cloture
+                            </th>
+                            <th pSortableColumn="montantClotureValide" style="width: 20%; color:#0056b3">
+                                <p-sortIcon field="montantClotureValide"></p-sortIcon>
+                                Montant cloture
+                            </th>
+                            <th pSortableColumn="montantClotureEspece" style="width: 20%; color:#0056b3">
+                                <p-sortIcon field="montantClotureEspece"></p-sortIcon>
+                                Montant caisse
+                            </th>
+                            <th pSortableColumn="employer.lastname" style="width: 20%; color:#0056b3">
+                                <p-sortIcon field="employer.lastname"></p-sortIcon>
+                                Employé
+                            </th>
+                            <th style="width: 6%; color:#0056b3">Action</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-cloture>
+                        <tr>
+                            <td style="width: 10%" class="font-bold">{{ cloture.id }}</td>
+                            <td style="width: 12%" class="font-bold">{{ cloture.dateCloture }}</td>
+                            <td style="width: 12%"
+                                class="text-success font-bold">{{ cloture.montantClotureValide.toFixed(3) }} TND
+                            </td>
+                            <td style="width: 12%"
+                                class="text-danger font-bold">{{ cloture.montantClotureEspece.toFixed(3) }} TND
+                            </td>
+                            <td style="width: 10%"
+                                class="font-bold">{{ getEmployer(cloture)['lastname'] + " " + getEmployer(cloture)['firstname']}}</td>
+                            <td style="width: 14%;" class="surface-overlay  flex-column">
+                                <button pButton pRipple icon="pi pi-eye"
+                                        class="p-button-rounded p-button-primary  p-button-text p-button-raised mr-2"
+                                        (click)="get(cloture, opCloture, $event)"></button>
+                                <p-overlayPanel #opCloture>
+                                    <p-table #dtVente [scrollable]="true" [value]="listVente"
+                                             [globalFilterFields]="['id','nomClient','dateVente','total', 'reglement', 'employer.lastname','employer.firstname','produit.nom','ligneVente.produit.dataQr']"
+                                             [rows]="10"
+                                             [showCurrentPageReport]="true"
+                                             [rowsPerPageOptions]="[10, 25, 50]"
+                                             [loading]="loading"
+                                             [paginator]="true">
+                                        <ng-template pTemplate="caption">
+                                            <div class="flex">
+                                                <span class="p-input-icon-left" style="justify-content: flex-end;">
+                                                    <i class="pi pi-search"></i>
+                                                    <input pInputText type="text" [(ngModel)]="searchTermVente"
+                                                           (input)="dtVente.filterGlobal(searchTermVente, 'contains')"
+                                                           placeholder="Rechercher ..."
+                                                           class="p-inputtext p-component w-auto"/>
+                                                </span>
+                                            </div>
+                                        </ng-template>
+                                        <ng-template pTemplate="header">
+                                            <tr class="fs-4">
+                                                <th pSortableColumn="id" style="width: 10%; color:#0056b3">
+                                                    <p-sortIcon field="id"></p-sortIcon>
+                                                    ID
+                                                </th>
+                                                <th pSortableColumn="dateVente" style="width: 10%; color:#0056b3">
+                                                    <p-sortIcon field="dateVente"></p-sortIcon>
+                                                    Date de Vente
+                                                </th>
+                                                <th pSortableColumn="nomClient" style="width: 10%; color:#0056b3">
+                                                    <p-sortIcon field="nomClient"></p-sortIcon>
+                                                    Nom du Client
+                                                </th>
+                                                <th pSortableColumn="total" style="width: 10%; color:#0056b3">
+                                                    <p-sortIcon field="total"></p-sortIcon>
+                                                    Total
+                                                </th>
+                                                <th pSortableColumn="employer.lastname"
+                                                    style="width: 10%; color:#0056b3">
+                                                    <p-sortIcon field="employer.lastname"></p-sortIcon>
+                                                    Employé
+                                                </th>
+                                                <th style="width: 35%; color:#0056b3">Lignes de Vente</th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-vente>
+                                            <tr>
+                                                <td style="width: 10%" class="fw-bold">{{ vente.id }}</td>
+                                                <td style="width: 10%" class="fw-bold">{{ vente.dateVente }}</td>
+                                                <td style="width: 10%" class="fw-bold">{{ vente.nomClient }}</td>
+                                                <td style="width: 10%" class="text-success fw-bold">{{ vente.total }}
+                                                    TND
+                                                </td>
+                                                <td style="width: 10%"
+                                                    class="fw-bold">{{ vente.employer.lastname }} {{ vente.employer.firstname }}</td>
+                                                <td style="width: 35%">
+                                                    <p-table [value]="vente.lignesVente"
+                                                             class="shadow-lg m-2 rounded-2 w-100">
+                                                        <ng-template pTemplate="header">
+                                                            <tr>
+                                                                <th style="width: 35%">Produit</th>
+                                                                <th style="width: 30%">Quantité</th>
+                                                                <th style="width: 30%">Prix de Vente</th>
+                                                                <th class="float-end" style="width: 5%"></th>
+                                                            </tr>
+                                                        </ng-template>
+                                                        <ng-template pTemplate="body" let-ligneVente>
+                                                            <tr>
+                                                                <td>{{ ligneVente.produit.nom }}</td>
+                                                                <td>{{ ligneVente.qtyV }}</td>
+                                                                <td class="text-success">{{ ligneVente.prixVente | currency: 'TND': 'TND' }}</td>
+                                                            </tr>
+                                                        </ng-template>
+                                                    </p-table>
+                                                </td>
+                                            </tr>
+                                        </ng-template>
+                                    </p-table>
+                                </p-overlayPanel>
+                                <button pButton pRipple icon="pi pi-trash"
+                                        class="p-button-rounded p-button-danger p-button-text p-button-raised"
+                                        (click)="removeCloture(cloture.id)"></button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
