@@ -12,7 +12,7 @@ import {DropdownModule} from "primeng/dropdown";
 import {FormsModule} from "@angular/forms";
 import {InputTextModule} from "primeng/inputtext";
 import {InputTextareaModule} from "primeng/inputtextarea";
-import {NgClass, NgIf} from "@angular/common";
+import {CurrencyPipe, DatePipe, NgClass, NgForOf, NgIf} from "@angular/common";
 import {ConfirmationService, MessageService, PrimeTemplate} from "primeng/api";
 import {Ripple, RippleModule} from "primeng/ripple";
 import {ToastModule} from "primeng/toast";
@@ -22,6 +22,7 @@ import {TagModule} from "primeng/tag";
 import {MultiSelectModule} from "primeng/multiselect";
 import {SplitButtonModule} from "primeng/splitbutton";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {b} from "@fullcalendar/core/internal-common";
 
 @Component({
   selector: 'app-facture',
@@ -44,7 +45,10 @@ import {ConfirmDialogModule} from "primeng/confirmdialog";
         NgClass,
         RippleModule,
         ToastModule,
-        ConfirmDialogModule
+        ConfirmDialogModule,
+        NgForOf,
+        DatePipe,
+        CurrencyPipe
     ],
   templateUrl: './facture.component.html',
   styleUrl: './facture.component.scss'
@@ -63,10 +67,11 @@ export class FactureComponent implements OnInit{
     client : User = new User();
     searchTerm: string = '';
     produit :Produit[]=[];
-    facture : Facture[] = [];
     idp?: number;
     idf?:number ;
     idd?:number;
+    visibleTranche: boolean = false;
+    newFacture : Facture;
 
     rechercheFacture: string = '';
 
@@ -80,6 +85,7 @@ export class FactureComponent implements OnInit{
 
     ngOnInit(): void {
         this.getAllFactures();
+        this.calculateMontants();
         this.root = this.router.url.split('/')[1];
         const idpParam = <string> this.activatedRoute.snapshot.paramMap.get('idp')
         const iddParam = <string> this.activatedRoute.snapshot.paramMap.get('idd')
@@ -212,5 +218,30 @@ export class FactureComponent implements OnInit{
     }
 
 
+    showDialogTranches(facture : Facture) {
+        this.newFacture = facture;
+        this.visibleTranche=true;
+        this.calculateMontants();
+
+    }
+    totalMontantTranches: number = 0;
+    montantTranchesPayees: number = 0;
+    montantTranchesNonPayees: number = 0;
+    calculateMontants() {
+        this.totalMontantTranches = 0;
+        this.montantTranchesPayees = 0;
+        this.montantTranchesNonPayees = 0;
+
+        if (this.newFacture?.tranches) {
+            this.newFacture.tranches.forEach((tranche: any) => {
+                this.totalMontantTranches += tranche.montantTranche;
+                if (tranche.statutPayement) {
+                    this.montantTranchesPayees += tranche.montantTranche;
+                } else {
+                    this.montantTranchesNonPayees += tranche.montantTranche;
+                }
+            });
+        }
+    }
 }
 

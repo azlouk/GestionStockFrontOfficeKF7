@@ -75,7 +75,6 @@ export class ProduitsComponent implements OnInit {
     produits: Produit[] = [];
     selectedProducts: Produit []= [];
     deleteProductsDialog: boolean = false;
-
     displayusers: boolean = true;
     images: any[] = [];
     visible: boolean = false;
@@ -94,7 +93,6 @@ export class ProduitsComponent implements OnInit {
 
     ngOnInit() {
         this.getAllProduits();
-        // this.imageUrl;
     }
 
     clear(table: Table) {
@@ -109,8 +107,6 @@ export class ProduitsComponent implements OnInit {
                 this.produits = value;
                 console.log(new JsonPipe().transform( this.produits))
                 this.loadingdata = false;
-
-
             },
             error => {
                 this.displayusers = false;

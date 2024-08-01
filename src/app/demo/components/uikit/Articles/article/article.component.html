@@ -22,7 +22,7 @@
             <p-table #dt [value]="articles" responsiveLayout="scroll" [rows]="10"
                      [globalFilterFields]="['nom','description','unite']" [paginator]="true"
                      [rowsPerPageOptions]="[5,10,20,30,50]" [showCurrentPageReport]="true"
-                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                     currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords} élements"
                      selectionMode="multiple" [rowHover]="true" dataKey="id"
                     [(selection)]="selectedArticles">
                 <ng-template pTemplate="caption">

@@ -1,3 +1,4 @@
+
 import {Component, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
 import {ButtonModule} from "primeng/button";
 import {InputNumberModule} from "primeng/inputnumber";
@@ -29,8 +30,8 @@ import {log} from "@angular-devkit/build-angular/src/builders/ssr-dev-server";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 
 @Component({
-  selector: 'app-produit-ajout',
-  standalone: true,
+    selector: 'app-produit-ajout',
+    standalone: true,
     imports: [
         ButtonModule,
         InputNumberModule,
@@ -55,8 +56,8 @@ import {ConfirmDialogModule} from "primeng/confirmdialog";
         CardModule,
         ConfirmDialogModule
     ],
-  templateUrl: './produit-ajout.component.html',
-  styleUrl: './produit-ajout.component.scss'
+    templateUrl: './produit-ajout.component.html',
+    styleUrl: './produit-ajout.component.scss'
 })
 export class ProduitAjoutComponent implements OnInit{
     newProduct: Produit = (new Produit());
@@ -80,8 +81,10 @@ export class ProduitAjoutComponent implements OnInit{
     SearchArticle: string='';
     articles: Article[]=[];
     selectedArticle: Article=new Article();
-    root: string;
     showButtunprod: boolean = true;
+    root: string;
+
+
 
     constructor(public produitService: ProduitService,
                 private route: ActivatedRoute,
@@ -92,6 +95,7 @@ export class ProduitAjoutComponent implements OnInit{
     }
     async ngOnInit(): Promise<void> {
         this.updateRootFromCurrentPath();
+
         const id = this.route.snapshot.paramMap.get('id');
         try {
             if (id) {
@@ -132,7 +136,6 @@ export class ProduitAjoutComponent implements OnInit{
     }
 
     ajouterProduit() {
-        // Validation des champs
         if (!this.newProduct.nom?.trim()) {
             this.messageService.add({severity: 'error', summary: 'Nom produit !', detail: 'Nom de produit invalide'});
             return;
@@ -145,58 +148,57 @@ export class ProduitAjoutComponent implements OnInit{
         } else if (this.newProduct.prixUnitaire <= 0) {
             this.messageService.add({severity: 'error', summary: 'Prix invalide!', detail: 'Prix unitaire doit être supérieur à 0 SVP !'});
             return;
-        } else if (this.newProduct.qantite <= 0) {
-            this.messageService.add({severity: 'error', summary: 'Quantité invalide!', detail: 'Quantité actuelle doit être supérieure à 0 SVP !'});
-            return;
-        } else if (this.newProduct.minQuantiteGros == null || this.newProduct.minQuantiteGros >= this.newProduct.qantite) {
-            this.messageService.add({severity: 'error', summary: 'Quantité invalide!', detail: 'Quantité min gros doit être inférieure à la quantité actuelle SVP !'});
-            return;
 
         } else {
             this.newProduct.subdataqr = this.subdataqr.map((value: CodeModel) => value.code);
 
-            const saveProduct = () => {
-                if (this.newProduct.id) {
-                    this.produitService.modifierProduit(this.newProduct, this.uploadedFiles).subscribe(
-                        response => {
-                            if (response) {
-                                this.newProduct = new Produit(); // Réinitialisation du formulaire après la mise à jour
-                                this.messageService.add({severity: 'success', summary: 'Succès', detail: `Le produit a été mis à jour avec succès`});
-                            }
-                        },
-                        error => {
-                            console.error('Erreur lors de la mise à jour du produit :', error);
-                            this.messageService.add({severity: 'error', summary: 'Erreur Duplication', detail:  'Une erreur s\'est produite lors de la mise à jour du produit'});
+
+            if (this.newProduct.id) {
+                this.produitService.modifierProduit(this.newProduct, this.uploadedFiles).subscribe(
+                    response => {
+                        if (response) {
+                            this.newProduct = new Produit(); // Réinitialisation du formulaire après la mise à jour
+                            Swal.fire('Succès', 'Le produit a été mis à jour avec succès', 'success');
+                            this.router.navigate(['/uikit/produits']);
+                        } else {
+                            Swal.fire('Erreur Duplication', 'Code Barre Ou QR Existe déjà', 'error');
                         }
-                    );
-                } else {
-                    this.produitService.addProduit(this.newProduct, this.uploadedFiles).subscribe(
-                        response => {
-                            if (response) {
-                                this.newProduct = new Produit(); // Réinitialisation du formulaire après l'ajout
-                                this.messageService.add({severity: 'success', summary: 'Succès', detail: `Le produit a été ${this.newProduct.id ? 'mis à jour' : 'ajouté'} avec succès`});}
-                        },
-                        error => {
-                            console.error('Erreur lors de la mise à jour du produit :', error);
-                            this.messageService.add({severity: 'error', summary: 'Erreur Duplication', detail:  'Une erreur s\'est produite lors de la cr&ation du produit!'});
+                    },
+                    error => {
+                        console.error('Erreur lors de la mise à jour du produit :', error);
+                        Swal.fire('Erreur', 'Une erreur s\'est produite lors de la mise à jour du produit', 'error');
+                    }
+                );
+            } else {
+                // Add new product
+                this.produitService.addProduit(this.newProduct, this.uploadedFiles).subscribe(
+                    response => {
+                        if (response) {
+                            this.confirmationService.confirm({
+                                message: 'Le produit a été ajouté avec succès. Voulez-vous consulter la liste des produits ?',
+                                accept: () => {
+                                    this.newProduct = new Produit(); // Réinitialisation du formulaire après l'ajout
+                                    this.router.navigate(['/uikit/produits']);
+                                },
+                                reject: () => {
+                                    this.newProduct = new Produit(); // Réinitialisation du formulaire après l'ajout
+                                }
+                            });
+                        } else {
+                            Swal.fire('Erreur Duplication', 'Code Barre Ou QR Existe déjà', 'error');
                         }
-                    );
-                }
-            };
-            this.confirmationService.confirm({
-                message: 'Voulez-vous rediriger vers la liste des produits après la sauvegarde ?',
-                header: 'Confirmation',
-                icon: 'pi pi-question',
-                accept: () => {
-                    saveProduct();
-                    this.router.navigate(['/uikit/produits']);
-                },
-                reject: () => {
-                    saveProduct();
-                }
-            });
+                    },
+                    error => {
+                        console.error('Erreur lors de l\'ajout du produit :', error);
+                        Swal.fire('Erreur', 'Une erreur s\'est produite lors de l\'ajout du produit', 'error');
+                    }
+                );
+            }
         }
     }
+
+
+
     clear(table: Table) {
         table.clear();
     }
@@ -350,8 +352,6 @@ export class ProduitAjoutComponent implements OnInit{
         this.subdataqr=[] ;
     }
 
-
-
     imprimer(id:string): boolean {
         /* Read more about handling dismissals below */
         const contenuImprimer = document.getElementById(id);
@@ -376,36 +376,9 @@ export class ProduitAjoutComponent implements OnInit{
             }
         }
 
-
-        /*
-            if (contenuImprimer) {
-              // Ouvrez une nouvelle fenêtre avec des dimensions spécifiées
-              const fenetreImpression = window.open('', '_blank', 'width=600,height=600');
-
-              if (fenetreImpression) {
-                // Ajoutez le contenu à la fenêtre d'impression
-                fenetreImpression.document.write('<html><head><title>Imprimer</title></head><body>');
-                fenetreImpression.document.write(contenuImprimer.innerHTML);
-                fenetreImpression.document.write('</body></html>');
-
-                // Appelez la fonction d'impression
-                fenetreImpression.document.close();
-                fenetreImpression.print();
-                fenetreImpression.close();
-              } else {
-                // Gestion d'erreur si la fenêtre n'a pas pu être ouverte
-                console.error("La fenêtre d'impression n'a pas pu être ouverte.");
-              }
-            }
-
-         */
         return true ;
     }
 
-
-    clearFiles() {
-        this.uploadedFiles=[] ;
-    }
     private updateShowButtun(): void {
         this.showButtunprod = !this.root.includes('add-facture');
     }
@@ -414,9 +387,13 @@ export class ProduitAjoutComponent implements OnInit{
         this.updateShowButtun();
         console.log("root",this.root)
     }
-
+    clearFiles() {
+        this.uploadedFiles=[] ;
+    }
 
 
     protected readonly EventEmitter = EventEmitter;
     data: string="gfg";
 }
+
+

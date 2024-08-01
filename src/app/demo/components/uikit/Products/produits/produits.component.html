@@ -21,7 +21,7 @@
             <p-table #dt [value]="produits" responsiveLayout="scroll" [rows]="10"
                      [globalFilterFields]="['id','nom','description','quantite','article.nom']" [paginator]="true"
                      [rowsPerPageOptions]="[5,10,20,30]" [showCurrentPageReport]="true"
-                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                     currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords} élements"
                      selectionMode="multiple" [rowHover]="true" dataKey="id">
                 <ng-template pTemplate="caption">
                     <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">

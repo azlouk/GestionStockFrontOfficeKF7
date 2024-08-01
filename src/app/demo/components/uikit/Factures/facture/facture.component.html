@@ -37,7 +37,7 @@
                         >
                             <ng-template pTemplate="caption">
                                 <div class="p-flex">
-                                    <button pButton label="Clear" class="p-button-outlined" icon="pi pi-filter-slash"
+                                    <button pButton label="Effacer" class="p-button-outlined" icon="pi pi-filter-slash"
                                             (click)="clear(dt2)"></button>
                                 </div>
                             </ng-template>
@@ -45,12 +45,13 @@
                                 <tr>
                                     <th style="width:15%">Reference</th>
                                     <th style="width:15%">Client</th>
-                                    <th style="width:15%">Provider</th>
+                                    <th style="width:15%">Fournisseur</th>
                                     <th style="width:15%">Transporteur</th>
                                     <th style="width:12%">Montant</th>
                                     <th style="width:12%">Date</th>
                                     <th style="width:5%">Paye</th>
-                                    <th style="width:18%">Activity</th>
+                                    <th style="width:5%">Tranches</th>
+                                    <th style="width:18%">Actions</th>
                                 </tr>
                                 <tr>
                                     <th>
@@ -64,6 +65,11 @@
                                         <p-columnFilter
                                                 type="text"
                                                 field="client.lastname"
+                                                placeholder="Search by client"
+                                                ariaLabel="Filter client"/>
+                                        <p-columnFilter
+                                                type="text"
+                                                field="client.telephone"
                                                 placeholder="Search by client"
                                                 ariaLabel="Filter client"/>
                                     </th>
@@ -98,7 +104,9 @@
                                     <th>
                                         <p-columnFilter type="boolean" field="paye"/>
                                     </th>
+                                    <th>
 
+                                    </th>
                                     <th>
                                         <div class="p-toolbar-group-end">
                                             <ng-container *ngIf="!montantFiltreCalcule; else montantTemplate">
@@ -128,7 +136,12 @@
                                         <i class="pi"
                                            [ngClass]="{ 'text-green-500 pi-check-circle': FactureInter.paye, 'text-red-500 pi-times-circle': !FactureInter.paye }"></i>
                                     </td>
-                                    <td class="justify-content-center">
+                                    <td>
+                                        <button pButton pRipple icon="pi pi-eye"
+                                                class="p-button-rounded p-button-primary p-button-outlined"
+                                                (click)="showDialogTranches(FactureInter)"></button>
+                                    </td>
+                                    <td class=" flex justify-content-center">
                                         <p-button icon="pi pi-pencil"
                                                   styleClass="p-button-rounded p-button-success p-button-text"
                                                   (click)="editFacture(FactureInter.id)"></p-button>
@@ -139,7 +152,53 @@
                                                   styleClass="p-button-rounded p-button-danger p-button-text"
                                                   (click)="deleteFacture(FactureInter.id)"></p-button>
                                     </td>
+
                                 </tr>
+                                <p-dialog header="Tranches facture" [(visible)]="visibleTranche" [style]="{ width: '50rem' }">
+                                    <div *ngIf="newFacture?.tranches?.length">
+                                        <p-table  [value]="newFacture?.tranches" scrollHeight="40rem">
+                                            <ng-template pTemplate="header">
+                                                <tr>
+                                                    <th>Description</th>
+                                                    <th>Date d'échéance</th>
+                                                    <th>Montant</th>
+                                                    <th>Statut de paiement</th>
+                                                </tr>
+                                            </ng-template>
+                                            <ng-template pTemplate="body" let-tranche>
+                                                <tr>
+                                                    <td>{{ tranche.description }}</td>
+                                                    <td>{{ tranche.dateEcheance | date:'dd-MM-yyyy' }}</td>
+                                                    <td>{{ tranche.montantTranche | currency }}</td>
+                                                    <td>
+                                                        <i class="pi"
+                                                           [ngClass]="{ 'text-green-500 pi-check-circle': tranche.statutPayement, 'text-red-500 pi-times-circle': !tranche.statutPayement }"></i>
+                                                    </td>
+                                                </tr>
+                                            </ng-template>
+
+                                        </p-table>
+                                    </div>
+                                    <div *ngIf="!newFacture?.tranches?.length">
+
+                                        <h4 class="text-red-600">Aucune tranche disponible pour cette facture!</h4>
+                                    </div>
+                                    <div class="p-card mt-3" style="width: 45%; float: right;">
+                                            <p-table *ngIf="newFacture?.tranches?.length" [value]="[
+                                                        {label: 'Total des Tranches', value: totalMontantTranches},
+                                                        {label: 'Montant Payées', value: montantTranchesPayees},
+                                                        {label: 'Reste à payer', value: montantTranchesNonPayees}
+                                                       ]">
+                                                <ng-template pTemplate="body" let-row>
+                                                    <tr>
+                                                        <td class="text-secondary font-bold">{{ row.label }}</td>
+                                                        <td class="text-red-700 font-bold">{{ row.value | currency :'': ' TND '}}</td>
+                                                    </tr>
+                                                </ng-template>
+                                            </p-table>
+                                    </div>
+                                </p-dialog>
+
                             </ng-template>
                             <ng-template pTemplate="emptymessage">
                                 <tr>

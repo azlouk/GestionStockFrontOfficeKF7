@@ -21,7 +21,7 @@
             <p-table #dt [value]="depots" responsiveLayout="scroll" [rows]="10"
                      [globalFilterFields]="['code','nom','description','capitale','adresse','responsable']" [paginator]="true"
                      [rowsPerPageOptions]="[10,20,30]" [showCurrentPageReport]="true"
-                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                     currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords} élements"
                      selectionMode="multiple" [rowHover]="true" dataKey="id">
                 <ng-template pTemplate="caption">
 
