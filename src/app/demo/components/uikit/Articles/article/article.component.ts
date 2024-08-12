@@ -24,6 +24,7 @@ import {InputTextareaModule} from "primeng/inputtextarea";
 import {RadioButtonModule} from "primeng/radiobutton";
 import {ArticleService} from "../../../../../layout/service/article.service";
 import {MessageService} from "primeng/api";
+import {DialogService} from "../../../../../layout/service/dialogue-user.service";
 
 @Component({
     selector: 'app-article',
@@ -71,7 +72,7 @@ export class ArticleComponent implements OnInit {
     public deleteProductsDialog: boolean=false;
 
     constructor(public produitService: ProduitService,private messageService: MessageService,
-                private router: Router,private articleService :ArticleService) {
+                private router: Router,private articleService :ArticleService,public dialogueService:DialogService) {
         this.displayusers = true;
 
     }
@@ -127,8 +128,6 @@ export class ArticleComponent implements OnInit {
 
             }
         });
-
-
     }
 
     editArticle(article: Article) {
@@ -157,7 +156,7 @@ export class ArticleComponent implements OnInit {
             });
         } else {
             this.produitService.addArticle(this.article).subscribe(value => {
-
+this.dialogueService.closeDialogueArticle()
 
                 this.article = new Article();
                 this.ShowPopArticle();
@@ -228,5 +227,9 @@ export class ArticleComponent implements OnInit {
 
         this.deleteProductsDialog = true;
 
+    }
+
+    refresh() {
+        this.getAllArticles()
     }
 }

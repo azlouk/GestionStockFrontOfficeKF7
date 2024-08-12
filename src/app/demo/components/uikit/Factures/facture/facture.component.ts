@@ -1,6 +1,5 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import Swal from "sweetalert2";
-import {Facture, FactureInterface} from "../../../../../models/Facture";
+import {booleanAttribute, Component, OnInit, ViewChild} from '@angular/core';
+import {Facture, FactureInterface, factureType} from "../../../../../models/Facture";
 import {User} from "../../../../../models/user";
 import {Produit} from "../../../../../models/produit";
 import {FactureService} from "../../../../../layout/service/facture.service";
@@ -8,27 +7,36 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {Table, TableModule} from "primeng/table";
 import {AvatarModule} from "primeng/avatar";
 import {BadgeModule} from "primeng/badge";
-import {Button, ButtonDirective} from "primeng/button";
 import {DialogModule} from "primeng/dialog";
 import {DropdownModule} from "primeng/dropdown";
 import {FormsModule} from "@angular/forms";
 import {InputTextModule} from "primeng/inputtext";
 import {InputTextareaModule} from "primeng/inputtextarea";
-import {NgClass, NgIf} from "@angular/common";
-import {PrimeTemplate} from "primeng/api";
-import {Ripple} from "primeng/ripple";
+import {CurrencyPipe, DatePipe, NgClass, NgForOf, NgIf} from "@angular/common";
+import {ConfirmationService, MessageService, PrimeTemplate} from "primeng/api";
+import {Ripple, RippleModule} from "primeng/ripple";
 import {ToastModule} from "primeng/toast";
 import {ToolbarModule} from "primeng/toolbar";
 import {SliderModule} from "primeng/slider";
 import {TagModule} from "primeng/tag";
 import {MultiSelectModule} from "primeng/multiselect";
 import {SplitButtonModule} from "primeng/splitbutton";
-import {Representative} from "../../../../api/customer";
-import {ColumnFilterFormElement} from "primeng/table/table";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {b} from "@fullcalendar/core/internal-common";
+import {TriStateCheckboxModule} from "primeng/tristatecheckbox";
+import {RadioButtonModule} from "primeng/radiobutton";
+import {Observable} from "rxjs/internal/Observable";
+import {OverlayPanelModule} from "primeng/overlaypanel";
+import {CheckboxModule} from "primeng/checkbox";
+import {AutoCompleteCompleteEvent, AutoCompleteModule} from "primeng/autocomplete";
+import {UserService} from "../../../../../layout/service/user.service";
+import {FieldsetModule} from "primeng/fieldset";
+import {Tranche} from "../../../../../models/Tranche";
+import {TreeTableModule} from "primeng/treetable";
 
 @Component({
-  selector: 'app-facture',
-  standalone: true,
+    selector: 'app-facture',
+    standalone: true,
     imports: [
         AvatarModule,
         BadgeModule,
@@ -44,113 +52,175 @@ import {ColumnFilterFormElement} from "primeng/table/table";
         TagModule,
         MultiSelectModule,
         SplitButtonModule,
-        NgClass
+        NgClass,
+        RippleModule,
+        ToastModule,
+        ConfirmDialogModule,
+        NgForOf,
+        DatePipe,
+        CurrencyPipe,
+        TriStateCheckboxModule,
+        RadioButtonModule,
+        OverlayPanelModule,
+        CheckboxModule,
+        AutoCompleteModule,
+        FieldsetModule,
+        TreeTableModule
     ],
-  templateUrl: './facture.component.html',
-  styleUrl: './facture.component.scss'
+    templateUrl: './facture.component.html',
+    styleUrl: './facture.component.scss'
 })
-export class FactureComponent implements OnInit{
+export class FactureComponent implements OnInit {
 
     @ViewChild('dt2') table: Table;
-
     montantFiltreCalcule: boolean = false;
-
-
     totalMontantFiltre: number = 0;
-
     statuses!: any[];
-
     loading: boolean = true;
-
     activityValues: number[] = [0, 100];
-
-
-
-    root : string | undefined;
-
+    root: string | undefined;
     factures: Facture[] = [];
-    Facturefilred : FactureInterface[]=[];
-    client : User = new User();
+    Facturefilred: FactureInterface[] = [];
+    FacturefilredSuplim: FactureInterface[] = [];
+
+    client: User = new User();
     searchTerm: string = '';
-    produit :Produit[]=[];
-    facture : Facture[] = [];
+    produit: Produit[] = [];
     idp?: number;
-    idf?:number ;
-    idd?:number;
+    idf?: number;
+    idd?: number;
+    visibleTranche: boolean = false;
+    newFacture: FactureInterface;
 
-    rechercheFacture: string = '';
+    visible: boolean = false;
 
-    public selectedFacture: Boolean;
+
+    public valueSearching: any;
+    public valuefirstname: any;
+    public valuelastname: any;
+    public valuetelephone: any;
+    public valueemail: any;
+    public valuepaye: any;
+    public clientRechercher: any;
+    public fournisseurrechercher: any;
+    public transporteurrechercher: any;
+    facturesFiltreAdv: Facture[] = [];
+    private typeFacture: any;
+    public typeA: any;
+    public typeV: any;
+    public totalFiltre: any = null;
+
+    items: any[] | undefined;
+
+    selectedItem: any;
+
+    suggestions: any[] | undefined;
+
+
+    public nbreTranche: any = 0;
+    public totalTranchepaye: any = 0;
+    public totalTrancheNonpaye: any = 0;
+
+
+    public dialogTrancheDVisible: boolean = false;
+    field: string;
+    header: string;
+    public balance: any = 0;
+
+    showDialog() {
+        this.visible = true;
+    }
+
     constructor(
         public factureService: FactureService,
-        private router:Router,
-        public  activatedRoute : ActivatedRoute){}
+        public userService: UserService,
+        private router: Router,
+        private messageService: MessageService,
+        private confirmationService: ConfirmationService,
+        public activatedRoute: ActivatedRoute) {
+    }
+
 
     ngOnInit(): void {
-
-        // this.factureService.getCustomersLarge().then((customers) => {
-        //     this.customers = customers;
-        //     this.loading = false;
-        //
-        //     this.customers.forEach((customer) => (customer.date = new Date(<Date>customer.date)));
-        // });
-
-
-
-        // if (this.factureService.FactureInter.length!==0){
-        //   this.loading=false;
-        // }
-        // else {
         this.getAllFactures();
-        // this.factures=this.getAllFactures();
-        // }
+        this.calculateMontants();
         this.root = this.router.url.split('/')[1];
-        const idpParam = <string> this.activatedRoute.snapshot.paramMap.get('idp')
-        const iddParam = <string> this.activatedRoute.snapshot.paramMap.get('idd')
+        const idpParam = <string>this.activatedRoute.snapshot.paramMap.get('idp')
+        const iddParam = <string>this.activatedRoute.snapshot.paramMap.get('idd')
         if (idpParam !== null) {
             this.idp = +idpParam;
         }
-
         if (iddParam !== null) {
             this.idd = +iddParam;
         }
-        //const sommeMontant = this.myFacture.getSommeMontant();
-        //console.log(sommeMontant);
-        //alert(this.idp)
-
-
     }
-    getClient(id: number): User {
-        this.factureService.getClient(id).subscribe((value: User) => {
-            this.client = value;
+
+
+    searchFirstName(event: AutoCompleteCompleteEvent) {
+        this.userService.getUsers().subscribe(users => {
+            const listFirstName = users.map(user => user.firstname);
+            this.suggestions = listFirstName
+                .filter(firstName => firstName.toLowerCase().includes(event.query.toLowerCase()))
+                .map(firstName => ({label: firstName, value: firstName})); // Ensure that label and value are the same
         });
-        return this.client;
     }
+
+    searchLastName(event: AutoCompleteCompleteEvent) {
+        this.userService.getUsers().subscribe(users => {
+            const listLastName = users.map(user => user.lastname);
+            this.suggestions = listLastName
+                .filter(lastName => lastName.toLowerCase().includes(event.query.toLowerCase()))
+                .map(lastName => ({label: lastName, value: lastName}));
+        });
+    }
+
+    searchTelephone(event: AutoCompleteCompleteEvent) {
+        this.userService.getUsers().subscribe(users => {
+            const listTelephone = users.map(user => user.telephone);
+            this.suggestions = listTelephone
+                .filter(telephone => telephone.toString().includes(event.query))
+                .map(telephone => ({label: telephone.toString(), value: telephone}));
+        });
+    }
+
+    searchEmail(event: AutoCompleteCompleteEvent) {
+        this.userService.getUsers().subscribe(users => {
+            const listEmail = users.map(user => user.email);
+            this.suggestions = listEmail
+                .filter(email => email.toLowerCase().includes(event.query.toLowerCase()))
+                .map(email => ({label: email, value: email}));
+        });
+    }
+
     clear(table: Table) {
         table.clear();
         this.montantFiltreCalcule = false;
+        this.refrech()
 
     }
+
     getAllFactures() {
         this.loading = true;
         this.factureService.getFactures().subscribe((value: FactureInterface[]) => {
-            this.factureService.FactureInter=value
-            this.loading=false;
-            this.Facturefilred=value
-            console.log('List of factures:', value);
+            this.factureService.FactureInter = [...value]
+            this.loading = false;
+            this.Facturefilred = [...value]
+            this.FacturefilredSuplim = [...value]
         });
     }
 
     goToFactureDetails(id: number): void {
-        this.router.navigate(['facture/', id]);
-    }
-    editFacture(id:number){
-        this.router.navigate(['edit-facture/', id]) ;
+        this.router.navigate(['uikit/facture/', id]);
     }
 
-    addFacture(){
+    editFacture(id: number) {
+        this.router.navigate(['uikit/update-facture/', id]);
+    }
+
+    addFacture() {
         this.router.navigate(['/uikit/add-facture']);
     }
+
     onSearch(): void {
         if (this.searchTerm.trim() !== '') {
             this.factures = this.factureService.searchFacture(this.searchTerm.toLowerCase());
@@ -161,12 +231,14 @@ export class FactureComponent implements OnInit{
 
     selectFacture(facture: Facture) {
         this.idf = facture.id;
-        console.log('idf:' ,this.idf)
-        this.router.navigate(['/ajout-service/',this.idp,this.idf,this.idd]);
+
+        this.router.navigate(['/ajout-service/', this.idp, this.idf, this.idd]);
     }
+
     getPayeLabel(paye: boolean): string {
         return paye ? 'Oui' : 'Non';
     }
+
     getSeverity(status: boolean) {
         switch (status) {
             case true:
@@ -176,49 +248,78 @@ export class FactureComponent implements OnInit{
         }
     }
 
-    getFilter(rechercheFacture: string) : string {
-        if (rechercheFacture.toLowerCase()==='oui')
+    getFilter(rechercheFacture: string): string {
+        if (rechercheFacture.toLowerCase() === 'oui')
             return 'true';
-        else if (rechercheFacture.toLowerCase()==='non')
+        else if (rechercheFacture.toLowerCase() === 'non')
             return 'false'
         else return rechercheFacture
     }
 
     refrech() {
+        this.resetForm()
+
         this.getAllFactures();
+
+        this.totalFiltre = null
+
+
+    }
+
+    resetForm() {
+
+        this.typeA = false;
+        this.typeV = false;
+        this.clientRechercher = false;
+        this.fournisseurrechercher = false;
+        this.transporteurrechercher = false;
+        this.valuefirstname = '';
+        this.valuelastname = '';
+        this.valuetelephone = '';
+        this.valueemail = '';
+        this.valuepaye = null;
     }
 
     deleteFacture(id: number): void {
-        Swal.fire({
-            title: "Are you sure?",
-            text: "You won't be able to revert this!",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Yes, delete it!"
-        }).then((result) => {
-            if (result.isConfirmed) {
+        this.confirmationService.confirm({
+            header: "Êtes-vous sûr ?",
+            message: "Vous ne pourrez pas revenir en arrière !",
+            icon: "pi pi-exclamation-triangle",
+            acceptLabel: "Oui, supprimer",
+            rejectLabel: "Annuler",
+            acceptButtonStyleClass: 'p-button-outlined p-button-danger',
+            rejectButtonStyleClass: 'p-button-outlined p-button-primary',
+            accept: () => {
                 this.factureService.deleteFacture(id).subscribe(
                     (response) => {
-                        console.log('Facture deleted successfully:', response);
-                        Swal.fire({
-                            title: "Deleted!",
-                            text: "Your file has been deleted.",
-                            icon: "success"
+                        console.log('Facture supprimée avec succès:', response);
+                        this.messageService.add({
+                            severity: 'success',
+                            summary: 'Supprimée',
+                            detail: 'Votre facture a été supprimée avec succès!'
                         });
                         this.getAllFactures();
                     },
                     (error) => {
-                        console.error('Error deleting facture:', error);
-                        // Handle error, if needed
+                        console.error('Erreur lors de la suppression de la facture:', error);
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Erreur',
+                            detail: 'Une erreur est survenue lors de la suppression de la facture.'
+                        });
                     }
                 );
+            },
+            reject: () => {
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Annuler!',
+                    detail: 'La supprission de facture est annuler!'
+                });
+                this.getAllFactures();
             }
         });
-
     }
-
 
     public AjouterFcture() {
 
@@ -228,10 +329,241 @@ export class FactureComponent implements OnInit{
 
     }
 
-    CalculeMontantFiltrer() {
+    CalculeMontantFiltrer(): number {
         const filteredFactures = this.table.filteredValue || this.Facturefilred;
         this.totalMontantFiltre = filteredFactures.reduce((acc, facture) => acc + facture.montant, 0);
         this.montantFiltreCalcule = true;
+        return this.totalMontantFiltre
+    }
+
+
+    showDialogTranches(facture: FactureInterface) {
+        this.newFacture = facture;
+        this.visibleTranche = true;
+        this.calculateMontants();
+
+    }
+
+    totalMontantTranches: number = 0;
+    montantTranchesPayees: number = 0;
+    montantTranchesNonPayees: number = 0;
+
+
+    calculateMontants() {
+        this.totalMontantTranches = 0;
+        this.montantTranchesPayees = 0;
+        this.montantTranchesNonPayees = 0;
+
+        if (this.newFacture?.tranches) {
+            this.newFacture.tranches.forEach((tranche: Tranche) => {
+                this.totalMontantTranches += tranche.montantTranche;
+                if (tranche.statutPayement) {
+                    this.montantTranchesPayees += tranche.montantTranche;
+                } else {
+                    this.montantTranchesNonPayees += tranche.montantTranche;
+                }
+            });
+        }
+    }
+
+    getFiltered(rechercheFacture: string): string {
+        if (rechercheFacture.toLowerCase() === 'oui')
+            return 'true';
+        else if (rechercheFacture.toLowerCase() === 'non')
+            return 'false'
+        else return rechercheFacture
+    }
+
+
+    // public  rechecheAvancee() {
+    //
+    //     this.Facturefilred = this.FacturefilredSuplim.filter(fact => {
+    //         let match = true;
+    //         let typeMatch: boolean = false;
+    //         let notChecked:boolean=this.typeA != "FACTURE_ACHAT" && this.typeV != "FACTURE_VENTE"
+    //
+    //         if (notChecked||this.typeA == "FACTURE_ACHAT") {
+    //             typeMatch = typeMatch ||      ( fact.typeFacture === 'FACTURE_ACHAT')
+    //
+    //         }
+    //
+    //
+    //         if (notChecked||this.typeV == "FACTURE_VENTE") {
+    //             typeMatch = typeMatch || ( fact.typeFacture === 'FACTURE_VENTE');
+    //
+    //
+    //         }
+    //
+    //
+    //         match = match && typeMatch;
+    //
+    //     //   Vérifier les attributs du client, fournisseur, ou t ransporteur avec son match
+    //         if (match && (this.valuefirstname || this.valuelastname || this.valueemail || this.valuetelephone)) {
+    //             let entityMatch = false;
+    //
+    //             let tous:boolean=!this.clientRechercher&&!this.fournisseurrechercher&&!this.transporteurrechercher
+    //
+    //             if (tous || this.clientRechercher && this.clientRechercher.includes('client')) {
+    //                 entityMatch = entityMatch || this.matchFacture(fact.client);
+    //
+    //             }
+    //             if (tous || this.fournisseurrechercher && this.fournisseurrechercher.includes('fournisseur')) {
+    //                 entityMatch = entityMatch || this.matchFacture(fact.provider);
+    //
+    //             }
+    //             if (tous || this.transporteurrechercher && this.transporteurrechercher.includes('transporteur')) {
+    //                 entityMatch = entityMatch || this.matchFacture(fact.transporteur);
+    //
+    //             }
+    //             match = match && entityMatch;
+    //         }else {
+    //             console.log("no data")
+    //         }
+    //
+    //
+    //
+    //
+    //
+    //
+    //         //Vérifier le statut de paiement
+    //         if (match && this.valuepaye !== null && this.valuepaye !== undefined) {
+    //             match = match && (fact.paye === this.valuepaye);
+    //         }
+    //         console.log(match)
+    //         return match;
+    //     });
+    //
+    //     this.visible = false;
+    //     console.error(this.Facturefilred.length)
+    //     console.error(this.FacturefilredSuplim.length)
+    // }
+    //
+    // private matchFacture(entity: any): boolean {
+    //     if (!entity) return false;
+    //
+    //
+    //     let isVide:boolean=!this.valuefirstname && !this.valuelastname &&!this.valueemail &&!this.valuetelephone;
+    //
+    //     let firstnameMatch =  entity.firstname.toLowerCase().includes(this.valuefirstname?.toLowerCase());
+    //
+    //     let lastnameMatch =  entity.lastname.toLowerCase().includes(this.valuelastname?.toLowerCase());
+    //
+    //
+    //     let emailMatch =   entity.email.toLowerCase().includes(this.valueemail?.toLowerCase());
+    //
+    //     let telephoneMatch =  entity.telephone.includes(this.valuetelephone);
+    //
+    //
+    //     // Si un des critères correspond, alors l'entité correspond
+    //     return firstnameMatch || lastnameMatch || emailMatch || telephoneMatch || isVide;
+    // }
+
+
+    public rechecheAvancee() {
+        this.Facturefilred = this.FacturefilredSuplim.filter(fact => {
+            let match = true;
+            let typeMatch: boolean = false;
+
+            let notChecked: boolean = this.typeA != "FACTURE_ACHAT" && this.typeV != "FACTURE_VENTE"
+
+            if (notChecked || this.typeA == "FACTURE_ACHAT") {
+                typeMatch = typeMatch || (fact.typeFacture === 'FACTURE_ACHAT')
+
+            }
+
+
+            if (notChecked || this.typeV == "FACTURE_VENTE") {
+                typeMatch = typeMatch || (fact.typeFacture === 'FACTURE_VENTE');
+
+
+            }
+
+
+            match = match && typeMatch;
+
+
+            // Check client, provider, transporter based on selected checkboxes and fields
+            if (match && (this.valuefirstname || this.valuelastname || this.valueemail || this.valuetelephone)) {
+                let entityMatch = false;
+                let searchAll = !this.clientRechercher && !this.fournisseurrechercher && !this.transporteurrechercher;
+
+                if (searchAll || this.clientRechercher) {
+                    entityMatch = entityMatch || this.matchFacture(fact.client);
+                }
+                if (searchAll || this.fournisseurrechercher) {
+                    entityMatch = entityMatch || this.matchFacture(fact.provider);
+                }
+                if (searchAll || this.transporteurrechercher) {
+                    entityMatch = entityMatch || this.matchFacture(fact.transporteur);
+                }
+
+                match = match && entityMatch;
+            }
+
+            // Check payment status
+            if (match && this.valuepaye !== null && this.valuepaye !== undefined) {
+                match = match && (fact.paye === this.valuepaye);
+            }
+
+            return match;
+        });
+
+        this.visible = false;
+        this.totalFiltre = this.CalculeMontantFiltrer()
+
+
+        // this.calculateMontants();
+        this.nbreTranche = this.calculeTrancheFiltre().totalTranches;
+        this.totalTranchepaye = this.calculeTrancheFiltre().totalPaid;
+        this.totalTrancheNonpaye = this.calculeTrancheFiltre().totalUnpaid;
+
+    }
+
+    private matchFacture(entity: any): boolean {
+        if (!entity) return false;
+
+        let firstnameMatch = this.valuefirstname ? entity.firstname.toLowerCase().includes(this.valuefirstname.toLowerCase()) : true;
+        let lastnameMatch = this.valuelastname ? entity.lastname.toLowerCase().includes(this.valuelastname.toLowerCase()) : true;
+        let emailMatch = this.valueemail ? entity.email.toLowerCase().includes(this.valueemail.toLowerCase()) : true;
+        let telephoneMatch = this.valuetelephone ? entity.telephone.includes(this.valuetelephone) : true;
+
+        return firstnameMatch && lastnameMatch && emailMatch && telephoneMatch;
+    }
+
+
+    public calculeTrancheFiltre() {
+        let totalTranches = 0;
+        let totalPaid = 0;
+        let totalUnpaid = 0;
+
+        this.Facturefilred.forEach(factureInt => {
+            if (factureInt.typeFacture == "FACTURE_ACHAT") {
+                this.balance = this.balance - factureInt.montant;
+
+
+            } else {
+                this.balance = this.balance + factureInt.montant;
+
+            }
+            if (factureInt.tranches && Array.isArray(factureInt.tranches)) { // Check if tranche is defined and is an array
+                factureInt.tranches.forEach(tranche => {
+                    totalTranches++;
+                    if (tranche.statutPayement) {
+                        totalPaid += tranche.montantTranche;
+                    } else {
+                        totalUnpaid += tranche.montantTranche;
+                    }
+                });
+            } else {
+            }
+        });
+        console.log("Total totale tranche: " + totalTranches);
+
+        return {
+            totalTranches: totalTranches,
+            totalPaid: totalPaid,
+            totalUnpaid: totalUnpaid
+        };
     }
 
 

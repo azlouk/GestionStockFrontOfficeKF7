@@ -9,6 +9,11 @@ import {InputNumberModule} from "primeng/inputnumber";
 import {ButtonModule} from "primeng/button";
 import {TableModule} from "primeng/table";
 import {DialogModule} from "primeng/dialog";
+import {ToolbarModule} from "primeng/toolbar";
+import {AvatarModule} from "primeng/avatar";
+import {BadgeModule} from "primeng/badge";
+import {RippleModule} from "primeng/ripple";
+import {Router} from "@angular/router";
 
 
 
@@ -23,7 +28,12 @@ import {DialogModule} from "primeng/dialog";
         CurrencyPipe,
         DialogModule,
         DatePipe,
-        CommonModule
+        CommonModule,
+        RippleModule,
+        CommonModule,
+        ToolbarModule,
+        AvatarModule,
+        BadgeModule
     ],
   templateUrl: './ligne-vente.component.html',
   styleUrl: './ligne-vente.component.scss'
@@ -34,7 +44,7 @@ export class LigneVenteComponent implements OnInit {
     searchTerm: string='';
     showTable : boolean= false;
     displayusers: boolean=true;
-    constructor(private venteService: VenteService) { this.displayusers=true; }
+    constructor(private venteService: VenteService,private router: Router,) { this.displayusers=true; }
 
     ngOnInit(): void {
         this.loadVentes();
@@ -82,6 +92,9 @@ export class LigneVenteComponent implements OnInit {
     //     }
     //   );
     // }
+    goToClotures(): void {
+        this.router.navigate(['/uikit/cloture']); // Redirection vers la page de modification avec l'ID du produit
+    }
     getSeverity(status: string) {
         switch (status) {
             case 'INSTOCK':
@@ -170,7 +183,7 @@ export class LigneVenteComponent implements OnInit {
         vente.visible = !vente.visible
     }
 
-    total:number=0;
+    /*total:number=0;
     DateStart: Date=new Date();
     DateFin:Date=new Date();
     getAllTotal() {
@@ -181,23 +194,45 @@ export class LigneVenteComponent implements OnInit {
                 this.total+=value.total;
 
         })
+    }*/
+    total: number = 0;
+    DateStart: Date = new Date();
+    DateFin: Date = new Date();
+
+    getAllTotal() {
+        this.total = 0;
+        const startTime = new Date(this.DateStart).getTime();
+        const endTime = new Date(this.DateFin).getTime();
+
+        console.log("DateStart:", this.DateStart);
+        console.log("DateFin:", this.DateFin);
+
+        this.ventes.forEach(value => {
+            console.log("Raw dateVente:", value.dateVente);
+            // Convertir value.dateVente en objet Date
+            const parts = value.dateVente.split(' ');
+            const dateParts = parts[0].split('-');
+            const timeParts = parts[1].split(':');
+            const venteTime = new Date(
+                parseInt(dateParts[2]),  // year
+                parseInt(dateParts[1]) - 1,  // month (zero-indexed)
+                parseInt(dateParts[0]),  // day
+                parseInt(timeParts[0]),  // hours
+                parseInt(timeParts[1]),  // minutes
+                parseInt(timeParts[2])   // seconds
+            ).getTime();
+
+            console.log("venteTime:", venteTime, "startTime:", startTime, "endTime:", endTime);
+            if (!isNaN(venteTime) && venteTime >= startTime && venteTime <= endTime) {
+                this.total += value.total;
+            }
+            console.log("total after processing vente:", this.total);
+        });
+
+        console.log("final total:", this.total);
     }
-    // getAllTotal(): void {
-    //   this.total = 0;
-    //   const dateFormat = 'DD-MM-YYYY HH:mm:ss';
-    //
-    //   // Parsing start and end dates
-    //   const startDate = moment(this.DateStart, dateFormat).toDate();
-    //   const endDate = moment(this.DateFin, dateFormat).toDate();
-    //
-    //   this.ventes.forEach(value => {
-    //     const venteDate = moment(value.dateVente, dateFormat).toDate();
-    //     if (venteDate >= startDate && venteDate <= endDate) {
-    //       this.total += value.total;
-    //     }
-    //   });
-    //
-    //   console.log('Total ventes entre', this.DateStart, 'et', this.DateFin, ':', this.total);
-    // }
+
+
+
 
 }

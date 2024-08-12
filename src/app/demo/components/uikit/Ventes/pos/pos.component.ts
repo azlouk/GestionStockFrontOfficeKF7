@@ -20,7 +20,7 @@ import {getTitleTicket, getToken, getUserDecodeID, setTitleTicket, setVentes} fr
 import Swal from "sweetalert2";
 import {ProduitService} from "../../../../../layout/service/produit.service";
 import {VenteService} from "../../../../../layout/service/vente.service";
-import {CurrencyPipe, DatePipe, JsonPipe, NgClass, NgForOf, NgIf} from "@angular/common";
+import {CommonModule, CurrencyPipe, DatePipe, JsonPipe, NgClass, NgForOf, NgIf} from "@angular/common";
 import {Router} from "@angular/router";
 import {User} from "../../../../../models/user";
 import {forkJoin} from "rxjs/internal/observable/forkJoin";
@@ -50,6 +50,7 @@ import {Cloture} from "../../../../../models/Cloture";
 import {File} from "../../../../../models/File";
 import {GalleriaModule} from "primeng/galleria";
 import {environment} from "../../../../../../environments/environment";
+import {RippleModule} from "primeng/ripple";
 
 @Component({
     selector: 'app-pos',
@@ -78,7 +79,9 @@ import {environment} from "../../../../../../environments/environment";
         CardModule,
         TagModule,
         RatingModule,
-        ToolbarModule
+        ToolbarModule,
+        CommonModule,
+        RippleModule
     ],
     templateUrl: './pos.component.html',
     styleUrl: './pos.component.scss'
@@ -207,10 +210,11 @@ export class POSComponent implements OnInit,OnDestroy {
             this.selectedVente.employer=new User(getUserDecodeID().id)
             const nameclient=this.selectedVente.nomClient
             this.selectedVente.nomClient=getTitleTicket();
-
+            this.selectedVente.dateVente=new Date().toString();
             this.produitService.SaveVente(this.selectedVente).subscribe(value => {
                 if (value) {
                     this.clearVente();
+                    this.getAllProduits()
                     this.showTopCenter("Votre Vente est bien enregistré ")
                     if (this.selectedVente.isPrint) {
                         Swal.fire({
@@ -485,7 +489,7 @@ export class POSComponent implements OnInit,OnDestroy {
     updatePrixVente(ligneVente: LigneVente): void {
         const produit = ligneVente.produit;
         if (ligneVente.venteQty >= produit.minQuantiteGros) {
-            ligneVente.prixVente = produit.prixGros + produit.gainGros;
+            ligneVente.prixVente = produit.prixUnitaire + produit.gainGros;
         } else {
             ligneVente.prixVente = produit.prixUnitaire + produit.gainUnitaire;
         }
@@ -664,7 +668,6 @@ export class POSComponent implements OnInit,OnDestroy {
     saveCloture() {
         this.cloture.employer.id = getUserDecodeID().id;
         this.cloture.dateCloture = new Date();
-
         this.clotureService.SaveCloture(this.cloture).subscribe(
             value => {
                 // console.log(value);
@@ -718,10 +721,7 @@ export class POSComponent implements OnInit,OnDestroy {
 
 
     calculatorInput(value: string) {
-
         try {
-
-
             // console.log("Value Data : "+this.calculateValue)
             // console.log("Data pressed: "+value)
             if(this.calculateValue=='0'){
@@ -974,6 +974,12 @@ export class POSComponent implements OnInit,OnDestroy {
     protected readonly Date = Date;
     filter(searchText: string) {
 
+    }
+
+    changeFocusCal() {
+        this.focusReg=false;
+        this.focusFrais=false ;
+        this.focusRecherche=false ;
     }
 
     protected readonly Vente = Vente;

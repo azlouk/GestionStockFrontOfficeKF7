@@ -32,8 +32,8 @@ import {AvatarModule} from "primeng/avatar";
 import {BadgeModule} from "primeng/badge";
 
 @Component({
-  selector: 'app-produits',
-  standalone: true,
+    selector: 'app-produits',
+    standalone: true,
     imports: [
         ButtonModule,
         DataViewModule,
@@ -63,19 +63,18 @@ import {BadgeModule} from "primeng/badge";
         AvatarModule,
         BadgeModule
     ],
-  templateUrl: './produits.component.html',
-  styleUrl: './produits.component.scss'
+    templateUrl: './produits.component.html',
+    styleUrl: './produits.component.scss'
 })
 export class ProduitsComponent implements OnInit {
 
 
-      imageUrl=""
+    imageUrl=""
 
     idd?: number;
     produits: Produit[] = [];
     selectedProducts: Produit []= [];
     deleteProductsDialog: boolean = false;
-
     displayusers: boolean = true;
     images: any[] = [];
     visible: boolean = false;
@@ -94,7 +93,6 @@ export class ProduitsComponent implements OnInit {
 
     ngOnInit() {
         this.getAllProduits();
-        // this.imageUrl;
     }
 
     clear(table: Table) {
@@ -107,10 +105,8 @@ export class ProduitsComponent implements OnInit {
         this.produitService.getProduits().subscribe(
             (value: Produit[]) => {
                 this.produits = value;
-                 console.log(new JsonPipe().transform( this.produits))
+                console.log(new JsonPipe().transform( this.produits))
                 this.loadingdata = false;
-
-
             },
             error => {
                 this.displayusers = false;
@@ -176,7 +172,7 @@ export class ProduitsComponent implements OnInit {
             product.files.forEach((file: File) => {
                 if (file && file.path) {
 
-                     this.imageUrl = `http://localhost:8081/img/${file.name}`;
+                    this.imageUrl = `http://localhost:8081/img/${file.name}`;
 
                     let safeUrl = this.sanitizer.bypassSecurityTrustUrl(this.imageUrl);
                     safeImages.push(safeUrl);
@@ -185,28 +181,14 @@ export class ProduitsComponent implements OnInit {
         }
         return safeImages;
     }
-    //
-    // getFileName(filePath: string): string {
-    //     // Séparez le chemin en parties en utilisant le séparateur de dossier
-    //     const parts = filePath.split('\\');
-    //     // Renvoyez le dernier élément du tableau, qui est normalement le nom du fichier
-    //     return parts[parts.length - 1];
-    // }
-
-    // createSafeImageUrl(filePath: string): SafeResourceUrl {
-    //     const fileName = this.getFileName(filePath);
-    //     const imageUrl = `http://localhost:8081/img/${fileName}`;
-    //     return this.sanitizer.bypassSecurityTrustUrl(imageUrl);
-    // }
-    //
-    // getFileName(filePath: string): string {
-    //     const parts = filePath.split(/[\\\/]/);
-    //     return parts[parts.length - 1];
-    // }
-
     deleteSelectedProducts() {
         this.deleteProductsDialog = true;
     }
 
     protected readonly JSON = JSON;
+
+    refresh() {
+        this.getAllProduits();
+        this.router.navigate(['/uikit/produits']);
+    }
 }

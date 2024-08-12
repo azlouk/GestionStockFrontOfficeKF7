@@ -7,6 +7,8 @@ import {Router} from "@angular/router";
 import {Observable} from "rxjs";
 import {getToken, getUserDecodeID} from "../../../main";
 import {JsonPipe} from "@angular/common";
+import {throwError} from "rxjs/internal/observable/throwError";
+import {catchError} from "rxjs/internal/operators/catchError";
 
 @Injectable({
   providedIn: 'root'
@@ -74,23 +76,28 @@ export class TrancheService {
     }
 
 
-    deleteTranche(id: Tranche): Observable<Tranche[]> {
-        const url = `${this.api}/delete`;
+    deleteTranche(id: number): Observable<void> {
+        const url = `${this.api}/delete/${id}`;
 
-        // Récupérer le token d'authentification depuis le stockage local (à adapter selon votre méthode d'authentification)
+        // Récupérer le token d'authentification depuis le stockage local
         const token = getToken();
-        console.log(token)
         if (token) {
             // Ajouter le token à l'en-tête de la requête
-            const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type","application/json; charset=utf8" );
+            const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type", "application/json; charset=utf-8");
 
             // Utiliser les headers dans la requête
-            return this.http.delete<Tranche[]>(url+'/'+id, {headers} );
+            return this.http.delete<void>(url, { headers }).pipe(
+                catchError(error => {
+                    console.error('Erreur lors de la suppression de la tranche', error);
+                    return throwError(error);
+                })
+            );
         } else {
             // Gérer le cas où le token n'est pas disponible
-            return new Observable(); // Vous pouvez également renvoyer une erreur ou effectuer d'autres actions
+            return throwError('Token d\'authentification manquant');
         }
     }
+
 
     modifierTranche(tranche: Tranche):Observable<Tranche> {
         const url = `${this.api}/update`;

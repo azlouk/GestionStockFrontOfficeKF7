@@ -1,226 +1,214 @@
 <div class="col-lg pe-4 ps-4 card-forms m-1" style="min-width: 900px">
     <div class=" d-flex flex-column mb-3 position-relative">
-       <!-- <div class="d-flex align-items-center shadow-lg p-3" *ngIf="displayusers">
-            <p-button label="Actualiser" styleClass="p-button-raised p-button-text" (click)="refrech()">
-                <i class="bi bi-arrow-repeat " style="font-size: 1rem"></i>
-            </p-button>
-
-
-            <div class="me-5">
-                <i class="pi pi-shopping-cart text-3xl" pBadge value="{{ventes.length}}"></i>
-
-            </div>
-            <p-button icon="pi pi-eye" (click)="toggleTable()" styleClass="p-button-outlined p-button-primary  "
-                      label="Afficher listes ventes"></p-button>
-            <p-button class="me-2 ms-2" icon="pi pi-key" routerLink="/cloture"
-                      styleClass="p-button-outlined p-button-primary  " label="Clotures"></p-button>
-        </div>-->
-
-        <div class="row  m-2 shadow-lg p-2 ">
+        <p-toolbar>
+            <ng-template pTemplate="left">
+                <button pRipple pButton class="m-2" label="Actualiser" icon="pi pi-refresh"
+                          styleClass="p-button-raised p-button-outlined" (click)="refrech()"></button>
+                <button pButton pRipple icon="pi pi-key" (click)="goToClotures()" Class="p-button-outlined p-button-primary"
+                        label="Clotures"></button>
+            </ng-template>
+            <ng-template pTemplate="right">
+                <p-button icon="pi pi-eye" (click)="toggleTable()" styleClass="p-button-outlined  "
+                          label="Afficher listes ventes"></p-button>
+                <p-avatar *ngIf="displayusers " class="m-2" icon="pi pi-shopping-cart" pBadge styleClass="mr-5"
+                          [value]="ventes.length+''" size="large"
+                          [style]="{ 'background-color': '#b9c7ce', color: '#1a1717' }"></p-avatar>
+            </ng-template>
+        </p-toolbar>
+        <div class="row  m-2  p-2 ">
             <div class="text-3xl font-bold">Total Ventes</div>
             <div class="text-3xl text-green-500 w-25 shadow-1 m-2 p-2">
                 {{total.toFixed(3)}} TND
             </div>
             <div class=" p-2  flex justify-content-right">
-                Date Debut : <input type="datetime-local" class="border-1 border-gray-200 p-2 rounded-2" [(ngModel)]="DateStart ">
-                Date Fin : <input type="datetime-local" class="border-1 border-gray-200 p-2 rounded-2" [(ngModel)]="DateFin">
+                Date Debut : <input type="datetime-local" class="border-1 border-gray-200 p-2 rounded-2"
+                                    [(ngModel)]="DateStart ">
+                Date Fin : <input type="datetime-local" class="border-1 border-gray-200 p-2 rounded-2"
+                                  [(ngModel)]="DateFin">
                 <p-button class="me-2 ms-2" icon="pi pi-boxes" (onClick)="getAllTotal()"
                           styleClass="p-button-outlined p-button-primary  " label="Calculer"></p-button>
 
             </div>
             <div *ngIf="displayusers">
-                <p-table #dt [scrollable]="true" [value]="ventes"
-                         [globalFilterFields]="[ 'id','nomClient','dateVente','total', 'reglement', 'employer.lastname','employer.firstname','produit.nom','ligneVente.produit.dataQr']"
+                <p-table #dt
+                         [scrollable]="true"
+                         [value]="ventes"
+                         [globalFilterFields]="['id','nomClient','dateVente','total', 'reglement', 'employer.lastname','employer.firstname','produit.nom','ligneVente.produit.dataQr']"
                          [rows]="10"
                          [showCurrentPageReport]="true"
                          [rowsPerPageOptions]="[10, 25, 50]"
                          [loading]="loading"
                          [paginator]="true"
+                         currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords} éléments"
+                         [sortField]="'dateVente'"
+                         [sortOrder]="-1">
 
-                >
                     <ng-template pTemplate="caption">
-                        <div class="flex  ">
-
-
-      <span class="p-input-icon-left" style="justify-content: flex-end;">
-    <i class="pi pi-search"></i>
-    <input pInputText type="text" [(ngModel)]="searchTerm" (input)="dt.filterGlobal(searchTerm, 'contains')"
-           placeholder="Rechercher ... " class="p-inputtext"/>
-</span>
-
+                        <div class="flex">
+            <span class="p-input-icon-left" style="justify-content: flex-end;">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text" [(ngModel)]="searchTerm" (input)="dt.filterGlobal(searchTerm, 'contains')"
+                       placeholder="Rechercher ... " class="p-inputtext"/>
+            </span>
                         </div>
-
                     </ng-template>
 
                     <ng-template pTemplate="header">
-                        <tr class=" fs-4">
-                            <th pSortableColumn="id" style="width: 10% ;color:#0056b3">
-                                <p-sortIcon field="dateVente"></p-sortIcon>
+                        <tr class="fs-4">
+                            <th pSortableColumn="id" style="width: 10%; color:#0056b3">
+                                <p-sortIcon field="id"></p-sortIcon>
                                 ID
                             </th>
-                            <th pSortableColumn="dateVente" style="width: 10%;color:#0056b3">
+                            <th pSortableColumn="dateVente" style="width: 10%; color:#0056b3">
                                 <p-sortIcon field="dateVente"></p-sortIcon>
                                 Date de Vente
                             </th>
-                            <th pSortableColumn="nomClient" style="width: 10% ;color:#0056b3">
-                                <p-sortIcon field="dateVente"></p-sortIcon>
+                            <th pSortableColumn="nomClient" style="width: 10%; color:#0056b3">
+                                <p-sortIcon field="nomClient"></p-sortIcon>
                                 Nom du Client
                             </th>
-                            <th pSortableColumn="total" style="width: 10%;color:#0056b3">
-                                <p-sortIcon field="dateVente"></p-sortIcon>
+                            <th pSortableColumn="total" style="width: 10%; color:#0056b3">
+                                <p-sortIcon field="total"></p-sortIcon>
                                 Total
                             </th>
-
-                            <th pSortableColumn="employer.lastname" style="width: 10%;color:#0056b3">
-                                <p-sortIcon field="dateVente"></p-sortIcon>
+                            <th pSortableColumn="employer.lastname" style="width: 10%; color:#0056b3">
+                                <p-sortIcon field="employer.lastname"></p-sortIcon>
                                 Employé
                             </th>
-                            <th style="width: 35%;color:#0056b3">Lignes de Vente</th>
+                            <th style="width: 35%; color:#0056b3">Lignes de Vente</th>
                             <th style="width: 5%"></th>
                         </tr>
                     </ng-template>
-                    <ng-template pTemplate="body" let-vente>
-                        <tr class="">
+
+                    <ng-template pTemplate="body" let-vente let-rowIndex="rowIndex">
+                        <tr [ngClass]="{'row-even': (rowIndex % 2 === 0), 'row-odd': (rowIndex % 2 !== 0)}">
                             <td style="width: 10%" class="fw-bold">{{ vente.id }}</td>
-                            <td style="width: 10%" class="fw-bold">{{ vente.dateVente}}</td>
+                            <td style="width: 10%" class="fw-bold">{{ vente.dateVente }}</td>
                             <td style="width: 10%" class="fw-bold">{{ vente.nomClient }}</td>
                             <td style="width: 10%" class="text-success fw-bold">{{ vente.total }} TND</td>
                             <td style="width: 10%" class="fw-bold">{{ vente.employer.lastname }} {{ vente.employer.firstname }}</td>
                             <td style="width: 35%">
-                                <table class="table table-hover table-striped shadow-lg m-2 rounded-2  w-100  "
-                                       style="--bs-table-color:#0056b3 ">
-                                    <thead>
-                                    <tr>
-                                        <th>Produit</th>
-                                        <th>Quantité</th>
-                                        <th>Prix de Vente</th>
-                                        <th class="float-end" style="padding: 0px">
-                                            <p-button icon="pi pi-eye" (click)="visibleLigneVente(vente)"
-                                                      styleClass="p-button-rounded-sm p-button-primary p-button-text "></p-button>
-                                        </th>
-                                    </tr>
-                                    </thead>
-                                    <tbody *ngIf="showTable || vente.visible">
-                                    <tr *ngFor="let ligneVente of vente.lignesVente">
-                                        <td>{{ ligneVente.produit.nom }}
-                                            <p-button icon="pi pi-eye" (click)="detailproduit(ligneVente.produit)"
-                                                      styleClass="p-button-rounded p-button-primary p-button-text "></p-button>
-                                        </td>
-                                        <td>{{ ligneVente.qtyV }}</td>
-                                        <td class="text-success">{{ ligneVente.prixVente | currency :'TND' : 'TND'}}  </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
+                                <p-table [value]="vente.lignesVente" class="shadow-lg m-2 rounded-2 w-100">
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width: 35%">Produit</th>
+                                            <th style="width: 30%">Quantité</th>
+                                            <th style="width: 30%">Prix de Vente</th>
+                                            <th class="float-end" style="width: 5%">
+                                                <p-button icon="pi pi-eye" (click)="visibleLigneVente(vente)"
+                                                          styleClass="p-button-rounded-sm p-button-primary p-button-outlined p-button-text"></p-button>
+                                            </th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-ligneVente let-rowIndex="rowIndex">
+                                        <tr [ngClass]="{'row-even': (rowIndex % 2 === 0), 'row-odd': (rowIndex % 2 !== 0)}" *ngIf="showTable || vente.visible">
+                                            <td>
+                                                {{ ligneVente.produit.nom }}
+                                                <p-button icon="pi pi-eye" (click)="detailproduit(ligneVente.produit)"
+                                                          styleClass="p-button-rounded p-button-primary p-button-text"></p-button>
+                                            </td>
+                                            <td>{{ ligneVente.qtyV }}</td>
+                                            <td class="text-success">{{ ligneVente.prixVente | currency: 'TND': 'TND' }}</td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
                             </td>
                             <td style="width: 5%">
                                 <p-button icon="pi pi-times" (click)="removeVente(vente.id)"
                                           styleClass="p-button-rounded p-button-danger p-button-text p-button-raised"></p-button>
                             </td>
-
                         </tr>
                     </ng-template>
                 </p-table>
+
+
             </div>
             <div class="card flex justify-content-center">
                 <p-dialog header="Header" [(visible)]="visibleDetails" [style]="{width: '50vw'}">
-
                     <div class="col-12 shadow-lg">
-
                         <div class="card-header m-2">
-
-
                         </div>
                         <div class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4">
-
-
                             <div class="row   ">
-
                                 <div class="col m-2  shadow-lg p-4 rounded-4 w-25">
-                                    <div class="fs-3  fw-bold   text-900  PrimaryColorTitle "><span
-                                        class=" pi pi-tag text-success"></span> {{ product.nom }}</div>
+                                    <div class="fs-3  fw-bold   text-900  text-primary-600 "><span
+                                            class=" pi pi-tag text-success"></span> {{ product.nom }}</div>
                                     <div class="fs-3  text-muted p-2 mt-2">
-
                                         <div class="row"> Déscription</div>
-
                                         <div class="row"><textarea rows="5" cols="30" disabled pInputTextarea
                                                                    [(ngModel)]="product.description "></textarea>
                                         </div>
                                     </div>
                                     <div class="p-2 justify-content-start">
-
                                     </div>
-
                                     <div class="row-gap-1    p-2 shadow-sm">
                                         <div class="col ">
-                                            <label class="fs-5 pi pi-calendar text-muted p-2 mt-2">Date Fabrication :</label>
+                                            <label class="fs-5 pi pi-calendar text-muted p-2 mt-2">Date Fabrication
+                                                :</label>
                                             <p
-                                                class="card-text   fw-bold PrimaryColorTitle pi pi-calendar p-1 ">{{ product.dateFabrication | date  }} </p>
-
+                                                    class="card-text   font-bold text-primary-600 pi pi-calendar p-1 ">{{ product.dateFabrication | date  }} </p>
                                         </div>
-
                                         <div class="col  ">
-                                            <label class="fs-5  text-muted p-2 mt-2  pi pi-calendar">Date Expiration :</label>
-
-                                            <p
-                                                class="card-text   fw-bold PrimaryColorTitle  p-1  pi pi-calendar">{{ product.dateExpiration  | date }} </p>
-
+                                            <label class="fs-5  text-muted p-2 mt-2  pi pi-calendar">Date Expiration
+                                                :</label>
+                                            <p class="card-text   font-bold text-primary-600  p-1  pi pi-calendar">{{ product.dateExpiration  | date }} </p>
                                         </div>
-
                                     </div>
-
-
                                 </div>
-
-
-                                <div class="col     rounded-4 ColorGradient2 shadow-lg">
+                                <div class="col rounded-4  shadow-lg">
                                     <div class="row g-3 p-5 shadow-sm">
                                         <div class="col">
-
                                             <label class="form-label fw-bold fs-5">Prix unitaire </label>
                                             <p-inputNumber [readonly]="true" pTooltip=" prix unitaire  d'achat"
-                                                           [(ngModel)]="product.prixUnitaire" mode="currency" inputId="currency-india"
-                                                           currency="TND" currencyDisplay="code" locale="en-IN"></p-inputNumber>
-
+                                                           [(ngModel)]="product.prixUnitaire" mode="currency"
+                                                           inputId="currency-india"
+                                                           currency="TND" currencyDisplay="code"
+                                                           locale="en-IN"></p-inputNumber>
                                         </div>
                                         <div class="col">
                                             <label class="form-label fw-bold fs-5"> Gain unitaire</label>
-                                            <p-inputNumber [readonly]="true" pTooltip="Gain de produit pour le prix unitaire  d'achat"
-                                                           [(ngModel)]=" product.gainUnitaire" mode="currency" inputId="currency-india"
-                                                           currency="TND" currencyDisplay="code" locale="en-IN"></p-inputNumber>
+                                            <p-inputNumber [readonly]="true"
+                                                           pTooltip="Gain de produit pour le prix unitaire  d'achat"
+                                                           [(ngModel)]=" product.gainUnitaire" mode="currency"
+                                                           inputId="currency-india"
+                                                           currency="TND" currencyDisplay="code"
+                                                           locale="en-IN"></p-inputNumber>
                                         </div>
                                         <div class="col">
                                             <label class="form-label fw-bold fs-5 ">Prix gros </label>
-                                            <p-inputNumber [readonly]="true" pTooltip="prix gros  d'achat" [(ngModel)]="product.prixGros"
-                                                           mode="currency" inputId="currency-india" currency="TND" currencyDisplay="code"
+                                            <p-inputNumber [readonly]="true" pTooltip="prix gros  d'achat"
+                                                           [(ngModel)]="product.prixGros"
+                                                           mode="currency" inputId="currency-india" currency="TND"
+                                                           currencyDisplay="code"
                                                            locale="en-IN"></p-inputNumber>
-
                                         </div>
                                         <div class="col">
                                             <label class="form-label fw-bold fs-5">Gain gros </label>
-                                            <p-inputNumber [readonly]="true" pTooltip="Gain de produit pour le prix gros"
-                                                           [(ngModel)]="product.gainGros" mode="currency" inputId="currency-india"
-                                                           currency="TND" currencyDisplay="code" locale="en-IN"></p-inputNumber>
-
+                                            <p-inputNumber [readonly]="true"
+                                                           pTooltip="Gain de produit pour le prix gros"
+                                                           [(ngModel)]="product.gainGros" mode="currency"
+                                                           inputId="currency-india"
+                                                           currency="TND" currencyDisplay="code"
+                                                           locale="en-IN"></p-inputNumber>
                                         </div>
                                     </div>
-
                                     <div class="row g-3 p-5 shadow-sm">
                                         <div class="col">
                                             <label class="form-label fw-bold fs-5">Quantité actuelle </label>
-                                            <p-inputNumber [readonly]="true" inputId="integeronly" [(ngModel)]=" product.qantite "
-                                                           [showButtons]="true" inputId="minmax-buttons" [min]="0"></p-inputNumber>
-
+                                            <p-inputNumber [readonly]="true" inputId="integeronly"
+                                                           [(ngModel)]=" product.qantite "
+                                                           [showButtons]="true" inputId="minmax-buttons"
+                                                           [min]="0"></p-inputNumber>
                                         </div>
                                         <div class="col">
                                             <label class="form-label fw-bold fs-5">Quantité min gros </label>
-                                            <p-inputNumber [readonly]="true" inputId="integeronly" [(ngModel)]=" product.minQuantiteGros "
-                                                           [showButtons]="true" inputId="minmax-buttons" [min]="0"></p-inputNumber>
-
+                                            <p-inputNumber [readonly]="true" inputId="integeronly"
+                                                           [(ngModel)]=" product.minQuantiteGros "
+                                                           [showButtons]="true" inputId="minmax-buttons"
+                                                           [min]="0"></p-inputNumber>
                                         </div>
                                     </div>
                                 </div>
-
-
                             </div>
                         </div>
                     </div>

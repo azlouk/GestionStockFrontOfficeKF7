@@ -37,6 +37,7 @@ export class Produit {
             id: number;
             nom: string;
             prixUnitaire: number;
+            typeCalcule: string;
             prixGros: number;
             description: string;
             qantite: number;
@@ -45,7 +46,7 @@ export class Produit {
             gainGros: number;
             files:File[];
             dateExpiration: Date;
-            dateFabrication: Date;
+    dateFabrication: Date;
             minQuantiteGros: number;
             taxe: number;
             enable: boolean;
@@ -58,9 +59,10 @@ export class Produit {
             subdataqr :string[]
 
 
-    constructor(_id: number=0, _nom: string="", _prixUnitaire: number=0, _prixGros: number=0, _description: string="", _qantite: number=0, _image: Blob=new Blob(), _gainUnitaire: number=0, _gainGros: number=0, _files: File[]=[], _dateExpiration: Date=new Date(), _dateFabrication:Date=new Date(), _minQuantiteGros: number=0, _taxe: number=0, _enable: boolean=false, _dataqr: string="", _qantiteFacture: number=0, _article: Article=new Article(), _levelstock: number=0, _showDetails: boolean=false, _checkedService: boolean=false, _subdataqr: string[]=[]) {
+    constructor(_id: number=0, _nom: string="",  _typeCalcule: string="",_prixUnitaire: number=0, _prixGros: number=0, _description: string="", _qantite: number=0, _image: Blob=new Blob(), _gainUnitaire: number=0, _gainGros: number=0, _files: File[]=[], _dateExpiration: Date=new Date(), _dateFabrication:Date=new Date(), _minQuantiteGros: number=0, _taxe: number=0, _enable: boolean=false, _dataqr: string="", _qantiteFacture: number=0, _article: Article=new Article(), _levelstock: number=0, _showDetails: boolean=false, _checkedService: boolean=false, _subdataqr: string[]=[]) {
         this.id = _id ;
         this.nom = _nom ;
+        this.typeCalcule = _typeCalcule ;
         this.prixUnitaire = _prixUnitaire ;
         this.prixGros = _prixGros ;
         this.description = _description ;
@@ -81,6 +83,14 @@ export class Produit {
         this.showDetails = _showDetails ;
         this.checkedService = _checkedService ;
         this.subdataqr = _subdataqr ;
+    }
+
+     get _typeCalcule(): string {
+        return this.typeCalcule;
+    }
+
+     set _typeCalcule(value: string) {
+        this.typeCalcule = value;
     }
 
     get _id(): number {

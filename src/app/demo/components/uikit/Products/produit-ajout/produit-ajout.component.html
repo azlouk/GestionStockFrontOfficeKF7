@@ -1,17 +1,17 @@
+<p-confirmDialog *ngIf="showButtunprod" ></p-confirmDialog>
 <p-card>
+    <p-toast *ngIf="showButtunprod" ></p-toast>
     <ng-template pTemplate="header" >
         <div class="flex justify-content-between align-items-center ">
         <div>        <h2 class="text-blue-600 font-bold m-3">Ajouter un produit</h2>
         </div>
-        <p-button
+        <p-button *ngIf="showButtunprod"
             icon="pi pi-times"
             (click)="returnBack()"
             styleClass="p-button-rounded p-button-danger p-button-text p-button-raised">
         </p-button>
         </div>
     </ng-template>
-    <p-toast></p-toast>
-    <p-confirmPopup></p-confirmPopup>
     <ng-template pTemplate="content">
     <div class="flex flex-column flex-row align-items-start p-4 gap-4 w-full ">
         <div        class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
@@ -21,7 +21,6 @@
                         <div class="col-auto">
                             <div class="flex gap-4 ">
                                 <!-- ---------------- Information de produit ------------------- -->
-
                                 <div class="flex-auto  card">
                                     <div class="PrimaryColorTitle fs-3 font-bold">
                                         <h5 class="text-bluegray-600 font-bold">Information de produit</h5>
@@ -47,24 +46,28 @@
                                                   pInputTextarea
                                                   [autoResize]="true"></textarea>
                                     </div>
-                                    <div class="flex g-3 p-2 justify-content-center">
-                                        <div class="flex-auto col-6">
-                                            <label class="font-bold fs-5 block mb-2"> Date de
+                                    <div class="flex gap-2 p-2 justify-content-between align-items-center">
+                                        <div class="flex flex-column gap-1 ">
+                                            <label class="font-bold fs-5  "> Date de
                                                 fabrication
                                             </label>
                                             <p-calendar [(ngModel)]="newProduct.dateFabrication"
+                                                        dateFormat="yy-mm-dd"
                                                         [touchUI]="true"
-                                                        [readonlyInput]="true"></p-calendar>
+                                                        [readonlyInput]="true"
+                                            ></p-calendar>
+
                                         </div>
-                                        <div class="flex-auto col-6">
-                                            <label class="font-bold block mb-2"> Date d'éxpiration
+                                        <div class="flex flex-column gap-1 ">
+                                            <label class="font-bold fs-5  "> Date d'éxpiration
                                             </label>
                                             <p-calendar [(ngModel)]="newProduct.dateExpiration"
+                                                        dateFormat="yy-mm-dd"
                                                         [touchUI]="true"
                                                         [readonlyInput]="true"></p-calendar>
                                         </div>
-                                        <div class="p-3 PrimaryColorTitle  font-bold">
-                                            <label class="font-bold block mb-2">  Sélection d'article </label>
+                                        <div class=" flex flex-column gap-1">
+                                            <label class="font-bold fs-5  ">  Sélection d'article </label>
                                             <p-dropdown
                                                 [options]="articles"
                                                 [(ngModel)]="newProduct.article"
@@ -77,9 +80,34 @@
                                                     <div class="flex align-items-center gap-2">
                                                         <p>{{ article.nom }}</p>
                                                     </div>
+
                                                 </ng-template>
                                             </p-dropdown>
                                         </div>
+
+<div>
+
+                                            <button pButton pRipple label="" icon="pi pi-plus"
+                                                    class="p-button-rounded p-button-success "
+                                                    (click)="openPopArticle()"></button>
+    <div>
+<!--        <div class=" flex justify-content-center">-->
+<!--            <button pButton pRipple label="Ajouter" icon="pi pi-user-plus" class="p-button-text p-button-success"-->
+<!--                    (click)="addNewArticle()"></button>-->
+<!--            <p-dialog-->
+<!--                    header="Ajouter Utilisateur"-->
+<!--                    [modal]="true"-->
+<!--                    [(visible)]="dialogueService.showAddArticle"-->
+<!--                    [style]="{ width: '100rem' }"-->
+<!--                    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"-->
+<!--                    [maximizable]="true">-->
+<!--                <app-article></app-article>-->
+<!--            </p-dialog>-->
+<!--        </div>-->
+    </div>
+</div>
+
+
 
                                     </div>
                                 </div>
@@ -290,7 +318,7 @@
                                         <span class="pi pi-image text-success"></span>
                                         Images de produit
                                     </label>
-                                    <p-toast></p-toast>
+
                                     <div style="max-height:800px; overflow-y: auto">
                                         <p-fileUpload name="demo[]"
                                                       url="{{produitService.apifilePrime}}"
@@ -317,18 +345,46 @@
                     </div>
                 </div>
             </div>
-
-
-
         </div>
     </div>
-
     </ng-template>
     <ng-template pTemplate="footer" >
         <div class="flex justify-content-end align-items-end">
-            <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="returnBack()"></button>
-            <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="ajouterProduit()"></button>
+            <button *ngIf="showButtunprod" pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="returnBack()"></button>
+            <button  pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="ajouterProduit()"></button>
         </div>
     </ng-template>
 </p-card>
+<p-dialog [(visible)]="articleDialog" [style]="{height: '600px',width: '500px'}" header="Article Details" [modal]="true"
+          class="p-fluid">
+    <ng-template pTemplate="content">
+        <div class="field">
+            <label for="name">Nom</label>
+            <input type="text" pInputText id="name" [(ngModel)]="article.nom" required autofocus
+                   [ngClass]="{'ng-invalid ng-dirty' : submitted && !article.nom}"/>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !article.nom">Name is required.</small>
+        </div>
+        <div class="field">
+            <label for="description">Description</label>
+            <textarea id="description" pInputTextarea [(ngModel)]="article.description" required rows="3"
+                      cols="20"></textarea>
+        </div>
+        <div class="p-3 PrimaryColorTitle fs-3 font-bold">
+            <label class="font-bold block mb-2"> Sélection de l'unité </label>
+            <p-dropdown
+                    [options]="newArticleunite"
+                    [(ngModel)]="article.unite"
+                    filterBy="nom"
+                    [showClear]="true"
+                    placeholder="Select Article">
+            </p-dropdown>
+        </div>
+
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Ajouter" icon="pi pi-check" class="p-button-text" (click)="addArticle()"></button>
+    </ng-template>
+</p-dialog>
 

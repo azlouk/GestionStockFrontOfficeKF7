@@ -1,29 +1,72 @@
 <div class="col-lg ms-2   ">
+    <p-toast></p-toast>
+    <p-confirmDialog></p-confirmDialog>
     <div class="col-lg pe-4 ps-4 card-forms m-1">
         <div class=" p-flex p-flex-column mb-3 position-relative">
             <div class="justify-content-between align-items-center">
                 <div class=" p-flex p-flex-column mb-3 position-relative">
+                    <p-toolbar styleClass="mb-4">
+                        <ng-template pTemplate="left">
+                            <div class="flex gap-6">
+                                <div class="my-2">
+                                    <button pButton pRipple label="Ajouter" icon="pi pi-file-plus"
+                                            class="p-button-success p-button-outlined mr-2"
+                                            (click)="addFacture()"></button>
+                                    <button pButton pRipple label="Actualiser" icon="pi pi-refresh"
+                                            class="p-button-primary p-button-outlined"
+                                            (click)="refrech()"></button>
 
-                    <p-toolbar>
-                        <div class="p-toolbar-group-start">
-                            <p-button label="Actualiser" styleClass="p-button-raised p-button-text" (click)="refrech()">
-                                <i class="bi bi-arrow-repeat " style="font-size: 1rem"></i>
-                            </p-button>
-                        </div>
-<!--                        <div class="p-toolbar-group-center">-->
-<!--        <span class="p-input-icon-left">-->
-<!--            <i class="pi pi-search"></i>-->
-<!--            <input pInputText placeholder="Search"/>-->
-<!--        </span>-->
-<!--                        </div>-->
-                        <div class="p-toolbar-group-end">
-                            <p-button label="Save" icon="pi pi-check" label="Ajouter Facture"
-                                      styleClass="p-button-raised p-button-text p-button-success"
-                                      (click)="addFacture()"></p-button>
-                        </div>
+                                </div>
+
+                            </div>
+
+                        </ng-template>
+                        <ng-template pTemplate="right">
+                            <div class="flex justify-content-end" *ngIf="this.totalFiltre!=null">
+                                <div class="flex align-items-center mb-2" style="width: 225px;height: 10px;">
+                                    <p-fieldset legend="Nombre Tranche " class="w-full">
+
+                                        <p class="m-0" style="font-size: 20px;color: #5833ff;">
+
+                                            <p-avatar class="float-end" icon="pi pi-tags" style="color: slateblue" pBadge styleClass="mr-5"
+                                                      [value]="this.nbreTranche+''" size="large"
+                                                      [style]="{ 'background-color': '#b9c7ce', color: '#1a1717' }"></p-avatar>
+
+                                            <p-button  icon="pi pi-eye" (onClick)="dialogTrancheDVisible = true" />
+                                            <br>
+                                        </p>
+
+
+
+
+
+                                    </p-fieldset>
+                                </div>
+                                <div class="flex align-items-center mb-2" style="width: 225px;height: 10px;">
+                                    <p-fieldset legend="Nombre Factures" class="w-full">
+                                        <p class="m-0" style="font-size: 20px;color: #5833ff;">
+                                            {{this.Facturefilred.length}} Factures
+                                        </p>
+                                    </p-fieldset>
+                                </div>
+
+                                <div class="flex align-items-center mb-2" style="width: 200px;height: 10px;" >
+                                    <p-fieldset legend="Montant Total Filtré" class="w-full">
+                                        <p class="m-0 "  style="font-size: 20px; color: #5833ff;">
+                                          {{totalFiltre}} TND
+                                        </p>
+                                    </p-fieldset>
+                                </div>
+
+
+                            </div>
+                            <div class="col-2 float-end d-flex d-inline ">
+                                <p-avatar class="float-end" icon="pi pi-file" pBadge styleClass="mr-5"
+                                          [value]="Facturefilred.length+''" size="large"
+                                          [style]="{ 'background-color': '#b9c7ce', color: '#1a1717' }"></p-avatar>
+                            </div>
+                        </ng-template>
                     </p-toolbar>
-
-
 
                     <!-----------------------------------------------------newTableSort--------------------------------------------------------------------n-->
                     <div class="card">
@@ -35,73 +78,114 @@
                             [rowsPerPageOptions]="[10, 25, 50]"
                             [loading]="loading"
                             [paginator]="true"
-                            [globalFilterFields]="['name', 'country.name', 'representative.name', 'status']"
+                            [globalFilterFields]="['reference', 'client.lastname', 'provider.firstname', 'transporteur.firstname','montant','date','paye','typeFacture']"
                             [tableStyle]="{ 'min-width': '75rem' }"
+
                         >
+
                             <ng-template pTemplate="caption">
-                                <div class="p-flex">
-                                    <button pButton label="Clear" class="p-button-outlined" icon="pi pi-filter-slash"
-                                            (click)="clear(dt2)"></button>
+                                <div class="flex justify-content-center">
+                                    <div class="flex gap-6">
+                                        <div class="float-end">
+                                            <button pButton label="Effacer filter Recherche" class="p-button-outlined"
+                                                    icon="pi pi-filter-slash" (click)="clear(dt2)"></button>
+                                        </div>
+
+                                    </div>
+
+
+                                    <p-iconField iconPosition="left" class="ml-auto">
+                                        <div class="flex gap-2">
+                                            <div>
+                                                <input
+                                                        [(ngModel)]="valueSearching"
+                                                        pInputText
+                                                        type="text"
+                                                        (input)="dt2.filterGlobal(getFiltered(valueSearching), 'contains')"
+                                                        placeholder="Search keyword"/>
+                                            </div>
+                                            <div>
+                                                <p-button (onClick)="op.toggle($event)" icon="pi pi-spin pi-cog"
+                                                          label=""/>
+
+                                            </div>
+                                        </div>
+
+                                    </p-iconField>
                                 </div>
                             </ng-template>
+
                             <ng-template pTemplate="header">
                                 <tr>
-                                    <th style="width:15%">Reference</th>
-                                    <th style="width:15%">Client</th>
-                                    <th style="width:15%">Provider</th>
-                                    <th style="width:15%">Transporteur</th>
-                                    <th style="width:12%">Montant</th>
-                                    <th style="width:12%">Date</th>
-                                    <th style="width:5%">Paye</th>
-                                    <th style="width:18%">Activity</th>
+                                    <th>Reference</th>
+                                    <th>Client</th>
+                                    <th>Fournisseur</th>
+                                    <th>Transporteur</th>
+                                    <th>Montant</th>
+                                    <th>Date</th>
+                                    <th>Type Facture</th>
+
+                                    <th>Paye</th>
+                                    <th>Tranches</th>
+                                    <th>Actions</th>
                                 </tr>
                                 <tr>
                                     <th>
                                         <p-columnFilter
                                                 type="text"
                                                 field="reference"
-                                                placeholder="Search by reference"
+                                                placeholder="by reference"
                                                 ariaLabel="Filter Reference"/>
                                     </th>
                                     <th>
                                         <p-columnFilter
                                                 type="text"
-                                                field="client"
-                                                placeholder="Search by client"
+                                                field="client.lastname"
+                                                placeholder="byc client"
                                                 ariaLabel="Filter client"/>
+
                                     </th>
                                     <th>
                                         <p-columnFilter
                                                 type="text"
-                                                field="provider"
-                                                placeholder="Search by provider"
+                                                field="provider.firstname"
+                                                placeholder="by provider"
                                                 ariaLabel="Filter provider"/>
                                     </th>
                                     <th>
                                         <p-columnFilter
                                                 type="text"
-                                                field="transporteur"
-                                                placeholder="Search by transporteur"
+                                                field="transporteur.firstname"
+                                                placeholder="by transporteur"
                                                 ariaLabel="Filter transporteur"/>
                                     </th>
                                     <th>
                                         <p-columnFilter
                                                 type="text"
                                                 field="montant"
-                                                placeholder="Search by montant"
+                                                placeholder="by montant"
                                                 ariaLabel="Filter montant"/>
                                     </th>
                                     <th>
                                         <p-columnFilter
                                                 type="text"
                                                 field="date"
-                                                placeholder="Search by date"
+                                                placeholder="by date"
                                                 ariaLabel="Filter date"/>
+                                    </th>
+                                    <th>
+                                        <p-columnFilter
+                                                type="text"
+                                                field="typeFacture"
+                                                placeholder="by Facture"
+                                                ariaLabel="Filter type"/>
                                     </th>
                                     <th>
                                         <p-columnFilter type="boolean" field="paye"/>
                                     </th>
+                                    <th>
 
+                                    </th>
                                     <th>
                                         <div class="p-toolbar-group-end">
                                             <ng-container *ngIf="!montantFiltreCalcule; else montantTemplate">
@@ -119,19 +203,25 @@
                                     </th>
                                 </tr>
                             </ng-template>
-                            <ng-template pTemplate="body" let-FactureInter>
-                                <tr>
+                            <ng-template pTemplate="body" let-FactureInter let-i="rowIndex">
+                                <tr [ngClass]="{'odd-row': i % 2 === 0, 'even-row': i % 2 !== 0}">
                                     <td>{{ FactureInter.reference }}</td>
-                                    <td>{{ FactureInter.client !== null ? FactureInter.client.lastname : "-" }}</td>
-                                    <td>{{ FactureInter.provider !== null ? FactureInter.provider.firstname : "-" }}</td>
+                                    <td>{{ FactureInter.client !== null ? FactureInter.client.lastname : '-' }}</td>
+                                    <td>{{ FactureInter.provider !== null ? FactureInter.provider.firstname : '-' }}</td>
                                     <td>{{ FactureInter.transporteur.firstname }}</td>
                                     <td>{{ FactureInter.montant }}</td>
                                     <td>{{ FactureInter.date }}</td>
+                                    <td>{{FactureInter.typeFacture}}</td>
                                     <td>
                                         <i class="pi"
                                            [ngClass]="{ 'text-green-500 pi-check-circle': FactureInter.paye, 'text-red-500 pi-times-circle': !FactureInter.paye }"></i>
                                     </td>
-                                    <td class="justify-content-center">
+                                    <td>
+                                        <button pButton pRipple icon="pi pi-eye"
+                                                class="p-button-rounded p-button-primary p-button-outlined"
+                                                (click)="showDialogTranches(FactureInter)"></button>
+                                    </td>
+                                    <td class=" flex justify-content-center">
                                         <p-button icon="pi pi-pencil"
                                                   styleClass="p-button-rounded p-button-success p-button-text"
                                                   (click)="editFacture(FactureInter.id)"></p-button>
@@ -142,7 +232,53 @@
                                                   styleClass="p-button-rounded p-button-danger p-button-text"
                                                   (click)="deleteFacture(FactureInter.id)"></p-button>
                                     </td>
+
                                 </tr>
+                                <p-dialog header="Tranches facture" [(visible)]="visibleTranche" [style]="{ width: '50rem' }">
+                                    <div *ngIf="newFacture?.tranches?.length">
+                                        <p-table  [value]="newFacture?.tranches" scrollHeight="40rem">
+                                            <ng-template pTemplate="header">
+                                                <tr>
+                                                    <th>Description</th>
+                                                    <th>Date d'échéance</th>
+                                                    <th>Montant</th>
+                                                    <th>Statut de paiement</th>
+                                                </tr>
+                                            </ng-template>
+                                            <ng-template pTemplate="body" let-tranche>
+                                                <tr>
+                                                    <td>{{ tranche.description }}</td>
+                                                    <td>{{ tranche.dateEcheance | date:'dd-MM-yyyy' }}</td>
+                                                    <td>{{ tranche.montantTranche | currency }}</td>
+                                                    <td>
+                                                        <i class="pi"
+                                                           [ngClass]="{ 'text-green-500 pi-check-circle': tranche.statutPayement, 'text-red-500 pi-times-circle': !tranche.statutPayement }"></i>
+                                                    </td>
+                                                </tr>
+                                            </ng-template>
+
+                                        </p-table>
+                                    </div>
+                                    <div *ngIf="!newFacture?.tranches?.length">
+
+                                        <h4 class="text-red-600">Aucune tranche disponible pour cette facture!</h4>
+                                    </div>
+                                    <div class="p-card mt-3" style="width: 45%; float: right;">
+                                        <p-table *ngIf="newFacture?.tranches?.length" [value]="[
+                                                        {label: 'Total des Tranches', value: totalMontantTranches},
+                                                        {label: 'Montant Payées', value: montantTranchesPayees},
+                                                        {label: 'Reste à payer', value: montantTranchesNonPayees}
+                                                       ]">
+                                            <ng-template pTemplate="body" let-row>
+                                                <tr>
+                                                    <td class="text-secondary font-bold">{{ row.label }}</td>
+                                                    <td class="text-red-700 font-bold">{{ row.value | currency :'': ' TND '}}</td>
+                                                </tr>
+                                            </ng-template>
+                                        </p-table>
+                                    </div>
+                                </p-dialog>
+
                             </ng-template>
                             <ng-template pTemplate="emptymessage">
                                 <tr>
@@ -150,6 +286,7 @@
                                 </tr>
                             </ng-template>
                         </p-table>
+
 
                         <p>Total Montant Filtré: {{ totalMontantFiltre }}</p>
 
@@ -162,3 +299,478 @@
         </div>
     </div>
 </div>
+
+
+<div class="card flex justify-content-center">
+    <div class="card flex justify-content-center">
+        <p-overlayPanel #op>
+
+            <h5 class="text-bluegray-600 font-bold">Information Supplémentaire</h5>
+
+            <!-- Filter Section -->
+            <div class="flex flex-column gap-3 mb-4">
+                <!-- Facture Types -->
+                <div class="flex gap-2 mb-3">
+                    <div class="flex align-items-center">
+                        <p-checkbox name="ACHAT" value="FACTURE_ACHAT" [(ngModel)]="typeA" inputId="achat"/>
+                        <label class="ml-2">FACTURE ACHAT</label>
+                    </div>
+                    <div class="flex align-items-center" >
+                        <p-checkbox name="VENTE" value="FACTURE_VENTE" [(ngModel)]="typeV" inputId="vente"/>
+                        <label class="ml-2">FACTURE VENTE</label>
+                    </div>
+                </div>
+
+                <!-- Client Types -->
+                <div class="flex gap-2 mb-4">
+                    <div class="flex align-items-center">
+                        <p-checkbox name="client" value="client" [(ngModel)]="clientRechercher"
+                                    inputId="clientrechercher"/>
+                        <label class="ml-2">Client</label>
+                    </div>
+                    <div class="flex align-items-center">
+                        <p-checkbox name="fournisseur" value="fournisseur" [(ngModel)]="fournisseurrechercher"
+                                    inputId="fournisseurrechercher"/>
+                        <label class="ml-2">Fournisseur</label>
+                    </div>
+                    <div class="flex align-items-center">
+                        <p-checkbox name="transporteur" value="transporteur" [(ngModel)]="transporteurrechercher"
+                                    inputId="transporteurrechercher"/>
+                        <label class="ml-2">Transporteur</label>
+                    </div>
+                </div>
+
+                <!-- Text Inputs -->
+                <div class="flex flex-column gap-4">
+                    <div class="flex align-items-center gap-3 mb-3">
+                        <label for="firstname" class="font-semibold w-6rem">First Name</label>
+                        <input pInputText id="firstname" class="flex-auto" [(ngModel)]="valuefirstname"
+                               autocomplete="off"/>
+                    </div>
+                    <div class="flex align-items-center gap-3 mb-3">
+                        <label for="lastname" class="font-semibold w-6rem">Last Name</label>
+                        <input pInputText id="lastname" class="flex-auto" [(ngModel)]="valuelastname"
+                               autocomplete="off"/>
+                    </div>
+                    <div class="flex align-items-center gap-3 mb-3">
+                        <label for="telephone" class="font-semibold w-6rem">Telephone</label>
+                        <input pInputText id="telephone" class="flex-auto" [(ngModel)]="valuetelephone"
+                               autocomplete="off"/>
+                    </div>
+                    <div class="flex align-items-center gap-3 mb-3">
+                        <label for="email" class="font-semibold w-6rem">Email</label>
+                        <input pInputText id="email" class="flex-auto" [(ngModel)]="valueemail" autocomplete="off"/>
+                    </div>
+                    <div class="flex align-items-center gap-3 mb-3">
+                        <label for="paye" class="font-semibold w-6rem">Payé</label>
+                        <p-triStateCheckbox id="paye" [(ngModel)]="valuepaye" inputId="tricheckbox"></p-triStateCheckbox>
+                        <span *ngIf="valuepaye === true">Payé</span>
+                        <span *ngIf="valuepaye === false">Non Payé</span>
+                        <span *ngIf="valuepaye === null">Payé et Non Payé</span>
+                    </div>
+
+                </div>
+            </div>
+            <div class="flex justify-content-between">
+                <div class="flex justify-content-end">
+                    <p-button label="Reset" (onClick)="resetForm()"/>
+                </div>
+                <!-- Search Button -->
+                <div class="flex justify-content-end">
+                    <p-button label="Recherche" (onClick)="rechecheAvancee()"/>
+                </div>
+            </div>
+
+        </p-overlayPanel>
+    </div>
+</div>
+<p-dialog
+        [(visible)]="dialogTrancheDVisible"
+        header="Listes des tranches"
+        [style]="{ width: '60vw' }"
+        maximizable
+        modal="true"
+        [contentStyle]="{ height: '500px' }">
+
+    <ng-template pTemplate="content">
+        <p-table
+            #dt4
+            [value]="Facturefilred"
+            dataKey="id"
+            [rows]="10"
+            [rowsPerPageOptions]="[10, 25, 50]"
+            [loading]="loading"
+            [paginator]="true"
+            [globalFilterFields]="['reference']"
+            [tableStyle]="{ 'min-width': '75rem' }">
+
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Reference Facture</th>
+                    <th>Description Tranche</th>
+                    <th>Date d'échéance Tranche</th>
+                    <th>Montant Tranche</th>
+                    <th>Statut de paiement</th>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-facture let-i="rowIndex">
+                <tr *ngIf="facture?.tranches?.length" [ngClass]="{'odd-row': i % 2 === 0, 'even-row': i % 2 !== 0}">
+                    <td >{{ facture.reference }}</td>
+                    <td colspan="4">
+                        <p-table *ngIf="facture?.tranches?.length" [value]="facture.tranches">
+                            <ng-template pTemplate="body" let-tranche>
+                                <tr>
+                                    <td>{{ tranche.description }}</td>
+                                    <td>{{ tranche.dateEcheance | date:'dd-MM-yyyy' }}</td>
+                                    <td>{{ tranche.montantTranche | currency }}</td>
+                                    <td>
+                                        <i class="pi"
+                                           [ngClass]="{ 'text-green-500 pi-check-circle': tranche.statutPayement, 'text-red-500 pi-times-circle': !tranche.statutPayement }"></i>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </td>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+                <tr>
+                    <td colspan="1" class="font-bold" >Total Tranches Payées :</td>
+                    <td colspan="1" >{{ totalTranchepaye | currency }}</td>
+                </tr>
+                <tr>
+                    <td colspan="1" class="font-bold">Total Tranches Non Payées :</td>
+                    <td colspan="1">{{ totalTrancheNonpaye | currency }}</td>
+                </tr>
+
+            </ng-template>
+
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="2">Listes Facture Vide.</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <p-button label="Cancel" icon="pi pi-check" (onClick)="dialogTrancheDVisible = false" />
+    </ng-template>
+</p-dialog>
+
+
+
+<!------------------------------------------------avec autocomplete--------------------------------------->
+
+
+<!--<div class="col-lg ms-2   ">-->
+<!--    <p-toast></p-toast>-->
+<!--    <p-confirmDialog></p-confirmDialog>-->
+<!--    <div class="col-lg pe-4 ps-4 card-forms m-1">-->
+<!--        <div class=" p-flex p-flex-column mb-3 position-relative">-->
+<!--            <div class="justify-content-between align-items-center">-->
+<!--                <div class=" p-flex p-flex-column mb-3 position-relative">-->
+<!--                    <p-toolbar styleClass="mb-4">-->
+<!--                        <ng-template pTemplate="left">-->
+<!--                            <div class="my-2">-->
+<!--                                <button pButton pRipple label="Ajouter" icon="pi pi-file-plus"-->
+<!--                                        class="p-button-success p-button-outlined mr-2"-->
+<!--                                        (click)="addFacture()"></button>-->
+<!--                            </div>-->
+<!--                            <div >-->
+<!--                                <button pButton pRipple label="Actualiser" icon="pi pi-refresh"-->
+<!--                                        class="p-button-primary p-button-outlined"-->
+<!--                                        (click)="refrech()"></button>-->
+
+<!--                            </div>-->
+<!--                        </ng-template>-->
+<!--                        <ng-template pTemplate="right">-->
+<!--                            <div class="col-2 float-end d-flex d-inline ">-->
+<!--                                <p-avatar class="float-end" icon="pi pi-file" pBadge styleClass="mr-5"-->
+<!--                                          [value]="Facturefilred.length+''" size="large"-->
+<!--                                          [style]="{ 'background-color': '#b9c7ce', color: '#1a1717' }"></p-avatar>-->
+<!--                            </div>-->
+<!--                        </ng-template>-->
+<!--                    </p-toolbar>-->
+
+<!--                    &lt;!&ndash;-&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;newTableSort&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;n&ndash;&gt;-->
+<!--                    <div class="card">-->
+<!--                        <p-table-->
+<!--                            #dt2-->
+<!--                            [value]="Facturefilred"-->
+<!--                            dataKey="id"-->
+<!--                            [rows]="10"-->
+<!--                            [rowsPerPageOptions]="[10, 25, 50]"-->
+<!--                            [loading]="loading"-->
+<!--                            [paginator]="true"-->
+<!--                            [globalFilterFields]="['reference', 'client.lastname', 'provider.firstname', 'transporteur.firstname','montant','date','paye','typeFacture']"-->
+<!--                            [tableStyle]="{ 'min-width': '75rem' }"-->
+
+<!--                        >-->
+
+<!--                            <ng-template pTemplate="caption">-->
+<!--                                <div class="flex">-->
+<!--                                    <div class="float-end">-->
+<!--                                        <button pButton label="Effacer" class="p-button-outlined"-->
+<!--                                                icon="pi pi-filter-slash" (click)="clear(dt2)"></button>-->
+<!--                                    </div>-->
+
+<!--                                    <p-iconField iconPosition="left" class="ml-auto">-->
+<!--                                        <button pButton pRipple label="Refresh" icon="pi pi-refresh"-->
+<!--                                                class="p-button-primary p-button-outlined"-->
+<!--                                                (click)="refrech()"></button>-->
+<!--                                        <p-button (onClick)="op.toggle($event)" icon="pi pi-spin pi-cog" label="" />-->
+<!--                                        <input-->
+<!--                                                [(ngModel)]="valueSearching"-->
+<!--                                                pInputText-->
+<!--                                                type="text"-->
+<!--                                                (input)="dt2.filterGlobal(getFiltered(valueSearching), 'contains')"-->
+<!--                                                placeholder="Search keyword"/>-->
+<!--                                    </p-iconField>-->
+<!--                                </div>-->
+<!--                            </ng-template>-->
+
+<!--                            <ng-template pTemplate="header">-->
+<!--                                <tr>-->
+<!--                                    <th style="width:15%">Reference</th>-->
+<!--                                    <th style="width:15%">Client</th>-->
+<!--                                    <th style="width:15%">Fournisseur</th>-->
+<!--                                    <th style="width:15%">Transporteur</th>-->
+<!--                                    <th style="width:12%">Montant</th>-->
+<!--                                    <th style="width:12%">Date</th>-->
+<!--                                    <th style="width:5%">Paye</th>-->
+<!--                                    <th style="width:5%">Tranches</th>-->
+<!--                                    <th style="width:18%">Actions</th>-->
+<!--                                </tr>-->
+<!--                                <tr>-->
+<!--                                    <th>-->
+<!--                                        <p-columnFilter-->
+<!--                                                type="text"-->
+<!--                                                field="reference"-->
+<!--                                                placeholder="by reference"-->
+<!--                                                ariaLabel="Filter Reference"/>-->
+<!--                                    </th>-->
+<!--                                    <th>-->
+<!--                                        <p-columnFilter-->
+<!--                                                type="text"-->
+<!--                                                field="client.lastname"-->
+<!--                                                placeholder="byc client"-->
+<!--                                                ariaLabel="Filter client"/>-->
+
+<!--                                    </th>-->
+<!--                                    <th>-->
+<!--                                        <p-columnFilter-->
+<!--                                                type="text"-->
+<!--                                                field="provider.firstname"-->
+<!--                                                placeholder="by provider"-->
+<!--                                                ariaLabel="Filter provider"/>-->
+<!--                                    </th>-->
+<!--                                    <th>-->
+<!--                                        <p-columnFilter-->
+<!--                                                type="text"-->
+<!--                                                field="transporteur.firstname"-->
+<!--                                                placeholder="by transporteur"-->
+<!--                                                ariaLabel="Filter transporteur"/>-->
+<!--                                    </th>-->
+<!--                                    <th>-->
+<!--                                        <p-columnFilter-->
+<!--                                                type="text"-->
+<!--                                                field="montant"-->
+<!--                                                placeholder="by montant"-->
+<!--                                                ariaLabel="Filter montant"/>-->
+<!--                                    </th>-->
+<!--                                    <th>-->
+<!--                                        <p-columnFilter-->
+<!--                                                type="text"-->
+<!--                                                field="date"-->
+<!--                                                placeholder="by date"-->
+<!--                                                ariaLabel="Filter date"/>-->
+<!--                                    </th>-->
+<!--                                    <th>-->
+<!--                                        <p-columnFilter type="boolean" field="paye"/>-->
+<!--                                    </th>-->
+<!--                                    <th>-->
+
+<!--                                    </th>-->
+<!--                                    <th>-->
+<!--                                        <div class="p-toolbar-group-end">-->
+<!--                                            <ng-container *ngIf="!montantFiltreCalcule; else montantTemplate">-->
+<!--                                                <p-button label="Calcule Montant Total"-->
+<!--                                                          icon="pi pi-check"-->
+<!--                                                          styleClass="p-button-raised p-button-text p-button-success"-->
+<!--                                                          (click)="CalculeMontantFiltrer()"></p-button>-->
+<!--                                            </ng-container>-->
+<!--                                            <ng-template #montantTemplate>-->
+<!--                        <span style="color: red; font-weight: bold;">-->
+<!--                            Total Montant Filtré: {{ totalMontantFiltre }}-->
+<!--                        </span>-->
+<!--                                            </ng-template>-->
+<!--                                        </div>-->
+<!--                                    </th>-->
+<!--                                </tr>-->
+<!--                            </ng-template>-->
+<!--                            <ng-template pTemplate="body" let-FactureInter let-i="rowIndex">-->
+<!--                                <tr [ngClass]="{'odd-row': i % 2 === 0, 'even-row': i % 2 !== 0}">-->
+<!--                                    <td>{{ FactureInter.reference }}</td>-->
+<!--                                    <td>{{ FactureInter.client !== null ? FactureInter.client.lastname : '-' }}</td>-->
+<!--                                    <td>{{ FactureInter.provider !== null ? FactureInter.provider.firstname : '-' }}</td>-->
+<!--                                    <td>{{ FactureInter.transporteur.firstname }}</td>-->
+<!--                                    <td>{{ FactureInter.montant }}</td>-->
+<!--                                    <td>{{ FactureInter.date }}</td>-->
+<!--                                    <td>-->
+<!--                                        <i class="pi"-->
+<!--                                           [ngClass]="{ 'text-green-500 pi-check-circle': FactureInter.paye, 'text-red-500 pi-times-circle': !FactureInter.paye }"></i>-->
+<!--                                    </td>-->
+<!--                                    <td>-->
+<!--                                        <button pButton pRipple icon="pi pi-eye"-->
+<!--                                                class="p-button-rounded p-button-primary p-button-outlined"-->
+<!--                                                (click)="showDialogTranches(FactureInter)"></button>-->
+<!--                                    </td>-->
+<!--                                    <td class=" flex justify-content-center">-->
+<!--                                        <p-button icon="pi pi-pencil"-->
+<!--                                                  styleClass="p-button-rounded p-button-success p-button-text"-->
+<!--                                                  (click)="editFacture(FactureInter.id)"></p-button>-->
+<!--                                        <p-button icon="pi pi-info-circle"-->
+<!--                                                  styleClass="p-button-rounded p-button-secondary p-button-text"-->
+<!--                                                  (click)="goToFactureDetails(FactureInter.id)"></p-button>-->
+<!--                                        <p-button icon="pi pi-trash"-->
+<!--                                                  styleClass="p-button-rounded p-button-danger p-button-text"-->
+<!--                                                  (click)="deleteFacture(FactureInter.id)"></p-button>-->
+<!--                                    </td>-->
+<!--                                </tr>-->
+<!--                            </ng-template>-->
+<!--                            <ng-template pTemplate="emptymessage">-->
+<!--                                <tr>-->
+<!--                                    <td colspan="5">Listes Facture Vide.</td>-->
+<!--                                </tr>-->
+<!--                            </ng-template>-->
+<!--                        </p-table>-->
+
+
+<!--                        <p>Total Montant Filtré: {{ totalMontantFiltre }}</p>-->
+
+
+<!--                    </div>-->
+
+<!--                </div>-->
+
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+<!--<div class="card flex justify-content-center">-->
+<!--    <p-overlayPanel #op>-->
+<!--        <span class="p-text-secondary block mb-5">Information Supplémentaire</span>-->
+
+<!--        <div class="flex flex-column gap-3 mb-5">-->
+<!--            <div class="flex gap-2">-->
+<!--                <div class="flex align-items-center">-->
+<!--                    <p-checkbox-->
+<!--                            name="ACHAT"-->
+<!--                            value="FACTURE_ACHAT"-->
+<!--                            [(ngModel)]="typeA"-->
+<!--                            inputId="achat"-->
+<!--                    />-->
+<!--                    <label  class="ml-2">FACTURE ACHAT</label>-->
+<!--                </div>-->
+<!--                <div class="flex align-items-center">-->
+<!--                    <p-checkbox-->
+<!--                            name="VENTE"-->
+<!--                            value="FACTURE_VENTE"-->
+<!--                            [(ngModel)]="typeV"-->
+<!--                            inputId="vente"-->
+<!--                    />-->
+<!--                    <label  class="ml-2">FACTURE VENTE</label>-->
+<!--                </div>-->
+<!--            </div>-->
+
+<!--            <div class="flex gap-2">-->
+<!--                <div class="flex align-items-center">-->
+<!--                    <p-checkbox-->
+<!--                            name="client"-->
+<!--                            value="client"-->
+<!--                            [(ngModel)]="clientRechercher"-->
+<!--                            inputId="clientrechercher"-->
+<!--                    />-->
+<!--                    <label  class="ml-2">Client</label>-->
+<!--                </div>-->
+<!--                <div class="flex align-items-center">-->
+<!--                    <p-checkbox-->
+<!--                            name="fournisseur"-->
+<!--                            value="fournisseur"-->
+<!--                            [(ngModel)]="fournisseurrechercher"-->
+<!--                            inputId="fournisseurrechercher"-->
+<!--                    />-->
+<!--                    <label  class="ml-2">Fournisseur</label>-->
+<!--                </div>-->
+<!--                <div class="flex align-items-center">-->
+<!--                    <p-checkbox-->
+<!--                            name="transporteur"-->
+<!--                            value="transporteur"-->
+<!--                            [(ngModel)]="transporteurrechercher"-->
+<!--                            inputId="transporteurrechercher"-->
+<!--                    />-->
+<!--                    <label  class="ml-2">Transporteur</label>-->
+<!--                </div>-->
+<!--            </div>-->
+
+<!--            <div class="flex flex-column gap-3 mb-5">-->
+<!--                <div class="flex align-items-center gap-3">-->
+<!--                    <label class="font-semibold w-6rem">First Name</label>-->
+<!--                    <p-autoComplete-->
+
+<!--                            [(ngModel)]="valuefirstname"-->
+<!--                            [suggestions]="suggestions"-->
+<!--                            (completeMethod)="searchFirstName($event)"-->
+<!--                            field="label"-->
+<!--                            [forceSelection]="true"-->
+<!--                            placeholder="Search First Name"-->
+<!--                    ></p-autoComplete>-->
+<!--                </div>-->
+<!--                <div class="flex align-items-center gap-3">-->
+<!--                    <label  class="font-semibold w-6rem">Last Name</label>-->
+<!--                    <p-autoComplete-->
+<!--                            [(ngModel)]="valuelastname"-->
+<!--                            [suggestions]="suggestions"-->
+<!--                            (completeMethod)="searchLastName($event)"-->
+<!--                            field="label"-->
+<!--                            [forceSelection]="true"-->
+<!--                            placeholder="Search Last Name"-->
+<!--                    ></p-autoComplete>-->
+<!--                </div>-->
+<!--                <div class="flex align-items-center gap-3">-->
+<!--                    <label  class="font-semibold w-6rem">Telephone</label>-->
+<!--                    <p-autoComplete-->
+<!--                            [(ngModel)]="valuetelephone"-->
+<!--                            [suggestions]="suggestions"-->
+<!--                            (completeMethod)="searchTelephone($event)"-->
+<!--                            field="label"-->
+<!--                            [forceSelection]="true"-->
+<!--                            placeholder="Search Telephone"-->
+<!--                    ></p-autoComplete>-->
+<!--                </div>-->
+<!--                <div class="flex align-items-center gap-3">-->
+<!--                    <label  class="font-semibold w-6rem">Email</label>-->
+<!--                    <p-autoComplete-->
+<!--                            [(ngModel)]="valueemail"-->
+<!--                            [suggestions]="suggestions"-->
+<!--                            (completeMethod)="searchEmail($event)"-->
+<!--                            field="label"-->
+<!--                            [forceSelection]="true"-->
+<!--                            placeholder="Search Email"-->
+<!--                    ></p-autoComplete>-->
+<!--                </div>-->
+<!--                <div class="flex align-items-center gap-3">-->
+<!--                    <label for="paye" class="font-semibold w-6rem">Payé</label>-->
+<!--                    <p-triStateCheckbox id="paye" [(ngModel)]="valuepaye" inputId="tricheckbox" />-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--        <div class="flex justify-content-end">-->
+<!--            <p-button label="Recherche" (onClick)="rechecheAvancee()" />-->
+<!--        </div>-->
+<!--    </p-overlayPanel>-->
+<!--</div>-->

@@ -200,7 +200,6 @@ export class DepotComponent implements OnInit{
     refrech() {
         this.getAllDepots()
         this.router.navigate(['/uikit/depots']);
-
     }
 
     showDialogCreate() {
@@ -222,7 +221,6 @@ export class DepotComponent implements OnInit{
     ajouterDepot() {
         if (this.depot.nom) {
             console.log(new JsonPipe().transform(this.depot))
-
             this.depotService.addDepot(this.depot).subscribe(value => {
                 console.log("Res of Add depot :"+ value)
                 Swal.fire('Succès', 'Le dêpot a été ajouté avec succès !', 'success');
@@ -233,14 +231,13 @@ export class DepotComponent implements OnInit{
             if (Response) {
                 this.refrech();
             }
-
-
         } else {
             Swal.fire('Erreur', 'Veuillez remplir tous les champs', 'error');
             console.log('nouveauDepot :',this.depot)
 
         }
         this.hideDialog();
+        this.getAllDepots();
 
     }
 

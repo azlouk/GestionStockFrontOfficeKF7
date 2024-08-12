@@ -14,6 +14,7 @@ import {User} from "../../models/user";
 import {map} from "rxjs/operators";
 import {UserService} from "./user.service";
 import {TrancheService} from "./tranche.service";
+import {ConfirmationService, MessageService} from "primeng/api";
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +30,8 @@ export class FactureService {
     constructor(private depotService: DepotService,
                 private userService: UserService,
                 private http : HttpClient,
+                private confirmationService:ConfirmationService,
+                private messageService : MessageService,
                 private produitService: ProduitService,
                 private trancheService: TrancheService,
                 private router : Router,
@@ -62,47 +65,15 @@ export class FactureService {
         return typeKeys.map(key => factureType[key]);
     }
 
-//   addFacture(idClient: number, idDepot: number, newFacture: Facture): Observable<Facture> {
-//     const token = getToken();
-//     const headers = new HttpHeaders({
-//       'Authorization': `Bearer ${token}`,
-//       'Content-Type': 'application/json'
-//     });
-//
-//     // Log the newFacture before making the HTTP request
-//     console.log(newFacture);
-//     let ligneFact:any[]=[];
-//     newFacture.ligneFacture.forEach(value => {
-//       ligneFact.push(  {
-//         "produit": {
-//           "id" :value.produit.id
-//         },
-//         "quantite": value.quantite,
-//         "montantTotal": value.montantTotal
-//       })
-//     })
-//     const fact ={
-//       "reference": newFacture.reference,
-//       "date":this.datePipe.transform(newFacture.date,'yyyy-MM-dd'),
-//       "montant": newFacture.montant,
-//       "paye": newFacture.payee,
-//       "reglement": newFacture.reglement,
-//       "montantTaxe": newFacture.montantTaxe,
-//       "typeFacture": newFacture.facturetype,
-//       "lignesFacture": ligneFact
-//     }
-//     // Corrected URL with proper concatenation
-//     const url = `${this.api}/add/${idClient}/${idDepot}`;
-// console.error(new JsonPipe().transform(fact))
-//     return this.http.post<Facture>(url, fact, { headers });
-//   }
-    // @ts-ignore
+
+
     addFacture(newFacture: Facture): Observable<Facture> {
         const token = getToken();
         const headers = new HttpHeaders({
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
         });
+
         let filesListes: any[] = [];
         newFacture.lignesFacture.forEach((value) => {
             value.produit.files.forEach((file) => {
@@ -115,7 +86,6 @@ export class FactureService {
             });
         });
 
-
         let ligneFact: any[] = [];
         newFacture.lignesFacture.forEach(value => {
             ligneFact.push({
@@ -123,6 +93,8 @@ export class FactureService {
                     "id": value.produit.id,
                     "qantite": value.produit.qantite,
                     "nom": value.produit.nom,
+                    "typeCalcule": value.produit.typeCalcule,
+
                     "prixUnitaire": value.produit.prixUnitaire,
                     "prixGros": value.produit.prixGros,
                     "description": value.produit.description,
@@ -130,15 +102,25 @@ export class FactureService {
                     "gainUnitaire": value.produit.gainUnitaire,
                     "gainGros": value.produit.prixGros,
                     "minQuantiteGros": value.produit.minQuantiteGros,
+                    "article": {
+                        "id":value.produit.article.id,
+                        "nom":value.produit.article.nom,
+                        "description":value.produit.article.description,
+                        "unite":value.produit.article.unite,
+                    },
                     "dateFabrication": value.produit.dateFabrication,
                     "dateExpiration": value.produit.dateExpiration,
                     "taxe": value.produit.taxe,
-                    "filesList": filesListes
+                    "filesList": filesListes,
                 },
                 "quantite": value.quantite,
-                "montantTotal": value.montantTotal
-            })
-        })
+                "montantTotal": value.montantTotal,
+                "prixVente": value.produit.prixUnitaire+value.produit.gainUnitaire,
+                "prixAchat": value.prixAchat,
+
+            });
+        });
+
         const fact = {
             "reference": newFacture.reference,
             "date": this.datePipe.transform(newFacture.date, 'yyyy-MM-dd'),
@@ -153,20 +135,40 @@ export class FactureService {
             },
             "transporteur": {
                 "id": newFacture.transporteur.id
-                // "role":newFacture.transporteur.role
             },
             "provider": {
                 "id": newFacture.provider.id
             },
             "depot": {
                 "id": newFacture.depot.id
-            }
-        }
-        console.log(fact);
+            },
+            "tranches": newFacture.tranches.map(tr => {
+                const tranche = {
+                    "id": tr.id,
+                    "dateEcheance": tr.dateEcheance,
+                    "montantTranche": tr.montantTranche,
+                    "description": tr.description,
+                    "statutPayement": tr.statutPayement
+                };
+
+                if (newFacture.typeFacture === factureType.SORTIE) {
+                    tranche['user'] = {
+                        "id": newFacture.provider.id
+                    };
+                } else if (newFacture.typeFacture === factureType.ENTREE) {
+                    tranche['user'] = {
+                        "id": newFacture.client.id
+                    };
+                }
+
+                return tranche;
+            })
+        };
+
+        console.error(fact);
         const url = `${this.api}/create`;
         return this.http.post<Facture>(url, fact, {headers});
     }
-
 
     getFactureById(id: number ):Observable <Facture>  {
         const token = getToken();
@@ -227,10 +229,18 @@ export class FactureService {
                     "dateFabrication":value.produit.dateFabrication,
                     "dateExpiration":value.produit.dateExpiration,
                     "taxe":value.produit.taxe,
-                    "filesList": filesListes
+                    "filesList": filesListes,
+                    "article": {
+                        "id":value.produit.article.id,
+                        "nom":value.produit.article.nom,
+                        "description":value.produit.article.description,
+                        "unite":value.produit.article.unite,
+                    }
                 },
                 "quantite": value.quantite,
                 "montantTotal": value.montantTotal,
+                "prixVente": value.produit.prixUnitaire+value.produit.gainUnitaire,
+                "prixAchat": value.prixAchat,
                 "id":value.id
             })
         })
@@ -256,8 +266,15 @@ export class FactureService {
             },
             "depot":{
                 "id":newFacture.depot.id
-            }
-        }
+            },
+            "tranches":newFacture.tranches.map(tr => ({
+                "id": tr.id,
+                "dateEcheance":tr.dateEcheance,
+                "montantTranche": tr.montantTranche,
+                "description": tr.description,
+                'user':null,
+            }))
+        };
         console.log("data :"+new JsonPipe().transform(fact));
         const url = `${this.api}/update`;
         return this.http.put<Facture>(url, fact, { headers });
@@ -280,6 +297,7 @@ export class FactureService {
             );
     }
 
+
     returnBack() {
         Swal.fire({
             title: 'Vous êtes sûr?',
@@ -291,7 +309,7 @@ export class FactureService {
             cancelButtonText: 'Annuler'
         }).then((result) => {
             if (result.isConfirmed) {
-                this.router.navigate(['/factures']);
+                this.router.navigate(['/uikit/facture']);
                 ;
             } else {
                 // Handle the case where the user cancels the return
@@ -306,7 +324,6 @@ export class FactureService {
     exist(tableName:String) {
         const token = getToken();
         console.log(token)
-
         if (token) {
             // Ajouter le token à l'en-tête de la requête
             const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type", "application/json; charset=utf8");
@@ -315,16 +332,13 @@ export class FactureService {
                     "id": getUserDecodeID().id
                 },
                 "tableName": tableName,
-
             }
             this.http.post<boolean>(environment.apiUrl + '/permission/checkpermission', data, { headers }).subscribe(value => {
                 this.permission=value ;
                 console.log("=======1111111>><>>>>>> "+new JsonPipe().transform(this.permission=value));
             })
-
         }else {
             this.permission =false ;
-
         }
     }
 }

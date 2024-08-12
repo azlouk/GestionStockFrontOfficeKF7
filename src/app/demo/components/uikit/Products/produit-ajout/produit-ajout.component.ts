@@ -25,11 +25,14 @@ import {NgxBarcode6Module} from "ngx-barcode6";
 import {File} from "../../../../../models/File";
 import {DomSanitizer, SafeUrl} from "@angular/platform-browser";
 import {CardModule} from "primeng/card";
-import {log} from "@angular-devkit/build-angular/src/builders/ssr-dev-server";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {ArticleService} from "../../../../../layout/service/article.service";
+import {ArticleComponent} from "../../Articles/article/article.component";
+import {DialogService} from "../../../../../layout/service/dialogue-user.service";
 
 @Component({
-  selector: 'app-produit-ajout',
-  standalone: true,
+    selector: 'app-produit-ajout',
+    standalone: true,
     imports: [
         ButtonModule,
         InputNumberModule,
@@ -51,45 +54,56 @@ import {log} from "@angular-devkit/build-angular/src/builders/ssr-dev-server";
         ButtonModule,
         NgxBarcode6Module,
         CommonModule,
-        CardModule
+        CardModule,
+        ConfirmDialogModule,
+        ArticleComponent
     ],
-  templateUrl: './produit-ajout.component.html',
-  styleUrl: './produit-ajout.component.scss'
+    templateUrl: './produit-ajout.component.html',
+    styleUrl: './produit-ajout.component.scss'
 })
-export class ProduitAjoutComponent implements OnInit{
+export class ProduitAjoutComponent implements OnInit {
     newProduct: Produit = (new Produit());
     selectedImage: any;
-    SelectedFile: Blob =new Blob();
+    SelectedFile: Blob = new Blob();
     uploadedFiles: any[] = [];
-    safeImageUrl: SafeUrl[] =[];
+    safeImageUrl: SafeUrl[] = [];
     @Output() dataToParent = new EventEmitter<string>();
-    @ViewChild( 'dt11' ) dv: DataView | undefined;
+    @ViewChild('dt11') dv: DataView | undefined;
 
-    subdataqr:CodeModel[]=[] ;
-    loading:boolean=false;
+    subdataqr: CodeModel[] = [];
+    loading: boolean = false;
 
     activityValues: number[] = [0, 100];
-    searchCode: string='';
-    newCodeGroupe: string='';
+    searchCode: string = '';
+    newCodeGroupe: string = '';
 
-    codeISvalide=true ;
-    visibleDetails: boolean=false;
-    product:Produit=new Produit() ;
-    SearchArticle: string='';
-    articles: Article[]=[];
-    selectedArticle: Article=new Article();
+    codeISvalide = true;
+    visibleDetails: boolean = false;
+    product: Produit = new Produit();
+    SearchArticle: string = '';
+    articles: Article[] = [];
+    selectedArticle: Article = new Article();
+    showButtunprod: boolean = true;
+    root: string;
 
-
-
+    public articleDialog: boolean = false;
+    public submitted: boolean = false;
+    article: Article = new Article();
+    newArticleunite: string[] = ['G', 'CM', 'ML', 'PIECE'];
 
     constructor(public produitService: ProduitService,
+                public articleService: ArticleService,
+                public dialogueService: DialogService,
                 private route: ActivatedRoute,
                 private sanitizer: DomSanitizer,
-                private router:Router ,private messageService: MessageService ,private confirmationService: ConfirmationService  ) {
-        this.data="kndjh" ;
+                private router: Router, private messageService: MessageService, private confirmationService: ConfirmationService) {
+        this.data = "kndjh";
 
     }
+
     async ngOnInit(): Promise<void> {
+        this.updateRootFromCurrentPath();
+
         const id = this.route.snapshot.paramMap.get('id');
         try {
             if (id) {
@@ -102,7 +116,7 @@ export class ProduitAjoutComponent implements OnInit{
                 // Check if _subdataqr is defined and is an array
                 if (Array.isArray(product._subdataqr)) {
                     product._subdataqr.forEach(value1 => {
-                        this.subdataqr.push({ id: value1, code: value1 });
+                        this.subdataqr.push({id: value1, code: value1});
                     });
                 } else {
                     console.warn("Product _subdataqr is not an array or is undefined", product._subdataqr);
@@ -130,45 +144,34 @@ export class ProduitAjoutComponent implements OnInit{
     }
 
     ajouterProduit() {
-        if (!this.newProduct.nom || this.newProduct.nom.trim() === '') {
-            Swal.fire({
-                title: "Nom produit !",
-                text: "Nom de produit invalide",
-                icon: "error"
-            });
+        if (!this.newProduct.nom?.trim()) {
+            this.messageService.add({severity: 'error', summary: 'Nom produit !', detail: 'Nom de produit invalide'});
+            return;
         } else if (!this.newProduct.article.nom || Object.keys(this.newProduct.article).length === 0) {
-            Swal.fire({
-                title: "Article vide!",
-                text: "Les détails de l'article ne peuvent pas être vides",
-                icon: "error"
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Article vide!',
+                detail: 'Les détails de l\'article ne peuvent pas être vides'
             });
+            return;
         } else if (!this.codeISvalide) {
-            Swal.fire({
-                title: "Code est dupliqué !",
-                text: "Votre code barre doit être unique SVP !",
-                icon: "error"
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Code est dupliqué !',
+                detail: 'Votre code barre doit être unique SVP !'
             });
-        } else if (!this.newProduct.prixUnitaire || this.newProduct.prixUnitaire <= 0) {
-            Swal.fire({
-                title: "Prix invalide!",
-                text: "Prix unitaire doit être supérieur à 0 SVP !",
-                icon: "error"
+            return;
+        } else if (this.newProduct.prixUnitaire <= 0) {
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Prix invalide!',
+                detail: 'Prix unitaire doit être supérieur à 0 SVP !'
             });
-        } else if (!this.newProduct.qantite || this.newProduct.qantite <= -1) {
-            Swal.fire({
-                title: "Quantité invalide!",
-                text: "Quantité actuelle doit être supérieure à 0 SVP !",
-                icon: "error"
-            });
-        } else if (this.newProduct.minQuantiteGros == null || this.newProduct.minQuantiteGros >= this.newProduct.qantite) {
-            console.log(this.newProduct.qantite)
-            Swal.fire({
-                title: "Quantité invalide!",
-                text: "Quantité min gros doit être inférieure Quantité actuelle SVP !",
-                icon: "error"
-            });
+            return;
+
         } else {
             this.newProduct.subdataqr = this.subdataqr.map((value: CodeModel) => value.code);
+
 
             if (this.newProduct.id) {
                 this.produitService.modifierProduit(this.newProduct, this.uploadedFiles).subscribe(
@@ -191,9 +194,16 @@ export class ProduitAjoutComponent implements OnInit{
                 this.produitService.addProduit(this.newProduct, this.uploadedFiles).subscribe(
                     response => {
                         if (response) {
-                            this.newProduct = new Produit(); // Réinitialisation du formulaire après l'ajout
-                            Swal.fire('Succès', 'Le produit a été ajouté avec succès', 'success');
-                            this.router.navigate(['/uikit/produits']);
+                            this.confirmationService.confirm({
+                                message: 'Le produit a été ajouté avec succès. Voulez-vous consulter la liste des produits ?',
+                                accept: () => {
+                                    this.newProduct = new Produit(); // Réinitialisation du formulaire après l'ajout
+                                    this.router.navigate(['/uikit/produits']);
+                                },
+                                reject: () => {
+                                    this.newProduct = new Produit(); // Réinitialisation du formulaire après l'ajout
+                                }
+                            });
                         } else {
                             Swal.fire('Erreur Duplication', 'Code Barre Ou QR Existe déjà', 'error');
                         }
@@ -208,10 +218,10 @@ export class ProduitAjoutComponent implements OnInit{
     }
 
 
-
     clear(table: Table) {
         table.clear();
     }
+
     onUpload(event: any) {
         if (event && event.files) {
             for (let file of event.files) {
@@ -220,10 +230,11 @@ export class ProduitAjoutComponent implements OnInit{
             this.messageService.add({severity: 'info', summary: 'File Uploaded', detail: ''});
         }
     }
-    confirm( ) {
+
+    confirm() {
         console.log(this.newProduct._dataqr)
-        this.codeISvalide=true ;
-        if(this.newProduct._dataqr.trim()!=='') {
+        this.codeISvalide = true;
+        if (this.newProduct._dataqr.trim() !== '') {
             this.produitService.getProduitByQrNom(this.newProduct._dataqr).subscribe(value => {
                 if (value !== null) {
                     Swal.fire({
@@ -233,18 +244,17 @@ export class ProduitAjoutComponent implements OnInit{
                         showCancelButton: true,
                         confirmButtonColor: "#3085d6",
                         cancelButtonColor: "#d33",
-                        confirmButtonText:'afficher',
-                        cancelButtonText:'annuler',
+                        confirmButtonText: 'afficher',
+                        cancelButtonText: 'annuler',
                     }).then((value1) => {
-                        if(value1.isConfirmed){
-                            this.product=value;
-                            this.visibleDetails=true ;
+                        if (value1.isConfirmed) {
+                            this.product = value;
+                            this.visibleDetails = true;
                         }
                     });
-                    this.codeISvalide=false
-                }
-                else {
-                    this.codeISvalide=true ;
+                    this.codeISvalide = false
+                } else {
+                    this.codeISvalide = true;
                 }
             })
         }
@@ -253,7 +263,7 @@ export class ProduitAjoutComponent implements OnInit{
 
     loadFile(filesList: File[]): void {
         // this.showDialog()
-        this.safeImageUrl=[] ;
+        this.safeImageUrl = [];
         filesList.forEach(value => {
             this.produitService.getImageProduit(value.name).subscribe(
                 (data: Blob) => {
@@ -276,10 +286,9 @@ export class ProduitAjoutComponent implements OnInit{
     }
 
 
-
     onFileSelected(event: any) {
         if (event.target.files && event.target.files[0]) {
-            this.SelectedFile= event.target.files[0] ;
+            this.SelectedFile = event.target.files[0];
             // @ts-ignore
             // alert(this.SelectedFile.name)
             const reader = new FileReader();
@@ -295,37 +304,39 @@ export class ProduitAjoutComponent implements OnInit{
 
     setDataCode($event: string) {
 
-        this.newProduct._dataqr=$event ;
+        this.newProduct._dataqr = $event;
         console.log(new JsonPipe().transform(this.subdataqr))
     }
 
-    returnBack()  {
+    returnBack() {
         this.produitService.returnBack()
     }
 
     setprixgros() {
-        this.newProduct._prixGros=this.newProduct._prixUnitaire
+        this.newProduct._prixGros = this.newProduct._prixUnitaire
     }
-    setQtyGros(){
+
+    setQtyGros() {
         this.newProduct._minQuantiteGros = this.newProduct._qantite
     }
 
     setGain() {
-        this.newProduct._gainGros=this.newProduct._gainUnitaire
+        this.newProduct._gainGros = this.newProduct._gainUnitaire
     }
 
-    removeQR(code:CodeModel) {
-        let data:CodeModel[]=[] ;
+    removeQR(code: CodeModel) {
+        let data: CodeModel[] = [];
         this.subdataqr.forEach(value => {
-            if(code.id!==value.code)
+            if (code.id !== value.code)
                 data.push(value)
             console.log(value)
-        }) ;
-        this.subdataqr=data ;
+        });
+        this.subdataqr = data;
     }
+
     addtolistCode() {
-        if(this.newCodeGroupe.trim()!=='') {
-            this.produitService.getProduitByQrNom(this.newCodeGroupe).subscribe((value:Produit) => {
+        if (this.newCodeGroupe.trim() !== '') {
+            this.produitService.getProduitByQrNom(this.newCodeGroupe).subscribe((value: Produit) => {
                 if (value !== null) {
                     Swal.fire({
                         title: "Dublication de code!",
@@ -334,22 +345,20 @@ export class ProduitAjoutComponent implements OnInit{
                         showCancelButton: true,
                         confirmButtonColor: "#3085d6",
                         cancelButtonColor: "#d33",
-                        confirmButtonText:'afficher',
-                        cancelButtonText:'annuler',
+                        confirmButtonText: 'afficher',
+                        cancelButtonText: 'annuler',
                     }).then((value1) => {
-                        if(value1.isConfirmed){
-                            this.product=value;
-                            this.visibleDetails=true ;
+                        if (value1.isConfirmed) {
+                            this.product = value;
+                            this.visibleDetails = true;
                         }
                     });
-                }
-                else {
-                    if(this.subdataqr.find((value:CodeModel) => value.id===this.newCodeGroupe)==undefined && this.newCodeGroupe!==this.newProduct._dataqr){
+                } else {
+                    if (this.subdataqr.find((value: CodeModel) => value.id === this.newCodeGroupe) == undefined && this.newCodeGroupe !== this.newProduct._dataqr) {
                         this.subdataqr.push({id: this.newCodeGroupe, code: this.newCodeGroupe});
                         this.newCodeGroupe = ''
 
-                    }
-                    else {
+                    } else {
                         Swal.fire('Erreur Duplication', 'Code Barre  Existe déja dans le groupe', 'error');
 
                     }
@@ -358,13 +367,12 @@ export class ProduitAjoutComponent implements OnInit{
 
         }
     }
+
     cleartolistCode() {
-        this.subdataqr=[] ;
+        this.subdataqr = [];
     }
 
-
-
-    imprimer(id:string): boolean {
+    imprimer(id: string): boolean {
         /* Read more about handling dismissals below */
         const contenuImprimer = document.getElementById(id);
 
@@ -384,42 +392,94 @@ export class ProduitAjoutComponent implements OnInit{
             } else {
                 // Gestion d'erreur si la fenêtre n'a pas pu être ouverte
                 console.error('La fenêtre d\'impression n\'a pas pu être ouverte.');
-                return  false
+                return false
             }
         }
 
-
-        /*
-            if (contenuImprimer) {
-              // Ouvrez une nouvelle fenêtre avec des dimensions spécifiées
-              const fenetreImpression = window.open('', '_blank', 'width=600,height=600');
-
-              if (fenetreImpression) {
-                // Ajoutez le contenu à la fenêtre d'impression
-                fenetreImpression.document.write('<html><head><title>Imprimer</title></head><body>');
-                fenetreImpression.document.write(contenuImprimer.innerHTML);
-                fenetreImpression.document.write('</body></html>');
-
-                // Appelez la fonction d'impression
-                fenetreImpression.document.close();
-                fenetreImpression.print();
-                fenetreImpression.close();
-              } else {
-                // Gestion d'erreur si la fenêtre n'a pas pu être ouverte
-                console.error("La fenêtre d'impression n'a pas pu être ouverte.");
-              }
-            }
-
-         */
-        return true ;
+        return true;
     }
 
+    private updateShowButtun(): void {
+        this.showButtunprod = !this.root.includes('add-facture');
+    }
+
+    private updateRootFromCurrentPath(): void {
+        this.root = this.router.url; // Récupère le chemin actuel
+        this.updateShowButtun();
+        console.log("root", this.root)
+    }
 
     clearFiles() {
-        this.uploadedFiles=[] ;
+        this.uploadedFiles = [];
     }
 
 
     protected readonly EventEmitter = EventEmitter;
-    data: string="gfg";
+    data: string = "gfg";
+
+
+    public openPopArticle() {
+
+        this.articleDialog = true;
+
+    }
+
+    public hideDialog() {
+
+        this.articleDialog = false;
+
+    }
+
+    addArticle() {
+        this.submitted = true;
+        if (this.article.nom.trim() == '') {
+            Swal.fire({
+                title: "Nom article Obligatoire !",
+                text: "Nom article est vide",
+                icon: "error"
+            });
+        } else if (this.article.unite == undefined) {
+            Swal.fire({
+                title: "Unité Obligatoire !",
+                text: "G , CM , ML ,Piéce",
+                icon: "error"
+            });
+        } else {
+            this.produitService.addArticle(this.article).subscribe(value => {
+
+
+                this.article = new Article();
+
+                this.getAllArticles();
+                Swal.fire({
+                    title: "Enregistrement",
+                    text: "votre article est bien enregistré",
+                    icon: "success"
+                });
+            }, error => {
+                console.log(error)
+            })
+        }
+        this.hideDialog();
+    }
+
+
+    getAllArticles() {
+        this.produitService.getArticles().subscribe((value: Article[]) => {
+            this.articles = value;
+        }, error => {
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Vous n'avez pas la permission s'il vous plait  contacter l'administrateur.  ",
+
+            });
+        })
+    }
+
+    public addNewArticle() {
+        this.dialogueService.openDialogueArticle();
+    }
 }
+
+

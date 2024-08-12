@@ -18,7 +18,6 @@ import {DialogModule} from "primeng/dialog";
 import {InputSwitchModule} from "primeng/inputswitch";
 import {DropdownModule} from "primeng/dropdown";
 import {ButtonModule} from "primeng/button";
-
 @NgModule({
     imports: [
         CommonModule,
@@ -38,10 +37,11 @@ import {ButtonModule} from "primeng/button";
         DialogModule,
         InputSwitchModule,
         DropdownModule,
-        ButtonModule
-
+        ButtonModule,
+        ConfirmDialogModule,
+        ToastModule
     ],
-    providers: [ConfirmationService,MessageService]
+    providers: [ConfirmationService, MessageService]
 
 })
 export class UIkitModule { }

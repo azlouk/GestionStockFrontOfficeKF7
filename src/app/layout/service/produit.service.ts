@@ -51,15 +51,8 @@ export class ProduitService {
             return new Observable();
         }
     }
-
-
-
-
-
-
     getProduitById(id: number): Observable<Produit> {
         const url = `${this.api}/findById`;
-
         const token = getToken();
         console.log(token)
         if (token) {

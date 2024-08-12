@@ -5,17 +5,15 @@
             <p-toolbar styleClass="mb-4">
                 <ng-template pTemplate="left">
                     <div class="my-2">
-                        <button pButton pRipple label="Ajouter" icon="pi pi-plus" class="p-button-success mr-2"
+                        <button pButton pRipple label="Ajouter" icon="pi pi-plus" class="p-button-success p-button-outlined mr-2"
                                 (click)="showDialogCreate()"></button>
-                        <button pButton pRipple label="Supprimer" icon="pi pi-trash" class="p-button-danger"
-                                (click)="deleteSelectedAricles()"
-                                [disabled]="!selectedDepots || !selectedDepots.length"></button>
+                        <button pButton pRipple label="Actualiser" icon="pi pi-refresh" class="p-button-primary p-button-outlined"
+                                (click)="refrech()"></button>
                     </div>
                 </ng-template>
                 <ng-template pTemplate="right">
                 <div class="col-2 float-end d-flex d-inline "  >
                     <p-avatar  *ngIf="displayusers " class="float-end" icon="pi pi-book" pBadge styleClass="mr-5" [value]="depots.length+''" size="large" [style]="{ 'background-color': '#b9c7ce', color: '#1a1717' }"></p-avatar>
-                    <i class="bi bi-boxes" style="font-size: 1rem"></i>
                 </div>
                 </ng-template>
             </p-toolbar>
@@ -23,7 +21,7 @@
             <p-table #dt [value]="depots" responsiveLayout="scroll" [rows]="10"
                      [globalFilterFields]="['code','nom','description','capitale','adresse','responsable']" [paginator]="true"
                      [rowsPerPageOptions]="[10,20,30]" [showCurrentPageReport]="true"
-                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                     currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords} élements"
                      selectionMode="multiple" [rowHover]="true" dataKey="id">
                 <ng-template pTemplate="caption">
 
@@ -100,7 +98,7 @@
                                 <button pButton pRipple icon="pi pi-pencil"
                                         class="p-button-rounded p-button-success mr-2"
                                         (click)="editDepot(depot)"></button>
-                                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
                                         (click)="removeDepot(depot.id)"></button>
                             </div>
                         </td>
