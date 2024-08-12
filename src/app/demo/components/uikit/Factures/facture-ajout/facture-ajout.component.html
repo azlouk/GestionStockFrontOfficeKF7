@@ -289,48 +289,54 @@
                         </ng-template>
                     </p-table>
             </div>
-            <div class=" p-card col-7 justify-content-center" >
-                    <h3 class="font-bold  mt-2">Produits facture</h3>
-                    <p-table [value]="produitsFactures" [scrollable]="true" scrollHeight="24rem">
-                        <ng-template pTemplate="header">
-                            <tr>
-                                <th pSortableColumn="nom" style="width:20%">Nom Produits <p-sortIcon field="nom"></p-sortIcon></th>
-                                <th pSortableColumn="quantite" style="width:20%">Quantité <p-sortIcon field="quantite"></p-sortIcon></th>
-                                <th style="width:20%">Prix (TND)</th>
-                                <th pSortableColumn="montantTotal" style="width:20%">Total (TND) <p-sortIcon field="price"></p-sortIcon></th>
-                                <th style="width:20%"></th>
-                            </tr>
-                        </ng-template>
-                        <ng-template pTemplate="body" let-l>
-                            <tr>
-                                <td>{{ l.produit.nom }}</td>
-                                <td>
-                                    <p-inputNumber class="text-center" id="{{ l.produit.id }}" [(ngModel)]="l.quantite" [max]="newFacture.typeFacture == 'FACTURE_VENTE' ? l.produit.qantite : null" (ngModelChange)="calaculateFactureTotalAcht()" name="quantiteProduit"></p-inputNumber>
-                                </td>
-                              <!--  <td class="fw-bold fs-4 text-red-600">{{ getPrixCalculate(l) | number }}</td>
-                                <td class="fw-bold fs-3 text-black" >{{ getPrixCalculate(l) * l.quantite | number }}</td>-->
-                                <td class="fw-bold fs-4 text-red-600">
-                                    {{ newFacture.typeFacture === 'FACTURE_ACHAT' ? (getPrixCalculateAchat(l) | number) : (getPrixCalculateVente(l) | number) }}
-                                </td>
-                                <td class="fw-bold fs-3 text-black">
-                                    {{ newFacture.typeFacture === 'FACTURE_ACHAT' ? (getPrixCalculateAchat(l) * l.quantite | number) : (getPrixCalculateVente(l) * l.quantite | number) }}
-                                </td>
-                                <td>
-                                    <button pButton pRipple icon="pi pi-cart-minus" class=" p-button-danger p-button-rounded" (click)="deleteProduct(l)"></button>
+            <div class="p-card col-7 justify-content-center">
+                <h3 class="font-bold mt-2">Produits facture</h3>
+                <p-table #dt [value]="produitsFactures" [scrollable]="true" scrollHeight="24rem" [globalFilterFields]="['produit.nom', 'quantite', 'montantTotal']">
+                    <ng-template pTemplate="caption">
+                        <div class="table-header">
+                <span class="p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input type="text" pInputText placeholder="Rechercher..." (input)="dt.filterGlobal($event.target, 'contains')" />
+                </span>
+                        </div>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th pSortableColumn="nom" style="width:20%">Nom Produits <p-sortIcon field="nom"></p-sortIcon></th>
+                            <th pSortableColumn="quantite" style="width:20%">Quantité <p-sortIcon field="quantite"></p-sortIcon></th>
+                            <th style="width:20%">Prix (TND)</th>
+                            <th pSortableColumn="montantTotal" style="width:20%">Total (TND) <p-sortIcon field="price"></p-sortIcon></th>
+                            <th style="width:20%"></th>
+                        </tr>
 
-                                </td>
-                            </tr>
-                        </ng-template>
-                        <ng-template pTemplate="emptymessage" >
-                            <tr>
-                                <td colspan="5">
-                                    <p-message severity="error" text="Aucun produit n'a été ajouté à votre facture !"
-                                               [style.padding-left]="'28%'"></p-message>
-                                </td>
-                            </tr>
-                        </ng-template>
-                    </p-table>
-                </div>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-l>
+                        <tr>
+                            <td>{{ l.produit.nom }}</td>
+                            <td>
+                                <p-inputNumber class="text-center" id="{{ l.produit.id }}" [(ngModel)]="l.quantite" [max]="newFacture.typeFacture == 'FACTURE_VENTE' ? l.produit.qantite : null" (ngModelChange)="calaculateFactureTotalAcht()" name="quantiteProduit"></p-inputNumber>
+                            </td>
+                            <td class="fw-bold fs-4 text-red-600">
+                                {{ newFacture.typeFacture === 'FACTURE_ACHAT' ? (getPrixCalculateAchat(l) | number) : (getPrixCalculateVente(l) | number) }}
+                            </td>
+                            <td class="fw-bold fs-3 text-black">
+                                {{ newFacture.typeFacture === 'FACTURE_ACHAT' ? (getPrixCalculateAchat(l) * l.quantite | number) : (getPrixCalculateVente(l) * l.quantite | number) }}
+                            </td>
+                            <td>
+                                <button pButton pRipple icon="pi pi-cart-minus" class="p-button-danger p-button-rounded" (click)="deleteProduct(l)"></button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td colspan="5">
+                                <p-message severity="error" text="Aucun produit n'a été ajouté à votre facture !" [style.padding-left]="'28%'"></p-message>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+
         </div>
         </p-fieldset>
         <p-fieldset  legend="Somme facture" [toggleable]="true">

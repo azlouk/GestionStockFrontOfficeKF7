@@ -4,7 +4,7 @@ import { UIkitRoutingModule } from './uikit-routing.module';
 import {ConfirmationService, MessageService} from "primeng/api";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {ToastModule} from "primeng/toast";
-import {FormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {ConfirmPopupModule} from "primeng/confirmpopup";
 import {TableModule} from "primeng/table";
 import {InputTextareaModule} from "primeng/inputtextarea";
@@ -18,13 +18,13 @@ import {DialogModule} from "primeng/dialog";
 import {InputSwitchModule} from "primeng/inputswitch";
 import {DropdownModule} from "primeng/dropdown";
 import {ButtonModule} from "primeng/button";
+import {AutoFocusModule} from "primeng/autofocus";
 @NgModule({
     imports: [
         CommonModule,
         UIkitRoutingModule,
         ConfirmDialogModule,
         ToastModule,
-        FormsModule,
         ConfirmPopupModule,
         TableModule,
         InputTextareaModule,
@@ -39,7 +39,11 @@ import {ButtonModule} from "primeng/button";
         DropdownModule,
         ButtonModule,
         ConfirmDialogModule,
-        ToastModule
+        ToastModule,
+        CommonModule,
+        AutoFocusModule,
+        ReactiveFormsModule,
+        FormsModule
     ],
     providers: [ConfirmationService, MessageService]
 

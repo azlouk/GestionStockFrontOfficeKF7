@@ -1,4 +1,6 @@
 import {Produit} from "./produit";
+import {ServiceService} from "../layout/service/service.service";
+import {ServiceComp} from "./ServiceComp";
 
 export class LigneFacture {
     private _id: number;
@@ -7,6 +9,7 @@ export class LigneFacture {
     private _montantTotal: number;
     private _prixAchat : number;
     private _prixVente : number;
+
 
     constructor(id?: number,  quantite?: number, montantTotal?:number, produit?:Produit,prixAchat?:number, prixVente?: number ) {
         this._id = id || 0;

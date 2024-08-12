@@ -22,7 +22,6 @@ import {TagModule} from "primeng/tag";
 import {MultiSelectModule} from "primeng/multiselect";
 import {SplitButtonModule} from "primeng/splitbutton";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
-import {b} from "@fullcalendar/core/internal-common";
 
 @Component({
   selector: 'app-facture',

@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnInit, ViewChild} from '@angular/core';
 import {Facture, factureType} from "../../../../../models/Facture";
 import {Depot} from "../../../../../models/Depot";
 import {CodeModel, Produit} from "../../../../../models/produit";
@@ -109,7 +109,7 @@ export class FactureAjoutComponent implements OnInit {
     codeISvalide=true ;
     subdataqr:CodeModel[]=[] ;
     uploadedFiles: any[] = [];
-
+    @ViewChild('dt') dt: Table;
 
     clear(table: Table) {
         table.clear();

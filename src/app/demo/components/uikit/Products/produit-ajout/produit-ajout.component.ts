@@ -97,43 +97,45 @@ export class ProduitAjoutComponent implements OnInit{
         this.updateRootFromCurrentPath();
 
         const id = this.route.snapshot.paramMap.get('id');
-        try {
-            if (id) {
-                // Attendre que les données du produit soient chargées
-                const product = await this.produitService.getProduitById(Number(id)).toPromise();
-                this.newProduct = product;
-                this.newProduct._dateFabrication = new Date(product._dateFabrication);
-                this.newProduct._dateExpiration = new Date(product._dateExpiration);
+        if (this.root.includes('produit')) {
+            try {
+                if (id) {
+                    const product = await this.produitService.getProduitById(Number(id)).toPromise();
+                    this.newProduct = product;
+                    this.newProduct._dateFabrication = new Date(product._dateFabrication);
+                    this.newProduct._dateExpiration = new Date(product._dateExpiration);
 
-                // Check if _subdataqr is defined and is an array
-                if (Array.isArray(product._subdataqr)) {
-                    product._subdataqr.forEach(value1 => {
-                        this.subdataqr.push({ id: value1, code: value1 });
-                    });
-                } else {
-                    console.warn("Product _subdataqr is not an array or is undefined", product._subdataqr);
+                    // Vérifiez si _subdataqr est défini et est un tableau
+                    if (Array.isArray(product._subdataqr)) {
+                        product._subdataqr.forEach(value1 => {
+                            this.subdataqr.push({ id: value1, code: value1 });
+                        });
+                    } else {
+                        console.warn("Product _subdataqr is not an array or is undefined", product._subdataqr);
+                    }
+
+                    // Assurez-vous que _filesList est correctement manipulé
+                    if (Array.isArray(product._filesList)) {
+                        this.loadFile(product._filesList);
+                    } else {
+                        console.warn("Product _filesList is not an array or is undefined", product._filesList);
+                    }
                 }
 
-                // Ensure _filesList is properly handled
-                if (Array.isArray(product._filesList)) {
-                    this.loadFile(product._filesList);
-                } else {
-                    console.warn("Product _filesList is not an array or is undefined", product._filesList);
-                }
+                // Attendre que les articles soient chargés
+                const articles = await this.produitService.getArticles().toPromise();
+                this.articles = articles;
+                console.log("Produit récupéré !!", this.newProduct);
+            } catch (error) {
+                console.error("Erreur lors du chargement des données :", error);
             }
 
-            // Attendre que les articles soient chargés
-            const articles = await this.produitService.getArticles().toPromise();
-            this.articles = articles;
-            console.log("Produit récupéré !!", this.newProduct);
-        } catch (error) {
-            console.error("Erreur lors du chargement des données :", error);
+            this.produitService.getArticles().subscribe((value: Article[]) => {
+                this.articles = value;
+            });
         }
-
-        this.produitService.getArticles().subscribe((value: Article[]) => {
-            this.articles = value;
-        });
     }
+
 
     ajouterProduit() {
         if (!this.newProduct.nom?.trim()) {

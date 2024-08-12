@@ -55,7 +55,8 @@ export class UserService {
         }else {
             return  new Observable<User[]>() ;
         }
-    }  getUsersClient(): Observable<User[]> {
+    }
+    getUsersClient(): Observable<User[]> {
         const token = getToken();
         console.log(token)
 

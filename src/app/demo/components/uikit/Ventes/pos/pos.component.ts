@@ -51,6 +51,7 @@ import {File} from "../../../../../models/File";
 import {GalleriaModule} from "primeng/galleria";
 import {environment} from "../../../../../../environments/environment";
 import {RippleModule} from "primeng/ripple";
+import {TooltipModule} from "primeng/tooltip";
 
 @Component({
     selector: 'app-pos',
@@ -81,7 +82,8 @@ import {RippleModule} from "primeng/ripple";
         RatingModule,
         ToolbarModule,
         CommonModule,
-        RippleModule
+        RippleModule,
+        TooltipModule
     ],
     templateUrl: './pos.component.html',
     styleUrl: './pos.component.scss'
@@ -930,7 +932,7 @@ export class POSComponent implements OnInit,OnDestroy {
         } else if (product.levelstock < product.qantite) {
             return 'ENSTOCK';
         } else {
-            return 'STOCKLIMITE';
+            return 'LIMITE';
         }
     }
     getUnite(product: Produit): string {

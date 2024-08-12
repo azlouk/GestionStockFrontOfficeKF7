@@ -285,4 +285,20 @@ export class AjoutUserComponent  implements  OnInit{
             return '' ;
         }
     }
+
+    onAfficherChange(permission: any): void {
+        if (!permission.afficher) {
+            permission.ajouter = false;
+            permission.modifier = false;
+            permission.supprimer = false;
+        }
+    }
+
+    toggleAllPermissions(permission: any): void {
+        const allChecked = permission.afficher && permission.ajouter && permission.modifier && permission.supprimer;
+        permission.afficher = !allChecked;
+        permission.ajouter = !allChecked;
+        permission.modifier = !allChecked;
+        permission.supprimer = !allChecked;
+    }
 }
