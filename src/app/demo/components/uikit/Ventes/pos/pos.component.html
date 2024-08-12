@@ -1,3 +1,126 @@
+<div class="p-toolbar flex justify-content-between align-items-center">
+    <button pButton type="button" label="Accueil" icon="pi pi-home" class="p-button-rounded p-button-outlined p-button-text p-button-success mr-2" (click)="goHome()"></button>
+    <button pButton type="button" label="En caisse" icon="pi pi-cart-plus" class="p-button-rounded p-button-outlined p-button-text p-button-success mr-2" (click)="addVente()"></button>
+    <button pButton type="button" label="Cloture" icon="pi pi-key" class="p-button-rounded p-button-outlined p-button-text p-button-danger mr-2" (click)="showClotureDIv()"></button>
+    <button pButton type="button" label="Vider" icon="pi pi-trash" class="p-button-rounded p-button-outlined p-button-text p-button-warning mr-2" (click)="clearTableVente()"></button>
+    <button pButton type="button" icon="pi pi-print" class="p-button-rounded p-button-outlined p-button-text p-button-danger"></button>
+    <div class="flex align-items-center">
+        <span class="pi pi-ticket p-2 font-bold">{{ getTitle() }}</span>
+        <button pButton type="button" icon="pi pi-pencil" class="p-button-text p-button-success " (click)="setTitle()"></button>
+    </div>
+    <div class="flex justify-content-between align-items-center">
+        <label class="text-primary font-bold mr-2" for="binary">Auto</label>
+        <p-inputSwitch [(ngModel)]="selectedVente.isPrint" id="binary" class="ml-2"></p-inputSwitch>
+    </div>
+</div>
+
+<div class="col-12">
+    <div class="card">
+        <div class="grid">
+            <div class="col-12 md:col-9">
+                <div class="card">
+                    <span class="p-input-icon-right">
+                        <input type="text" class="float-end m-2" pInputText [(ngModel)]="searchText" (input)="dv.filter(searchText)" placeholder="Rechercher par Nom ou Code à barre..." (click)="changeFocusSearch()" />
+                        <i class="pi pi-spin pi-box text-success"></i>
+                    </span>
+                    <p-dataView #dv [value]="produits" [layout]="layout" [paginator]="true" [rows]="12" [loading]="loading" [rowsPerPageOptions]="[6,12,18,24,30,42 ]" [filterBy]="'nom,dataqr,subdataqr,dateFabrication,dateExpiration,description,qantite,prixUnitaire,gainGros,minQuantiteGros,article.nom,article.id'">
+                        <ng-template pTemplate="grid" let-produits>
+                            <div class="grid grid-nogutter">
+                                <div class="col-12 sm:col-6 md:col-4 xl:col-2 p-2" *ngFor="let product of produits">
+                                    <div class="p-2 border-3 surface-border surface-card border-round flex flex-column">
+                                        <div class="flex justify-content-between">
+                                            <div><i class="pi pi-tags text-blue-500"></i><span class="font-medium text-secondary text-sm">{{ product.article.nom }}</span></div>
+                                            <p-tag class="font-medium text-sm" [value]="getStockLabel(product)" [severity]="getSeverity(product)"></p-tag>
+                                        </div>
+                                        <div class="surface-50 flex justify-content-center border-round" (click)="addProductToSale(product)">
+                                            <img *ngIf="afficherImage" class="w-9 border-round" style="width: 90%; height: 8vh;" [src]="loadFileByProduct(product)|| defaultImageUrl" [alt]="">
+                                        </div>
+                                        <div class="pt-4">
+                                            <div class="text-lg font-medium text-900 mt-1">{{ product.qantite + getUnite(product) }}</div>
+                                            <div class="surface-0 flex align-items-center justify-content-center py-1 px-2 bg-orange-50 text-overflow-ellipsis overflow-hidden whitespace-nowrap" style="border-radius: 30px; max-width: 200px;" pTooltip="{{ product.nom }}" tooltipPosition="top">
+                                                <span class="text-900 font-medium">{{ product.nom }}</span>
+                                            </div>
+                                            <div class="flex  mt-4 justify-content-between">
+                                                <span class="text-2xl text-red-400 font-semibold"> TND {{ product.prixUnitaire + product.gainUnitaire }}</span>
+                                                <i class="pi pi-eye text-primary-600" (click)="op.toggle($event)"></i>
+                                                <p-overlayPanel #op>
+                                                    <div class="card" style="width: 250px;">
+                                                        <div class="flex justify-content-between">
+                                                            <div><i class="pi pi-tags text-primary-600"></i><span class="font-bold text-primary-600 text-2xl"> {{ product.article.nom }}</span></div>
+                                                            <p-tag class="font-medium text-sm" [value]="getStockLabel(product)" [severity]="getSeverity(product)"></p-tag>
+                                                        </div>
+                                                        <div class="flex flex-column align-items-center text-center mb-3">
+                                                            <img *ngIf="afficherImage" [src]="loadFileByProduct(product)|| defaultImageUrl" [alt]="product.nom" class="w-5 shadow-2 my-3 mx-0"/>
+                                                            <div class="text-2xl font-bold"><i class="pi pi-tag text-primary-600"></i> {{product.nom}}</div>
+                                                            <div class="text-2xl font-bold"><span class="text-900 font-medium">Quantité: {{ product.qantite + getUnite(product) }}</span></div>
+                                                            <div class="text-2xl font-bold"><span class="text-900 font-medium">Levelstock: {{ product.levelstock }}</span></div>
+                                                            <div class="text-2xl font-bold"><span class="text-900 font-medium"><i class="pi pi-barcode" style="color: #0523cc;"></i>  {{ product.dataqr }}</span></div>
+                                                            <div class="mb-3"> description: {{product.description}}</div>
+                                                        </div>
+                                                        <div class="flex justify-content-between footer">
+                                                            <span class="text-2xl font-semibold text-red-400">{{product.prixUnitaire + product.gainUnitaire}} TND</span>
+                                                            <button pButton pRipple icon="pi pi-cart-plus" class="p-button-rounded p-button-outlined p-button-success" (click)="addProductToSale(product)"></button>
+                                                        </div>
+                                                    </div>
+                                                </p-overlayPanel>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </p-dataView>
+                </div>
+            </div>
+            <div class="col-12 md:col-3">
+                <div class="card">
+                    <div class="flex mb-1 p-2">
+                        <div class="flex flex-column">
+                            <span class="flex ml-2 font-medium text-4xl text-red-500 font-bold">{{getTotalVente() | currency:'TND':'TND '}}</span>
+                        </div>
+                    </div>
+                    <p-table #dt [value]="selectedVente.lignesVente" scrollHeight="360px" [tableStyle]="{'min-height': '15rem'}" styleClass="p-datatable-striped" [globalFilterFields]="['produit.nom', 'prixVente', 'venteQty']">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th style="width: 25%">Nom</th>
+                                <th style="width: 25%">QTY</th>
+                                <th style="width: 40%">Prix</th>
+                                <th style="width: 10%"></th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-ligneVente let-i="rowIndex">
+                            <tr>
+                                <td>{{ ligneVente.produit.nom }}</td>
+                                <td>
+                                    <div>
+                                        <p-inputNumber styleClass="surface-border" [size]="1" pAutoFocus inputId="minmaxfraction" [autofocus]="ligneVente.focus" (click)="changeFocus(ligneVente)" mode="decimal" [(ngModel)]="ligneVente.venteQty" (ngModelChange)="updatePrixVente(ligneVente)" [min]="1" [max]="ligneVente.produit.qantite"></p-inputNumber>
+                                    </div>
+                                </td>
+                                <td class="text-green-300 font-bold text-1xl">{{ (ligneVente.venteQty * ligneVente.prixVente).toFixed(3) }} TND</td>
+                                <td>
+                                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-outlined p-button-danger" (click)="supprimerProduit(i)"></button>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+<!--
 
 
 <div class="p-toolbar flex justify-content-between align-items-center">
@@ -37,7 +160,7 @@
                                                 <span
                                                         class="font-medium text-secondary text-sm">{{ product.article.nom }}</span>
                                             </div>
-                                            <p-tag class="font-medium text-secondary text-sm"
+                                            <p-tag class="font-medium text-sm"
                                                    [value]="getStockLabel(product)"
                                                    [severity]="getSeverity(product)"></p-tag>
                                         </div>
@@ -47,18 +170,17 @@
                                                  [src]="loadFileByProduct(product)|| defaultImageUrl" [alt]="">
                                         </div>
                                         <div class="pt-4">
-                                            <div class=" justify-content-between align-items-start gap-2">
-                                                    <div class="text-lg font-medium text-900 mt-1"><i class="pi pi-pi pi-tag text-blue-500"></i>{{ product.nom }}
+                                            <div class=" justify-content- gap-2">
+                                                    <div class="text-lg font-medium text-900 mt-1 ">{{ product.qantite +getUnite(product)}}
                                                     </div>
-                                                <div class="surface-100 p-1" style="border-radius: 30px">
-                                                    <div
-                                                            class="surface-0 flex align-items-center gap-3 justify-content-center py-1 px-2"
-                                                            style="border-radius: 30px; box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.04), 0px 1px 2px 0px rgba(0, 0, 0, 0.06)">
-                                                                <span
-                                                                        class="text-900 font-medium">{{ product.qantite +getUnite(product)}}
-                                                                </span>
-                                                    </div>
+
+                                                <div class="surface-0 flex align-items-center gap-3 justify-content-center py-1 px-2 bg-orange-50 text-overflow-ellipsis overflow-hidden whitespace-nowrap"
+                                                     style="border-radius: 30px; max-width: 200px;"
+                                                     pTooltip="{{ product.nom }}" tooltipPosition="top">
+                                                    <span class="text-900 font-medium">{{ product.nom }}</span>
                                                 </div>
+
+
                                             </div>
                                             <div class="flex flex-column  mt-4">
                                                 <span
@@ -76,7 +198,7 @@
                                                                 <span
                                                                         class="font-bold text-primary-600 text-2xl"> {{ product.article.nom }}</span>
                                                             </div>
-                                                            <p-tag class="font-medium text-secondary text-sm"
+                                                            <p-tag class="font-medium text-sm"
                                                                    [value]="getStockLabel(product)"
                                                                    [severity]="getSeverity(product)"></p-tag>
                                                         </div>
@@ -246,3 +368,4 @@
         </ng-template>
     </p-dialog>
 </div>
+-->

@@ -1,5 +1,6 @@
 import {Article} from "./Article";
 import {File} from "./File";
+import {Historique} from "./historique";
 /*
 export interface ProduitInterface {
     id?: number;
@@ -46,7 +47,7 @@ export class Produit {
             gainGros: number;
             files:File[];
             dateExpiration: Date;
-    dateFabrication: Date;
+            dateFabrication: Date;
             minQuantiteGros: number;
             taxe: number;
             enable: boolean;
@@ -56,10 +57,11 @@ export class Produit {
             levelstock:number ;
             showDetails:boolean ;
             checkedService: boolean ;
-            subdataqr :string[]
+            subdataqr :string[];
+            historiques: Historique [];
 
 
-    constructor(_id: number=0, _nom: string="",  _typeCalcule: string="",_prixUnitaire: number=0, _prixGros: number=0, _description: string="", _qantite: number=0, _image: Blob=new Blob(), _gainUnitaire: number=0, _gainGros: number=0, _files: File[]=[], _dateExpiration: Date=new Date(), _dateFabrication:Date=new Date(), _minQuantiteGros: number=0, _taxe: number=0, _enable: boolean=false, _dataqr: string="", _qantiteFacture: number=0, _article: Article=new Article(), _levelstock: number=0, _showDetails: boolean=false, _checkedService: boolean=false, _subdataqr: string[]=[]) {
+    constructor(_id: number=0, _nom: string="",  _typeCalcule: string="",_prixUnitaire: number=0, _prixGros: number=0, _description: string="", _qantite: number=0, _image: Blob=new Blob(), _gainUnitaire: number=0, _gainGros: number=0, _files: File[]=[], _dateExpiration: Date=new Date(), _dateFabrication:Date=new Date(), _minQuantiteGros: number=0, _taxe: number=0, _enable: boolean=false, _dataqr: string="", _qantiteFacture: number=0, _article: Article=new Article(), _levelstock: number=0, _showDetails: boolean=false, _checkedService: boolean=false, _subdataqr: string[]=[],_historiques : Historique []= []) {
         this.id = _id ;
         this.nom = _nom ;
         this.typeCalcule = _typeCalcule ;
@@ -83,6 +85,7 @@ export class Produit {
         this.showDetails = _showDetails ;
         this.checkedService = _checkedService ;
         this.subdataqr = _subdataqr ;
+        this.historiques = _historiques;
     }
 
      get _typeCalcule(): string {
@@ -268,6 +271,23 @@ export class Produit {
     set _subdataqr(value: string[]) {
         this.subdataqr = value;
     }
+
+    get _files(): File[] {
+        return this.files;
+    }
+
+    set _files(value: File[]) {
+        this.files = value;
+    }
+
+    get _historiques(): Historique[] {
+        return this.historiques;
+    }
+
+    set _historiques(value: Historique[]) {
+        this.historiques = value;
+    }
+
     toJSON() {
         return {
             ...this,

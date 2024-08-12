@@ -1,4 +1,5 @@
 import {Produit} from "./produit";
+import {ServiceComp} from "./ServiceComp";
 
 export class LigneVente{
     private _id : number;
@@ -6,7 +7,6 @@ export class LigneVente{
     private _prixVente : number;
     private _produit : Produit;
     public focus : boolean = false;
-
     constructor(id?: number, venteQty?: number, prixVente?: number, produit? : Produit ) {
         this._id = id || 0;
         this._venteQty = venteQty || 0;
@@ -15,37 +15,35 @@ export class LigneVente{
         this.focus=false;
     }
 
-
-
-    get id(): number {
+    // Getter et Setter pour _id
+    public get id(): number {
         return this._id;
     }
-
-    set id(value: number) {
+    public set id(value: number) {
         this._id = value;
     }
 
-    get venteQty(): number {
+    // Getter et Setter pour _venteQty
+    public get venteQty(): number {
         return this._venteQty;
     }
-
-    set venteQty(value: number) {
+    public set venteQty(value: number) {
         this._venteQty = value;
     }
 
-    get prixVente(): number {
+    // Getter et Setter pour _prixVente
+    public get prixVente(): number {
         return this._prixVente;
     }
-
-    set prixVente(value: number) {
+    public set prixVente(value: number) {
         this._prixVente = value;
     }
 
-    get produit(): Produit {
+    // Getter et Setter pour _produit
+    public get produit(): Produit {
         return this._produit;
     }
-
-    set produit(value: Produit) {
+    public set produit(value: Produit) {
         this._produit = value;
     }
 }

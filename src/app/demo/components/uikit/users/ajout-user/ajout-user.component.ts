@@ -1,3 +1,4 @@
+
 import {Component, OnInit} from '@angular/core';
 import Swal from "sweetalert2";
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
@@ -169,11 +170,10 @@ export class AjoutUserComponent implements OnInit {
         // this.getAllServiceList() ;
          this.userService.getUsers();
     }
-
     onSubmit(): void {
         if (this.userForm.valid) {
             const userData = this.userForm.value;
-            let user: any = {
+            let user:any = {
                 username: "",
                 firstname: userData.nom,
                 lastname: userData.prenom,
@@ -285,13 +285,11 @@ export class AjoutUserComponent implements OnInit {
         if (depotfound !== undefined)
             this.SelectedDepot = depotfound;
     }
-
     dispalyService() {
         const Servicefound: SERVICE | undefined = this.ListService.find(value => value.id == this.SelectedServiceId);
         if (Servicefound !== undefined)
             this.SelectedServcie = Servicefound;
     }
-
     ViewDetailResponsable(responsable: User) {
         if (responsable != null) {
             Swal.fire({
@@ -328,13 +326,10 @@ export class AjoutUserComponent implements OnInit {
         }
 
     }
-
     deleteService(SelectedServcie: SERVICE) {
     }
-
     editService(SelectedServcie: SERVICE) {
     }
-
     returnBack() {
         this.userService.returnBack()
     }
@@ -366,6 +361,22 @@ export class AjoutUserComponent implements OnInit {
         } else {
             return '';
         }
+    }
+
+    onAfficherChange(permission: any): void {
+        if (!permission.afficher) {
+            permission.ajouter = false;
+            permission.modifier = false;
+            permission.supprimer = false;
+        }
+    }
+
+    toggleAllPermissions(permission: any): void {
+        const allChecked = permission.afficher && permission.ajouter && permission.modifier && permission.supprimer;
+        permission.afficher = !allChecked;
+        permission.ajouter = !allChecked;
+        permission.modifier = !allChecked;
+        permission.supprimer = !allChecked;
     }
 
 

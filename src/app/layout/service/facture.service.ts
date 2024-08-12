@@ -182,12 +182,7 @@ export class FactureService {
             facture.reference.toLowerCase().includes(term)
         );
     }
-    // updateFacture(facture: Facture): void {
-    //   const index = this.factures.findIndex(f => f.id === facture.id);
-    //   if (index !== -1) {
-    //     this.factures[index] = facture;
-    //   }
-    // }
+
     getClient(id : number) :Observable<User> {
         const token = getToken();
         const url = `${this.api}/getClient/${id}`;

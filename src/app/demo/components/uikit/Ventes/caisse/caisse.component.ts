@@ -9,7 +9,7 @@ import {ProduitService} from "../../../../../layout/service/produit.service";
 import {VenteService} from "../../../../../layout/service/vente.service";
 import {ClotureService} from "../../../../service/cloture.service";
 import {Router} from "@angular/router";
-import {MessageService} from "primeng/api";
+import {ConfirmationService, MessageService} from "primeng/api";
 import {DomSanitizer, SafeUrl} from "@angular/platform-browser";
 import {SaveUrlFileProduct} from "../../../../../models/File";
 import {LigneVente} from "../../../../../models/LigneVente";
@@ -33,6 +33,12 @@ import {Cloture} from "../../../../../models/Cloture";
 import {SidebarModule} from "primeng/sidebar";
 import {FactureComponent} from "../../Factures/facture/facture.component";
 import {FactureAjoutComponent} from "../../Factures/facture-ajout/facture-ajout.component";
+import {RippleModule} from "primeng/ripple";
+import {TabViewModule} from "primeng/tabview";
+import {ServiceComp} from "../../../../../models/ServiceComp";
+import {ServiceService} from "../../../../../layout/service/service.service";
+import {ServiceCompService} from "../../../../../layout/service/service-comp.service";
+import {CommandeServAjoutComponent} from "../../commandeServices/commande-serv-ajout/commande-serv-ajout.component";
 
 @Component({
     selector: 'app-caisse',
@@ -54,30 +60,38 @@ import {FactureAjoutComponent} from "../../Factures/facture-ajout/facture-ajout.
         BadgeModule,
         InputGroupModule,
         InputGroupAddonModule, InputTextModule, TableModule,
-        CommonModule, ToggleButtonModule, AutoFocusModule, SidebarModule, FactureComponent, FactureAjoutComponent
+        CommonModule, ToggleButtonModule, AutoFocusModule, SidebarModule, FactureComponent, FactureAjoutComponent, RippleModule, TabViewModule, CommandeServAjoutComponent
     ],
     templateUrl: './caisse.component.html',
     styleUrl: './caisse.component.scss'
 })
-export class CaisseComponent implements OnInit{
+export class CaisseComponent implements OnInit {
     @ViewChild('dv') dv: DataView | undefined;
-
+    @ViewChild('searchInput') searchInput: ElementRef;
+    @ViewChild('dtProduitsFiltres') dtProduitsFiltres: any;
+    @ViewChild('dtProduitsFiltreservice') dtProduitsFiltreservice :any;
     focusIndex = 0;
     searchTerm: string = '';
+    searchTermFilter: string = '';
+    searchTermFilterService: string = '';
+
     masquer = true;
 
 
     produits: Produit[] = [];
+    services: ServiceComp [] = []
     produitsFiltres: Produit [] = [];
-    cloture : Cloture = new Cloture();
+    serviceFiltres: ServiceComp [] = [];
 
-    listeVente : Vente[]=[];
+    cloture: Cloture = new Cloture();
 
-    selectedVente: Vente=new Vente() ;
+    listeVente: Vente[] = [];
+
+    selectedVente: Vente = new Vente();
     checked: boolean = true;
     divVisible: boolean = true;
     visible: boolean = false;
-    show : boolean = false;
+    show: boolean = false;
     identifiant = 0;
 
 
@@ -90,19 +104,17 @@ export class CaisseComponent implements OnInit{
     DateCReation: Date = new Date();
     visibleimage: boolean = false;
     newCloture!: FormGroup;
-    frais: number=0;
-    reglement: number=0;
+    frais: number = 0;
+    reglement: number = 0;
 
-
-
+    sidebarVisibleFacture: boolean = false;
+    searchTable: boolean = false;
+    searchTableService: boolean = false;
 
     activityValues: number[] = [0, 100];
     currentDate: string = this.formatDate(new Date());
-
-
     TotalProductNb: number = 0;
-
-    TotalAndReglement:any={total:0,reglement:0};
+    TotalAndReglement: any = {total: 0, reglement: 0};
 
     // Ajoutez cette méthode pour formater la date au format 'YYYY-MM-DD'
     formatDate(date: Date): string {
@@ -112,13 +124,17 @@ export class CaisseComponent implements OnInit{
         return `${year}-${month}-${day}`;
     }
 
-    @ViewChild('searchInput') searchInput!: ElementRef;
     @ViewChild('ajouterProduitButton') ajouterProduitButton!: ElementRef;
     messages1: Message[] = [];
 
     ngOnInit(): void {
         this.getAllProduits();
+        this.getAllServices()
         this.messages1 = [{severity: 'error', summary: 'Error', detail: 'Pas des images'}];
+    }
+
+    ngAfterViewInit(): void {
+        this.searchInput.nativeElement.focus();
     }
 
     toggleDivVisibility() {
@@ -126,65 +142,104 @@ export class CaisseComponent implements OnInit{
     }
 
     constructor(private produitService: ProduitService,
+                private serviceCompService: ServiceCompService,
                 public venteService: VenteService,
-                private clotureService : ClotureService,
+                private clotureService: ClotureService,
                 private renderer: Renderer2,
                 private route: Router,
                 private messageService: MessageService,
-                private sanitizer: DomSanitizer
+                private sanitizer: DomSanitizer,
+                private confirmationService: ConfirmationService
     ) {
-        const idrandom=1;
-        this.selectedVente=new Vente(idrandom,new Date().toString(),'client '+idrandom,0,0,[],getUserDecodeID());
+        const idrandom = 1;
+        this.selectedVente = new Vente(idrandom, new Date().toString(), 'client ' + idrandom, 0, 0, [], getUserDecodeID());
         this.listeVente.push(this.selectedVente);
         this.reglement = this.selectedVente.total;
     }
 
+    /*
+        SaveVente() {
+            if (this.selectedVente.lignesVente.length != 0) {
+
+                this.getTotalVente();
+                this.selectedVente.reglement=this.reglement ;
+                this.produitService.SaveVente(this.selectedVente).subscribe(value => {
+                    console.log("Result Vente :" + value);
+                    if (value ) {
+                        this.showTopCenter("Votre Vente est bien enregistré ")
+                        if (this.autoimprimer) {
+                            //let timerInterval: string | number | NodeJS.Timeout | undefined;
+                            Swal.fire({
+                                title: "Auto close alert!",
+                                html: "I will close in <b></b> milliseconds.",
+                                timer: 2000,
+                                timerProgressBar: true,
+                                didOpen: () => {
+                                    Swal.showLoading();
+                                    // @ts-ignore
+                                    // const timer = Swal.getPopup().querySelector("b");
+                                    // timerInterval = setInterval(() => {
+                                    //     // @ts-ignore
+                                    //     timer.textContent = `${Swal.getTimerLeft()}`;
+                                    // }, 100);
+                                },
+                                /!* willClose: () => {
+                                     clearInterval(timerInterval);
+                                 }*!/
+                            }).then((result) => {
+                                /!* Read more about handling dismissals below *!/
+                                if (result.dismiss === Swal.DismissReason.timer) {
+                                    console.log("I was closed by the timer");
+                                    this.imprimer()
+                                }
+                            });
+
+                        } else {
+                            this.clearVente();
+                        }
+                    }
+                })
+            } else {
+                Swal.fire({
+                    title: "Pas de vente ?",
+                    text: "SVP ajouter des produits ",
+                    icon: "info"
+                });
+            }
+        }
+    */
     SaveVente() {
         if (this.selectedVente.lignesVente.length != 0) {
-
             this.getTotalVente();
-            this.selectedVente.reglement=this.reglement ;
+            this.selectedVente.reglement = this.reglement;
             this.produitService.SaveVente(this.selectedVente).subscribe(value => {
-                console.log("Result Vente :" + value);
-                if (value ) {
-                    this.showTopCenter("Votre Vente est bien enregistré ")
+                if (value) {
+                    this.messageService.add({
+                        key: 'tc',
+                        severity: 'success',
+                        summary: 'Succès',
+                        detail: 'Votre Vente est bien enregistrée'
+                    });
                     if (this.autoimprimer) {
-                        //let timerInterval: string | number | NodeJS.Timeout | undefined;
-                        Swal.fire({
-                            title: "Auto close alert!",
-                            html: "I will close in <b></b> milliseconds.",
-                            timer: 2000,
-                            timerProgressBar: true,
-                            didOpen: () => {
-                                Swal.showLoading();
-                                // @ts-ignore
-                                // const timer = Swal.getPopup().querySelector("b");
-                                // timerInterval = setInterval(() => {
-                                //     // @ts-ignore
-                                //     timer.textContent = `${Swal.getTimerLeft()}`;
-                                // }, 100);
-                            },
-                            /* willClose: () => {
-                                 clearInterval(timerInterval);
-                             }*/
-                        }).then((result) => {
-                            /* Read more about handling dismissals below */
-                            if (result.dismiss === Swal.DismissReason.timer) {
-                                console.log("I was closed by the timer");
-                                this.imprimer()
+                        // Remplacez Swal.fire par confirmationService pour l'alerte auto-close
+                        this.confirmationService.confirm({
+                            message: 'Votre vente est enregistrée. Voulez-vous imprimer le ticket ?',
+                            header: 'Confirmation',
+                            accept: () => {
+                                this.imprimer();
                             }
                         });
-
                     } else {
                         this.clearVente();
                     }
                 }
-            })
+            });
         } else {
-            Swal.fire({
-                title: "Pas de vente ?",
-                text: "SVP ajouter des produits ",
-                icon: "info"
+            this.messageService.add({
+                key: 'tc',
+                severity: 'error',
+                summary: 'Information',
+                detail: 'Pas de vente, SVP ajouter des produits'
             });
         }
     }
@@ -195,14 +250,34 @@ export class CaisseComponent implements OnInit{
         })
     }
 
+    getAllServices(): void {
+        this.loading = true;
+        this.serviceCompService.getServices().subscribe(
+            (services: ServiceComp[]) => {
+                this.services = services;
+                this.loading = false;
+                //this.calculerCout();
+                console.table(services);
+            },
+            (error: any) => {
+                console.error('Error fetching services:', error);
+                this.loading = false;
+                // this.displayusers = false;
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Oops...',
+                    detail: "Vous n'avez pas la permission, s'il vous plaît contactez l'administrateur."
+                });
+            }
+        );
+    }
+
     clearVente() {
         this.selectedVente.lignesVente = [];
         this.selectedVente.reglement = 0;
         this.TotalProductNb = 0;
 
     }
-
-
 
 
     @HostListener('document:keydown', ['$event'])
@@ -249,7 +324,7 @@ export class CaisseComponent implements OnInit{
                 break;
             case 'F6' :
                 this.focusIndex = 6;
-                this.route.navigate(["/home"])
+                this.route.navigate(["/"])
                 break;
             case 'F7':
                 this.focusIndex = 7;
@@ -264,6 +339,10 @@ export class CaisseComponent implements OnInit{
             case 'F10' :
                 this.focusIndex = 10;
                 this.SaveVente();
+                break;
+            case 'r' :
+                this.focusIndex = 11;
+                this.searchTable = true;
                 break;
             case 'F9': {
 
@@ -306,7 +385,7 @@ export class CaisseComponent implements OnInit{
         switch (index) {
             case 1 :
                 this.focusIndex = 1;
-                this.sidebarVisibleFacture=true
+                this.sidebarVisibleFacture = true
                 break;
 
             case 2:
@@ -338,7 +417,7 @@ export class CaisseComponent implements OnInit{
                 break;
             case 6 :
                 this.focusIndex = 6;
-                this.route.navigate(["/home"])
+                this.route.navigate(["/"])
                 break;
             case 7:
                 this.focusIndex = 7;
@@ -352,6 +431,10 @@ export class CaisseComponent implements OnInit{
             case 10 :
                 this.focusIndex = 10;
                 this.SaveVente();
+                break;
+            case 11 :
+                this.focusIndex = 11;
+                this.searchTable = true;
                 break;
             case 9: {
                 if (this.selectedVente.lignesVente.length != 0) {
@@ -451,7 +534,6 @@ export class CaisseComponent implements OnInit{
 
     }
 
-
     search(): void {
         if (this.searchTerm.trim() !== '') {
             this.produitsFiltres = []
@@ -464,8 +546,8 @@ export class CaisseComponent implements OnInit{
                     this.ajouterProduit()
             });
         }
-        console.log('Produits filtrés: dATA', this.produitsFiltres);
     }
+
     showTopCenter(message: string) {
         this.messageService.add({key: 'tc', severity: 'warn', summary: 'Warn', detail: message});
     }
@@ -523,7 +605,6 @@ export class CaisseComponent implements OnInit{
     }
 
     ajouterProduit(): void {
-
         if (this.produitsFiltres.length > 0) {
             this.ajouterProduitSelectionne(0);
             this.getTottalNbProduct()
@@ -553,6 +634,14 @@ export class CaisseComponent implements OnInit{
             // Remove the selected product from the list
             this.selectedVente.lignesVente.splice(index, 1);
             this.getTottalNbProduct()
+        }
+    }
+
+    supprimerService(index: number): void {
+        // Check if the index is valid
+        if (index >= 0 && index < this.selectedVente.lignesVente.length) {
+            // Remove the selected product from the list
+            this.selectedVente.lignesVente.splice(index, 1);
         }
     }
 
@@ -616,17 +705,16 @@ export class CaisseComponent implements OnInit{
     }
 
     getTotalVente(): number {
-        const val = this.getSommeTotale() + this.getSommeTaxes()+this.frais;
-        this.selectedVente.total=val;
+        const val = this.getSommeTotale() + this.getSommeTaxes() + this.frais;
+        this.selectedVente.total = val;
 
         return this.selectedVente.total;
     }
 
 
-
     private showClotureDIv() {
         this.clotureService.getTotalClotureNow(new Date()).subscribe(value => {
-            this.TotalAndReglement=value ;
+            this.TotalAndReglement = value;
         })
 
         this.show = !this.show
@@ -661,47 +749,77 @@ export class CaisseComponent implements OnInit{
             }
         );
     }
+
     async showDialog() {
         const {value: nomClient} = await Swal.fire({
             title: "Client",
             input: "text",
-            inputValue:"client " +(this.listeVente.length +1) ,
+            inputValue: "client " + (this.listeVente.length + 1),
             inputLabel: "nom client!",
             inputPlaceholder: "nom du clients"
         });
         if (nomClient) {
 
 
-
-            if(this.selectedVente.lignesVente.length != 0){
-
+            if (this.selectedVente.lignesVente.length != 0) {
 
 
-                this.selectedVente=new Vente(this.listeVente.length +1,new Date().toString(),nomClient,0,0,[],getUserDecodeID()) ;
-                this.listeVente.push(this.selectedVente) ;
+                this.selectedVente = new Vente(this.listeVente.length + 1, new Date().toString(), nomClient, 0, 0, [], getUserDecodeID());
+                this.listeVente.push(this.selectedVente);
                 this.getTottalNbProduct()
 
 
-                console.log("ligne Ventes:",this.listeVente);
-            }
-            else {
+                console.log("ligne Ventes:", this.listeVente);
+            } else {
                 Swal.fire({
                     title: "Vider  !",
                     text: "Votre vente est déja vidé",
                     icon: "error"
-                });        }
+                });
+            }
         }
     }
-    switchVente(vente:Vente){
+
+    switchVente(vente: Vente) {
         this.getTottalNbProduct()
 
         this.selectedVente = vente;
 
-        console.log("SelectedVente",this.selectedVente)
+        console.log("SelectedVente", this.selectedVente)
 
     }
 
 
     protected readonly top = top;
-    sidebarVisibleFacture: boolean=false;
+
+
+    filterProduits() {
+        if (this.searchTermFilter) {
+            this.produitsFiltres = this.produits.filter(produit =>
+                produit.id.toString().includes(this.searchTermFilter) ||
+                produit.nom.includes(this.searchTermFilter) ||
+                produit.description.includes(this.searchTermFilter) ||
+                produit.dataqr.includes(this.searchTermFilter) ||
+                produit.dateExpiration.toString().includes(this.searchTermFilter) ||
+                produit.dateFabrication.toString().includes(this.searchTermFilter)
+            );
+        } else {
+            this.produitsFiltres = [...this.produits];
+        }
+    }
+    filterServices() {
+        if (this.searchTermFilterService) {
+            this.serviceFiltres = this.services.filter(service =>
+                service.id.toString().includes(this.searchTermFilter) ||
+                service.nomServiceComp.includes(this.searchTermFilter) ||
+                service.descriptionServiceComp.includes(this.searchTermFilter) ||
+                service.dateDebutService.toString().includes(this.searchTermFilter) ||
+                service.dateFinService.toString().includes(this.searchTermFilter)
+            );
+        } else {
+            this.serviceFiltres = [...this.services];
+        }
+    }
+
 }
+

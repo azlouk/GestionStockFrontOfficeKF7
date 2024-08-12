@@ -1,0 +1,353 @@
+<!-- Card Container -->
+<div class="flex-auto card">
+    <p-toast></p-toast>
+    <p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+
+    <!-- Title -->
+    <div class="PrimaryColorTitle fs-3 font-bold ">
+        <h3 class="text-primary-600 font-bold">Ajouter une commande service</h3>
+    </div>
+    <div class="card">
+        <!-- Dates -->
+        <div class=" flex flex-wrap  p-2">
+            <div class="flex-auto col-12 md:col-4">
+                <label class="font-bold block mb-2"> Date de Création </label>
+                <p-calendar [(ngModel)]="newCommandeService.dateCreation"
+                            [touchUI]="true"
+                            [readonlyInput]="true"></p-calendar>
+            </div>
+            <div class="flex-auto col-12 md:col-4">
+                <label class="font-bold block mb-2"> Date Estimée Fin </label>
+                <p-calendar [(ngModel)]="newCommandeService.dateEstimeeFin"
+                            [touchUI]="true"
+                            [readonlyInput]="true"></p-calendar>
+            </div>
+            <div class="flex-auto col-12 md:col-4">
+                <label class="font-bold block mb-2"> Date Validation/Sortie </label>
+                <p-calendar [(ngModel)]="newCommandeService.dateValidationOuSortie"
+                            [touchUI]="true"
+                            [readonlyInput]="true"></p-calendar>
+            </div>
+        </div>
+        <!-- Nom panne description -->
+        <div class="flex flex-wrap  p-2">
+            <div class="flex flex-column gap-2 p-3  col-12 md:col-5">
+                <label for="nompanne" class="font-bold fs-5">
+                    <span class="pi pi-tags text-success font-bold"></span> Nom panne
+                </label>
+                <input class="form-control" pInputText id="nompanne"
+                       aria-describedby="nompanne-help"
+                       [(ngModel)]="newCommandeService.nomPanne"/>
+                <small id="nompanne-help">Vérifiez que le nom est significatif</small>
+            </div>
+            <div class="flex flex-column gap-2 p-3  col-12 md:col-7">
+                <label class="font-bold fs-5">
+                    <span class="pi pi-info-circle text-success font-bold fs-5"></span> Description
+                </label>
+                <textarea pInputTextarea id="description" rows="5" [(ngModel)]="newCommandeService.descriptionPanne"
+                          [autoResize]="true"></textarea>
+            </div>
+        </div>
+    </div>
+    <!-- Services  and Client -->
+    <div class="card flex flex-wrap p-2">
+        <div class="flex flex-column flex-auto col-12 md:col-3">
+            <label class="font-bold fs-5"> Services </label>
+            <p-multiSelect
+                    [options]="services"
+                    [(ngModel)]="newCommandeService.services"
+                    optionLabel="id"
+                    [showToggleAll]="false"
+                    [filter]="true"
+                    filterBy="id"
+                    placeholder="Sélectionner Services"
+                    (onChange)="getCoutService()">
+                <ng-template let-service pTemplate="item">
+                    <div class="flex align-items-center gap-2">
+                        <p>{{ service.id }}</p>
+                    </div>
+                </ng-template>
+            </p-multiSelect>
+        </div>
+        <div class="flex-auto flex-auto col-12 md:col-3">
+            <label class="font-bold block mb-2"> Client </label>
+            <p-dropdown
+                    [options]="clients"
+                    [(ngModel)]="newCommandeService.client"
+                    optionLabel="id"
+                    [filter]="true"
+                    filterBy="id"
+                    [showClear]="true"
+                    placeholder="Sélectionner Client">
+                <ng-template let-client pTemplate="item">
+                    <div class="flex align-items-center gap-2">
+                        <p>{{ client.id }}</p>
+                    </div>
+                </ng-template>
+            </p-dropdown>
+        </div>
+    </div>
+    <div class="card flex flex-wrap gap-3 ">
+
+            <!-- Sélectionner Produits -->
+            <div class="flex-auto col-12 md:col-4">
+                <h4 class="font-bold text-center">Sélectionner Produits</h4>
+                <p-table
+                    #dtproduit
+                    [value]="produits"
+                    dataKey="id"
+                    scrollable="true"
+                    scrollHeight="20rem"
+                    currentPageReportTemplate="Affichage de {first} à {last} des entrées {totalRecords}"
+                    [globalFilterFields]="['nom', 'description', 'dataqr', 'dateF','dateE']"
+                >
+                    <ng-template pTemplate="caption">
+                        <div class="flex flex-wrap">
+                            <div class="flex-auto col-12 md:col-2">
+                                <button pButton label=" " class="p-button-outlined p-button-warning" icon="pi pi-filter-slash" (click)="clear(dtproduit)"></button>
+                            </div>
+                            <div class="flex-auto col-12 md:col-2">
+                                <button pButton pRipple label=" " icon="pi pi-refresh" class="p-button-primary p-button-outlined" (click)="refresh()"></button>
+                            </div>
+                            <div class="flex-auto col-12 md:col-2">
+                                <button pButton label=" " class="p-button-outlined p-button-success" icon="pi pi-plus" (click)="addProduit()"></button>
+                                <p-dialog
+                                        header="Ajouter Produit"
+                                        [modal]="true"
+                                        [(visible)]="showAddProduit"
+                                        [style]="{ width: '100rem' }"
+                                        [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+                                        [maximizable]="true">
+                                    <div class="p-fluid">
+                                        <app-produit-ajout></app-produit-ajout>
+                                    </div>
+                                </p-dialog>
+                            </div>
+                            <div class="flex-auto col-12 md:col-6">
+            <span class="p-input-icon-left w-full">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text" [(ngModel)]="rechercheProduit" (input)="dtproduit.filterGlobal(rechercheProduit, 'contains')" placeholder="Rechercher ici ..." />
+            </span>
+                            </div>
+                        </div>
+                    </ng-template>
+
+                    <!-- Headers et Corps de la table -->
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="min-width:4rem">
+                                <div class="flex align-items-center">
+                                    Nom
+                                    <p type="text" field="nom" display="menu"></p>
+                                </div>
+                            </th>
+                            <th style="min-width:4rem">
+                                <div class="flex align-items-center">
+                                    Code
+                                    <p type="text" field="dataqr" display="menu"></p>
+                                </div>
+                            </th>
+                            <th style="min-width:4rem">
+                                <div class="flex align-items-center">
+                                    Quantité
+                                    <p field="Quantite" matchMode="in" display="menu"></p>
+                                    <ng-template pTemplate="header">
+                                        <div class="px-3 pt-3 pb-0">
+                                            <span class="font-bold">Agent Picker</span>
+                                        </div>
+                                    </ng-template>
+                                    <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                        <p-multiSelect [ngModel]="value" [options]="produits" placeholder="Any" (onChange)="filter($event.value)" optionLabel="name">
+                                            <ng-template let-option pTemplate="item">
+                                                <div class="inline-block vertical-align-middle">
+                                                    <img [alt]="option.label" src="https://primefaces.org/cdn/primeng/images/demo/avatar/{{ option.image }}" width="24" class="vertical-align-middle" />
+                                                    <span class="ml-1 mt-1">{{ option.name }}</span>
+                                                </div>
+                                            </ng-template>
+                                        </p-multiSelect>
+                                    </ng-template>
+                                </div>
+                            <th style="min-width:3rem">
+                                <div class="flex align-items-center">
+                                    <p field="activity" matchMode="between" display="menu"> </p>
+                                    <ng-template pTemplate="filter" let-filter="filterCallback">
+                                        <p-slider [ngModel]="activityValues" [range]="true" (onSlideEnd)="filter($event.values)" styleClass="m-3"></p-slider>
+                                        <div class="flex align-items-center px-2">
+                                            <span>{{ activityValues[0] }}</span>
+                                            <span>{{ activityValues[1] }}</span>
+                                        </div>
+                                    </ng-template>
+                                </div>
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-ProduitInter>
+                        <tr>
+                            <td class="text-break">{{ ProduitInter.nom }}</td>
+                            <td class="text-break">{{ ProduitInter.dataqr }}</td>
+                            <td class="text-break">{{ ProduitInter.qantite }}</td>
+                            <td class="align-items-center">
+                                <button pButton pRipple icon="pi pi-cart-plus" class="p-button-success p-button-rounded" (click)="addToCommande(ProduitInter)"></button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td colspan="7">Aucun produit n'a été trouvé.</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+
+            <!-- Produits commande service -->
+            <div class="flex-auto col-12 md:col-7">
+                <h3 class="font-bold mt-2 text-center">Produits Commande</h3>
+                <p-table #dt [value]="newCommandeService.produits" [scrollable]="true" scrollHeight="24rem" [globalFilterFields]="['produit.nom', 'quantite', 'montantTotal']">
+                    <ng-template pTemplate="caption">
+                        <div class=" col-8 md:col-4">
+                        <span class="p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input type="text" pInputText placeholder="Rechercher..." (input)="dt.filterGlobal($event.target, 'contains')" />
+                        </span>
+                        </div>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th pSortableColumn="nom" style="width:20%">Nom Produits <p-sortIcon field="nom"></p-sortIcon></th>
+                            <th pSortableColumn="quantite" style="width:20%">Quantité <p-sortIcon field="quantite"></p-sortIcon></th>
+                            <th style="width:20%">Prix (TND)</th>
+                            <th pSortableColumn="montantTotal" style="width:20%">Total (TND) <p-sortIcon field="price"></p-sortIcon></th>
+                            <th style="width:20%"></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-c let-i="rowIndex">
+                        <tr>
+                            <td>{{ c.produit.nom }}</td>
+                            <td>
+                                <p-inputNumber
+                                        class="text-center"
+                                        id="{{ c.produit.id }}"
+                                        [(ngModel)]="c.qtyV"
+                                        (ngModelChange)="handleQuantityChange(c)"
+                                        min="1"
+                                        [max]="c.produit.qantite"
+                                        name="quantiteProduit">
+                                </p-inputNumber>                            </td>
+                            <td class="fw-bold fs-4 text-red-600">{{ c.produit.prixUnitaire+c.produit.gainUnitaire | number }}</td>
+                            <td class="fw-bold fs-3 text-black">{{ ((c.produit.prixUnitaire+c.produit.gainUnitaire)*c.venteQty) }}</td>
+                            <td>
+                                <button pButton pRipple icon="pi pi-cart-minus" class="p-button-danger p-button-rounded" (click)="deleteProduct(i)"></button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td colspan="5">
+                                <p-message severity="error" text="Aucun produit n'a été ajouté à votre facture !" [style.padding-left]="'28%'"></p-message>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+    </div>
+
+    <!-- Status and Payment -->
+        <div class="flex flex-wrap gap-4 p-2">
+            <!-- État Commande Service -->
+            <div class="flex-auto col-12 md:col-8 lg:col-7">
+                <p-fieldset legend="État Commande Service">
+                    <div class="flex flex-wrap p-ai-center">
+                        <div class="p-mr-3 p-mb-2 col-12 md:col-4">
+                            <p-radioButton
+                                    name="etatService"
+                                    [value]="Status.ENCOURS"
+                                    [(ngModel)]="newCommandeService.status"
+                                    inputId="enCours"
+                            ></p-radioButton>
+                            <label for="enCours" class="m-2 font-bold text-blue-600">ENCOURS</label>
+                        </div>
+                        <div class="p-mr-3 p-mb-2 col-12 md:col-4">
+                            <p-radioButton
+                                    name="etatService"
+                                    [value]="Status.CONFIRME"
+                                    [(ngModel)]="newCommandeService.status"
+                                    inputId="confirme"
+                            ></p-radioButton>
+                            <label for="confirme" class="m-2 font-bold text-green-600">CONFIRME</label>
+                        </div>
+                        <div class="p-mr-3 p-mb-2 col-12 md:col-4">
+                            <p-radioButton
+                                    name="etatService"
+                                    [value]="Status.RETOUR"
+                                    [(ngModel)]="newCommandeService.status"
+                                    inputId="retour"
+                            ></p-radioButton>
+                            <label for="retour" class="m-2 font-bold text-red-600">RETOUR</label>
+                        </div>
+                    </div>
+                </p-fieldset>
+            </div>
+            <!-- Paiement -->
+            <div class="flex-auto col-12 md:col-4">
+                <p-fieldset legend="Paiement">
+                    <div class="flex flex-wrap p-ai-center">
+                        <div class="p-mr-3 p-mb-2 col-12 md:col-6">
+                            <p-radioButton
+                                    name="paiement"
+                                    [value]="true"
+                                    [(ngModel)]="newCommandeService.paiement"
+                                    inputId="paiementOui"
+                            ></p-radioButton>
+                            <label for="paiementOui" class="m-2 font-bold text-green-600">Payer</label>
+                        </div>
+                        <div class="p-mr-3 p-mb-2 col-12 md:col-6">
+                            <p-radioButton
+                                    name="paiement"
+                                    [value]="false"
+                                    [(ngModel)]="newCommandeService.paiement"
+                                    inputId="paiementNon"
+                            ></p-radioButton>
+                            <label for="paiementNon" class="m-2 font-bold text-red-600">Non payer</label>
+                        </div>
+                    </div>
+                </p-fieldset>
+            </div>
+        </div>
+
+    <!-- Avance and Total -->
+    <div class="flex flex-wrap card justify-content-between p-3">
+        <div class="flex-auto col-12 md:col-4">
+            <label class="font-bold block mb-2"> total Produit </label>
+            <p-inputNumber [(ngModel)]="newCommandeService.totalProduits"  calaculateCommandeTotal mode="decimal" currency="USD"></p-inputNumber>
+        </div>
+        <div class="flex-auto col-12 md:col-4">
+            <label class="font-bold block mb-2"> Prix Supplimentaire </label>
+            <p-inputNumber [(ngModel)]="newCommandeService.prixSupplimentaire" (ngModelChange)="calaculateCommandeTotal()" mode="decimal" currency="USD"></p-inputNumber>
+        </div>
+        <div class="flex-auto col-12 md:col-4">
+            <label class="font-bold block mb-2"> desc Supplimentaire </label>
+            <input pInputText [(ngModel)]="newCommandeService.descriptionprixSupplimentaire" type="text"/>
+        </div>
+        <div class="flex-auto col-12 md:col-4">
+            <label class="font-bold block mb-2">Total Cout Service </label>
+            <p-inputNumber [(ngModel)]="newCommandeService.totalCoutService" mode="decimal" currency="USD"></p-inputNumber>
+        </div>
+
+        <div class="flex-auto col-12 md:col-4">
+            <label class="font-bold block mb-2"> Avance </label>
+            <p-inputNumber [(ngModel)]="newCommandeService.avance" mode="decimal" currency="USD"></p-inputNumber>
+        </div>
+        <div class="flex-auto col-12 md:col-4">
+            <label class="font-bold block mb-2"> Total </label>
+            <p-inputNumber [(ngModel)]="newCommandeService.prixTotal" mode="decimal" currency="USD"></p-inputNumber>
+        </div>
+    </div>
+
+    <!-- Button -->
+    <div class="p-3 flex justify-content-end">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text p-button-danger"
+                (click)="returnBack()"></button>
+        <button pButton pRipple label="Ajouter" icon="pi pi-check" class="p-button-text p-button-success"
+                (click)="addNewCommande()"></button>
+    </div>
+</div>
