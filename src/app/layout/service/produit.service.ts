@@ -41,7 +41,7 @@ export class ProduitService {
     }
 
     getProduits(): Observable<Produit[]> {
-        const url = `${this.api}/DtoRead`;
+        const url = `${this.api}/read`;
         const token = getToken();
         if (token) {
             const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type","application/json; charset=utf8" );
