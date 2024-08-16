@@ -14,11 +14,11 @@
             <h3 class="font-bold"></h3>
             <div class="flex justify-content-between">
                 <div class="p-col-12 p-md-6 d-flex align-items-center">
-                    <div class="switch-label mb-2 font-bold">
-                        <label>Dépôt</label>
+                    <div class="flex switch-label mb-2 font-bold">
+                        <label>Dépôt</label><p class="text-red-600 ml-1"> *</p>
                     </div>
                     <p-dropdown [options]="depots" optionLabel="nom" placeholder="Sélectionner dépôt"
-                                [(ngModel)]="newFacture.depot"></p-dropdown>
+                                [(ngModel)]="newFacture.depot" ></p-dropdown>
                 </div>
                 <div class="p-col-12 p-md-6 d-flex align-items-center">
                     <div class="switch-label mb-2 font-bold">
@@ -103,7 +103,9 @@
                     <div class="card-content">
                         <div class="p-grid p-fluid">
                             <div class="col-6 p-md-6 p-mb-3">
-                                <label class="text-primary font-bold pi pi-user mb-2"> Client</label>
+                                <div class="flex">
+                                <label class="text-primary font-bold pi pi-user mb-2"> Client</label> <p class="text-red-600 ml-1"> *</p>
+                                </div>
                                 <p-dropdown
                                         [options]="utilisateursClients"
                                         [(ngModel)]="newFacture.client"
@@ -139,7 +141,9 @@
                     <div class="card-content">
                         <div class="p-grid p-fluid">
                             <div class="col-6 p-md-6 p-mb-3">
-                                <label class="text-primary font-bold pi pi-user mb-2"> Fournisseur</label>
+                                <div class="flex">
+                                <label class="text-primary font-bold pi pi-user mb-2"> Fournisseur</label><p class="text-red-600 ml-1"> *</p>
+                                </div>
                                 <p-dropdown
                                         [options]="providers"
                                         [(ngModel)]="newFacture.provider"
@@ -175,7 +179,9 @@
         <p-fieldset legend="Lignes Facture" [toggleable]="true">
             <div class="flex p-3 pl-4 pr-4 border-round gap-3 justify-content-center bg-gray-100 flex-column md:flex-row">
                 <div class="p-card col-12 md:col-5 justify-content-center mb-3 md:mb-0">
-                    <h4 class="font-bold">Sélectionner Produits</h4>
+                    <div class="flex">
+                        <h4 class="font-bold">Sélectionner Produits</h4> <p class="text-red-600 ml-1 text-2xl"> *</p>
+                    </div>
                     <p-table
                         #dt1
                         [value]="produits"
@@ -583,6 +589,7 @@
         </p-fieldset>
     </ng-template>
     <ng-template pTemplate="footer">
+        <h6 class="text-gray-500 font-bold">NB : Les champs avec des étoiles rouges sont des champs obligatoires</h6>
         <div class="flex justify-content-end align-items-end">
             <button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-text p-button-danger"
                     (click)="returnBack()"></button>

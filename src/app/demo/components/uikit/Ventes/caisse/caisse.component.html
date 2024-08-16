@@ -2,7 +2,7 @@
 <div class="card">
     <!-- Buttons -->
     <div class="p-toolbar flex justify-content-between align-items-center" *ngIf="divVisible">
-        <div class="flex flex-column p-ai-center">
+        <div class="flex flex-column p-ai-center" >
             <label class="mb-2 font-bold">Facture</label>
             <button pButton type="button" label="F 1" icon="pi pi-file-plus" class="p-button-outlined p-button-success" [ngClass]="{'activeBtn': isButtonFocused(1)}" (click)="onButtonClick(1)" accesskey="F1"></button>
         </div>
@@ -10,23 +10,23 @@
             <label class="mb-2 font-bold">Ajouter Produit</label>
             <button pButton type="button" label="F 2" icon="pi pi-cart-plus" class="p-button-outlined p-button-success " [ngClass]="{'activeBtn': isButtonFocused(2)}" (click)="onButtonClick(2)" accesskey="F2"></button>
         </div>
-        <div class="flex flex-column align-items-center">
+        <div class="flex flex-column align-items-center"  >
             <label class="mb-2 font-bold">Focus</label>
             <button pButton type="button" label="F 3" icon="pi pi-search" class="p-button-outlined p-button-primary" [ngClass]="{'activeBtn': isButtonFocused(3)}" (click)="onButtonClick(3)" accesskey="R"></button>
         </div>
-        <div class="flex flex-column align-items-center">
+        <div class="flex flex-column align-items-center" >
             <label class="mb-2 font-bold">Recherche</label>
             <button pButton type="button" label="R" icon="pi pi-search" class="p-button-outlined p-button-primary" [ngClass]="{'activeBtn': isButtonFocused(11)}" (click)="onButtonClick(11)" accesskey="F3"></button>
         </div>
-        <div class="flex flex-column align-items-center">
+        <div class="flex flex-column align-items-center" >
             <label class="mb-2 font-bold">Vider</label>
             <button pButton type="button" label="F 9" icon="pi pi-cart-minus" class="p-button-outlined p-button-danger  " [ngClass]="{'activeBtn': isButtonFocused(9)}" (click)="onButtonClick(9)" accesskey="F9"></button>
-        </div>
-        <div class="flex flex-column align-items-center">
+        </div >
+        <divc class="flex flex-column align-items-center"  >
             <label class="mb-2 font-bold">Encaisser</label>
             <button pButton type="button" label="F 10" icon="pi pi-calculator" class="p-button-outlined p-button-success " [ngClass]="{'active': isButtonFocused(10)}" (click)="onButtonClick(10)" accesskey="F6"></button>
-        </div>
-        <div class="flex align-items-center">
+        </divc >
+        <div class="flex align-items-center"  >
             <p-toggleButton
                     [(ngModel)]="selectedVente.isPrint"
                     onLabel="Oui"
@@ -44,39 +44,26 @@
         </div>
 
 
-        <div class="flex flex-column align-items-center">
+        <div class="flex flex-column align-items-center"  >
             <label class="mb-2 font-bold">Client</label>
             <button pButton type="button" label="F 4" icon="pi pi-user" class="p-button-outlined p-button-warning " [ngClass]="{'activeBtn': isButtonFocused(4)}" (click)="onButtonClick(4)" accesskey="F4"></button>
         </div>
-        <div class="p-2 m-1 rounded-4 ">
+        <div class="p-2 m-1 rounded-4 " >
             <p-dropdown [options]="listeVente" [(ngModel)]="selectedVente" (ngModelChange)="switchVente(selectedVente)" optionLabel="nomClient"></p-dropdown>
-        </div>
-        <div class="flex flex-column align-items-center">
+        </div >
+        <div class="flex flex-column align-items-center" >
             <label class="mb-2 font-bold">Masquer</label>
             <button pButton type="button" label="F 8" icon="pi pi-eye-slash" class="p-button-outlined p-button-danger " [ngClass]="{'active': isButtonFocused(8)}" (click)="onButtonClick(8)" accesskey="F8"></button>
         </div>
-        <div class="flex flex-column align-items-center">
+        <div class="flex flex-column align-items-center"  >
             <label class="mb-2 font-bold">Cloture</label>
             <button pButton type="button" label="F 7" icon="pi pi-key" class="p-button-outlined p-button-success " [ngClass]="{'active': isButtonFocused(7)}" (click)="onButtonClick(7)" accesskey="F7"></button>
         </div>
-        <div class="flex flex-column align-items-center">
+        <div class="flex flex-column align-items-center" >
             <label class="mb-2 font-bold">Accueil</label>
             <button pButton type="button" label="F 6" icon="pi pi-home" class="p-button-outlined p-button-primary" [ngClass]="{'active': isButtonFocused(6)}" (click)="onButtonClick(6)" accesskey="F6"></button>
         </div>
     </div>
-    <p-tabView styleClass="tabview-custom">
-        <p-tabPanel>
-            <ng-template pTemplate="header">
-                <div class="flex align-items-center gap-2">
-                    <p-avatar
-                           icon="pi pi-calculator"
-                            shape="circle" />
-                    <span class="font-bold white-space-nowrap m-0">
-                       Vente
-                    </span>
-                </div>
-            </ng-template>
-
             <div class="col-12">
                 <div class="card flex justify-content-between">
                     <div class="flex card col-3">
@@ -237,8 +224,6 @@
                     </div>
                 </p-footer>
             </p-dialog>
-
-
             <p-toast position="top-center" class="bg-info" key="tc" ></p-toast>
             <p-dialog header="Clôture Caisse" [maximizable]="true" [modal]="true" [(visible)]="show"[style]="{ width: '40vw' }">
                 <ng-template pTemplate="content">
@@ -272,7 +257,6 @@
 
                 </ng-template>
             </p-dialog>
-
             <p-sidebar [(visible)]="sidebarVisibleFacture" [fullScreen]="true">
                 <ng-template pTemplate="header">
             <span class="font-semibold text-xl">
@@ -281,36 +265,7 @@
                 <app-facture-ajout></app-facture-ajout>
             </p-sidebar>
 
-        </p-tabPanel>
-        <p-tabPanel header="Service">
-            <ng-template pTemplate="header">
-                <div class="flex align-items-center gap-2">
-                    <p-avatar
-                            icon="pi pi-wrench"
-                            shape="circle" />
-                    <span class="font-bold white-space-nowrap m-0">
-                       Service
-                    </span>
-                </div>
-            </ng-template>
-            <app-commande-serv-ajout></app-commande-serv-ajout>
 
-
-        </p-tabPanel>
-        <p-tabPanel header="Header III">
-            <ng-template pTemplate="header">
-                <div class="flex align-items-center gap-2">
-                    <p-avatar
-                            icon="pi pi-file-plus"
-                            shape="circle" />
-                    <span class="font-bold white-space-nowrap m-0">
-                       Facture
-                    </span>
-                </div>
-            </ng-template>
-            <app-facture-ajout></app-facture-ajout>
-        </p-tabPanel>
-    </p-tabView>
     <p-dialog
             header="Services"
             [visible]="searchTableService"

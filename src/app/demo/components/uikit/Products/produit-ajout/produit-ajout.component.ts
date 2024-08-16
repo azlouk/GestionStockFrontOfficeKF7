@@ -103,7 +103,6 @@ export class ProduitAjoutComponent implements OnInit {
 
     async ngOnInit(): Promise<void> {
         this.updateRootFromCurrentPath();
-
         const id = this.route.snapshot.paramMap.get('id');
         try {
             if (id) {

@@ -29,16 +29,15 @@ import {InputGroupAddonModule} from "primeng/inputgroupaddon";
 import {InputTextModule} from "primeng/inputtext";
 import {ToggleButtonModule} from "primeng/togglebutton";
 import {AutoFocusModule} from "primeng/autofocus";
-import {Cloture} from "../../../../../models/Cloture";
 import {SidebarModule} from "primeng/sidebar";
 import {FactureComponent} from "../../Factures/facture/facture.component";
 import {FactureAjoutComponent} from "../../Factures/facture-ajout/facture-ajout.component";
 import {RippleModule} from "primeng/ripple";
 import {TabViewModule} from "primeng/tabview";
 import {ServiceComp} from "../../../../../models/ServiceComp";
-import {ServiceService} from "../../../../../layout/service/service.service";
 import {ServiceCompService} from "../../../../../layout/service/service-comp.service";
 import {CommandeServAjoutComponent} from "../../commandeServices/commande-serv-ajout/commande-serv-ajout.component";
+import {Cloture} from "../../../../../models/Cloture";
 
 @Component({
     selector: 'app-caisse',

@@ -11,6 +11,7 @@ export enum Status {
 
 export class CommandeServ {
     id: number;
+    reference: string;
     dateCreation: string;
     dateEstimeeFin: string;
     dateValidationOuSortie: string;
@@ -28,6 +29,7 @@ export class CommandeServ {
     produits: LigneCommande [] = [];
     client: User;
     constructor(_id?: number,
+                _reference?: string,
                 _dateCreation?: string,
                 _dateEstimeeFin?: string,
                 _dateValidationOuSortie?: string,
@@ -45,6 +47,7 @@ export class CommandeServ {
                 _client?: User,
                 _descriptionprixSupplimentaire?: string) {
         this.id = _id || 0;
+        this.reference = _reference || "";
         this.dateCreation = _dateCreation || new Date().toString();
         this.dateEstimeeFin = _dateEstimeeFin || new Date().toString();
         this.dateValidationOuSortie = _dateValidationOuSortie || new Date().toString();
@@ -69,6 +72,14 @@ export class CommandeServ {
 
     set _id(value: number) {
         this.id = value;
+    }
+
+    get _reference(): string {
+        return this.reference;
+    }
+
+    set _reference(value: string) {
+        this.reference = value;
     }
 
     get _dateCreation(): string {

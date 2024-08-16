@@ -1,7 +1,7 @@
 export class Historique {
-    private id: number;
-    private prixHistoriqueAchat: number;
-    private quantiteHistoriqueAchat: number;
+    id: number;
+    prixHistoriqueAchat: number;
+    quantiteHistoriqueAchat: number;
 
     constructor(_id: number, _prixHistoriqueAchat: number, _quantiteHistoriqueAchat: number) {
         this.id = _id;

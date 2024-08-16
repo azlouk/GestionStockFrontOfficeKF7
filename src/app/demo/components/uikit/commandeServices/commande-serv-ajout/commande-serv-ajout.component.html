@@ -1,93 +1,143 @@
 <!-- Card Container -->
-<div class="flex-auto card">
-    <p-toast></p-toast>
-    <p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+<p-toast></p-toast>
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+<div class="card flex-wrap   justify-content-center">
 
     <!-- Title -->
     <div class="PrimaryColorTitle fs-3 font-bold ">
         <h3 class="text-primary-600 font-bold">Ajouter une commande service</h3>
     </div>
-    <div class="card">
-        <!-- Dates -->
-        <div class=" flex flex-wrap  p-2">
-            <div class="flex-auto col-12 md:col-4">
-                <label class="font-bold block mb-2"> Date de Création </label>
-                <p-calendar [(ngModel)]="newCommandeService.dateCreation"
-                            [touchUI]="true"
-                            [readonlyInput]="true"></p-calendar>
-            </div>
-            <div class="flex-auto col-12 md:col-4">
-                <label class="font-bold block mb-2"> Date Estimée Fin </label>
-                <p-calendar [(ngModel)]="newCommandeService.dateEstimeeFin"
-                            [touchUI]="true"
-                            [readonlyInput]="true"></p-calendar>
-            </div>
-            <div class="flex-auto col-12 md:col-4">
-                <label class="font-bold block mb-2"> Date Validation/Sortie </label>
-                <p-calendar [(ngModel)]="newCommandeService.dateValidationOuSortie"
-                            [touchUI]="true"
-                            [readonlyInput]="true"></p-calendar>
-            </div>
-        </div>
-        <!-- Nom panne description -->
-        <div class="flex flex-wrap  p-2">
-            <div class="flex flex-column gap-2 p-3  col-12 md:col-5">
-                <label for="nompanne" class="font-bold fs-5">
-                    <span class="pi pi-tags text-success font-bold"></span> Nom panne
-                </label>
-                <input class="form-control" pInputText id="nompanne"
-                       aria-describedby="nompanne-help"
-                       [(ngModel)]="newCommandeService.nomPanne"/>
-                <small id="nompanne-help">Vérifiez que le nom est significatif</small>
-            </div>
-            <div class="flex flex-column gap-2 p-3  col-12 md:col-7">
-                <label class="font-bold fs-5">
-                    <span class="pi pi-info-circle text-success font-bold fs-5"></span> Description
-                </label>
-                <textarea pInputTextarea id="description" rows="5" [(ngModel)]="newCommandeService.descriptionPanne"
-                          [autoResize]="true"></textarea>
-            </div>
-        </div>
-    </div>
-    <!-- Services  and Client -->
-    <div class="card flex flex-wrap p-2">
-        <div class="flex flex-column flex-auto col-12 md:col-3">
-            <label class="font-bold fs-5"> Services </label>
-            <p-multiSelect
-                    [options]="services"
-                    [(ngModel)]="newCommandeService.services"
-                    optionLabel="id"
-                    [showToggleAll]="false"
-                    [filter]="true"
-                    filterBy="id"
-                    placeholder="Sélectionner Services"
-                    (onChange)="getCoutService()">
-                <ng-template let-service pTemplate="item">
-                    <div class="flex align-items-center gap-2">
-                        <p>{{ service.id }}</p>
+    <p-fieldset legend="Détails Commande" [toggleable]="true" class="m-1">
+        <div class="gap-5 flex flex-wrap col-12 justify-content-around bg-gray-50">
+            <div class="p-card flex-row flex-wrap col-12 md:col-4 p-2">
+                <div class="flex flex-column gap-2 p-3  col-12 md:col-12">
+                    <label for="nompanne" class="font-bold fs-5">
+                        <span class="pi pi-tags text-success font-bold"></span> Nom panne
+                    </label>
+                    <input class="form-control" pInputText id="nompanne"
+                           aria-describedby="nompanne-help"
+                           [(ngModel)]="newCommandeService.nomPanne"/>
+                    <small id="nompanne-help">Vérifiez que le nom est significatif</small>
+                </div>
+
+                <!-- Dates -->
+                <div class="flex">
+                    <div class="flex-auto col-12 md:col-12">
+                        <label class="font-bold block mb-2"> Réferance </label>
+                        <input pInputText [(ngModel)]="newCommandeService.reference" readonly/>
                     </div>
-                </ng-template>
-            </p-multiSelect>
-        </div>
-        <div class="flex-auto flex-auto col-12 md:col-3">
-            <label class="font-bold block mb-2"> Client </label>
-            <p-dropdown
-                    [options]="clients"
-                    [(ngModel)]="newCommandeService.client"
-                    optionLabel="id"
-                    [filter]="true"
-                    filterBy="id"
-                    [showClear]="true"
-                    placeholder="Sélectionner Client">
-                <ng-template let-client pTemplate="item">
-                    <div class="flex align-items-center gap-2">
-                        <p>{{ client.id }}</p>
+                    <div class="flex-auto col-12 md:col-12">
+                        <label class="font-bold block mb-2"> Date de Création </label>
+                        <p-calendar [(ngModel)]="newCommandeService.dateCreation"
+                                    [touchUI]="true"
+                                    [readonlyInput]="true"
+                                    [showIcon]="true" dateFormat="yy-mm-dd"></p-calendar>
                     </div>
-                </ng-template>
-            </p-dropdown>
+                </div>
+                <div class="flex">
+                    <div class="flex-auto col-12 md:col-12">
+                        <label class="font-bold block mb-2"> Date Estimée Fin </label>
+                        <p-calendar [(ngModel)]="newCommandeService.dateEstimeeFin"
+                                    [touchUI]="true"
+                                    [showIcon]="true" dateFormat="yy-mm-dd"></p-calendar>
+                    </div>
+                    <div class="flex-auto col-12 md:col-12">
+                        <label class="font-bold block mb-2"> Date Validation/Sortie </label>
+                        <p-calendar [(ngModel)]="newCommandeService.dateValidationOuSortie"
+                                    [touchUI]="true"
+                                    [showIcon]="true" dateFormat="yy-mm-dd"></p-calendar>
+                    </div>
+                    <!-- Nom panne description -->
+                </div>
+                <div class="flex flex-column gap-2 p-3  col-12 md:col-12">
+                    <label class="font-bold fs-5">
+                        <span class="pi pi-info-circle text-success font-bold fs-5"></span> Description
+                    </label>
+                    <textarea pInputTextarea id="description" rows="5" [(ngModel)]="newCommandeService.descriptionPanne"
+                              [autoResize]="true"></textarea>
+                </div>
+            </div>
+            <!-- Services  and Client -->
+            <div class="p-card flex flex-wrap col-12 md:col-7 p-2" >
+                <div class="flex flex-column gap-2 col-12">
+                    <div class="flex flex-column gap-2 col-12 p-2">
+                        <label class="font-bold fs-5"> Liste de services </label>
+                        <p-multiSelect [options]="services"
+                                       [(ngModel)]="newCommandeService.services"
+                                       optionLabel="nomServiceComp"
+                                       [showToggleAll]="false"
+                                       [filter]="true"
+                                       filterBy="nomServiceComp"
+                                       placeholder="Sélectionner Services"
+                                       (onChange)="getCoutService()">
+                            <ng-template let-service pTemplate="item">
+                                <div class="flex align-items-center  gap-2">
+                                    <p>{{ service.nomServiceComp }}</p>
+                                </div>
+                            </ng-template>
+                        </p-multiSelect>
+                        <!-- Table pour afficher les détails des services sélectionnés -->
+                        <p-table [value]="newCommandeService.services" class="mt-2" *ngIf="newCommandeService.services.length">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nom</th>
+                                    <th>Coût Service</th>
+                                    <th>Description</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-service>
+                                <tr>
+                                    <td>{{ service.id }}</td>
+                                    <td>{{ service.nomServiceComp }}</td>
+                                    <td>{{ service.coutService | currency : '':'TND ' }}</td>
+                                    <td>{{ service.descriptionServiceComp }}</td>
+
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                    <div class="flex flex-column gap-2 col-12 p-2">
+                        <label class="font-bold block mb-2"> Client </label>
+                        <p-dropdown [options]="clients"
+                                    [(ngModel)]="newCommandeService.client"
+                                    optionLabel="lastname"
+                                    [filter]="true"
+                                    filterBy="lastname"
+                                    [showClear]="true"
+                                    placeholder="Sélectionner Client">
+                            <ng-template let-client pTemplate="item">
+                                <div class="flex align-items-center gap-2">
+                                    <p>{{ client.lastname }}</p>
+                                </div>
+                            </ng-template>
+                        </p-dropdown>
+                        <!-- Table pour afficher les détails du client sélectionné -->
+                        <p-table *ngIf="newCommandeService.client&&newCommandeService.client.id" [value]="[newCommandeService.client]" class="mt-2">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nom</th>
+                                    <th>TEl</th>
+                                    <th>Email</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-client>
+                                <tr>
+                                    <td>{{ client.id }}</td>
+                                    <td>{{ client.firstname + " " + client.lastname}}</td>
+                                    <td>{{ client.telephone }}</td>
+                                    <td>{{ client.email }}</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="card flex flex-wrap gap-3 ">
+    </p-fieldset>
+    <p-fieldset legend="Ligne Commande" [toggleable]="true" class="m-1">
+        <div class="card flex flex-wrap gap-3 ">
 
             <!-- Sélectionner Produits -->
             <div class="flex-auto col-12 md:col-4">
@@ -104,13 +154,16 @@
                     <ng-template pTemplate="caption">
                         <div class="flex flex-wrap">
                             <div class="flex-auto col-12 md:col-2">
-                                <button pButton label=" " class="p-button-outlined p-button-warning" icon="pi pi-filter-slash" (click)="clear(dtproduit)"></button>
+                                <button pButton label=" " class="p-button-outlined p-button-warning"
+                                        icon="pi pi-filter-slash" (click)="clear(dtproduit)"></button>
                             </div>
                             <div class="flex-auto col-12 md:col-2">
-                                <button pButton pRipple label=" " icon="pi pi-refresh" class="p-button-primary p-button-outlined" (click)="refresh()"></button>
+                                <button pButton pRipple label=" " icon="pi pi-refresh"
+                                        class="p-button-primary p-button-outlined" (click)="refresh()"></button>
                             </div>
                             <div class="flex-auto col-12 md:col-2">
-                                <button pButton label=" " class="p-button-outlined p-button-success" icon="pi pi-plus" (click)="addProduit()"></button>
+                                <button pButton label=" " class="p-button-outlined p-button-success" icon="pi pi-plus"
+                                        (click)="addProduit()"></button>
                                 <p-dialog
                                         header="Ajouter Produit"
                                         [modal]="true"
@@ -126,7 +179,8 @@
                             <div class="flex-auto col-12 md:col-6">
             <span class="p-input-icon-left w-full">
                 <i class="pi pi-search"></i>
-                <input pInputText type="text" [(ngModel)]="rechercheProduit" (input)="dtproduit.filterGlobal(rechercheProduit, 'contains')" placeholder="Rechercher ici ..." />
+                <input pInputText type="text" [(ngModel)]="rechercheProduit"
+                       (input)="dtproduit.filterGlobal(rechercheProduit, 'contains')" placeholder="Rechercher ici ..."/>
             </span>
                             </div>
                         </div>
@@ -157,10 +211,13 @@
                                         </div>
                                     </ng-template>
                                     <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                                        <p-multiSelect [ngModel]="value" [options]="produits" placeholder="Any" (onChange)="filter($event.value)" optionLabel="name">
+                                        <p-multiSelect [ngModel]="value" [options]="produits" placeholder="Any"
+                                                       (onChange)="filter($event.value)" optionLabel="name">
                                             <ng-template let-option pTemplate="item">
                                                 <div class="inline-block vertical-align-middle">
-                                                    <img [alt]="option.label" src="https://primefaces.org/cdn/primeng/images/demo/avatar/{{ option.image }}" width="24" class="vertical-align-middle" />
+                                                    <img [alt]="option.label"
+                                                         src="https://primefaces.org/cdn/primeng/images/demo/avatar/{{ option.image }}"
+                                                         width="24" class="vertical-align-middle"/>
                                                     <span class="ml-1 mt-1">{{ option.name }}</span>
                                                 </div>
                                             </ng-template>
@@ -169,9 +226,10 @@
                                 </div>
                             <th style="min-width:3rem">
                                 <div class="flex align-items-center">
-                                    <p field="activity" matchMode="between" display="menu"> </p>
+                                    <p field="activity" matchMode="between" display="menu"></p>
                                     <ng-template pTemplate="filter" let-filter="filterCallback">
-                                        <p-slider [ngModel]="activityValues" [range]="true" (onSlideEnd)="filter($event.values)" styleClass="m-3"></p-slider>
+                                        <p-slider [ngModel]="activityValues" [range]="true"
+                                                  (onSlideEnd)="filter($event.values)" styleClass="m-3"></p-slider>
                                         <div class="flex align-items-center px-2">
                                             <span>{{ activityValues[0] }}</span>
                                             <span>{{ activityValues[1] }}</span>
@@ -187,7 +245,8 @@
                             <td class="text-break">{{ ProduitInter.dataqr }}</td>
                             <td class="text-break">{{ ProduitInter.qantite }}</td>
                             <td class="align-items-center">
-                                <button pButton pRipple icon="pi pi-cart-plus" class="p-button-success p-button-rounded" (click)="addToCommande(ProduitInter)"></button>
+                                <button pButton pRipple icon="pi pi-cart-plus" class="p-button-success p-button-rounded"
+                                        (click)="addToCommande(ProduitInter)"></button>
                             </td>
                         </tr>
                     </ng-template>
@@ -202,21 +261,29 @@
             <!-- Produits commande service -->
             <div class="flex-auto col-12 md:col-7">
                 <h3 class="font-bold mt-2 text-center">Produits Commande</h3>
-                <p-table #dt [value]="newCommandeService.produits" [scrollable]="true" scrollHeight="24rem" [globalFilterFields]="['produit.nom', 'quantite', 'montantTotal']">
+                <p-table #dt [value]="newCommandeService.produits" [scrollable]="true" scrollHeight="24rem"
+                         [globalFilterFields]="['produit.nom', 'quantite', 'montantTotal']">
                     <ng-template pTemplate="caption">
                         <div class=" col-8 md:col-4">
                         <span class="p-input-icon-left">
                             <i class="pi pi-search"></i>
-                            <input type="text" pInputText placeholder="Rechercher..." (input)="dt.filterGlobal($event.target, 'contains')" />
+                            <input type="text" pInputText placeholder="Rechercher..."
+                                   (input)="dt.filterGlobal($event.target, 'contains')"/>
                         </span>
                         </div>
                     </ng-template>
                     <ng-template pTemplate="header">
                         <tr>
-                            <th pSortableColumn="nom" style="width:20%">Nom Produits <p-sortIcon field="nom"></p-sortIcon></th>
-                            <th pSortableColumn="quantite" style="width:20%">Quantité <p-sortIcon field="quantite"></p-sortIcon></th>
+                            <th pSortableColumn="nom" style="width:20%">Nom Produits
+                                <p-sortIcon field="nom"></p-sortIcon>
+                            </th>
+                            <th pSortableColumn="quantite" style="width:20%">Quantité
+                                <p-sortIcon field="quantite"></p-sortIcon>
+                            </th>
                             <th style="width:20%">Prix (TND)</th>
-                            <th pSortableColumn="montantTotal" style="width:20%">Total (TND) <p-sortIcon field="price"></p-sortIcon></th>
+                            <th pSortableColumn="montantTotal" style="width:20%">Total (TND)
+                                <p-sortIcon field="price"></p-sortIcon>
+                            </th>
                             <th style="width:20%"></th>
                         </tr>
                     </ng-template>
@@ -232,26 +299,65 @@
                                         min="1"
                                         [max]="c.produit.qantite"
                                         name="quantiteProduit">
-                                </p-inputNumber>                            </td>
-                            <td class="fw-bold fs-4 text-red-600">{{ c.produit.prixUnitaire+c.produit.gainUnitaire | number }}</td>
-                            <td class="fw-bold fs-3 text-black">{{ ((c.produit.prixUnitaire+c.produit.gainUnitaire)*c.venteQty) }}</td>
+                                </p-inputNumber>
+                            </td>
+                            <td class="fw-bold fs-4 text-red-600">{{ c.produit.prixUnitaire + c.produit.gainUnitaire | number }}</td>
+                            <td class="fw-bold fs-3 text-black">{{ ((c.produit.prixUnitaire + c.produit.gainUnitaire) * c.qtyV) }}</td>
                             <td>
-                                <button pButton pRipple icon="pi pi-cart-minus" class="p-button-danger p-button-rounded" (click)="deleteProduct(i)"></button>
+                                <button pButton pRipple icon="pi pi-cart-minus" class="p-button-danger p-button-rounded"
+                                        (click)="deleteProduct(i)"></button>
                             </td>
                         </tr>
                     </ng-template>
                     <ng-template pTemplate="emptymessage">
                         <tr>
                             <td colspan="5">
-                                <p-message severity="error" text="Aucun produit n'a été ajouté à votre facture !" [style.padding-left]="'28%'"></p-message>
+                                <p-message severity="error" text="Aucun produit n'a été ajouté à votre facture !"
+                                           [style.padding-left]="'28%'"></p-message>
                             </td>
                         </tr>
                     </ng-template>
                 </p-table>
             </div>
-    </div>
+        </div>
 
+    </p-fieldset>
+    <!-- Avance and Total -->
+    <p-fieldset legend="Somme Commande" [toggleable]="true">
+        <div class="flex flex-wrap  justify-content-between p-3">
+            <div class="flex-auto col-12 md:col-4">
+                <label class="font-bold block mb-2"> total Produit </label>
+                <p-inputNumber [(ngModel)]="newCommandeService.totalProduits" calaculateCommandeTotal mode="decimal"
+                               currency="USD"></p-inputNumber>
+            </div>
+            <div class="flex-auto col-12 md:col-4">
+                <label class="font-bold block mb-2"> Prix Supplimentaire </label>
+                <p-inputNumber [(ngModel)]="newCommandeService.prixSupplimentaire"
+                               (ngModelChange)="calaculateCommandeTotal()" mode="decimal"
+                               currency="USD"></p-inputNumber>
+            </div>
+            <div class="flex-auto col-12 md:col-4">
+                <label class="font-bold block mb-2"> Description Supplimentaire </label>
+                <input pInputText [(ngModel)]="newCommandeService.descriptionprixSupplimentaire" type="text"/>
+            </div>
+            <div class="flex-auto col-12 md:col-4">
+                <label class="font-bold block mb-2">Total Cout Service </label>
+                <p-inputNumber [(ngModel)]="newCommandeService.totalCoutService" mode="decimal"
+                               currency="USD"></p-inputNumber>
+            </div>
+
+            <div class="flex-auto col-12 md:col-4">
+                <label class="font-bold block mb-2"> Avance </label>
+                <p-inputNumber [(ngModel)]="newCommandeService.avance" mode="decimal" currency="USD"></p-inputNumber>
+            </div>
+            <div class="flex-auto col-12 md:col-4">
+                <label class="font-bold block mb-2"> Total </label>
+                <p-inputNumber [(ngModel)]="newCommandeService.prixTotal" mode="decimal" currency="USD"></p-inputNumber>
+            </div>
+        </div>
+    </p-fieldset>
     <!-- Status and Payment -->
+    <p-fieldset legend="Etat Commande" [toggleable]="true" class="m-1">
         <div class="flex flex-wrap gap-4 p-2">
             <!-- État Commande Service -->
             <div class="flex-auto col-12 md:col-8 lg:col-7">
@@ -313,41 +419,18 @@
                 </p-fieldset>
             </div>
         </div>
-
-    <!-- Avance and Total -->
-    <div class="flex flex-wrap card justify-content-between p-3">
-        <div class="flex-auto col-12 md:col-4">
-            <label class="font-bold block mb-2"> total Produit </label>
-            <p-inputNumber [(ngModel)]="newCommandeService.totalProduits"  calaculateCommandeTotal mode="decimal" currency="USD"></p-inputNumber>
-        </div>
-        <div class="flex-auto col-12 md:col-4">
-            <label class="font-bold block mb-2"> Prix Supplimentaire </label>
-            <p-inputNumber [(ngModel)]="newCommandeService.prixSupplimentaire" (ngModelChange)="calaculateCommandeTotal()" mode="decimal" currency="USD"></p-inputNumber>
-        </div>
-        <div class="flex-auto col-12 md:col-4">
-            <label class="font-bold block mb-2"> desc Supplimentaire </label>
-            <input pInputText [(ngModel)]="newCommandeService.descriptionprixSupplimentaire" type="text"/>
-        </div>
-        <div class="flex-auto col-12 md:col-4">
-            <label class="font-bold block mb-2">Total Cout Service </label>
-            <p-inputNumber [(ngModel)]="newCommandeService.totalCoutService" mode="decimal" currency="USD"></p-inputNumber>
-        </div>
-
-        <div class="flex-auto col-12 md:col-4">
-            <label class="font-bold block mb-2"> Avance </label>
-            <p-inputNumber [(ngModel)]="newCommandeService.avance" mode="decimal" currency="USD"></p-inputNumber>
-        </div>
-        <div class="flex-auto col-12 md:col-4">
-            <label class="font-bold block mb-2"> Total </label>
-            <p-inputNumber [(ngModel)]="newCommandeService.prixTotal" mode="decimal" currency="USD"></p-inputNumber>
-        </div>
-    </div>
-
+    </p-fieldset>
     <!-- Button -->
     <div class="p-3 flex justify-content-end">
         <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text p-button-danger"
-                (click)="returnBack()"></button>
+                (click)="returnBack($event)"></button>
         <button pButton pRipple label="Ajouter" icon="pi pi-check" class="p-button-text p-button-success"
                 (click)="addNewCommande()"></button>
     </div>
+    <p-toast/>
+    <div *ngIf="referenceCommande" class="reference-commande">
+        <h3>Commande créée avec succès!</h3>
+        <p>Référence de la commande: <strong>{{ referenceCommande }}</strong></p>
+    </div>
+
 </div>

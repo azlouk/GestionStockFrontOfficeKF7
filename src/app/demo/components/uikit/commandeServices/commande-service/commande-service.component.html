@@ -5,30 +5,36 @@
             <p-toolbar styleClass="mb-4">
                 <ng-template pTemplate="left">
                     <div class="my-2">
-                        <button pButton pRipple label="Ajouter" icon="pi pi-plus" class="p-button-success p-button-outlined mr-2"
+                        <button pButton pRipple label="Ajouter" icon="pi pi-plus"
+                                class="p-button-success p-button-outlined mr-2"
                                 (click)="ajouterCommandeService()"></button>
-                        <button pButton pRipple label="Actualiser" icon="pi pi-refresh" class="p-button-primary p-button-outlined"
+                        <button pButton pRipple label="Actualiser" icon="pi pi-refresh"
+                                class="p-button-primary p-button-outlined"
                                 (click)="refresh()"></button>
                     </div>
                 </ng-template>
                 <ng-template pTemplate="right">
-                    <div class="col-2 float-end d-flex d-inline "  >
-                        <p-avatar   class="float-end" icon="pi pi-bars" pBadge styleClass="mr-5" [value]="commandes.length+''" size="large" [style]="{ 'background-color': '#b9c7ce', color: '#1a1717' }"></p-avatar>
+                    <div class="col-2 float-end d-flex d-inline ">
+                        <p-avatar class="float-end" icon="pi pi-cog" pBadge styleClass="mr-5"
+                                  [value]="commandes.length+''" size="large"
+                                  [style]="{ 'background-color': '#b9c7ce', color: '#1a1717' }"></p-avatar>
                     </div>
                 </ng-template>
             </p-toolbar>
             <p-table #dt [value]="commandes" responsiveLayout="scroll" [rows]="10"
                      [globalFilterFields]="['id', 'dateCreation', 'dateEstimeeFin', 'dateValidationOuSortie', 'status', 'prixTotal', 'paiement', 'avance', 'descriptionPanne', 'nomPanne']"
                      [paginator]="true" [rowsPerPageOptions]="[5,10,20,30,50]"
-                     [showCurrentPageReport]="true" currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords} éléments"
+                     [showCurrentPageReport]="true"
+                     currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords} éléments"
                      selectionMode="multiple" [rowHover]="true" dataKey="id"
-                     >
+            >
                 <ng-template pTemplate="caption">
                     <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
                         <h5 class="m-0">Gestion des commandes</h5>
                         <span class="block mt-2 md:mt-0 p-input-icon-left">
         <i class="pi pi-search"></i>
-        <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Recherche..." class="w-full sm:w-auto"/>
+        <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Recherche..."
+               class="w-full sm:w-auto"/>
       </span>
                     </div>
                 </ng-template>
@@ -46,14 +52,9 @@
                         <th pSortableColumn="dateValidationOuSortie">Date Sortie
                             <p-sortIcon field="dateValidationOuSortie"></p-sortIcon>
                         </th>
-                        <th pSortableColumn="status">Status
-                            <p-sortIcon field="status"></p-sortIcon>
-                        </th>
+
                         <th pSortableColumn="prixTotal">Total
                             <p-sortIcon field="prixTotal"></p-sortIcon>
-                        </th>
-                        <th pSortableColumn="paiement">Paiement
-                            <p-sortIcon field="paiement"></p-sortIcon>
                         </th>
                         <th pSortableColumn="avance">Avance
                             <p-sortIcon field="avance"></p-sortIcon>
@@ -64,25 +65,58 @@
                         <th pSortableColumn="nomPanne">Panne
                             <p-sortIcon field="nomPanne"></p-sortIcon>
                         </th>
+                        <th pSortableColumn="status">Status
+                            <p-sortIcon field="status"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="paiement">Paiement
+                            <p-sortIcon field="paiement"></p-sortIcon>
+                        </th>
                         <th></th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-commande>
                     <tr>
-                        <td ><span class="p-column-title">ID</span>{{ commande.id }}</td>
-                        <td ><span class="p-column-title">Date de Création</span>{{ commande.dateCreation }}</td>
-                        <td ><span class="p-column-title">Date Estimée de Fin</span>{{ commande.dateEstimeeFin }}</td>
-                        <td ><span class="p-column-title">Date de Validation ou Sortie</span>{{ commande.dateValidationOuSortie }}</td>
-                        <td ><span class="p-column-title">Status</span>{{ commande.status }}</td>
-                        <td ><span class="p-column-title">Prix Total</span>{{ commande.prixTotal }}</td>
-                        <td ><span class="p-column-title">Paiement</span>{{ commande.paiement }}</td>
-                        <td> <span class="p-column-title">Avance</span>{{ commande.avance }}</td>
-                        <td ><span class="p-column-title">Description de la Panne</span>{{ commande.descriptionPanne }}</td>
-                        <td ><span class="p-column-title">Nom de la Panne</span>{{ commande.nomPanne }}</td>
-                        <td >
+                        <td><span class="p-column-title">ID</span>{{ commande.id }}</td>
+                        <td><span class="p-column-title">Date de Création</span>{{ commande.dateCreation }}</td>
+                        <td><span class="p-column-title">Date Estimée de Fin</span>{{ commande.dateEstimeeFin }}</td>
+                        <td><span
+                                class="p-column-title">Date de Validation ou Sortie</span>{{ commande.dateValidationOuSortie }}
+                        </td>
+                        <td><span class="p-column-title">Prix Total</span>{{ commande.prixTotal }}</td>
+                        <td><span class="p-column-title">Avance</span>{{ commande.avance }}</td>
+                        <td><span class="p-column-title">Description de la Panne</span>{{ commande.descriptionPanne }}
+                        </td>
+                        <td><span class="p-column-title">Nom de la Panne</span>{{ commande.nomPanne }}</td>
+                        <td>
+                            <span class="p-column-title">Status</span>
+                            <span [ngClass]="{
+                                'status-en-cours': commande.status === 'ENCOURS',
+                                'status-retour': commande.status === 'RETOUR',
+                                'status-terminer': commande.status === 'CONFIRME'}">
+                                {{ commande.status }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="p-column-title">Paiement</span>
+                            <ng-container *ngIf="commande.paiement; else echec">
+                                <i class="pi pi-verified" style="color: #0dd30d;font-size: 1.5em;"></i>
+                                <!-- Icône de succès -->
+                            </ng-container>
+                            <ng-template #echec>
+                                <i class="pi pi-times-circle" style="color: red;font-size: 1.5em;"></i>
+                                <!-- Icône d'échec -->
+                            </ng-template>
+                        </td>
+                        <td>
                             <div class="flex">
-                                <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editCommande(commande)"></button>
-                                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="confirmDelete(commande.id)"></button>
+                                <button pButton pRipple icon="pi pi-pencil"
+                                        class="p-button-rounded p-button-success mr-2"
+                                        (click)="editCommande(commande.id)"></button>
+                                <button pButton pRipple icon="pi pi-print"
+                                        class="p-button-rounded p-button-primary mr-2"
+                                        (click)="goToCoommandeDetails(commande.id)"></button>
+                                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
+                                        (click)="confirmDelete(commande.id)"></button>
                             </div>
                         </td>
                     </tr>

@@ -1,4 +1,97 @@
-    <div class="grid">
+<div class=" m-2       ">
+    <div class="  px-4 py-5 md:px-6 lg:px-8">
+        <div class=" flex align-items-center   ">
+            <div class="col-12 md:col-6 lg:col-3  h-full">
+                <div class="surface-card shadow-2 p-3 border-round">
+                    <div class="flex justify-content-between mb-3">
+                        <div>
+                            <span class="block text-blue-300 font-bold mb-3"> Produits</span>
+                            <div class=" flex flex-row "> <p>Quantité des Produits:</p> <b class="text-blue-300 font-bold pl-2">{{ servicestatistic.statistic.nbqtyproduit}}</b> </div>
+                        </div>
+                        <div class="flex align-items-center justify-content-center bg-blue-100 border-round" style="width:2.5rem;height:2.5rem">
+                            <i class="bi bi-boxes text-blue-500 text-xl">{{servicestatistic.statistic.nbproduit}}</i>
+                        </div>
+                    </div>
+                    <span class="text-green-500 font-medium">{{servicestatistic.statistic.totalprixunitaire.toFixed(3)  }}  </span>
+                    <span class="text-500">total unitaire (TND)</span>
+                </div>
+            </div>
+            <div class="col-12 md:col-6 lg:col-3 h-full">
+                <div class="surface-card shadow-2 p-3 border-round">
+                    <div class="flex justify-content-between mb-3">
+                        <div>
+                            <span class="block text-500 font-medium mb-3">Gains Unitaire</span>
+                            <div class="text-900 font-medium text-xl">{{servicestatistic.statistic.totalgainunitaire.toFixed(3)}} TND</div>
+                        </div>
+                        <div class="flex align-items-center justify-content-center bg-orange-100 border-round" style="width:2.5rem;height:2.5rem">
+                            <i class="pi pi-dollar text-orange-500 text-xl"></i>
+                        </div>
+                    </div>
+                    <span class="text-green-500 font-medium">{{servicestatistic.statistic.totalgaingros.toFixed(3)}} </span>
+                    <span class="text-500">gain gros</span>
+                </div>
+            </div>
+            <div class="col-12 md:col-6 lg:col-3 h-full">
+                <div class="surface-card shadow-2 p-3 border-round">
+                    <div class="flex justify-content-between mb-3">
+                        <div>
+                            <span class="block text-500 font-medium mb-3">Nombre d'articles</span>
+                            <div class="text-900 font-medium text-xl">{{servicestatistic.statistic.nbarticle}}</div>
+                        </div>
+                        <div class="flex align-items-center justify-content-center bg-cyan-100 border-round" style="width:2.5rem;height:2.5rem">
+                            <i class="bi bi-box text-cyan-500 text-xl"></i>
+                        </div>
+                    </div>
+                    <span class="text-green-500 font-medium">{{servicestatistic.statistic.nbarticle | number}}  </span>
+                    <span class="text-500">articles</span>
+                </div>
+            </div>
+            <div class="col-12 md:col-6 lg:col-3 h-full">
+                <div class="surface-card shadow-2 p-3 border-round">
+                    <div class="flex justify-content-between mb-3">
+                        <div>
+                            <span class="block text-500 font-medium mb-3">Nombre Produit Expiré</span>
+                            <div class="text-900 font-medium text-xl">{{servicestatistic.statistic.listproduitexp.length}}</div>
+                        </div>
+                        <div class="flex align-items-center justify-content-center bg-purple-100 border-round" style="width:2.5rem;height:2.5rem">
+                            <i class="pi pi-info text-purple-500 text-xl"></i>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3     ">
+
+        <div class="col-12 p-2">
+            <div class="row   p-2">
+                <label class="text-2xl PrimaryColorTitle">Statistique sur les ventes </label>
+            </div>
+            <p-chart type="bar" [data]="data" [options]="options"></p-chart>
+        </div>
+    </div>
+    <div class="col-12 p-2">
+        <div class="row   p-2">
+            <label class="text-2xl PrimaryColorTitle">Statistique sur les produits par unité</label>
+        </div>
+
+        <div  class=" d-flex justify-content-center"  >
+            <div style="display: inline-block; width: 30%;"> <!-- Utiliser inline-block pour le centrage horizontal et réduire la largeur du graphique -->
+                <p-chart type="doughnut" [data]="data2" [options]="options2"></p-chart>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+<div class="grid">
         <div class="col-12 lg:col-6 xl:col-3">
             <div class="card mb-0">
                 <div class="flex justify-content-between mb-3">

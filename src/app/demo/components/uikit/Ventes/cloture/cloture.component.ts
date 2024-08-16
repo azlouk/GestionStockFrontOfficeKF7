@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import {OverlayPanel, OverlayPanelModule} from "primeng/overlaypanel";
-import { Cloture } from "../../../../../models/Cloture";
 import {Table, TableModule} from "primeng/table";
 import { ClotureService } from "../../../../service/cloture.service";
 import { User } from "../../../../../models/user";
@@ -13,6 +12,7 @@ import { DialogModule } from "primeng/dialog";
 import { CommonModule } from "@angular/common";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { RippleModule } from "primeng/ripple";
+import {Cloture} from "../../../../../models/Cloture";
 
 @Component({
   selector: 'app-cloture',

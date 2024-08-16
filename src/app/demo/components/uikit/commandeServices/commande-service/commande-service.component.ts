@@ -5,7 +5,7 @@ import {AvatarModule} from "primeng/avatar";
 import {BadgeModule} from "primeng/badge";
 import {ButtonModule} from "primeng/button";
 import {InputTextModule} from "primeng/inputtext";
-import {DatePipe, NgIf} from "@angular/common";
+import {DatePipe, NgClass, NgIf} from "@angular/common";
 import {RippleModule} from "primeng/ripple";
 import {ConfirmationService, MessageService, SharedModule} from "primeng/api";
 import {TableModule} from "primeng/table";
@@ -37,7 +37,8 @@ import {Router} from "@angular/router";
     FormsModule,
     DropdownModule,
     DatePipe,
-    ConfirmDialogModule
+    ConfirmDialogModule,
+    NgClass
   ],
   templateUrl: './commande-service.component.html',
   styleUrl: './commande-service.component.scss'
@@ -53,7 +54,6 @@ export class CommandeServiceComponent implements OnInit{
   }
   ngOnInit(): void {
     this.getCommandes();
-
   }
   getCommandes(): void {
     this.commandesService.getAllCommandes().subscribe(
@@ -100,9 +100,7 @@ export class CommandeServiceComponent implements OnInit{
     table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
   }
 
-  editCommande(commande: any) {
-    
-  }
+
 
 
   refresh() {
@@ -112,4 +110,11 @@ export class CommandeServiceComponent implements OnInit{
   ajouterCommandeService() {
     this.router.navigate(['/uikit/Ajout-Commande']);
   }
+  editCommande(id: number) {
+    this.router.navigate(['/uikit/Edit-Commande' ,id])
+  }
+
+    goToCoommandeDetails(id: number): void {
+      this.router.navigate(['uikit/CommandeServ/', id]);
+    }
 }

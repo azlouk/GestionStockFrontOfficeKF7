@@ -164,7 +164,6 @@ export class FactureAjoutComponent implements OnInit {
 
             }
 
-            this.newFacture.typeFacture = factureType.SORTIE;
             this.getAllTranches();
             this.getAllClient();
             this.getAllTrans();
@@ -349,15 +348,7 @@ export class FactureAjoutComponent implements OnInit {
 
             });
             return false;
-        } else if (this.newFacture.transporteur.id == 0) {
-            this.messageService.add({
-                severity: 'error',
-                summary: 'Erreur',
-                detail: 'Aucun transporteur n\'a été sélectionné pour la facture',
-                life: 3000
 
-            });
-            return false;
         }
         return true;
     }

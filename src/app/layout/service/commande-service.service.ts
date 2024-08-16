@@ -41,17 +41,6 @@ private newCommande : CommandeServ;
   }
 
 
-  createCommande(newCommande: CommandeServ): Observable<CommandeServ> {
-    const headers = new HttpHeaders()
-        .set('Authorization', `Bearer ${getToken()}`)
-        .set('Content-Type', 'application/json; charset=utf-8');
-    return this.http.post<CommandeServ>(this.api, JSON.stringify(newCommande), { headers }).pipe(
-        catchError(error => {
-          console.error('Erreur lors de la création de la commande:', error);
-          return throwError(error);
-        })
-    );
-  }
 
   addCommande(c: CommandeServ): Observable<CommandeServ> {
     const token = getToken();
@@ -102,6 +91,7 @@ private newCommande : CommandeServ;
       dateCreation: this.datePipe.transform(c.dateCreation, 'yyyy-MM-dd'),
       dateValidationOuSortie: this.datePipe.transform(c.dateValidationOuSortie, 'yyyy-MM-dd'),
       dateEstimeeFin: this.datePipe.transform(c.dateEstimeeFin, 'yyyy-MM-dd'),
+      reference : c.reference,
       paiement: c.paiement,
       status: c.status,
       avance: c.avance,
@@ -131,8 +121,13 @@ private newCommande : CommandeServ;
         })
     );
   }
-  updateCommande(c: any): Observable<any> {
-    // Préparation de la liste des fichiers
+  updateCommande(c: CommandeServ): Observable<CommandeServ> {
+    const token = getToken();
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+
     const filesListes = c.produits.flatMap(value =>
         value.produit.files.map(file => ({
           id: file.id,
@@ -142,7 +137,6 @@ private newCommande : CommandeServ;
         }))
     );
 
-    // Préparation des lignes de commande
     const lignecommande = c.produits.map(value => ({
       produit: {
         id: value.produit.id,
@@ -172,12 +166,12 @@ private newCommande : CommandeServ;
       prixAchat: value.produit.prixUnitaire
     }));
 
-    // Préparation de la commande
     const commande = {
       dateCreation: this.datePipe.transform(c.dateCreation, 'yyyy-MM-dd'),
       dateValidationOuSortie: this.datePipe.transform(c.dateValidationOuSortie, 'yyyy-MM-dd'),
       dateEstimeeFin: this.datePipe.transform(c.dateEstimeeFin, 'yyyy-MM-dd'),
       paiement: c.paiement,
+      reference : c.reference,
       status: c.status,
       avance: c.avance,
       prixSupplimentaire: c.prixSupplimentaire,
@@ -198,8 +192,13 @@ private newCommande : CommandeServ;
       }))
     };
 
-    // Appel à l'API pour mettre à jour la commande
-    return this.http.put<CommandeServ>(`${this.api}/commandes/${c.id}`, commande);
+    console.log("Commande mise à jour:", commande);
+    return this.http.put<CommandeServ>(`${this.api}/${c.id}`, commande, { headers }).pipe(
+        catchError((error: HttpErrorResponse) => {
+          console.error('Erreur lors de la mise à jour de la commande:', error);
+          return throwError(() => new Error('Une erreur est survenue lors de la mise à jour de la commande.'));
+        })
+    );
   }
 
 

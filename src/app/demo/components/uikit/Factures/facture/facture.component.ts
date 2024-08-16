@@ -33,6 +33,7 @@ import {UserService} from "../../../../../layout/service/user.service";
 import {FieldsetModule} from "primeng/fieldset";
 import {Tranche} from "../../../../../models/Tranche";
 import {TreeTableModule} from "primeng/treetable";
+import {TabViewModule} from "primeng/tabview";
 
 @Component({
     selector: 'app-facture',
@@ -65,7 +66,8 @@ import {TreeTableModule} from "primeng/treetable";
         CheckboxModule,
         AutoCompleteModule,
         FieldsetModule,
-        TreeTableModule
+        TreeTableModule,
+        TabViewModule
     ],
     templateUrl: './facture.component.html',
     styleUrl: './facture.component.scss'

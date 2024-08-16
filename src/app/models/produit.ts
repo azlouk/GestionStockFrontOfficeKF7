@@ -1,32 +1,7 @@
 import {Article} from "./Article";
 import {File} from "./File";
 import {Historique} from "./historique";
-/*
-export interface ProduitInterface {
-    id?: number;
-    nom?: string;
-    prixUnitaire?: number;
-    prixGros?: number;
-    description?: string;
-    qantite?: number;
-    imageData?: File;
-    gainUnitaire?: number;
-    gainGros?: number;
-    dateExpiration?: Date;
-    dateFabrication?: Date;
-    minQuantiteGros?: number;
-    taxe?: number;
-    enable?: boolean;
-    dataqr?: string;
-    filesList?: File[];
-    image:File ;
-    checkedService?: boolean ;
-    subdataqr?:string[] ;
-    article:Article;
-    levelstock?:number;
-    prixVente? :number;
-}
-*/
+
 
 
 export interface CodeModel{
