@@ -19,10 +19,12 @@ import {ServiceComponent} from "./Services/service/service.component";
 import {AjoutServiceComponent} from "./Services/ajout-service/ajout-service.component";
 import {CommandeServiceComponent} from "./commandeServices/commande-service/commande-service.component";
 import {CommandeServAjoutComponent} from "./commandeServices/commande-serv-ajout/commande-serv-ajout.component";
+import {LoginComponent} from "../auth/login/login.component";
 
 @NgModule({
     imports: [RouterModule.forChild([
 
+        { path: 'login', component:LoginComponent },
         { path: 'Users', component:UserComponent },
         { path: 'Add-user', component:AjoutUserComponent },
         {path:"Edit-user/:id", component:UpdateUserComponent},

@@ -1,6 +1,6 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ButtonModule} from "primeng/button";
-import { DataViewModule} from "primeng/dataview";
+import {DataViewModule} from "primeng/dataview";
 import {DropdownModule} from "primeng/dropdown";
 import {InputTextModule} from "primeng/inputtext";
 import {CurrencyPipe, DatePipe, JsonPipe, NgClass, NgForOf, NgIf} from "@angular/common";
@@ -30,6 +30,7 @@ import {File} from "../../../../../models/File";
 import {log} from "@angular-devkit/build-angular/src/builders/ssr-dev-server";
 import {AvatarModule} from "primeng/avatar";
 import {BadgeModule} from "primeng/badge";
+import {Historique} from "../../../../../models/historique";
 
 @Component({
     selector: 'app-produits',
@@ -69,11 +70,12 @@ import {BadgeModule} from "primeng/badge";
 export class ProduitsComponent implements OnInit {
 
 
-    imageUrl=""
+    imageUrl = ""
 
     idd?: number;
     produits: Produit[] = [];
-    selectedProducts: Produit []= [];
+    historiques: Historique[] = [];
+    selectedProducts: Produit [] = [];
     deleteProductsDialog: boolean = false;
     displayusers: boolean = true;
     images: any[] = [];
@@ -83,6 +85,7 @@ export class ProduitsComponent implements OnInit {
     @ViewChild('filter') filter!: ElementRef;
 
     responsiveOptions: any[];
+
     constructor(private productService: ProductService,
                 private produitService: ProduitService,
                 private messageService: MessageService,
@@ -99,13 +102,14 @@ export class ProduitsComponent implements OnInit {
         table.clear();
         this.filter.nativeElement.value = '';
     }
+
 // ------------ list Produits ------------
     getAllProduits() {
         this.loadingdata = true;
         this.produitService.getProduits().subscribe(
             (value: Produit[]) => {
                 this.produits = value;
-                console.log(new JsonPipe().transform( this.produits))
+                console.log(new JsonPipe().transform(this.produits))
                 this.loadingdata = false;
             },
             error => {
@@ -119,6 +123,7 @@ export class ProduitsComponent implements OnInit {
             }
         );
     }
+
     supprimerProduit(id: number): void {
         Swal.fire({
             title: 'Êtes-vous sûr ?',
@@ -151,7 +156,6 @@ export class ProduitsComponent implements OnInit {
     }
 
 
-
     onGlobalFilter(table: Table, event: Event) {
         table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
     }
@@ -159,12 +163,14 @@ export class ProduitsComponent implements OnInit {
     modifierProduit(id: number): void {
         this.router.navigate(['/uikit/edit-produit', id]); // Redirection vers la page de modification avec l'ID du produit
     }
+
     newProduit(): void {
         this.router.navigate(['/uikit/ajout-produit']); // Redirection vers la page de modification avec l'ID du produit
     }
 
 
     defaultImageUrl = '../../assets/no-picture-taking.png';
+
     loadFileByProduct(product: Produit): SafeUrl[] {
         let safeImages: SafeUrl[] = [];
 
@@ -181,6 +187,7 @@ export class ProduitsComponent implements OnInit {
         }
         return safeImages;
     }
+
     deleteSelectedProducts() {
         this.deleteProductsDialog = true;
     }
@@ -190,5 +197,29 @@ export class ProduitsComponent implements OnInit {
     refresh() {
         this.getAllProduits();
         this.router.navigate(['/uikit/produits']);
+    }
+
+    public visibleShowDetails: boolean = false;
+
+
+    public showDetail(id: Number) {
+        this.visibleShowDetails = true;
+
+        this.produitService.getHistoriques(id).subscribe(
+            (value: Historique[]) => {
+                this.historiques = value;
+
+            },
+            error => {
+                console.error(error)
+            }
+        );
+        console.log(this.historiques)
+    }
+
+
+    public closeShowDetails() {
+        this.visibleShowDetails = false;
+
     }
 }

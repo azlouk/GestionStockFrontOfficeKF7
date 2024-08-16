@@ -4,6 +4,9 @@ import { Product } from '../../api/product';
 import { ProductService } from '../../service/product.service';
 import { Subscription, debounceTime } from 'rxjs';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
+import {VenteService} from "../../../layout/service/vente.service";
+import {Vente} from "../../../models/Vente";
+import {Observable} from "rxjs/internal/Observable";
 
 @Component({
     templateUrl: './dashboard.component.html',
@@ -20,7 +23,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     subscription!: Subscription;
 
-    constructor(private productService: ProductService, public layoutService: LayoutService) {
+    ventesDash: Observable<Vente>[] = [];
+
+    constructor(private productService: ProductService, public layoutService: LayoutService ,public venteService:VenteService) {
         this.subscription = this.layoutService.configUpdate$
         .pipe(debounceTime(25))
         .subscribe((config) => {
@@ -36,8 +41,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
             { label: 'Add New', icon: 'pi pi-fw pi-plus' },
             { label: 'Remove', icon: 'pi pi-fw pi-minus' }
         ];
-    }
 
+
+    }
+    // this.venteService.getVentes().subscribe(vente => {
+    //
+    //     console.error()})
     initChart() {
         const documentStyle = getComputedStyle(document.documentElement);
         const textColor = documentStyle.getPropertyValue('--text-color');

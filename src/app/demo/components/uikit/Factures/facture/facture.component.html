@@ -26,18 +26,19 @@
                                 <div class="flex align-items-center mb-2" style="width: 225px;height: 10px;">
                                     <p-fieldset legend="Nombre Tranche " class="w-full">
 
-                                        <p class="m-0" style="font-size: 20px;color: #5833ff;">
 
-                                            <p-avatar class="float-end" icon="pi pi-tags" style="color: slateblue" pBadge styleClass="mr-5"
+                                        <div class="m-0" style="font-size: 10px;color: #5833ff;" >
+
+                                            <p-avatar class="float-end" icon="pi pi-tags" style="color: slateblue"
+                                                      pBadge styleClass="mr-5"
                                                       [value]="this.nbreTranche+''" size="large"
                                                       [style]="{ 'background-color': '#b9c7ce', color: '#1a1717' }"></p-avatar>
 
-                                            <p-button  icon="pi pi-eye" (onClick)="dialogTrancheDVisible = true" />
+
+                                            <p-button icon="pi pi-eye" (onClick)="dialogTrancheDVisible = true"/>
                                             <br>
-                                        </p>
 
-
-
+                                        </div>
 
 
                                     </p-fieldset>
@@ -50,10 +51,10 @@
                                     </p-fieldset>
                                 </div>
 
-                                <div class="flex align-items-center mb-2" style="width: 200px;height: 10px;" >
+                                <div class="flex align-items-center mb-2" style="width: 200px;height: 10px;">
                                     <p-fieldset legend="Montant Total Filtré" class="w-full">
-                                        <p class="m-0 "  style="font-size: 20px; color: #5833ff;">
-                                          {{totalFiltre}} TND
+                                        <p class="m-0 " style="font-size: 20px; color: #5833ff;">
+                                            {{totalFiltre}} TND
                                         </p>
                                     </p-fieldset>
                                 </div>
@@ -129,7 +130,7 @@
                                     <th>Tranche</th>
                                     <th>Action</th>
                                 </tr>
-                                <tr >
+                                <tr>
                                     <th>
                                         <p-columnFilter
                                                 type="text"
@@ -234,9 +235,10 @@
                                     </td>
 
                                 </tr>
-                                <p-dialog header="Tranches facture" [(visible)]="visibleTranche" [style]="{ width: '50rem' }">
+                                <p-dialog header="Tranches facture" [(visible)]="visibleTranche"
+                                          [style]="{ width: '50rem' }">
                                     <div *ngIf="newFacture?.tranches?.length">
-                                        <p-table  [value]="newFacture?.tranches" scrollHeight="40rem">
+                                        <p-table [value]="newFacture?.tranches" scrollHeight="40rem">
                                             <ng-template pTemplate="header">
                                                 <tr>
                                                     <th>Description</th>
@@ -315,7 +317,7 @@
                         <p-checkbox name="ACHAT" value="FACTURE_ACHAT" [(ngModel)]="typeA" inputId="achat"/>
                         <label class="ml-2">FACTURE ACHAT</label>
                     </div>
-                    <div class="flex align-items-center" >
+                    <div class="flex align-items-center">
                         <p-checkbox name="VENTE" value="FACTURE_VENTE" [(ngModel)]="typeV" inputId="vente"/>
                         <label class="ml-2">FACTURE VENTE</label>
                     </div>
@@ -363,7 +365,8 @@
                     </div>
                     <div class="flex align-items-center gap-3 mb-3">
                         <label for="paye" class="font-semibold w-6rem">Payé</label>
-                        <p-triStateCheckbox id="paye" [(ngModel)]="valuepaye" inputId="tricheckbox"></p-triStateCheckbox>
+                        <p-triStateCheckbox id="paye" [(ngModel)]="valuepaye"
+                                            inputId="tricheckbox"></p-triStateCheckbox>
                         <span *ngIf="valuepaye === true">Payé</span>
                         <span *ngIf="valuepaye === false">Non Payé</span>
                         <span *ngIf="valuepaye === null">Payé et Non Payé</span>
@@ -416,7 +419,7 @@
 
             <ng-template pTemplate="body" let-facture let-i="rowIndex">
                 <tr *ngIf="facture?.tranches?.length" [ngClass]="{'odd-row': i % 2 === 0, 'even-row': i % 2 !== 0}">
-                    <td >{{ facture.reference }}</td>
+                    <td>{{ facture.reference }}</td>
                     <td colspan="4">
                         <p-table *ngIf="facture?.tranches?.length" [value]="facture.tranches">
                             <ng-template pTemplate="body" let-tranche>
@@ -437,8 +440,8 @@
 
             <ng-template pTemplate="footer">
                 <tr>
-                    <td colspan="1" class="font-bold" >Total Tranches Payées :</td>
-                    <td colspan="1" >{{ totalTranchepaye | currency }}</td>
+                    <td colspan="1" class="font-bold">Total Tranches Payées :</td>
+                    <td colspan="1">{{ totalTranchepaye | currency }}</td>
                 </tr>
                 <tr>
                     <td colspan="1" class="font-bold">Total Tranches Non Payées :</td>
@@ -456,10 +459,9 @@
     </ng-template>
 
     <ng-template pTemplate="footer">
-        <p-button label="Cancel" icon="pi pi-check" (onClick)="dialogTrancheDVisible = false" />
+        <p-button label="Cancel" icon="pi pi-check" (onClick)="dialogTrancheDVisible = false"/>
     </ng-template>
 </p-dialog>
-
 
 
 <!------------------------------------------------avec autocomplete--------------------------------------->

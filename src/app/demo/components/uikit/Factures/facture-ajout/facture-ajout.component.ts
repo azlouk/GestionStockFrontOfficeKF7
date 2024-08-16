@@ -164,7 +164,6 @@ export class FactureAjoutComponent implements OnInit {
 
             }
 
-            this.newFacture.typeFacture = factureType.SORTIE;
             this.getAllTranches();
             this.getAllClient();
             this.getAllTrans();
@@ -595,9 +594,7 @@ export class FactureAjoutComponent implements OnInit {
     protected readonly confirm = confirm;
     public typeCalculeDialogue: boolean = false;
 
-    public modifierProduit(id) {
-        this.router.navigate(['/uikit/edit-produit', id]);
-    }
+
 
     public onRowEditCancel(l: LigneFacture) {
         // this.newFacture.lignesFacture[index] = this.clonedLignesFactures[l.id as string];

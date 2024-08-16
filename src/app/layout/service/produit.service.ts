@@ -10,6 +10,7 @@ import {Vente} from "../../models/Vente";
 import {Article} from "../../models/Article";
 import {Produit} from "../../models/produit";
 import Swal from "sweetalert2";
+import {Historique} from "../../models/historique";
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +25,8 @@ export class ProduitService {
 
     public apifile = environment.apiUrl+'/api/'
     public apifilePrime = environment.apiUrl+'/api/uploadFilesIntoDB'
+    private apiH = environment.apiUrl+'/api/historiques'
+
     produitsFactures:Produit[] = [];
     nbProduit : number= 0;
     public permission: any ;
@@ -373,5 +376,17 @@ export class ProduitService {
         });
     }
 
-//   ============article==================
+//   ============historique==================
+
+    getHistoriques(id:Number): Observable<Historique[]> {
+        const url = `${this.apiH}/getByProduit`;
+        const token = getToken();
+        if (token) {
+            const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type","application/json; charset=utf8" );
+            return this.http.get<Historique[]>(url+'/'+id, {headers} );
+
+        } else {
+            return new Observable();
+        }
+    }
 }

@@ -28,14 +28,49 @@ export class UserService {
             });
 
     }
+
+// public loadGenarate() :void{
+//
+//
+//
+//         this.secretKey=this.generateUUID()
+//         this.confirmationService.confirm({
+//             header: 'Remember your Secret key?',
+//             message: ` ${this.secretKey}`,
+//             accept: () => {
+//                 console.log("accept"+this.secretKey)
+//                 this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted your secret Key', life: 3000 });
+//             },
+//             reject: () => {
+//                 this.secretKey="";
+//                 this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
+//                 console.log("reject"+this.secretKey)
+//
+//             }
+//         });
+//
+//     }
+
+
+
+
+
+    public generateUUID(): string {
+
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            const r = Math.random() * 16 | 0;
+            const v = c === 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+
+            console.log("randomU"+v.toString(16))
+
+        });
+    }
     addUser(newUser: any): Observable<any> {
         // this.users.push(newUser);
 
-        console.log("Data user"+new JsonPipe().transform(newUser))
         const table=this.getTableWithRole(newUser) ;
-        console.log("Table :"+ table)
         const token = getToken();
-        console.log(token);
         if (token) {
             // Ajouter le token à l'en-tête de la requête
             const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type", "application/json; charset=utf8");
@@ -47,7 +82,6 @@ export class UserService {
     }
     getUsers(): Observable<User[]> {
         const token = getToken();
-        console.log(token)
         if (token) {
             // Ajouter le token à l'en-tête de la requête
             const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type", "application/json; charset=utf8");
@@ -58,7 +92,6 @@ export class UserService {
     }
     getUsersClient(): Observable<User[]> {
         const token = getToken();
-        console.log(token)
 
         if (token) {
             // Ajouter le token à l'en-tête de la requête
@@ -71,7 +104,6 @@ export class UserService {
     }
     getUsersResponsable(): Observable<User[]> {
         const token = getToken();
-        console.log(token)
 
         if (token) {
             // Ajouter le token à l'en-tête de la requête
@@ -84,7 +116,6 @@ export class UserService {
     }
     getUsersTransporteur(): Observable<User[]> {
         const token = getToken();
-        console.log(token)
 
         if (token) {
             // Ajouter le token à l'en-tête de la requête
@@ -97,7 +128,7 @@ export class UserService {
     }
     getUsersProviders(): Observable<User[]> {
         const token = getToken();
-        console.log(token)
+
 
         if (token) {
             // Ajouter le token à l'en-tête de la requête
@@ -112,7 +143,7 @@ export class UserService {
     getUserById(id: number): Observable<User> {
         const url = `${this.api}/user/getUserById/${id}`; // Corrected URL path
         const token = getToken();
-        console.log(token);
+
 
         if (token) {
             // Add the token to the request header
@@ -125,7 +156,7 @@ export class UserService {
     }
     getPassword(id: number): Observable<any> {
         const token = getToken();
-        console.log(token);
+
 
         if (token) {
             // Add the token to the request header
@@ -169,6 +200,7 @@ export class UserService {
                 "firstname": user.firstname,
                 "lastname": user.lastname,
                 "email": user.email,
+                "secretKey":user.secretKey,
                 "telephone": user.telephone,
                 "adresse": user.adresse,
                 "role": user.role,
@@ -191,15 +223,12 @@ export class UserService {
 
     deleteUser(userId: User): Observable<any> {
         const token = getToken();
-        console.log(token)
 
         if (token) {
             // Ajouter le token à l'en-tête de la requête
             const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type", "application/json; charset=utf8");
             const table = this.getTableWithRole(userId);
-            console.log("Item deleted :" + new JsonPipe().transform(userId));
             const url = this.api + '/' + table + '/delete/' + userId.id;
-            console.log(url)
             return this.http.delete(url, {headers}); // Indiquer que la réponse est une chaîne de texte
         }
         else  { return  new Observable<any>()}
