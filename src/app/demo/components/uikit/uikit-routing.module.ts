@@ -49,7 +49,6 @@ import {CommandeServAjoutComponent} from "./commandeServices/commande-serv-ajout
         { path: 'menu', data: { breadcrumb: 'Menu' }, loadChildren: () => import('./menus/menus.module').then(m => m.MenusModule) },
         { path: '**', redirectTo: '/notfound' },
 
-
     ])],
     exports: [RouterModule]
 })

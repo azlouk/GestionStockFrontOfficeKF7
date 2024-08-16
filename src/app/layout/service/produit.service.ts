@@ -132,6 +132,7 @@ export class ProduitService {
         const token = getToken();
 
         if (token) {
+
             // Ajouter le token à l'en-tête de la requête
             const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
             let formData = new FormData();

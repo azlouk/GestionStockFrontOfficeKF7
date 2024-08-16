@@ -191,7 +191,6 @@ private newCommande : CommandeServ;
         description: service.descriptionServiceComp
       }))
     };
-
     console.log("Commande mise à jour:", commande);
     return this.http.put<CommandeServ>(`${this.api}/${c.id}`, commande, { headers }).pipe(
         catchError((error: HttpErrorResponse) => {

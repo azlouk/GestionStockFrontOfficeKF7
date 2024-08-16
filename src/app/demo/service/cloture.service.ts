@@ -53,7 +53,6 @@ export class ClotureService {
         console.log("Data cloture", newCloture);
         const token = getToken();
         console.log(token);
-
         if (token) {
             const headers = new HttpHeaders()
                 .set('Authorization', `Bearer ${token}`)
