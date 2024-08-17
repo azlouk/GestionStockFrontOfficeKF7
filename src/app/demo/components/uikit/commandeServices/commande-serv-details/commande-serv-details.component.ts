@@ -98,4 +98,8 @@ export class CommandeServDetailsComponent implements OnInit{
       };
     }
   }
+
+      returnBack(): void {
+        this.router.navigate(['/uikit/Commandes'])  }
+
 }
