@@ -19,6 +19,7 @@ import {ServiceComponent} from "./Services/service/service.component";
 import {AjoutServiceComponent} from "./Services/ajout-service/ajout-service.component";
 import {CommandeServiceComponent} from "./commandeServices/commande-service/commande-service.component";
 import {CommandeServAjoutComponent} from "./commandeServices/commande-serv-ajout/commande-serv-ajout.component";
+import {CommandeServDetailsComponent} from "./commandeServices/commande-serv-details/commande-serv-details.component";
 
 @NgModule({
     imports: [RouterModule.forChild([
@@ -46,6 +47,8 @@ import {CommandeServAjoutComponent} from "./commandeServices/commande-serv-ajout
         { path: 'Commandes', component:CommandeServiceComponent },
         { path: 'Ajout-Commande', component:CommandeServAjoutComponent },
         { path: 'Edit-Commande/:id', component:CommandeServAjoutComponent },
+        { path: 'CommandeServ/:id', component:CommandeServDetailsComponent },
+
         { path: 'menu', data: { breadcrumb: 'Menu' }, loadChildren: () => import('./menus/menus.module').then(m => m.MenusModule) },
         { path: '**', redirectTo: '/notfound' },
 

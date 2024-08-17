@@ -1,59 +1,50 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {ButtonModule} from "primeng/button";
-import Swal from "sweetalert2";
 import {Facture} from "../../../../../models/Facture";
-import {Produit} from "../../../../../models/produit";
 import {FactureService} from "../../../../../layout/service/facture.service";
-import {ActivatedRoute, Router} from "@angular/router";
 import {ProduitService} from "../../../../../layout/service/produit.service";
-import {CurrencyPipe, DatePipe, NgForOf} from "@angular/common";
+import {ActivatedRoute, Router} from "@angular/router";
+import {CommandeServ} from "../../../../../models/CommandeServ ";
+import {CommandeServiceService} from "../../../../../layout/service/commande-service.service";
+import {ButtonModule} from "primeng/button";
+import {CurrencyPipe} from "@angular/common";
 import {RippleModule} from "primeng/ripple";
-import {ToolbarModule} from "primeng/toolbar";
+import {SharedModule} from "primeng/api";
 import {TableModule} from "primeng/table";
 
 @Component({
-  selector: 'app-facture-details',
+  selector: 'app-commande-serv-details',
   standalone: true,
   imports: [
     ButtonModule,
-    DatePipe,
+    CurrencyPipe,
     RippleModule,
-    ToolbarModule,
-    TableModule,
-    NgForOf,
-    CurrencyPipe
+    SharedModule,
+    TableModule
   ],
-  templateUrl: './facture-details.component.html',
-  styleUrl: './facture-details.component.scss'
+  templateUrl: './commande-serv-details.component.html',
+  styleUrl: './commande-serv-details.component.scss'
 })
-export class FactureDetailsComponent implements OnInit {
-  facture: Facture = new Facture(); // Initialisez votre objet Facture
+export class CommandeServDetailsComponent implements OnInit{
+
+  commandeSer:CommandeServ = new CommandeServ(); // Initialisez votre objet Facture
 
   @ViewChild('factureContent') factureContent!: ElementRef;
   constructor(
-      private factureService: FactureService,
+      private commandeService: CommandeServiceService,
       private produitService : ProduitService,
       private route: ActivatedRoute,
       private router : Router,
   ) {}
 
   ngOnInit(): void {
-    this.getCommandeDetails(); // Appelez la méthode pour récupérer les détails de la facture
+    this.getFactureDetails(); // Appelez la méthode pour récupérer les détails de la facture
   }
 
-  getCommandeDetails(): void {
+  getFactureDetails(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.factureService.getFactureById(id)?.subscribe((value: Facture) => {
-      this.facture = value; // Mettez à jour l'objet facture avec les détails récupérés
+    this.commandeService.getCommandeById(id)?.subscribe((value: CommandeServ) => {
+      this.commandeSer = value; // Mettez à jour l'objet facture avec les détails récupérés
     });
-  }
-
-  returnBack(): void {
-    this.factureService.returnBack()
-  }
-
-  saveFacture(): void {
-    // Implémentez la logique pour sauvegarder la facture
   }
 
   printFacture() {
@@ -108,4 +99,3 @@ export class FactureDetailsComponent implements OnInit {
     }
   }
 }
-
