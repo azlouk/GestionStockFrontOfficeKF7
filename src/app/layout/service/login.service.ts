@@ -21,15 +21,18 @@ export class LoginService {
   }
 
   verifForgetPasswor(email: string, secretKey: string): Observable<any> {
-    return this.http.get<User>(`${this.apiL}/getVerifForget/${email}/${secretKey}`);
+    const url = `${this.apiL}/getVerifForget`;
+    const body = { email, secretKey };
+    return this.http.post<User>(url, body);
   }
 
 
 
-  updatePassword(userId: number, newPassword: string): Observable<any> {
+  updatePassword(userId: number, newPassword: string): Observable<boolean> {
     const url = `${this.apiL}/${userId}/update-password`;
     const body = { newPassword };
-    return this.http.put(url, body);
+    return this.http.put<boolean>(url, body);
   }
+
 
 }

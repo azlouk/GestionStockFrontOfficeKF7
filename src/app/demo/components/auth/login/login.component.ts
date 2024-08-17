@@ -80,9 +80,20 @@ export class LoginComponent {
             }
         );
     }
+    resetFormPassword()
+    {
+        this.newPassword="";
+        this.confirmPassword=""
+        this.emailverif = "";
+        this.secretKeyverif = "";
+    }
 
     // Method to save the new password
     saveNewPassword(userId: number) {
+
+        console.log('Nouveau mot de passe:', this.newPassword);
+        console.log('Confirmez le mot de passe:', this.confirmPassword);
+
         if (this.newPassword !== this.confirmPassword) {
             this.errorMessage = 'Les mots de passe ne correspondent pas.';
             this.visibleError = true;
@@ -90,23 +101,26 @@ export class LoginComponent {
         }
 
         this.loginService.updatePassword(userId, this.newPassword).subscribe(
-            ( value :boolean) => {
-                 if(value) {
+            (value: boolean) => {
+                console.log('Résultat de la mise à jour:', value);
+                if (value) {
                     this.visibleSuccess = true;
                     this.visibleConfirmPass = false;
-                    this.showVerif=false;
-                }else {
+                    this.showVerif = false;
+                } else {
                     this.errorMessage = 'La mise à jour du mot de passe a échoué.';
                     this.visibleError = true;
                 }
             },
             error => {
-                console.error(error)
-                this.errorMessage = 'La mise à jour erroné';
+                console.error('Erreur lors de la mise à jour du mot de passe:', error);
+                this.errorMessage = 'La mise à jour erronée';
                 this.visibleError = true;
             }
         );
+        this.resetFormPassword();
     }
+
 
     navigateToLogin() {
         this.visibleSuccess = false;

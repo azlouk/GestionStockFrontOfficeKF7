@@ -49,19 +49,22 @@
 
 
 <p-dialog header="Saisissez un nouveau mot de passe" [modal]="true" [(visible)]="visibleConfirmPass" [style]="{ width: '25rem' }">
-    <div class="flex align-items-center gap-3 mb-3">
-        <label for="new-password" class="font-semibold w-6rem">Nouveau mot de passe</label>
-        <input pInputText type="password" id="new-password" class="flex-auto" [(ngModel)]="newPassword" autocomplete="off" />
-    </div>
-    <div class="flex align-items-center gap-3 mb-5">
-        <label for="confirm-password" class="font-semibold w-6rem">Confirmez le mot de passe</label>
-        <input pInputText type="password" id="confirm-password" [(ngModel)]="confirmPassword" autocomplete="off" />
-    </div>
-    <div class="flex justify-content-end gap-2">
-        <p-button label="Annuler" (onClick)="visibleConfirmPass = false" class="p-button-secondary" />
-        <p-button label="Enregistrer" (onClick)="saveNewPassword(this.userId)" />
-    </div>
+    <form (ngSubmit)="saveNewPassword(userId)">
+        <div class="flex align-items-center gap-3 mb-3">
+            <label for="new-password" class="font-semibold w-6rem">Nouveau mot de passe</label>
+            <input pInputText type="password" id="new-password" class="flex-auto" [(ngModel)]="newPassword" name="newPassword" autocomplete="off" />
+        </div>
+        <div class="flex align-items-center gap-3 mb-5">
+            <label for="confirm-password" class="font-semibold w-6rem">Confirmez le mot de passe</label>
+            <input pInputText type="password" id="confirm-password" [(ngModel)]="confirmPassword" name="confirmPassword" autocomplete="off" />
+        </div>
+        <div class="flex justify-content-end gap-2">
+            <p-button label="Annuler" (onClick)="visibleConfirmPass = false" class="p-button-secondary" />
+            <p-button label="Enregistrer" type="submit" />
+        </div>
+    </form>
 </p-dialog>
+
 <p-dialog header="Erreur" [(visible)]="visibleError" [modal]="true" [closable]="false" [style]="{ width: '25rem' }">
     <div class="p-d-flex p-ai-center p-jc-center">
         <span class="p-text-secondary">{{ errorMessage }}</span>
