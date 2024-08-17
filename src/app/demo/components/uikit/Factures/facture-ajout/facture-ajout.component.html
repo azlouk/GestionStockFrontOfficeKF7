@@ -411,38 +411,61 @@
                                             (click)="deleteProduct(l)"></button>
                                 </td>
                             </tr>
-                            <p-dialog [(visible)]="typeCalculeDialogue" [style]="{width: '500px'}"
-                                      header="Choisir La methode de Calcule de Prix" [modal]="true" class="p-fluid">
+
+                            <p-dialog [(visible)]="typeCalculeDialogue" [style]="{width: '500px'}" header="Choisir La methode de Calcule de Prix" [modal]="true" class="p-fluid">
                                 <ng-template pTemplate="content">
                                     <div class="flex justify-content-between w-full">
                                         <div class="flex align-items-center">
-                                            <p-radioButton name="Max" value="MaxValue"
-                                                           [(ngModel)]="l.produit.typeCalcule" inputId="ingredient2"/>
-                                            <label class="ml-2">
-                                                Max Value
-                                            </label>
+                                            <p-radioButton name="Max" value="MaxValue" [(ngModel)]="l.produit.typeCalcule" inputId="ingredient2"/>
+                                            <label class="ml-2">Max Value</label>
                                         </div>
                                         <div class="flex align-items-center">
-                                            <p-radioButton name="Min" value="MinValue"
-                                                           [(ngModel)]="l.produit.typeCalcule" inputId="ingredient3"/>
-                                            <label class="ml-2">
-                                                Min Value
-                                            </label>
+                                            <p-radioButton name="Min" value="MinValue" [(ngModel)]="l.produit.typeCalcule" inputId="ingredient3"/>
+                                            <label class="ml-2">Min Value</label>
                                         </div>
                                         <div class="flex align-items-center">
-                                            <p-radioButton name="Moyen" value="MoyenValue"
-                                                           [(ngModel)]="l.produit.typeCalcule" inputId="ingredient4"/>
-                                            <label class="ml-2">
-                                                Moyen Value
-                                            </label>
+                                            <p-radioButton name="Moyen" value="MoyenValue" [(ngModel)]="l.produit.typeCalcule" inputId="ingredient4"/>
+                                            <label class="ml-2">Moyen Value</label>
                                         </div>
                                     </div>
                                 </ng-template>
                                 <ng-template pTemplate="footer">
-                                    <button pButton pRipple label="Confirmer" icon="pi pi-times" class="p-button-text"
-                                            (click)="hideDialog()"></button>
+                                    <button pButton pRipple label="Confirmer" icon="pi pi-times" class="p-button-text" (click)="confirmerRecalculPrix()"></button>
                                 </ng-template>
                             </p-dialog>
+
+                            <!--      <p-dialog [(visible)]="typeCalculeDialogue" [style]="{width: '500px'}"
+                                            header="Choisir La methode de Calcule de Prix" [modal]="true" class="p-fluid">
+                                      <ng-template pTemplate="content">
+                                          <div class="flex justify-content-between w-full">
+                                              <div class="flex align-items-center">
+                                                  <p-radioButton name="Max" value="MaxValue"
+                                                                 [(ngModel)]="l.produit.typeCalcule" inputId="ingredient2"/>
+                                                  <label class="ml-2">
+                                                      Max Value
+                                                  </label>
+                                              </div>
+                                              <div class="flex align-items-center">
+                                                  <p-radioButton name="Min" value="MinValue"
+                                                                 [(ngModel)]="l.produit.typeCalcule" inputId="ingredient3"/>
+                                                  <label class="ml-2">
+                                                      Min Value
+                                                  </label>
+                                              </div>
+                                              <div class="flex align-items-center">
+                                                  <p-radioButton name="Moyen" value="MoyenValue"
+                                                                 [(ngModel)]="l.produit.typeCalcule" inputId="ingredient4"/>
+                                                  <label class="ml-2">
+                                                      Moyen Value
+                                                  </label>
+                                              </div>
+                                          </div>
+                                      </ng-template>
+                                      <ng-template pTemplate="footer">
+                                          <button pButton pRipple label="Confirmer" icon="pi pi-times" class="p-button-text"
+                                                  (click)="hideDialog()"></button>
+                                      </ng-template>
+                                  </p-dialog>-->
                         </ng-template>
                         <ng-template pTemplate="emptymessage">
                             <tr>

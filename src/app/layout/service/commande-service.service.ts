@@ -14,7 +14,7 @@ import {LigneVente} from "../../models/LigneVente";
   providedIn: 'root'
 })
 export class CommandeServiceService {
-private newCommande : CommandeServ;
+  private newCommande : CommandeServ;
   private api = `${environment.apiUrl}/commandes`;
 
   constructor(private http: HttpClient,

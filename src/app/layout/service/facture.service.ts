@@ -15,6 +15,7 @@ import {map} from "rxjs/operators";
 import {UserService} from "./user.service";
 import {TrancheService} from "./tranche.service";
 import {ConfirmationService, MessageService} from "primeng/api";
+import {Produit} from "../../models/produit";
 
 @Injectable({
   providedIn: 'root'
@@ -25,6 +26,7 @@ export class FactureService {
     // @ts-ignore
     depots: Depot[] = this.getAllDepots();
     private api =environment.apiUrl+'/facture';
+    private apiP =environment.apiUrl+'/produit';
     idFacture : number=0;
     public permission: any ;
     constructor(private depotService: DepotService,
@@ -336,5 +338,12 @@ export class FactureService {
             this.permission =false ;
         }
     }
+
+
+    mettreAJourPrixProduit(typeCalcule: string, produit: Produit): Observable<Produit> {
+        const url = `${this.apiP}/mettre-a-jour-prix?typeCalcule=${typeCalcule}`;
+        return this.http.put<Produit>(url, produit);
+    }
+
 }
 

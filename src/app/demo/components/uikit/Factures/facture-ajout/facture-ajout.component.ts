@@ -113,6 +113,9 @@ export class FactureAjoutComponent implements OnInit {
     isUpdateValide = false;
     private Tranchefilred: Tranche[];
 
+    produit: Produit; // Assurez-vous de définir correctement ce produit
+    typeCalculeDialogue: boolean = false;
+    typeCalcule: string = '';
 
     clear(table: Table) {
         table.clear();
@@ -584,7 +587,6 @@ export class FactureAjoutComponent implements OnInit {
 
     protected readonly factureType = factureType;
     protected readonly confirm = confirm;
-    public typeCalculeDialogue: boolean = false;
 
 
 
@@ -609,9 +611,31 @@ export class FactureAjoutComponent implements OnInit {
 
     }
 
-    public hideDialog() {
+   /* public hideDialog() {
 
         this.typeCalculeDialogue = false;
+    }*/
+
+    confirmerRecalculPrix(): void {
+        if (this.typeCalcule) {
+            this.factureService.mettreAJourPrixProduit(this.typeCalcule, this.produit)
+                .subscribe({
+                    next: (produitMisAJour) => {
+                        // Gérer la réponse et mettre à jour le produit dans votre UI
+                        console.log('Produit mis à jour:', produitMisAJour);
+                        this.typeCalculeDialogue = false;
+                    },
+                    error: (err) => {
+                        // Gérer les erreurs ici
+                        console.error('Erreur lors de la mise à jour du produit:', err);
+                    }
+                });
+        } else {
+            // Gestion du cas où aucun type de calcul n'est sélectionné
+            console.warn('Veuillez sélectionner un type de calcul.');
+        }
+        this.typeCalculeDialogue = false;
+
     }
 
     onQuantiteChange(newValue: number, item: any) {

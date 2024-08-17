@@ -138,6 +138,7 @@ export class DepotComponent implements OnInit{
                 this.depotService.deleteDepot(id).subscribe(
                     (response: any) => {
                         console.log("response :"+response)
+                        this.refrech();
                         if (response) {
                             this.refrech();0
                             Swal.fire('Supprimé', response.message, 'success');
@@ -198,7 +199,8 @@ export class DepotComponent implements OnInit{
     }
 
     refrech() {
-        this.getAllDepots()
+        this.getAllDepots();
+        this.getDataResponsable();
         this.router.navigate(['/uikit/depots']);
     }
 
@@ -224,7 +226,7 @@ export class DepotComponent implements OnInit{
             this.depotService.addDepot(this.depot).subscribe(value => {
                 console.log("Res of Add depot :"+ value)
                 Swal.fire('Succès', 'Le dêpot a été ajouté avec succès !', 'success');
-
+                this.refrech();
             }); // Ajout du produit via le service
             this.depot = new Depot(0,'', '', 0, 0, ''); // Réinitialisation du formulaire après l'ajout
             console.log('nouveauResponsableId :',this.depot.responsable.id)

@@ -263,5 +263,11 @@ export class Produit {
         this.historiques = value;
     }
 
-
+    toJSON() {
+        return {
+            ...this,
+            dateExpiration: this.dateExpiration ? this.dateExpiration.toISOString().split('T')[0] : null,
+            dateFabrication: this.dateFabrication ? this.dateFabrication.toISOString().split('T')[0] : null
+        };
+    }
 }
