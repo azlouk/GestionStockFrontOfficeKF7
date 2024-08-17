@@ -7,7 +7,7 @@ import {FormGroup, FormsModule} from "@angular/forms";
 import {Message} from "primeng/api/message";
 import {ProduitService} from "../../../../../layout/service/produit.service";
 import {VenteService} from "../../../../../layout/service/vente.service";
-import {ClotureService} from "../../../../service/cloture.service";
+import {ClotureService} from "../../../../../layout/service/cloture.service";
 import {Router} from "@angular/router";
 import {ConfirmationService, MessageService} from "primeng/api";
 import {DomSanitizer, SafeUrl} from "@angular/platform-browser";

@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import {OverlayPanel, OverlayPanelModule} from "primeng/overlaypanel";
 import {Table, TableModule} from "primeng/table";
-import { ClotureService } from "../../../../service/cloture.service";
+import { ClotureService } from "../../../../../layout/service/cloture.service";
 import { User } from "../../../../../models/user";
 import { ActivatedRoute, Router } from "@angular/router";
 import { UserService } from "../../../../../layout/service/user.service";

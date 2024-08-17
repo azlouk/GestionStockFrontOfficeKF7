@@ -15,6 +15,10 @@ import {RippleModule} from "primeng/ripple";
 import {RoleEnum, User} from "../../../../../models/user";
  import {deleteToken, getUserDecodeID} from "../../../../../../main";
 import { IPermission } from 'src/app/models/permission';
+import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {ToastModule} from "primeng/toast";
+import {AjoutUserComponent} from "../ajout-user/ajout-user.component";
+import {ConfirmationService, MessageService} from "primeng/api";
   
 @Component({
     selector: 'app-update-user',
@@ -29,7 +33,9 @@ import { IPermission } from 'src/app/models/permission';
         DropdownModule,
         InputNumberModule,
         InputTextModule,
-        RippleModule
+        RippleModule,
+        ConfirmDialogModule,
+        ToastModule
     ],
     templateUrl: './update-user.component.html',
     styleUrl: './update-user.component.scss'
@@ -49,10 +55,13 @@ export class UpdateUserComponent implements OnInit {
         {name:'Payement',tableName:'tranche',afficher:false,modifier:false,supprimer:false,ajouter:false,icon:'bi-currency-exchange'},
     ];
     private userPermission: IPermission[]=[];
+
     constructor(
         private userService: UserService,
         private route: ActivatedRoute,
         private router: Router,
+        private ajouterUser:AjoutUserComponent,
+        private confirmationService: ConfirmationService, private messageService: MessageService
     ) {}
     ngOnInit(): void {
         this.route.params.subscribe((params) => {
@@ -93,7 +102,30 @@ export class UpdateUserComponent implements OnInit {
             }
         });
     }
+
+    private secretKeyU: string="";
+    loadUp():string {
+
+        this.secretKeyU=this.userService.generateUUID()
+        this.confirmationService.confirm({
+            header: 'Remember your Secret key?',
+            message: ` ${this.secretKeyU}`,
+            accept: () => {
+                console.log("accept"+this.secretKeyU)
+                this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted your secret Key', life: 3000 });
+            },
+            reject: () => {
+                this.secretKeyU="";
+                this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'Secret Key rejected', life: 3000 });
+                console.log("reject"+this.secretKeyU)
+
+            }
+        });
+        return this.secretKeyU;
+
+    }
     sauvegarderModification(): void {
+        this.user.secretKey=this.secretKeyU;
         // console.log (new JsonPipe().transform(this.user))
         if(this.user.firstname.trim()==''){
             Swal.fire('Erreur nom ', 'nom vide ', 'error');
@@ -126,6 +158,7 @@ export class UpdateUserComponent implements OnInit {
                     reverseButtons: true
                 }).then((result) => {
                     if (result.isConfirmed) {
+
                         this.userService.modifierUser(this.user).subscribe(
                             (modifiedUser) => {
                                 console.log("Utilisateur modifié avec succès :", modifiedUser);
@@ -138,7 +171,7 @@ export class UpdateUserComponent implements OnInit {
                                     deleteToken() ;
                                     // RedirectToLogin(this.router) ;
                                 }else {
-                                    this.router.navigate(['/uikit/Users']);
+                                    this.router.navigate(['/uikit/login']);
                                 }},
                             (error) => {
                                 console.error('Erreur lors de la modification de l\'utilisateur :', error);
@@ -155,7 +188,6 @@ export class UpdateUserComponent implements OnInit {
                             text: "Votre modification est annulée!",
                             icon: "error"
                         });
-                        this.router.navigate(['/uikit/Users']);
                     }
                 });
             }
@@ -184,4 +216,7 @@ export class UpdateUserComponent implements OnInit {
         this.user.permission=this.userPermission;
         console.log("Table Permisiion :"+ new JsonPipe().transform(this.user.permission))
     }
+
+
+    protected readonly RoleEnum = RoleEnum;
 }

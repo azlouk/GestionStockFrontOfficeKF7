@@ -1,5 +1,5 @@
 
-import {Component, OnInit} from '@angular/core';
+import {Component, Injectable, OnInit} from '@angular/core';
 import Swal from "sweetalert2";
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {RoleEnum, User} from "../../../../../models/user";
@@ -22,7 +22,12 @@ import {DropdownModule} from "primeng/dropdown";
 import {PasswordModule} from "primeng/password";
 import {RippleModule} from "primeng/ripple";
 import {DialogService} from "../../../../../layout/service/dialogue-user.service";
-
+import {ToastModule} from "primeng/toast";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {ConfirmationService, MessageService} from "primeng/api";
+@Injectable({
+    providedIn: 'root'
+})
 @Component({
     selector: 'app-ajout-user',
     standalone: true,
@@ -38,7 +43,9 @@ import {DialogService} from "../../../../../layout/service/dialogue-user.service
         MultiSelectModule,
         DropdownModule,
         PasswordModule,
-        RippleModule
+        RippleModule,
+        ToastModule,
+        ConfirmDialogModule
     ],
     templateUrl: './ajout-user.component.html',
     styleUrl: './ajout-user.component.scss'
@@ -55,12 +62,14 @@ export class AjoutUserComponent implements OnInit {
     SelectedServiceId: any = 0;
     ListService: SERVICE[] = [];
     SelectedServcie: SERVICE;
-
+     secretKey="";
+    selectedRole: string;
 
     constructor(private formBuilder: FormBuilder,
                 private userService: UserService,
                 private dialogueUser: DialogService,
-                private router: Router, private depotService: DepotService, private serviceSERVICE: ServiceService) {
+                private router: Router, private depotService: DepotService, private serviceSERVICE: ServiceService,
+                private confirmationService: ConfirmationService, private messageService: MessageService) {
 
         this.SelectedDepot = new Depot();
         this.SelectedServcie = new SERVICE();
@@ -73,6 +82,7 @@ export class AjoutUserComponent implements OnInit {
             adresse: ['', Validators.required],
             role: ['', Validators.required],
             motdepasse: [''],
+            secretKey:[''],
             motdepasseconfirm: [''],
             typeClient: [''],
             solde: [],
@@ -170,6 +180,29 @@ export class AjoutUserComponent implements OnInit {
         // this.getAllServiceList() ;
          this.userService.getUsers();
     }
+
+    loading: boolean = false;
+
+    load():string {
+
+         this.secretKey=this.userService.generateUUID()
+        this.confirmationService.confirm({
+            header: 'Remember your Secret key?',
+            message: ` ${this.secretKey}`,
+            accept: () => {
+                console.log("accept"+this.secretKey)
+                this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted your secret Key', life: 3000 });
+                },
+            reject: () => {
+                this.secretKey="";
+                this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'Secret Key rejected', life: 3000 });
+                console.log("reject"+this.secretKey)
+
+            }
+        });
+         return this.secretKey;
+
+    }
     onSubmit(): void {
         if (this.userForm.valid) {
             const userData = this.userForm.value;
@@ -189,6 +222,8 @@ export class AjoutUserComponent implements OnInit {
                     user.pseudo = 'admin';
                     user.responsableDepotNo = ''
                     user.password = userData.motdepasseconfirm;
+                    user.secretKey=this.secretKey;
+
                     user.pseudo = userData.pseudo;
                     console.log("error data" + user)
                     break
@@ -197,6 +232,8 @@ export class AjoutUserComponent implements OnInit {
                     user.pseudo = 'manager';
                     user.responsableDepotNo = ''
                     user.password = userData.motdepasseconfirm;
+                    user.secretKey=this.secretKey;
+
                     user.attributManager = userData.attributManager;
                     console.log("error data" + user)
 
@@ -206,6 +243,8 @@ export class AjoutUserComponent implements OnInit {
                     user.pseudo = 'responsable';
                     user.responsableDepotNo = ''
                     user.password = userData.motdepasseconfirm;
+                    user.secretKey=this.secretKey;
+
                     console.log("error data" + user)
                     break;
                 }
@@ -222,6 +261,7 @@ export class AjoutUserComponent implements OnInit {
                     user.pseudo = 'employer';
                     user.responsableDepotNo = ''
                     user.password = userData.motdepasseconfirm;
+                    user.secretKey=this.secretKey;
                     user.typeEmployer = userData.typeEmployer;
                     user.tacheEmployer = userData.tacheEmployer;
                     console.log("error data" + user)
