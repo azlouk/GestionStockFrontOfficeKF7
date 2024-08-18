@@ -234,30 +234,14 @@
                                         <p type="text" field="dataqr" display="menu"></p>
                                     </div>
                                 </th>
+                                <th>Prix Unit</th>
+                                <th>Prix Gros</th>
                                 <th style="min-width:4rem">
-                                    <div class="flex align-items-center">
-                                        Quantité
-                                        <p field="Quantite" matchMode="in" display="menu"></p>
-                                        <ng-template pTemplate="header">
-                                            <div class="px-3 pt-3 pb-0">
-                                                <span class="font-bold">Agent Picker</span>
-                                            </div>
-                                        </ng-template>
-                                        <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                                            <p-multiSelect [ngModel]="value" [options]="produits" placeholder="Any"
-                                                           (onChange)="filter($event.value)" optionLabel="name">
-                                                <ng-template let-option pTemplate="item">
-                                                    <div class="inline-block vertical-align-middle">
-                                                        <img [alt]="option.label"
-                                                             src="https://primefaces.org/cdn/primeng/images/demo/avatar/{{ option.image }}"
-                                                             width="24" class="vertical-align-middle"/>
-                                                        <span class="ml-1 mt-1">{{ option.name }}</span>
-                                                    </div>
-                                                </ng-template>
-                                            </p-multiSelect>
-                                        </ng-template>
-                                    </div>
-                                </th>
+                                         Qty Disp
+                                 </th>
+                                <th style="min-width:4rem">
+                                         Qty Min Gros
+                                 </th>
                                 <th style="min-width:3rem">
                                     <div class="flex align-items-center">
                                         <p field="activity" matchMode="between" display="menu"></p>
@@ -281,8 +265,13 @@
                                 <td class="text-break">
                                     {{ ProduitInter.dataqr }}
                                 </td>
+                                <td>{{ProduitInter.prixUnitaire + ProduitInter.gainUnitaire}}</td>
+                                <td>{{ProduitInter.prixUnitaire + ProduitInter.gainGros}}</td>
                                 <td class="text-break">
                                     {{ ProduitInter.qantite }}
+                                </td>
+                                <td class="text-break">
+                                    {{ ProduitInter.minQuantiteGros }}
                                 </td>
                                 <td class="align-items-center">
                                     <button pButton pRipple icon="pi pi-cart-plus"
@@ -360,9 +349,9 @@
                                 </td>
                                 <td class="fw-bold fs-4 text-red-600" style="width:15%"
                                     *ngIf="newFacture.typeFacture === 'FACTURE_VENTE'">
-                                    <p-cellEditor>
+                                    <p-cellEditor  >
                                         <ng-template pTemplate="input">
-                                            <p-inputNumber [(ngModel)]="l.prixVente" name="prix"
+                                            <p-inputNumber [disabled]="newFacture.typeFacture === 'FACTURE_VENTE'" [(ngModel)]="l.prixVente" name="prix"
                                                            (ngModelChange)="getPrixCalculateVente(l)"
                                                            mode="decimal" minFractionDigits="1" maxFractionDigits="2">
 
@@ -416,21 +405,21 @@
                                 <ng-template pTemplate="content">
                                     <div class="flex justify-content-between w-full">
                                         <div class="flex align-items-center">
-                                            <p-radioButton name="Max" value="MaxValue" [(ngModel)]="l.produit.typeCalcule" inputId="ingredient2"/>
+                                            <p-radioButton name="Max" value="MaxValue" [(ngModel)]="l.typeCalcule" inputId="ingredient2"/>
                                             <label class="ml-2">Max Value</label>
                                         </div>
                                         <div class="flex align-items-center">
-                                            <p-radioButton name="Min" value="MinValue" [(ngModel)]="l.produit.typeCalcule" inputId="ingredient3"/>
+                                            <p-radioButton name="Min" value="MinValue" [(ngModel)]="l.typeCalcule" inputId="ingredient3"/>
                                             <label class="ml-2">Min Value</label>
                                         </div>
                                         <div class="flex align-items-center">
-                                            <p-radioButton name="Moyen" value="MoyenValue" [(ngModel)]="l.produit.typeCalcule" inputId="ingredient4"/>
+                                            <p-radioButton name="Moyen" value="MoyenValue" [(ngModel)]="l.typeCalcule" inputId="ingredient4"/>
                                             <label class="ml-2">Moyen Value</label>
                                         </div>
                                     </div>
                                 </ng-template>
                                 <ng-template pTemplate="footer">
-                                    <button pButton pRipple label="Confirmer" icon="pi pi-times" class="p-button-text" (click)="confirmerRecalculPrix()"></button>
+                                    <button pButton pRipple label="Confirmer" icon="pi pi-times" class="p-button-text" (click)="confirmerRecalculPrix(l)"></button>
                                 </ng-template>
                             </p-dialog>
 

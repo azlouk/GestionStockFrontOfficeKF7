@@ -9,15 +9,16 @@ export class LigneFacture {
     private _montantTotal: number;
     private _prixAchat : number;
     private _prixVente : number;
+    private _typeCalcule: string;
 
-
-    constructor(id?: number,  quantite?: number, montantTotal?:number, produit?:Produit,prixAchat?:number, prixVente?: number ) {
+    constructor(id?: number,  quantite?: number, montantTotal?:number, produit?:Produit,prixAchat?:number, prixVente?: number, typeCalcule?: string) {
         this._id = id || 0;
          this._produit = produit || new Produit();
         this._quantite = quantite || 0;
         this._montantTotal = montantTotal || 0;
         this._prixAchat = prixAchat || produit!=undefined?produit.prixUnitaire:0;
         this._prixVente = prixVente || produit!=undefined ? produit!.prixUnitaire+produit.gainUnitaire:0;
+        this._typeCalcule=typeCalcule || '' ;
     }
 
 
@@ -27,6 +28,14 @@ export class LigneFacture {
 
     set id(value: number) {
         this._id = value;
+    }
+
+    get typeCalcule(): string {
+        return this._typeCalcule;
+    }
+
+    set typeCalcule(value: string) {
+        this._typeCalcule = value;
     }
 
     get produit(): Produit {

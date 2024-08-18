@@ -95,7 +95,7 @@ export class FactureService {
                     "id": value.produit.id,
                     "qantite": value.produit.qantite,
                     "nom": value.produit.nom,
-                    "typeCalcule": value.produit.typeCalcule,
+
 
                     "prixUnitaire": value.produit.prixUnitaire,
                     "prixGros": value.produit.prixGros,
@@ -104,6 +104,15 @@ export class FactureService {
                     "gainUnitaire": value.produit.gainUnitaire,
                     "gainGros": value.produit.prixGros,
                     "minQuantiteGros": value.produit.minQuantiteGros,
+                    // "historiques":value.produit.historiques.map(value1 => {})
+
+                    "historiques": value.produit.historiques.map(value1 => ({
+                        "id": value1.id,
+                        "prixHistoriqueAchat": value1.prixHistoriqueAchat,
+                        "quantiteHistoriqueAchat": value1.quantiteHistoriqueAchat,
+                        "dateMisAjoure": value1.dateMisAjoure,
+
+                    })),
                     "article": {
                         "id":value.produit.article.id,
                         "nom":value.produit.article.nom,
@@ -119,7 +128,7 @@ export class FactureService {
                 "montantTotal": value.montantTotal,
                 "prixVente": value.produit.prixUnitaire+value.produit.gainUnitaire,
                 "prixAchat": value.prixAchat,
-
+                "typeCalcule": value.typeCalcule,
             });
         });
 
@@ -208,8 +217,20 @@ export class FactureService {
                 });
             });
         });
+        // let historique:any[]=[]
+        // newFacture.lignesFacture.forEach((value) => {
+        //     value.produit.historiques.forEach((historique) => {
+        //         filesListes.push({
+        //             "id": file.id,
+        //             "name":file.name,
+        //             "type":file.type,
+        //             "path":file.path
+        //         });
+        //     });
+        // });
 
         let ligneFact:any[]=[];
+
         newFacture.lignesFacture.forEach(value => {
             ligneFact.push(  {
                 "produit": {
@@ -238,10 +259,11 @@ export class FactureService {
                 "montantTotal": value.montantTotal,
                 "prixVente": value.produit.prixUnitaire+value.produit.gainUnitaire,
                 "prixAchat": value.prixAchat,
+                "typeCalcule": value.typeCalcule,
                 "id":value.id
             })
         })
-        const fact ={
+        const fact={
             "id":newFacture.id,
             "reference": newFacture.reference,
             "date":this.datePipe.transform(newFacture.date,'yyyy-MM-dd'),
@@ -342,6 +364,7 @@ export class FactureService {
 
     mettreAJourPrixProduit(typeCalcule: string, produit: Produit): Observable<Produit> {
         const url = `${this.apiP}/mettre-a-jour-prix?typeCalcule=${typeCalcule}`;
+        console.log("produit"+JSON.stringify(produit))
         return this.http.put<Produit>(url, produit);
     }
 

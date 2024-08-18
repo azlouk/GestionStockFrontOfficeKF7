@@ -13,7 +13,7 @@ export class Produit {
             id: number;
             nom: string;
             prixUnitaire: number;
-            typeCalcule: string;
+
             prixGros: number;
             description: string;
             qantite: number;
@@ -36,11 +36,10 @@ export class Produit {
             historiques: Historique [];
 
 
-    constructor(_id: number=0, _nom: string="",  _typeCalcule: string="",_prixUnitaire: number=0, _prixGros: number=0, _description: string="", _qantite: number=0, _image: Blob=new Blob(), _gainUnitaire: number=0, _gainGros: number=0, _files: File[]=[], _dateExpiration: Date=new Date(), _dateFabrication:Date=new Date(), _minQuantiteGros: number=0, _taxe: number=0, _enable: boolean=false, _dataqr: string="", _qantiteFacture: number=0, _article: Article=new Article(), _levelstock: number=0, _showDetails: boolean=false, _checkedService: boolean=false, _subdataqr: string[]=[],_historiques : Historique []= []) {
+    constructor(_id: number=0, _nom: string="",_prixUnitaire: number=0, _prixGros: number=0, _description: string="", _qantite: number=0, _image: Blob=new Blob(), _gainUnitaire: number=0, _gainGros: number=0, _files: File[]=[], _dateExpiration: Date=new Date(), _dateFabrication:Date=new Date(), _minQuantiteGros: number=0, _taxe: number=0, _enable: boolean=false, _dataqr: string="", _qantiteFacture: number=0, _article: Article=new Article(), _levelstock: number=0, _showDetails: boolean=false, _checkedService: boolean=false, _subdataqr: string[]=[],_historiques : Historique []= []) {
         this.id = _id ;
         this.nom = _nom ;
-        this.typeCalcule = _typeCalcule ;
-        this.prixUnitaire = _prixUnitaire ;
+         this.prixUnitaire = _prixUnitaire ;
         this.prixGros = _prixGros ;
         this.description = _description ;
         this.qantite = _qantite ;
@@ -63,13 +62,7 @@ export class Produit {
         this.historiques = _historiques;
     }
 
-     get _typeCalcule(): string {
-        return this.typeCalcule;
-    }
 
-     set _typeCalcule(value: string) {
-        this.typeCalcule = value;
-    }
 
     get _id(): number {
         return this.id;
@@ -269,5 +262,34 @@ export class Produit {
             dateExpiration: this.dateExpiration ? this.dateExpiration.toISOString().split('T')[0] : null,
             dateFabrication: this.dateFabrication ? this.dateFabrication.toISOString().split('T')[0] : null
         };
+    }
+    static copy(produit: Produit): Produit {
+        const newProduit = new Produit();
+
+        newProduit.id = produit.id;
+        newProduit.nom = produit.nom;
+        newProduit.prixUnitaire = produit.prixUnitaire;
+        newProduit.prixGros = produit.prixGros;
+        newProduit.description = produit.description;
+        newProduit.qantite = produit.qantite;
+        newProduit.image = produit.image;
+        newProduit.gainUnitaire = produit.gainUnitaire;
+        newProduit.gainGros = produit.gainGros;
+        newProduit.files = produit.files ? [...produit.files] : [];
+        newProduit.dateExpiration = produit.dateExpiration;
+        newProduit.dateFabrication = produit.dateFabrication;
+        newProduit.minQuantiteGros = produit.minQuantiteGros;
+        newProduit.taxe = produit.taxe;
+        newProduit.enable = produit.enable;
+        newProduit.dataqr = produit.dataqr;
+        newProduit.qantiteFacture = produit.qantiteFacture;
+        newProduit.article = produit.article;
+        newProduit.levelstock = produit.levelstock;
+        newProduit.showDetails = produit.showDetails;
+        newProduit.checkedService = produit.checkedService;
+        newProduit.subdataqr = produit.subdataqr ? [...produit.subdataqr] : [];
+        newProduit.historiques = produit.historiques ? [...produit.historiques] : [];
+
+        return newProduit;
     }
 }
