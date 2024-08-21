@@ -62,7 +62,7 @@ export class AjoutUserComponent implements OnInit {
     SelectedServiceId: any = 0;
     ListService: SERVICE[] = [];
     SelectedServcie: SERVICE;
-     secretKey="";
+    secretKey="";
     selectedRole: string;
 
     constructor(private formBuilder: FormBuilder,
@@ -178,21 +178,21 @@ export class AjoutUserComponent implements OnInit {
     ngOnInit() {
         // this.getAllDepotList() ;
         // this.getAllServiceList() ;
-         this.userService.getUsers();
+        this.userService.getUsers();
     }
 
     loading: boolean = false;
 
     load():string {
 
-         this.secretKey=this.userService.generateUUID()
+        this.secretKey=this.userService.generateUUID()
         this.confirmationService.confirm({
             header: 'Remember your Secret key?',
             message: ` ${this.secretKey}`,
             accept: () => {
                 console.log("accept"+this.secretKey)
                 this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted your secret Key', life: 3000 });
-                },
+            },
             reject: () => {
                 this.secretKey="";
                 this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'Secret Key rejected', life: 3000 });
@@ -200,7 +200,7 @@ export class AjoutUserComponent implements OnInit {
 
             }
         });
-         return this.secretKey;
+        return this.secretKey;
 
     }
     onSubmit(): void {
@@ -425,6 +425,21 @@ export class AjoutUserComponent implements OnInit {
 
         return currentUrl.includes('/uikit/add-facture');
     }
+    allSelected(permission: any): boolean {
+        return permission.afficher && permission.ajouter && permission.modifier && permission.supprimer;
+    }
 
+    toggleAll(isSelected: boolean, permission: any) {
+        permission.afficher = isSelected;
+        permission.ajouter = isSelected;
+        permission.modifier = isSelected;
+        permission.supprimer = isSelected;
+
+        this.getPermission(permission.tableName, isSelected ? 'read' : 'readn');
+        this.getPermission(permission.tableName, isSelected ? 'create' : 'createn');
+        this.getPermission(permission.tableName, isSelected ? 'update' : 'updaten');
+        this.getPermission(permission.tableName, isSelected ? 'delete' : 'deleten');
+    }
 
 }
+

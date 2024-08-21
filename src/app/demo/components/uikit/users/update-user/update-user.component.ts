@@ -13,13 +13,13 @@ import {InputNumberModule} from "primeng/inputnumber";
 import {InputTextModule} from "primeng/inputtext";
 import {RippleModule} from "primeng/ripple";
 import {RoleEnum, User} from "../../../../../models/user";
- import {deleteToken, getUserDecodeID} from "../../../../../../main";
+import {deleteToken, getUserDecodeID} from "../../../../../../main";
 import { IPermission } from 'src/app/models/permission';
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {ToastModule} from "primeng/toast";
 import {AjoutUserComponent} from "../ajout-user/ajout-user.component";
 import {ConfirmationService, MessageService} from "primeng/api";
-  
+
 @Component({
     selector: 'app-update-user',
     standalone: true,
@@ -169,9 +169,10 @@ export class UpdateUserComponent implements OnInit {
                                 });
                                 if(this.user.id==getUserDecodeID().id){
                                     deleteToken() ;
+                                    this.router.navigate(['/auth/login']);
                                     // RedirectToLogin(this.router) ;
                                 }else {
-                                    this.router.navigate(['/uikit/login']);
+                                    this.router.navigate(['/auth/login']);
                                 }},
                             (error) => {
                                 console.error('Erreur lors de la modification de l\'utilisateur :', error);

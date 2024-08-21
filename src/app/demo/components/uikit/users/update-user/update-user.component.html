@@ -74,23 +74,23 @@
                         <td [class]="permission.icon">{{permission.name}}</td>
                         <td>
                             <p-checkbox
-                                (click)="getPermission(permission.tableName,permission.ajouter==true?'create':'createn')"
-                                [(ngModel)]="permission.ajouter" [binary]="true"></p-checkbox>
+                                    (click)="getPermission(permission.tableName,permission.ajouter==true?'create':'createn')"
+                                    [(ngModel)]="permission.ajouter" [binary]="true"></p-checkbox>
                         </td>
                         <td>
                             <p-checkbox
-                                (click)="getPermission(permission.tableName,permission.afficher==true?'read':'readn')"
-                                [(ngModel)]="permission.afficher" [binary]="true"></p-checkbox>
+                                    (click)="getPermission(permission.tableName,permission.afficher==true?'read':'readn')"
+                                    [(ngModel)]="permission.afficher" [binary]="true"></p-checkbox>
                         </td>
                         <td>
                             <p-checkbox
-                                (click)="getPermission(permission.tableName,permission.modifier==true?'update':'updaten')"
-                                [(ngModel)]="permission.modifier" [binary]="true"></p-checkbox>
+                                    (click)="getPermission(permission.tableName,permission.modifier==true?'update':'updaten')"
+                                    [(ngModel)]="permission.modifier" [binary]="true"></p-checkbox>
                         </td>
                         <td>
                             <p-checkbox
-                                (click)="getPermission(permission.tableName,permission.supprimer==true?'delete':'deleten')"
-                                [(ngModel)]="permission.supprimer" [binary]="true"></p-checkbox>
+                                    (click)="getPermission(permission.tableName,permission.supprimer==true?'delete':'deleten')"
+                                    [(ngModel)]="permission.supprimer" [binary]="true"></p-checkbox>
                         </td>
                     </tr>
 

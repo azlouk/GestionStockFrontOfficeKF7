@@ -143,6 +143,8 @@
                         <th>Ajouter</th>
                         <th>Modifier</th>
                         <th>Supprimer</th>
+                        <th>Multi-Sélection</th>
+
                     </tr>
                 </ng-template>
 
@@ -171,6 +173,13 @@
                                         (click)="getPermission(permission.tableName,permission.supprimer==true?'delete':'deleten')"
                                         [(ngModel)]="permission.supprimer" [binary]="true"></p-checkbox>
                         </td>
+                        <td>
+                            <p-checkbox
+                                    [ngModel]="allSelected(permission)"
+                                    (ngModelChange)="toggleAll($event, permission)"
+                                    [binary]="true">
+                            </p-checkbox>
+                        </td>
                     </tr>
                 </ng-template>
 
@@ -187,32 +196,33 @@
     </div>
 </div>
 <div>
-<p-toast/>
-<p-confirmDialog #cd>
-    <ng-template pTemplate="headless" let-message>
-        <div class="flex flex-column align-items-center p-5 surface-overlay border-round">
-            <div class="border-circle bg-primary inline-flex justify-content-center align-items-center h-6rem w-6rem">
-                <i class="pi pi-key text-5xl"></i>
-            </div>
-            <span class="font-bold text-2xl block mb-2 mt-4">
+    <p-toast/>
+    <p-confirmDialog #cd>
+        <ng-template pTemplate="headless" let-message>
+            <div class="flex flex-column align-items-center p-5 surface-overlay border-round">
+                <div class="border-circle bg-primary inline-flex justify-content-center align-items-center h-6rem w-6rem">
+                    <i class="pi pi-key text-5xl"></i>
+                </div>
+                <span class="font-bold text-2xl block mb-2 mt-4">
                                            {{ message.header }}
                                     </span>
-            <p class="mb-0">{{ message.message }}</p>
-            <div class="flex align-items-center gap-2 mt-4">
-                <button
-                        pButton
-                        label="Save"
-                        (click)="cd.accept()"
-                        class="w-8rem">
-                </button>
-                <button
-                        pButton
-                        label="Cancel"
-                        (click)="cd.reject()"
-                        class="p-button-outlined w-8rem ">
-                </button>
+                <p class="mb-0">{{ message.message }}</p>
+                <div class="flex align-items-center gap-2 mt-4">
+                    <button
+                            pButton
+                            label="Save"
+                            (click)="cd.accept()"
+                            class="w-8rem">
+                    </button>
+                    <button
+                            pButton
+                            label="Cancel"
+                            (click)="cd.reject()"
+                            class="p-button-outlined w-8rem ">
+                    </button>
+                </div>
             </div>
-        </div>
-    </ng-template>
-</p-confirmDialog>
+        </ng-template>
+    </p-confirmDialog>
 </div>
+

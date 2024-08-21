@@ -351,7 +351,7 @@
                                     *ngIf="newFacture.typeFacture === 'FACTURE_VENTE'">
                                     <p-cellEditor  >
                                         <ng-template pTemplate="input">
-                                            <p-inputNumber [disabled]="newFacture.typeFacture === 'FACTURE_VENTE'" [(ngModel)]="l.prixVente" name="prix"
+                                            <p-inputNumber [readonly]="newFacture.typeFacture === 'FACTURE_VENTE'" [(ngModel)]="l.prixVente" name="prix"
                                                            (ngModelChange)="getPrixCalculateVente(l)"
                                                            mode="decimal" minFractionDigits="1" maxFractionDigits="2">
 
