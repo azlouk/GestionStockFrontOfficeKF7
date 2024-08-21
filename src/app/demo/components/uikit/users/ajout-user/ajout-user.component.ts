@@ -25,6 +25,7 @@ import {DialogService} from "../../../../../layout/service/dialogue-user.service
 import {ToastModule} from "primeng/toast";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {ConfirmationService, MessageService} from "primeng/api";
+import {InputTextareaModule} from "primeng/inputtextarea";
 @Injectable({
     providedIn: 'root'
 })
@@ -45,7 +46,8 @@ import {ConfirmationService, MessageService} from "primeng/api";
         PasswordModule,
         RippleModule,
         ToastModule,
-        ConfirmDialogModule
+        ConfirmDialogModule,
+        InputTextareaModule
     ],
     templateUrl: './ajout-user.component.html',
     styleUrl: './ajout-user.component.scss'

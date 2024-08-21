@@ -19,6 +19,7 @@ import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {ToastModule} from "primeng/toast";
 import {AjoutUserComponent} from "../ajout-user/ajout-user.component";
 import {ConfirmationService, MessageService} from "primeng/api";
+import {InputTextareaModule} from "primeng/inputtextarea";
   
 @Component({
     selector: 'app-update-user',
@@ -35,7 +36,8 @@ import {ConfirmationService, MessageService} from "primeng/api";
         InputTextModule,
         RippleModule,
         ConfirmDialogModule,
-        ToastModule
+        ToastModule,
+        InputTextareaModule
     ],
     templateUrl: './update-user.component.html',
     styleUrl: './update-user.component.scss'
