@@ -18,7 +18,7 @@ export class LigneFacture {
         this._montantTotal = montantTotal || 0;
         this._prixAchat = prixAchat || produit!=undefined?produit.prixUnitaire:0;
         this._prixVente = prixVente || produit!=undefined ? produit!.prixUnitaire+produit.gainUnitaire:0;
-        this._typeCalcule=typeCalcule || '' ;
+        this._typeCalcule=typeCalcule || "NoAction" ;
     }
 
 

@@ -25,7 +25,6 @@ export class ProduitService {
 
     public apifile = environment.apiUrl+'/api/'
     public apifilePrime = environment.apiUrl+'/api/uploadFilesIntoDB'
-    private apiH = environment.apiUrl+'/api/historiques'
 
     produitsFactures:Produit[] = [];
     nbProduit : number= 0;
@@ -121,7 +120,7 @@ export class ProduitService {
                 formData.append('file', uploadFiles[i]);
             }
 
-
+            console.log(produit)
             // Utiliser les headers dans la require
             return this.http.post<any>(this.api + '/create', formData,{headers} );
         } else {
@@ -380,7 +379,7 @@ export class ProduitService {
 //   ============historique==================
 
     getHistoriques(id:Number): Observable<Historique[]> {
-        const url = `${this.apiH}/getByProduit`;
+        const url = `${this.api}/historiques`;
         const token = getToken();
         if (token) {
             const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type","application/json; charset=utf8" );

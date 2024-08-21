@@ -13,7 +13,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {CalendarModule} from "primeng/calendar";
 import {ListboxModule} from "primeng/listbox";
 import {Table, TableModule} from "primeng/table";
-import {CommonModule, DecimalPipe, JsonPipe} from "@angular/common";
+import {CommonModule, DatePipe, DecimalPipe, JsonPipe} from "@angular/common";
 import {InputNumberModule} from "primeng/inputnumber";
 import {MessagesModule} from "primeng/messages";
 import {DropdownModule} from "primeng/dropdown";
@@ -43,6 +43,8 @@ import {InputTextareaModule} from "primeng/inputtextarea";
 import {NgxBarcode6Module} from "ngx-barcode6";
 import {DialogService} from "../../../../../layout/service/dialogue-user.service";
 import {Historique} from "../../../../../models/historique";
+import {LigneVente} from "../../../../../models/LigneVente";
+import {Vente} from "../../../../../models/Vente";
 
 @Component({
     selector: 'app-facture-ajout',
@@ -113,10 +115,10 @@ export class FactureAjoutComponent implements OnInit {
     showAddProduit: boolean = false;
     isUpdateValide = false;
     private Tranchefilred: Tranche[];
-
     produit: Produit; // Assurez-vous de définir correctement ce produit
     typeCalculeDialogue: boolean = false;
     typeCalcule: string = '';
+    public newPrix: number=0;
 
     clear(table: Table) {
         table.clear();
@@ -265,6 +267,7 @@ export class FactureAjoutComponent implements OnInit {
     private saveFacture() {
         this.newFacture.montant = this.getToTalFacture();
         if (this.newFacture.id) {
+
             // Mise à jour de la facture existante
             this.factureService.updateFacture(this.newFacture).subscribe(
                 (response) => {
@@ -371,11 +374,11 @@ export class FactureAjoutComponent implements OnInit {
             if (value.quantite < value.produit.minQuantiteGros) {
                 this.newFacture.montant += value.quantite * (value.produit.prixUnitaire + value.produit.gainUnitaire);
                 value.montantTotal = value.quantite * (value.produit.prixUnitaire + value.produit.gainUnitaire);
-                console.log(value.montantTotal);
+
             } else {
                 this.newFacture.montant += value.quantite * (value.produit.prixGros + value.produit.gainGros);
                 value.montantTotal = value.quantite * (value.produit.prixGros + value.produit.gainGros)
-                console.log(value.montantTotal);
+
             }
         })
     }
@@ -388,7 +391,8 @@ export class FactureAjoutComponent implements OnInit {
             } else {
 
                 if (value.quantite <= value.produit.qantite) {
-                    this.newFacture.montant += value.quantite * this.getPrixCalculateVente(value);
+                    this.newFacture.montant += value.quantite * this.newPrix;
+
 
                 } else {
                     this.messageService.add({
@@ -400,9 +404,9 @@ export class FactureAjoutComponent implements OnInit {
                     value.quantite = value.produit.qantite
 
                 }
-                this.newFacture.montant += value.quantite * this.getPrixCalculateVente(value);
+                this.newFacture.montant += value.quantite * value.prixVente;
             }
-            console.log(this.newFacture.montant);  // Vous pouvez aussi afficher montantTotal si nécessaire
+
         });
     }
 
@@ -419,13 +423,7 @@ export class FactureAjoutComponent implements OnInit {
         return l.produit.prixUnitaire;
     }
 
-    getPrixCalculate(l: LigneFacture): number {
-        if (l.quantite < l.produit.minQuantiteGros) {
-            return l.produit.prixUnitaire + l.produit.gainUnitaire;
-        } else {
-            return l.produit.prixUnitaire + l.produit.gainGros;
-        }
-    }
+
 
     changeType() {
         this.newFacture.typeFacture = this.newFacture.typeFacture === factureType.SORTIE
@@ -433,7 +431,7 @@ export class FactureAjoutComponent implements OnInit {
             : factureType.SORTIE;
         // Manually trigger change detection
         this.cdr.detectChanges();
-        console.log(this.newFacture.typeFacture)
+
     }
 
     returnBack() {
@@ -442,7 +440,9 @@ export class FactureAjoutComponent implements OnInit {
 
     addToFacture(produitInterface: Produit) {
         const existingProduct = this.newFacture.lignesFacture.findIndex(product => product.produit.id === produitInterface.id);
-        console.table(produitInterface)
+        console.log(produitInterface.prixUnitaire)
+
+
         if (produitInterface.qantite > 0) {
 
             if (existingProduct >= 0) {
@@ -602,43 +602,39 @@ export class FactureAjoutComponent implements OnInit {
         if (this.newFacture.typeFacture === 'FACTURE_ACHAT')
             if (l.prixAchat !== l.produit.prixUnitaire) {
                 this.typeCalculeDialogue = true;
+                let historique :Historique=new Historique()
+                historique.prixHistoriqueAchat=l.prixAchat;
+                historique.quantiteHistoriqueAchat=l.quantite;
+                historique.dateMisAjoure = new DatePipe('en-US').transform(historique.dateMisAjoure, 'yyyy-MM-dd') as any;
+
+                l.produit.historiques.push(historique);
+
+
             }
+
+
 
     }
 
 
     public onRowEditInit(l: LigneFacture) {
 
-        console.info(l.produit)
+
         this.produitService.getProduitById(l.produit.id).subscribe(value => {
             l.produit=value ;
-            console.info(l.produit)
+
         })
     }
 
-   /* public hideDialog() {
 
-        this.typeCalculeDialogue = false;
-    }*/
 
     confirmerRecalculPrix(ligne:LigneFacture): void {
 
         if (ligne.typeCalcule) {
-            ligne.prixAchat= this.calculerNouveauPrix(ligne.typeCalcule,ligne)
-            // this.factureService.mettreAJourPrixProduit(this.typeCalcule, ligne.produit)
-            //     .subscribe({
-            //         next: (produitMisAJour) => {
-            //             // Gérer la réponse et mettre à jour le produit dans votre UI
-            //             console.log('Produit mis à jour:', produitMisAJour);
-            //             this.typeCalculeDialogue = false;
-            //         },
-            //         error: (err) => {
-            //             // Gérer les erreurs ici
-            //             console.error('Erreur lors de la mise à jour du produit:', err);
-            //         }
-            //     });
 
-            console.log(this.newFacture.lignesFacture)
+           ligne.produit.prixUnitaire= this.calculerNouveauPrix(ligne.typeCalcule,ligne)
+
+
 
         } else {
             // Gestion du cas où aucun type de calcul n'est sélectionné
@@ -649,6 +645,8 @@ export class FactureAjoutComponent implements OnInit {
     }
 
     onQuantiteChange(newValue: number, item: any) {
+
+           this.updatePrixVente(item);
 
         if (newValue > item.produit.qantite) {
             item.quantite = 0; // Réinitialisez la valeur si elle dépasse la quantité
@@ -685,20 +683,34 @@ export class FactureAjoutComponent implements OnInit {
 
     }
 
+    updatePrixVente(ligneFacture: LigneFacture): void {
+        const produit = ligneFacture.produit;
 
+        if (ligneFacture.quantite >= produit.minQuantiteGros) {
+            ligneFacture.prixVente = produit.prixUnitaire + produit.gainGros;
+
+        }
+        else {
+            ligneFacture.prixVente = produit.prixUnitaire + produit.gainUnitaire;
+        }
+        this.getTottalNbProduct()
+
+    }
+    TotalProductNb: number = 0;
+    selectedFacture: Facture = new Facture();
+    getTottalNbProduct() {
+        this.TotalProductNb = 0;
+
+        this.selectedFacture.lignesFacture.forEach(value => {
+            this.TotalProductNb += value.quantite;
+        })
+    }
     calculerNouveauPrix(typeCalcule: string, ligneFacture: LigneFacture): number {
         const historiques: Historique[] = ligneFacture.produit.historiques;
 
-        if (!historiques || historiques.length === 0) {
-
-
-            historiques.push(new Historique(new Date().getTime(),ligneFacture.produit.prixUnitaire,ligneFacture.produit.qantite,new Date(),ligneFacture.produit))
-            historiques.push(new Historique(new Date().getTime(),ligneFacture.prixAchat,ligneFacture.produit.qantite,new Date(),ligneFacture.produit))
-        }
-
         let nouveauPrix: number = 0;
-        console.error(typeCalcule)
-        console.error(historiques)
+
+
         switch (typeCalcule) {
             case 'MaxValue':
                 nouveauPrix = Math.max(...historiques.map(h => h.prixHistoriqueAchat));
@@ -714,14 +726,21 @@ export class FactureAjoutComponent implements OnInit {
                 throw new Error(`Type de calcul inconnu: ${typeCalcule}`);
         }
 
-        console.error(nouveauPrix)
+
+
         return nouveauPrix;
     }
 
 
-
-
-
-
+    public getTitleFacture() {
+        const id = this.route.snapshot.paramMap.get('id');
+        return id
+            ?this.newFacture.typeFacture=="FACTURE_VENTE"
+                ?"Update facture vente"
+                :"Update facture achat"
+            :this.newFacture.typeFacture=="FACTURE_VENTE"
+                ?"Ajouter facture vente"
+                :"Ajouter facture achat"
+    }
 }
 

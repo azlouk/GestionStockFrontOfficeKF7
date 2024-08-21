@@ -171,7 +171,7 @@ export class UpdateUserComponent implements OnInit {
                                     deleteToken() ;
                                     // RedirectToLogin(this.router) ;
                                 }else {
-                                    this.router.navigate(['/uikit/login']);
+                                    this.router.navigate(['/uikit/users']);
                                 }},
                             (error) => {
                                 console.error('Erreur lors de la modification de l\'utilisateur :', error);
@@ -219,4 +219,6 @@ export class UpdateUserComponent implements OnInit {
 
 
     protected readonly RoleEnum = RoleEnum;
+
+
 }

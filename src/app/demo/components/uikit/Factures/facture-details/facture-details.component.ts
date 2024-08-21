@@ -1,8 +1,6 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ButtonModule} from "primeng/button";
-import Swal from "sweetalert2";
-import {Facture} from "../../../../../models/Facture";
-import {Produit} from "../../../../../models/produit";
+import {Facture, factureType} from "../../../../../models/Facture";
 import {FactureService} from "../../../../../layout/service/facture.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ProduitService} from "../../../../../layout/service/produit.service";
@@ -10,6 +8,7 @@ import {CurrencyPipe, DatePipe, NgForOf} from "@angular/common";
 import {RippleModule} from "primeng/ripple";
 import {ToolbarModule} from "primeng/toolbar";
 import {TableModule} from "primeng/table";
+import {LigneFacture} from "../../../../../models/LigneFacture";
 
 @Component({
   selector: 'app-facture-details',
@@ -107,5 +106,11 @@ export class FactureDetailsComponent implements OnInit {
       };
     }
   }
+
+    public getNewPrice(l: LigneFacture) {
+
+      console.log("getNewPrice"+this.facture.typeFacture)
+    return this.facture.typeFacture!="FACTURE_VENTE"?l.prixAchat:l.prixVente;
+    }
 }
 

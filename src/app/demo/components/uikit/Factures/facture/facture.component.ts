@@ -377,88 +377,7 @@ export class FactureComponent implements OnInit {
     }
 
 
-    // public  rechecheAvancee() {
-    //
-    //     this.Facturefilred = this.FacturefilredSuplim.filter(fact => {
-    //         let match = true;
-    //         let typeMatch: boolean = false;
-    //         let notChecked:boolean=this.typeA != "FACTURE_ACHAT" && this.typeV != "FACTURE_VENTE"
-    //
-    //         if (notChecked||this.typeA == "FACTURE_ACHAT") {
-    //             typeMatch = typeMatch ||      ( fact.typeFacture === 'FACTURE_ACHAT')
-    //
-    //         }
-    //
-    //
-    //         if (notChecked||this.typeV == "FACTURE_VENTE") {
-    //             typeMatch = typeMatch || ( fact.typeFacture === 'FACTURE_VENTE');
-    //
-    //
-    //         }
-    //
-    //
-    //         match = match && typeMatch;
-    //
-    //     //   Vérifier les attributs du client, fournisseur, ou t ransporteur avec son match
-    //         if (match && (this.valuefirstname || this.valuelastname || this.valueemail || this.valuetelephone)) {
-    //             let entityMatch = false;
-    //
-    //             let tous:boolean=!this.clientRechercher&&!this.fournisseurrechercher&&!this.transporteurrechercher
-    //
-    //             if (tous || this.clientRechercher && this.clientRechercher.includes('client')) {
-    //                 entityMatch = entityMatch || this.matchFacture(fact.client);
-    //
-    //             }
-    //             if (tous || this.fournisseurrechercher && this.fournisseurrechercher.includes('fournisseur')) {
-    //                 entityMatch = entityMatch || this.matchFacture(fact.provider);
-    //
-    //             }
-    //             if (tous || this.transporteurrechercher && this.transporteurrechercher.includes('transporteur')) {
-    //                 entityMatch = entityMatch || this.matchFacture(fact.transporteur);
-    //
-    //             }
-    //             match = match && entityMatch;
-    //         }else {
-    //             console.log("no data")
-    //         }
-    //
-    //
-    //
-    //
-    //
-    //
-    //         //Vérifier le statut de paiement
-    //         if (match && this.valuepaye !== null && this.valuepaye !== undefined) {
-    //             match = match && (fact.paye === this.valuepaye);
-    //         }
-    //         console.log(match)
-    //         return match;
-    //     });
-    //
-    //     this.visible = false;
-    //     console.error(this.Facturefilred.length)
-    //     console.error(this.FacturefilredSuplim.length)
-    // }
-    //
-    // private matchFacture(entity: any): boolean {
-    //     if (!entity) return false;
-    //
-    //
-    //     let isVide:boolean=!this.valuefirstname && !this.valuelastname &&!this.valueemail &&!this.valuetelephone;
-    //
-    //     let firstnameMatch =  entity.firstname.toLowerCase().includes(this.valuefirstname?.toLowerCase());
-    //
-    //     let lastnameMatch =  entity.lastname.toLowerCase().includes(this.valuelastname?.toLowerCase());
-    //
-    //
-    //     let emailMatch =   entity.email.toLowerCase().includes(this.valueemail?.toLowerCase());
-    //
-    //     let telephoneMatch =  entity.telephone.includes(this.valuetelephone);
-    //
-    //
-    //     // Si un des critères correspond, alors l'entité correspond
-    //     return firstnameMatch || lastnameMatch || emailMatch || telephoneMatch || isVide;
-    // }
+
 
 
     public rechecheAvancee() {
@@ -559,7 +478,6 @@ export class FactureComponent implements OnInit {
             } else {
             }
         });
-        console.log("Total totale tranche: " + totalTranches);
 
         return {
             totalTranches: totalTranches,

@@ -29,6 +29,7 @@ import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {ArticleService} from "../../../../../layout/service/article.service";
 import {ArticleComponent} from "../../Articles/article/article.component";
 import {DialogService} from "../../../../../layout/service/dialogue-user.service";
+import {Historique} from "../../../../../models/historique";
 
 @Component({
     selector: 'app-produit-ajout',
@@ -90,6 +91,7 @@ export class ProduitAjoutComponent implements OnInit {
     public submitted: boolean = false;
     article: Article = new Article();
     newArticleunite: string[] = ['G', 'CM', 'ML', 'PIECE'];
+    private historiques: Historique[];
 
     constructor(public produitService: ProduitService,
                 public articleService: ArticleService,
@@ -189,7 +191,8 @@ export class ProduitAjoutComponent implements OnInit {
                     }
                 );
             } else {
-                // Add new product
+
+
                 this.produitService.addProduit(this.newProduct, this.uploadedFiles).subscribe(
                     response => {
                         if (response) {

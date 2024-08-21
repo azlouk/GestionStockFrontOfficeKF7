@@ -185,7 +185,6 @@ this.dialogueService.closeDialogueArticle()
 
     confirmDeleteSelected() {
 
-        console.log(this.selectedArticles.length)
         this.selectedArticles.forEach(selectedArticle => {
             this.articleService.deleteArticle(selectedArticle.id).subscribe(
                 () => {
@@ -202,7 +201,6 @@ this.dialogueService.closeDialogueArticle()
     }
     confirmDelete() {
 
-        console.log("this.article.id", this.article.id);
 
         if (this.article.id!= null) {
             this.articleService.deleteArticle(this.article.id).subscribe(() => {

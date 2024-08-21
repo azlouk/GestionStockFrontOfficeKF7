@@ -121,13 +121,11 @@ export class CommandeServAjoutComponent implements OnInit {
 
     private updateRootFromCurrentPath(): void {
         this.root = this.router.url; // Récupère le chemin actuel
-        console.log("root", this.root)
     }
 
     getAllClients() {
         this.userService.getUsersClient().subscribe((value: User[]) => {
             this.clients = value
-            console.table(this.clients)
         })
     }
 
@@ -135,8 +133,6 @@ export class CommandeServAjoutComponent implements OnInit {
         this.serviceCompService.getServices().subscribe(
             (services: ServiceComp[]) => {
                 this.services = services;
-                //this.calculerCout();
-                console.table(services);
             },
             (error: any) => {
                 console.error('Error fetching services:', error);
@@ -153,7 +149,6 @@ export class CommandeServAjoutComponent implements OnInit {
     getAllProduits() {
         this.produitService.getProduits().subscribe((value: any) => {
             this.produits = value;
-            // console.error(""+new JsonPipe().transform(this.produits))
         })
     }
     addNewCommande(): void {

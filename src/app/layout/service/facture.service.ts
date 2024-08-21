@@ -102,7 +102,7 @@ export class FactureService {
                     "description": value.produit.description,
                     "dataqr": value.produit.dataqr,
                     "gainUnitaire": value.produit.gainUnitaire,
-                    "gainGros": value.produit.prixGros,
+                    "gainGros": value.produit.gainGros,
                     "minQuantiteGros": value.produit.minQuantiteGros,
                     // "historiques":value.produit.historiques.map(value1 => {})
 
@@ -126,7 +126,7 @@ export class FactureService {
                 },
                 "quantite": value.quantite,
                 "montantTotal": value.montantTotal,
-                "prixVente": value.produit.prixUnitaire+value.produit.gainUnitaire,
+                "prixVente": value.prixVente,
                 "prixAchat": value.prixAchat,
                 "typeCalcule": value.typeCalcule,
             });
@@ -178,6 +178,7 @@ export class FactureService {
 
         console.error(fact);
         const url = `${this.api}/create`;
+        console.log("fact Json"+fact);
         return this.http.post<Facture>(url, fact, {headers});
     }
 
@@ -217,17 +218,7 @@ export class FactureService {
                 });
             });
         });
-        // let historique:any[]=[]
-        // newFacture.lignesFacture.forEach((value) => {
-        //     value.produit.historiques.forEach((historique) => {
-        //         filesListes.push({
-        //             "id": file.id,
-        //             "name":file.name,
-        //             "type":file.type,
-        //             "path":file.path
-        //         });
-        //     });
-        // });
+
 
         let ligneFact:any[]=[];
 
@@ -242,8 +233,14 @@ export class FactureService {
                     "description":value.produit.description,
                     "dataqr":value.produit.dataqr,
                     "gainUnitaire":value.produit.gainUnitaire,
-                    "gainGros":value.produit.prixGros,
+                    "gainGros":value.produit.gainGros,
                     "minQuantiteGros":value.produit.minQuantiteGros,
+                    "historiques": value.produit.historiques.map(value1 => ({
+                        "id": value1.id,
+                        "prixHistoriqueAchat": value1.prixHistoriqueAchat,
+                        "quantiteHistoriqueAchat": value1.quantiteHistoriqueAchat,
+                        "dateMisAjoure": value1.dateMisAjoure,
+                    })),
                     "dateFabrication":value.produit.dateFabrication,
                     "dateExpiration":value.produit.dateExpiration,
                     "taxe":value.produit.taxe,
@@ -257,7 +254,7 @@ export class FactureService {
                 },
                 "quantite": value.quantite,
                 "montantTotal": value.montantTotal,
-                "prixVente": value.produit.prixUnitaire+value.produit.gainUnitaire,
+                "prixVente": value.prixVente,
                 "prixAchat": value.prixAchat,
                 "typeCalcule": value.typeCalcule,
                 "id":value.id
@@ -294,7 +291,7 @@ export class FactureService {
                 'user':null,
             }))
         };
-        console.log("data :"+new JsonPipe().transform(fact));
+        console.info(fact);
         const url = `${this.api}/update`;
         return this.http.put<Facture>(url, fact, { headers });
     }
@@ -362,11 +359,6 @@ export class FactureService {
     }
 
 
-    mettreAJourPrixProduit(typeCalcule: string, produit: Produit): Observable<Produit> {
-        const url = `${this.apiP}/mettre-a-jour-prix?typeCalcule=${typeCalcule}`;
-        console.log("produit"+JSON.stringify(produit))
-        return this.http.put<Produit>(url, produit);
-    }
 
 }
 

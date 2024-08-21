@@ -4,15 +4,16 @@ export class Historique {
      id: number;
      prixHistoriqueAchat: number;
      quantiteHistoriqueAchat: number;
-     dateMisAjoure: Date;
-     produit: Produit;
+    dateMisAjoure: Date ;
 
-    constructor(_id: number, _prixHistoriqueAchat: number, _quantiteHistoriqueAchat: number, _dateMisAjoure?: Date,_produit?: Produit) {
+
+    constructor(_id: number=0, _prixHistoriqueAchat: number=0, _quantiteHistoriqueAchat: number=0, _dateMisAJoure = new Date()) {
         this.id = _id;
         this.prixHistoriqueAchat = _prixHistoriqueAchat;
         this.quantiteHistoriqueAchat = _quantiteHistoriqueAchat;
-        this.dateMisAjoure = _dateMisAjoure || new Date();
-        this.produit = _produit || new Produit();
+        this.dateMisAjoure = _dateMisAJoure;
+
+
 
 
     }
@@ -40,4 +41,6 @@ export class Historique {
     set _quantiteHistoriqueAchat(value: number) {
         this.quantiteHistoriqueAchat = value;
     }
+
+
 }

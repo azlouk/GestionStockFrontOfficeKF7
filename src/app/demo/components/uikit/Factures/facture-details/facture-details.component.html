@@ -56,7 +56,7 @@
                         <td>{{ l.id }}</td>
                         <td>{{ l.produit.nom }}</td>
                         <td>{{ l.quantite }}</td>
-                        <td>{{ l.produit.prixUnitaire + l.produit.gainUnitaire }}</td>
+                        <td>{{ getNewPrice(l) }}</td>
                         <td>{{ (l.produit.prixUnitaire + l.produit.gainUnitaire) * l.quantite }}</td>
                     </tr>
                 </ng-template>

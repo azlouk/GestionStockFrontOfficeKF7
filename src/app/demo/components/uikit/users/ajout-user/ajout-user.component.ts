@@ -183,26 +183,31 @@ export class AjoutUserComponent implements OnInit {
 
     loading: boolean = false;
 
-    load():string {
-
-         this.secretKey=this.userService.generateUUID()
+    load(): string {
+        this.secretKey = this.userService.generateUUID();
         this.confirmationService.confirm({
             header: 'Remember your Secret key?',
-            message: ` ${this.secretKey}`,
+            message: `${this.secretKey}`,
             accept: () => {
-                console.log("accept"+this.secretKey)
+                console.log("accept" + this.secretKey);
                 this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted your secret Key', life: 3000 });
-                },
+            },
             reject: () => {
-                this.secretKey="";
+                this.secretKey = "";
                 this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'Secret Key rejected', life: 3000 });
-                console.log("reject"+this.secretKey)
-
+                console.log("reject" + this.secretKey);
             }
         });
-         return this.secretKey;
-
+        return this.secretKey;
     }
+    copyToClipboard(text: string): void {
+        navigator.clipboard.writeText(text).then(() => {
+            this.messageService.add({ severity: 'success', summary: 'Copied', detail: 'Secret Key copied to clipboard', life: 3000 });
+        }).catch(err => {
+            console.error('Could not copy text: ', err);
+        });
+    }
+
     onSubmit(): void {
         if (this.userForm.valid) {
             const userData = this.userForm.value;
