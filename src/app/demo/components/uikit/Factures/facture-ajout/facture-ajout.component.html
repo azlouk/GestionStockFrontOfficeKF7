@@ -4,7 +4,7 @@
     <ng-template pTemplate="header">
         <div class="flex justify-content-between align-items-center ">
             <div>
-                <h2 class="text-primary-600 font-bold m-3">{{getTitleFacture()}}</h2>
+                <h2 class="text-primary-600 font-bold m-3">Ajouter une nouvelle Facture</h2>
             </div>
         </div>
     </ng-template>
@@ -352,7 +352,7 @@
                                     *ngIf="newFacture.typeFacture === 'FACTURE_VENTE'">
                                     <p-cellEditor  >
                                         <ng-template pTemplate="input">
-                                            <p-inputNumber  [(ngModel)]="l.prixVente" name="prix"
+                                            <p-inputNumber [readonly]="newFacture.typeFacture === 'FACTURE_VENTE'" [(ngModel)]="l.prixVente" name="prix"
                                                            (ngModelChange)="getPrixCalculateVente(l)"
                                                            mode="decimal" minFractionDigits="1" maxFractionDigits="2">
 

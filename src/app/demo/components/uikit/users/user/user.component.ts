@@ -20,8 +20,8 @@ import {AvatarModule} from "primeng/avatar";
 import {BadgeModule} from "primeng/badge";
 import {RippleModule} from "primeng/ripple";
 @Component({
-  selector: 'app-user',
-  standalone: true,
+    selector: 'app-user',
+    standalone: true,
     imports: [
         ButtonModule,
         CurrencyPipe,
@@ -42,8 +42,8 @@ import {RippleModule} from "primeng/ripple";
         NgIf,
         RippleModule
     ],
-  templateUrl: './user.component.html',
-  styleUrl: './user.component.scss'
+    templateUrl: './user.component.html',
+    styleUrl: './user.component.scss'
 })
 export class UserComponent {
     users: User[] = [];
@@ -186,4 +186,3 @@ export class UserComponent {
 
     }
 }
-

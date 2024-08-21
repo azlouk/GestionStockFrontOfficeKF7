@@ -190,6 +190,13 @@
                                         (click)="getPermission(permission.tableName,permission.supprimer==true?'delete':'deleten')"
                                         [(ngModel)]="permission.supprimer" [binary]="true"></p-checkbox>
                         </td>
+                        <td>
+                            <p-checkbox
+                                    [ngModel]="allSelected(permission)"
+                                    (ngModelChange)="toggleAll($event, permission)"
+                                    [binary]="true">
+                            </p-checkbox>
+                        </td>
                     </tr>
                 </ng-template>
 

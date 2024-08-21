@@ -180,7 +180,7 @@ export class AjoutUserComponent implements OnInit {
     ngOnInit() {
         // this.getAllDepotList() ;
         // this.getAllServiceList() ;
-         this.userService.getUsers();
+        this.userService.getUsers();
     }
 
     loading: boolean = false;
@@ -432,6 +432,21 @@ export class AjoutUserComponent implements OnInit {
 
         return currentUrl.includes('/uikit/add-facture');
     }
+    allSelected(permission: any): boolean {
+        return permission.afficher && permission.ajouter && permission.modifier && permission.supprimer;
+    }
 
+    toggleAll(isSelected: boolean, permission: any) {
+        permission.afficher = isSelected;
+        permission.ajouter = isSelected;
+        permission.modifier = isSelected;
+        permission.supprimer = isSelected;
+
+        this.getPermission(permission.tableName, isSelected ? 'read' : 'readn');
+        this.getPermission(permission.tableName, isSelected ? 'create' : 'createn');
+        this.getPermission(permission.tableName, isSelected ? 'update' : 'updaten');
+        this.getPermission(permission.tableName, isSelected ? 'delete' : 'deleten');
+    }
 
 }
+
