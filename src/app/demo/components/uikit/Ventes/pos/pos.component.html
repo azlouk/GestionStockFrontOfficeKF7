@@ -93,7 +93,7 @@
                                 <td>{{ ligneVente.produit.nom }}</td>
                                 <td>
                                     <div>
-                                        <p-inputNumber styleClass="surface-border" [size]="1" pAutoFocus inputId="minmaxfraction" [autofocus]="ligneVente.focus" (click)="changeFocus(ligneVente)" mode="decimal" [(ngModel)]="ligneVente.venteQty" (ngModelChange)="updatePrixVente(ligneVente)" [min]="1" [max]="ligneVente.produit.qantite"></p-inputNumber>
+                                        <p-inputNumber styleClass="surface-border" [size]="1" pAutoFocus inputId="minmaxfraction" [autofocus]="ligneVente.focus" (click)="changeFocus(ligneVente)" mode="decimal" [(ngModel)]="ligneVente.venteQty" (ngModelChange)="updatePrixVenteAchat(ligneVente)" [min]="1" [max]="ligneVente.produit.qantite"></p-inputNumber>
                                     </div>
                                 </td>
                                 <td class="text-green-300 font-bold text-1xl">{{ (ligneVente.venteQty * ligneVente.prixVente).toFixed(3) }} TND</td>

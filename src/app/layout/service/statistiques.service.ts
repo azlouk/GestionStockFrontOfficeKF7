@@ -130,4 +130,45 @@ export class StatistiquesService {
       return new Observable<{ [key: string]: { [key: string]: number } }>();
     }
   }
+  getCommandesEtGainsParMois(): Observable<{ [key: string]: { [key: string]: number } }> {
+    const url = `${this.api}/commandes-par-mois`;
+    const token = getToken(); // Remplacez cette fonction par votre méthode d'obtention du token
+
+    if (token) {
+      const headers = new HttpHeaders()
+          .set('Authorization', `Bearer ${token}`)
+          .set('Content-Type', 'application/json; charset=utf-8');
+
+      return this.http.get<{ [key: string]: { [key: string]: number } }>(url, { headers }).pipe(
+          tap(response => console.log('Données des ventes et gains reçues :', response)),
+          catchError(error => {
+            console.error('Erreur lors de la récupération des ventes et gains :', error);
+            return throwError(error);
+          })
+      );
+    } else {
+      return throwError('Token manquant');
+    }
+  }
+  getCommandesEtGainsParJour(): Observable<{ [key: string]: { [key: string]: number } }> {
+    const url = `${this.api}/commandes-par-jour`;
+    const token = getToken(); // Remplacez cette fonction par votre méthode d'obtention du token
+
+    if (token) {
+      const headers = new HttpHeaders()
+          .set('Authorization', `Bearer ${token}`)
+          .set('Content-Type', 'application/json; charset=utf-8');
+
+      return this.http.get<{ [key: string]: { [key: string]: number } }>(url, { headers }).pipe(
+          tap(response => console.log('Données des ventes et gains reçues :', response)),
+          catchError(error => {
+            console.error('Erreur lors de la récupération des ventes et gains :', error);
+            return throwError(error);
+          })
+      );
+    } else {
+      return throwError('Token manquant');
+    }
+  }
+
 }

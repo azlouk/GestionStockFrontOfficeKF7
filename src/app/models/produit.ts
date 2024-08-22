@@ -13,8 +13,6 @@ export class Produit {
             id: number;
             nom: string;
             prixUnitaire: number;
-
-            prixGros: number;
             description: string;
             qantite: number;
             image: Blob;
@@ -36,11 +34,33 @@ export class Produit {
             historiques: Historique [];
 
 
-    constructor(_id: number=0, _nom: string="",_prixUnitaire: number=0, _prixGros: number=0, _description: string="", _qantite: number=0, _image: Blob=new Blob(), _gainUnitaire: number=0, _gainGros: number=0, _files: File[]=[], _dateExpiration: Date=new Date(), _dateFabrication:Date=new Date(), _minQuantiteGros: number=0, _taxe: number=0, _enable: boolean=false, _dataqr: string="", _qantiteFacture: number=0, _article: Article=new Article(), _levelstock: number=0, _showDetails: boolean=false, _checkedService: boolean=false, _subdataqr: string[]=[],_historiques : Historique []= []) {
+    constructor(_id: number=0,
+                _nom: string="",
+                _prixUnitaire: number=0,
+                _prixGros: number=0,
+                _description: string="",
+                _qantite: number=0,
+                _image: Blob=new Blob(),
+                _gainUnitaire: number=0,
+                _gainGros: number=0,
+                _files: File[]=[],
+                _dateExpiration: Date=new Date(),
+                _dateFabrication:Date=new Date(),
+                _minQuantiteGros: number=0,
+                _taxe: number=0,
+                _enable: boolean=false,
+                _dataqr: string="",
+                _qantiteFacture: number=0,
+                _article: Article=new Article(),
+                _levelstock: number=0,
+                _showDetails: boolean=false,
+                _checkedService: boolean=false,
+                _subdataqr: string[]=[],
+                _historiques : Historique []= []) {
         this.id = _id ;
         this.nom = _nom ;
          this.prixUnitaire = _prixUnitaire ;
-        this.prixGros = _prixGros ;
+
         this.description = _description ;
         this.qantite = _qantite ;
         this.image = _image ;
@@ -86,14 +106,6 @@ export class Produit {
 
     set _prixUnitaire(value: number) {
         this.prixUnitaire = value;
-    }
-
-    get _prixGros(): number {
-        return this.prixGros;
-    }
-
-    set _prixGros(value: number) {
-        this.prixGros = value;
     }
 
     get _description(): string {
@@ -269,7 +281,6 @@ export class Produit {
         newProduit.id = produit.id;
         newProduit.nom = produit.nom;
         newProduit.prixUnitaire = produit.prixUnitaire;
-        newProduit.prixGros = produit.prixGros;
         newProduit.description = produit.description;
         newProduit.qantite = produit.qantite;
         newProduit.image = produit.image;

@@ -202,8 +202,6 @@ export class ProduitService {
     }
 
 
-
-
     SaveVente(vente:Vente )  {
         const token = getToken();
 
@@ -223,6 +221,7 @@ export class ProduitService {
                         {
                             "qtyV": value.venteQty,
                             "prixVente": value.prixVente,
+                            "prixAchat": value.prixAchat,
                             "produit": {
                                 "id": value.produit.id
                             }
@@ -252,9 +251,6 @@ export class ProduitService {
         }
 
     }
-
-
-
 
     getArticles(): Observable<Article[]> {
         const url = `${this.apiarticle}/read`;

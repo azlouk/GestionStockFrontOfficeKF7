@@ -95,10 +95,7 @@ export class FactureService {
                     "id": value.produit.id,
                     "qantite": value.produit.qantite,
                     "nom": value.produit.nom,
-
-
                     "prixUnitaire": value.produit.prixUnitaire,
-                    "prixGros": value.produit.prixGros,
                     "description": value.produit.description,
                     "dataqr": value.produit.dataqr,
                     "gainUnitaire": value.produit.gainUnitaire,
@@ -229,7 +226,6 @@ export class FactureService {
                     "qantite":value.produit.qantite,
                     "nom":value.produit.nom,
                     "prixUnitaire":value.produit.prixUnitaire,
-                    "prixGros":value.produit.prixGros,
                     "description":value.produit.description,
                     "dataqr":value.produit.dataqr,
                     "gainUnitaire":value.produit.gainUnitaire,

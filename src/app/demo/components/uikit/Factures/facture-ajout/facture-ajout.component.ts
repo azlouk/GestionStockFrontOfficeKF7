@@ -365,7 +365,7 @@ export class FactureAjoutComponent implements OnInit {
         this.calaculateFactureTotalAcht();
     }
 
-    calculeFactureTotal() {
+    /*calculeFactureTotal() {
         this.newFacture.montant = 0;
         this.newFacture.lignesFacture.forEach(value => {
             if (value.quantite > value.produit.qantite) {
@@ -381,7 +381,7 @@ export class FactureAjoutComponent implements OnInit {
 
             }
         })
-    }
+    }*/
 
     calaculateFactureTotalAcht() {
         this.newFacture.montant = 0;

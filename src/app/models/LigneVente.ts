@@ -7,11 +7,13 @@ export class LigneVente{
     private _prixVente : number;
     private _produit : Produit;
     public focus : boolean = false;
-    constructor(id?: number, venteQty?: number, prixVente?: number, produit? : Produit ) {
+    private _prixAchat : number;
+    constructor(id?: number, venteQty?: number, prixVente?: number, produit? : Produit,prixAchat?:number ) {
         this._id = id || 0;
         this._venteQty = venteQty || 0;
         this._prixVente = prixVente || 0;
         this._produit = produit || new Produit();
+        this._prixAchat = prixAchat || 0;
         this.focus=false;
     }
 
@@ -46,4 +48,13 @@ export class LigneVente{
     public set produit(value: Produit) {
         this._produit = value;
     }
+    get prixAchat(): number {
+        return this._prixAchat;
+    }
+
+    set prixAchat(value: number) {
+        this._prixAchat = value;
+    }
+
+
 }

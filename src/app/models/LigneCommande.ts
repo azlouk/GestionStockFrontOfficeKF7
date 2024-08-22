@@ -5,12 +5,13 @@ export class LigneCommande {
     qtyV: number;
     prixVente: number;
     produit: Produit;
-
-    constructor(_id?: number , _qtyV?: number, _prixVente?: number, _produit?: Produit) {
+    prixAchat : number;
+    constructor(_id?: number , _qtyV?: number, _prixVente?: number, _produit?: Produit, _prixAchat? :number) {
         this.id = _id || 0;
         this.qtyV = _qtyV || 0;
         this.prixVente = _prixVente || 0;
         this.produit = _produit ||new Produit();
+        this.prixAchat = this.prixAchat || this.produit!=undefined?this.produit.prixUnitaire:0;
     }
 
     get _id(): number | null {

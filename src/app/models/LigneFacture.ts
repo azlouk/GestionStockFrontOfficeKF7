@@ -10,7 +10,6 @@ export class LigneFacture {
     private _prixAchat : number;
     private _prixVente : number;
     private _typeCalcule: string;
-
     constructor(id?: number,  quantite?: number, montantTotal?:number, produit?:Produit,prixAchat?:number, prixVente?: number, typeCalcule?: string) {
         this._id = id || 0;
          this._produit = produit || new Produit();
@@ -78,4 +77,6 @@ export class LigneFacture {
     public set prixVente(value: number) {
         this._prixVente = value;
     }
+
 }
+

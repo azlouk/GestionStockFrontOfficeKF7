@@ -470,6 +470,7 @@ export class POSComponent implements OnInit,OnDestroy {
                 ligneVente.id = produitSelectionne.id; // Assurez-vous que id est correctement initialisé si nécessaire
                 ligneVente.venteQty = 1; // Quantité initiale (vous pouvez ajuster selon vos besoins)
                 ligneVente.prixVente = produitSelectionne.prixUnitaire + produitSelectionne.gainUnitaire;
+                ligneVente.prixAchat = produitSelectionne.prixUnitaire;
                 ligneVente.produit = produitSelectionne;
 
                 // Ajouter la nouvelle ligne au début de la liste (utilisation de unshift pour insérer au début)
@@ -488,12 +489,14 @@ export class POSComponent implements OnInit,OnDestroy {
     }
 
 
-    updatePrixVente(ligneVente: LigneVente): void {
+    updatePrixVenteAchat(ligneVente: LigneVente): void {
         const produit = ligneVente.produit;
         if (ligneVente.venteQty >= produit.minQuantiteGros) {
             ligneVente.prixVente = produit.prixUnitaire + produit.gainGros;
+            ligneVente.prixAchat = produit.prixUnitaire;
         } else {
             ligneVente.prixVente = produit.prixUnitaire + produit.gainUnitaire;
+            ligneVente.prixAchat = produit.prixUnitaire;
         }
         this.getTottalNbProduct()
 
@@ -541,6 +544,7 @@ export class POSComponent implements OnInit,OnDestroy {
             newLigneVente.venteQty=Number(this.calculateValue)?parseFloat(this.calculateValue):0 ;
             newLigneVente.venteQty = 1;
             newLigneVente.prixVente = produit.prixUnitaire + produit.gainUnitaire;
+            newLigneVente.prixAchat = produit.prixUnitaire;
             newLigneVente.produit = produit;
 
             this.calculateValue='0' ;
@@ -594,12 +598,14 @@ export class POSComponent implements OnInit,OnDestroy {
         // Check against all relevant attributes
         const productName = ligneVente.produit.nom.toLowerCase();
         const price = ligneVente.prixVente.toString().toLowerCase();
+        const priceAchat = ligneVente.prixAchat.toString().toLowerCase();
         const quantity = ligneVente.venteQty.toString().toLowerCase();
         const total = (ligneVente.venteQty * ligneVente.prixVente).toString().toLowerCase();
 
         // Customize this condition based on your requirements
         return productName.includes(searchTerm1) ||
             price.includes(searchTerm1) ||
+            priceAchat.includes(searchTerm1) ||
             quantity.includes(searchTerm1) ||
             total.includes(searchTerm1);
     }

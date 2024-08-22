@@ -44,6 +44,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     chartDataCommande: any;
     chartDataCommandeMois: any;
+    chartOptionsComd:any;
     constructor(private productService: ProductService, public layoutService: LayoutService,
                 private route: Router, public servicestatistic: StatistiquesService, private venteservice: VenteService) {
 
@@ -54,6 +55,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.getVenteDay();
         this.getfactureByDay();
         this.getVentesEtGainsParMois();
+        this.getCommandesEtGainsParMois();
+        this.getCommandesEtGainsParJours();
 
         this.venteservice.getVentes().subscribe(value => {
             this.ventes = value;
@@ -349,6 +352,122 @@ export class DashboardComponent implements OnInit, OnDestroy {
             console.error('Erreur lors de la récupération des factures et gains par mois :', error);
         });
     }
+    getCommandesEtGainsParMois(): void {
+        this.servicestatistic.getCommandesEtGainsParMois().subscribe(data => {
+            console.log('Données des commandes et gains par mois reçues :', data);
+
+            if (data) {
+                const sortedVentesData = this.sortDataByDate(data['ventes']);
+                const sortedGainsData = this.sortDataByDate(data['gains']);
+
+                this.chartDataCommandeMois = {
+                    labels: sortedVentesData.map(d => d.date),
+                    datasets: [
+                        {
+                            label: 'Factures par Mois',
+                            data: sortedVentesData.map(d => d.value),
+                            backgroundColor: '#FFA726',
+                            stack: 'stack0'
+                        },
+                        {
+                            label: 'Gains par Mois',
+                            data: sortedGainsData.map(d => d.value),
+                            backgroundColor: '#66BB6A',
+                            stack: 'stack1'
+                        }
+                    ]
+                };
+
+                this.chartOptionsComd = {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Mois'
+                            },
+                            stacked: false,
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Montant'
+                            },
+                            stacked: false,
+                            ticks: {
+                                beginAtZero: true,
+                                stepSize: 100
+                            }
+                        }
+                    }
+                };
+            }
+        }, error => {
+            console.error('Erreur lors de la récupération des factures et gains par mois :', error);
+        });
+    }
+    getCommandesEtGainsParJours(): void {
+        this.servicestatistic.getCommandesEtGainsParJour().subscribe(data => {
+            console.log('Données des factures et gains par mois reçues :', data);
+
+            if (data) {
+                const sortedVentesData = this.sortDataByDate(data['ventes']);
+                const sortedGainsData = this.sortDataByDate(data['gains']);
+
+                this.chartDataCommande = {
+                    labels: sortedVentesData.map(d => d.date),
+                    datasets: [
+                        {
+                            label: 'Factures par Mois',
+                            data: sortedVentesData.map(d => d.value),
+                            backgroundColor: '#FFA726',
+                            stack: 'stack0'
+                        },
+                        {
+                            label: 'Gains par Mois',
+                            data: sortedGainsData.map(d => d.value),
+                            backgroundColor: '#66BB6A',
+                            stack: 'stack1'
+                        }
+                    ]
+                };
+
+                this.chartOptionsComd = {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Mois'
+                            },
+                            stacked: false,
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Montant'
+                            },
+                            stacked: false,
+                            ticks: {
+                                beginAtZero: true,
+                                stepSize: 100
+                            }
+                        }
+                    }
+                };
+            }
+        }, error => {
+            console.error('Erreur lors de la récupération des factures et gains par mois :', error);
+        });
+    }
+
+
 
 }
 

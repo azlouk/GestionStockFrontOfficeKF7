@@ -570,7 +570,7 @@ export class CaisseComponent implements OnInit {
                 ligneVente.id = produitSelectionne.id;
                 ligneVente.venteQty = 1; // Vous pouvez ajuster la quantité initiale ici
                 ligneVente.prixVente = produitSelectionne.prixUnitaire + produitSelectionne.gainUnitaire;
-
+                ligneVente.prixAchat = produitSelectionne.prixUnitaire ;
                 ligneVente.produit = produitSelectionne;
 
                 // Ajouter la ligne de vente à la liste
@@ -588,8 +588,10 @@ export class CaisseComponent implements OnInit {
 
         if (ligneVente.venteQty >= produit.minQuantiteGros) {
             ligneVente.prixVente = produit.prixUnitaire + produit.gainGros;
+            ligneVente.prixAchat = produit.prixUnitaire ;
         } else {
             ligneVente.prixVente = produit.prixUnitaire + produit.gainUnitaire;
+            ligneVente.prixAchat = produit.prixUnitaire;
         }
         this.getTottalNbProduct()
 

@@ -314,9 +314,7 @@ export class ProduitAjoutComponent implements OnInit {
         this.produitService.returnBack()
     }
 
-    setprixgros() {
-        this.newProduct._prixGros = this.newProduct._prixUnitaire
-    }
+
 
     setQtyGros() {
         this.newProduct._minQuantiteGros = this.newProduct._qantite
