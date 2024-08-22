@@ -73,10 +73,15 @@
                                         [(ngModel)]="newFacture.transporteur"
                                         optionLabel="firstname"
                                         [filter]="true"
-                                        placeholder="Sélectionner Transporteur"></p-dropdown>
+                                        placeholder="No Transporteur"></p-dropdown>
                             </div>
+
+
+
+
+
                             <div class="p-col-12 p-md-12">
-                                <p-table *ngIf="newFacture.transporteur.id !== 0" [value]="[newFacture.transporteur]">
+                                <p-table *ngIf="newFacture.transporteur.id !== 0;else noTransporteur" [value]="[newFacture.transporteur] ">
                                     <ng-template pTemplate="header">
                                         <tr class="fs-5" style="--bs-table-color: #0056b3">
                                             <th>Nom</th>
@@ -84,7 +89,9 @@
                                             <th>Email</th>
                                             <th>Téléphone</th>
                                         </tr>
+
                                     </ng-template>
+
                                     <ng-template pTemplate="body" let-transporteur>
                                         <tr>
                                             <td>{{ transporteur.firstname }}</td>
@@ -94,6 +101,10 @@
                                         </tr>
                                     </ng-template>
                                 </p-table>
+                                <ng-template #noTransporteur>
+                                    <span class="fs-5" style="font-weight: 600; color: red;">No Transporteur Assigned</span>
+                                </ng-template>
+
                             </div>
                         </div>
                     </div>

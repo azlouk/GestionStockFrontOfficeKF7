@@ -107,6 +107,40 @@
             </div>
         </div>
     </div>
+
+    <p-toast position="top-center" class="bg-info" key="tc" ></p-toast>
+    <p-dialog header="Clôture Caisse"  [maximizable]="true" [modal]="true" [(visible)]="show"[style]="{ width: '40vw'}">
+        <ng-template pTemplate="content">
+            <div class="subscribe  m-5 justify-content-center">
+                <div   >
+                    <h1 class="text-center font-bold font-italic text-primary">Sauvegarder la clôture de caisse</h1>
+                    <div class="container-lg mt-2 shadow-lg p-3 mb-5 bg-body-tertiary rounded">
+                        <h4 class=" bi-lock text-primary-800 font-bold">Détails de la clôture</h4>
+                        <div class="colorShadow flex flex-column md:flex-row gap-3 p-2">
+                            <div class="col-6  ">
+                                <span class="font-bold text-6xl text-primary">Total clôture</span>
+                            </div>
+                            <div class="col-6">
+                                <span class="ml-2 text-6xl text-red-600 font-bold">{{TotalAndReglement.total.toFixed(3)  }}</span>
+                                <span class="font-bold text-red-600">TND</span>
+                            </div>
+                        </div>
+
+                        <div class=" card flex">
+                            <div class="flex-auto ">
+                                <label class="font-bold text-6xl text-red-600"  >Montant Espéce </label>
+                                <p-inputNumber inputId="espece" [size]="24" pTooltip=" prix unitaire  d'achat" mode="currency" inputId="currency-india" currency="TND" currencyDisplay="code" locale="en-IN"  [(ngModel)]="cloture.montantClotureEspece"> </p-inputNumber>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class=" flex justify-content-end align-items-end">
+                    <button pButton type="button" label="Clôture" icon="pi pi-calculator" class="p-button-rounded p-button-outlined p-button-text p-button-success mr-2" (click)="saveCloture()"></button>
+                </div>
+            </div>
+
+        </ng-template>
+    </p-dialog>
 </div>
 
 
