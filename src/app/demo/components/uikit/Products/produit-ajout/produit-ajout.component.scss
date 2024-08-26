@@ -1,0 +1,114 @@
+// Styles globaux
+body {
+  font-family: Arial, sans-serif;
+}
+
+// Styles du p-card
+p-card {
+  .p-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    h2 {
+      margin: 0;
+    }
+    .p-button {
+      margin-left: auto;
+    }
+  }
+
+  .p-card-content {
+    .flex {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    // Responsive adjustments for small screens
+    @media (max-width: 768px) {
+      .p-inputNumber,
+      .p-calendar,
+      .p-dropdown,
+      .p-fileUpload {
+        width: 100%;
+      }
+
+      .card {
+        width: 100%;
+        margin-bottom: 1rem;
+      }
+
+      .col {
+        flex: 1 1 100%;
+      }
+    }
+
+    // Responsive adjustments for medium screens
+    @media (min-width: 769px) and (max-width: 1200px) {
+      .card {
+        width: calc(50% - 1rem);
+      }
+
+      .col {
+        flex: 1 1 48%;
+      }
+    }
+
+    // Responsive adjustments for large screens
+    @media (min-width: 1201px) {
+      .card {
+        width: calc(33.333% - 1rem);
+      }
+
+      .col {
+        flex: 1 1 32%;
+      }
+    }
+  }
+
+  // Styles du p-dialog
+  p-dialog {
+    .p-dialog-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      h2 {
+        margin: 0;
+      }
+    }
+
+    .p-dialog-content {
+      .field {
+        margin-bottom: 1rem;
+      }
+
+      .p-inputText,
+      .p-inputTextarea,
+      .p-dropdown {
+        width: 100%;
+      }
+
+      @media (max-width: 768px) {
+        .p-dropdown {
+          width: 100%;
+        }
+      }
+    }
+
+    .p-dialog-footer {
+      display: flex;
+      justify-content: flex-end;
+      button {
+        margin-left: 1rem;
+      }
+    }
+  }
+
+  // Styles de l'image
+  .p-fileUpload {
+    .p-fileupload-content {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+  }
+}
