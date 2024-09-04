@@ -347,5 +347,11 @@ export class UserService {
     //   return this.http.post<string>(`${this.api+'/user'}/encodePass`, { password: pass });
     // }
 
+
+    getUserByEmail(email: string): Observable<User> {
+        const url = `${this.api}/user/email/${email}`;
+        return this.http.get<User>(url);
+    }
+
 }
 

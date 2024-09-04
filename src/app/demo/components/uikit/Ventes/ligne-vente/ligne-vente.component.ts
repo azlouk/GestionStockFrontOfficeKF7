@@ -209,30 +209,118 @@ export class LigneVenteComponent implements OnInit {
 
         this.ventes.forEach(value => {
             console.log("Raw dateVente:", value.dateVente);
+
             // Convertir value.dateVente en objet Date
-            const parts = value.dateVente.split(' ');
+            const parts = value.dateVente.toString().split(' ');
             const dateParts = parts[0].split('-');
-            const timeParts = parts[1].split(':');
+
+            // Vérifiez si la partie horaire existe, sinon utilisez une heure par défaut
+            let timeParts = ['00', '00', '00']; // Valeur par défaut
+            if (parts.length > 1) {
+                timeParts = parts[1].split(':');
+            }
+
             const venteTime = new Date(
-                parseInt(dateParts[2]),  // year
-                parseInt(dateParts[1]) - 1,  // month (zero-indexed)
-                parseInt(dateParts[0]),  // day
-                parseInt(timeParts[0]),  // hours
+                parseInt(dateParts[2]),  // année
+                parseInt(dateParts[1]) - 1,  // mois (indexé à partir de zéro)
+                parseInt(dateParts[0]),  // jour
+                parseInt(timeParts[0]),  // heures
                 parseInt(timeParts[1]),  // minutes
-                parseInt(timeParts[2])   // seconds
+                parseInt(timeParts[2])   // secondes
             ).getTime();
 
             console.log("venteTime:", venteTime, "startTime:", startTime, "endTime:", endTime);
+
             if (!isNaN(venteTime) && venteTime >= startTime && venteTime <= endTime) {
                 this.total += value.total;
             }
-            console.log("total after processing vente:", this.total);
+            console.log("total après traitement de la vente:", this.total);
         });
 
-        console.log("final total:", this.total);
+        console.log("total final:", this.total);
     }
 
 
+    selectedVentes:Vente[] = [];
+    listTransfer:Vente[] = [];
+    // transferSelected() {
+    //
+    //     if (this.selectedVentes.length > 0) {
+    //         const firstClient = this.selectedVentes[0].client;
+    //         const allSameClient = this.selectedVentes.every(vente => vente.client === firstClient);
+    //
+    //         if (allSameClient) {
+    //
+    //             this.listTransfer.push(...this.selectedVentes);
+    //             console.info(this.listTransfer);
+    //
+    //             this.venteService.transferFacturation(this.listTransfer).subscribe({
+    //
+    //             })
+    //
+    //
+    //
+    //         } else {
+    //
+    //             Swal.fire({
+    //                 title: "Fails Facturation !",
+    //                 text: "Votre Liste vente n'appartient pas a un seul Client!",
+    //                 icon: "error"
+    //             });
+    //         }
+    //         this.selectedVentes = [];
+    //     }
+    // }
+
+    transferSelected() {
+        if (this.selectedVentes && this.selectedVentes.length > 0) {
+            // const firstClient = this.selectedVentes[0].client;
+            // const allSameClient = this.selectedVentes.every(vente => vente.client.id === firstClient.id); // Vérifier par ID
+            //
+            // if (allSameClient) {
+                this.listTransfer.push(...this.selectedVentes);
+            //     console.info("listTransfer"+new JsonPipe().transform(this.listTransfer));
+            //
+            //     // Appel au service pour le transfert
+            console.info("listTransfer ts"+new JsonPipe().transform(this.listTransfer));
+
+            this.venteService.transferFacturation(this.listTransfer).subscribe({
+                    next: () => {
+                        Swal.fire({
+
+                            title: "Succès",
+                            text: "Transfert de facturation réussi.",
+                            icon: "success"
+                        });
+                    },
+
+                    error: (err) => {
+                        console.error("Erreur de transfert de facturation: ", err);
+                        Swal.fire({
+                            title: "Erreur",
+                            text: `Une erreur est survenue lors du transfert de facturation : ${err.message || err.statusText}`,
+                            icon: "error"
+                        });
+                    }
+                });
+
+        //         // Réinitialiser selectedVentes après tentative de transfert
+        //         this.selectedVentes = [];
+        //     } else {
+        //         Swal.fire({
+        //             title: "Échec de la facturation!",
+        //             text: "Votre liste de ventes n'appartient pas à un seul client!",
+        //             icon: "error"
+        //         });
+        //     }
+        // } else {
+        //     Swal.fire({
+        //         title: "Attention",
+        //         text: "Aucune vente sélectionnée pour le transfert.",
+        //         icon: "warning"
+        //     });
+        }
+    }
 
 
 }

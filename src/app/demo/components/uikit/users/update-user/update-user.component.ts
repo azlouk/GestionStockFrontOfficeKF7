@@ -54,7 +54,16 @@ export class UpdateUserComponent implements OnInit {
         {name:'Factures',tableName:'facture',afficher:false,modifier:false,supprimer:false,ajouter:false,icon:'bi-journals'},
         {name:'Ventes',tableName:'vente',afficher:false,modifier:false,supprimer:false,ajouter:false,icon:'bi-cart4'},
         {name:'Services',tableName:'service',afficher:false,modifier:false,supprimer:false,ajouter:false,icon:'bi-tools'},
+        {name: 'Statistiques',
+            tableName: 'statistique',
+            afficher: false,
+            modifier: false,
+            supprimer: false,
+            ajouter: false,
+            icon: 'bi-tools'
+        },
         {name:'Payement',tableName:'tranche',afficher:false,modifier:false,supprimer:false,ajouter:false,icon:'bi-currency-exchange'},
+
     ];
     private userPermission: IPermission[]=[];
 

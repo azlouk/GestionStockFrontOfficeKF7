@@ -146,4 +146,12 @@ export class AjoutServiceComponent  implements OnInit {
   returnBack() {
     this.router.navigate(['/uikit/services']);
   }
+
+    public getTitleService() {
+        if(this.newService.id)
+         return"Update "
+      else
+        return "Ajouter "
+
+    }
 }

@@ -1,112 +1,108 @@
 import {User} from "./user";
 import {LigneVente} from "./LigneVente";
+import {Employer} from "./employer";
+import {Client} from "./client";
 
 export class Vente {
 
-    id: number;  // Mettez à jour cette propriété
-    dateVente : string;
-    nomClient: string;
-    total: number;
-    reglement: number;
-    lignesVente :LigneVente[];
-    employer :User  ;
-    visible : boolean ;
-    isPrint : boolean ;
-    constructor(_id?: number,
-                _dateVente?: string,
-                _nomClient?: string,
-                _total?: number,
-                _reglement?: number,
-                _lignesVente?: LigneVente[],
-                _employer?: User,
-                _visible?: boolean,
-                _isPrint? :boolean) {
-        this.id = _id || 0;
-        this.dateVente = _dateVente || new Date().toString();
-        // this.dateVente = _dateVente || new Date();
-        this.nomClient = _nomClient;
+      id: number;
+    paye: boolean;
+      dateVente: Date;
+      total: number;
+      reglement: number;
+      lignesVente: LigneVente[];
+         employer: User;
+         client: User;
+
+
+    visible: boolean;
+    isPrint: boolean;
+
+
+    constructor(_id: number=0, _paye?: boolean, _dateVente: Date=new Date(), _total: number=0, _reglement: number=0, _lignesVente: LigneVente[]=[], _employer: User=new User(), _client: User=new User(), _visible: boolean=false, _isPrint: boolean=true) {
+        this.id = _id;
+        this.paye = _paye || false;
+        this.dateVente = _dateVente;
         this.total = _total;
+
         this.reglement = _reglement;
         this.lignesVente = _lignesVente;
         this.employer = _employer;
+        this.client = _client;
         this.visible = _visible;
-        this.isPrint = _isPrint || true;
+        this.isPrint = _isPrint;
     }
 
-    get _id(): number {
+    public get _id(): number {
         return this.id;
     }
 
-    set _id(value: number) {
+    public set _id(value: number) {
         this.id = value;
     }
 
-
-    get _dateVente(): string {
+    public get _dateVente(): Date {
         return this.dateVente;
     }
 
-    set _dateVente(value: string) {
+    public set _dateVente(value: Date) {
         this.dateVente = value;
     }
 
-    get _nomClient(): string {
-        return this.nomClient;
-    }
-
-    set _nomClient(value: string) {
-        this.nomClient = value;
-    }
-
-    get _total(): number {
+    public get _total(): number {
         return this.total;
     }
 
-    set _total(value: number) {
+    public set _total(value: number) {
         this.total = value;
     }
 
-    get _reglement(): number {
+    public get _reglement(): number {
         return this.reglement;
     }
 
-    set _reglement(value: number) {
+    public set _reglement(value: number) {
         this.reglement = value;
     }
 
-    get _lignesVente(): LigneVente[] {
+    public get _lignesVente(): LigneVente[] {
         return this.lignesVente;
     }
 
-    set _lignesVente(value: LigneVente[]) {
+    public set _lignesVente(value: LigneVente[]) {
         this.lignesVente = value;
     }
 
-    get _employer(): User {
+
+    public get _employer(): User {
         return this.employer;
     }
 
-    set _employer(value: User) {
+    public set _employer(value: User) {
         this.employer = value;
     }
 
-    get _visible(): boolean {
+    public get _client(): User {
+        return this.client;
+    }
+
+    public set _client(value: User) {
+        this.client = value;
+    }
+
+    public get _visible(): boolean {
         return this.visible;
     }
 
-    set _visible(value: boolean) {
+    public set _visible(value: boolean) {
         this.visible = value;
     }
 
-    get _isPrint(): boolean {
+    public get _isPrint(): boolean {
         return this.isPrint;
     }
 
-    set _isPrint(value: boolean) {
+    public set _isPrint(value: boolean) {
         this.isPrint = value;
-    }
-
-    public toggleIsPrint(): void {
-        this.isPrint = !this.isPrint;
     }
 }

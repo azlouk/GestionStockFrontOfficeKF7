@@ -6,7 +6,6 @@ import {Produit} from "../../../../../models/produit";
 import {FormGroup, FormsModule} from "@angular/forms";
 import {Message} from "primeng/api/message";
 import {ProduitService} from "../../../../../layout/service/produit.service";
-import {VenteService} from "../../../../../layout/service/vente.service";
 import {ClotureService} from "../../../../../layout/service/cloture.service";
 import {Router} from "@angular/router";
 import {ConfirmationService, MessageService} from "primeng/api";
@@ -15,7 +14,7 @@ import {SaveUrlFileProduct} from "../../../../../models/File";
 import {LigneVente} from "../../../../../models/LigneVente";
 import {Table, TableModule} from "primeng/table";
 import {DropdownModule} from "primeng/dropdown";
-import {CommonModule, CurrencyPipe, DatePipe, DecimalPipe, NgClass} from "@angular/common";
+import {CommonModule, CurrencyPipe, DatePipe, DecimalPipe, JsonPipe, NgClass} from "@angular/common";
 import {CheckboxModule} from "primeng/checkbox";
 import {InplaceModule} from "primeng/inplace";
 import {InputNumberModule} from "primeng/inputnumber";
@@ -38,6 +37,20 @@ import {ServiceComp} from "../../../../../models/ServiceComp";
 import {ServiceCompService} from "../../../../../layout/service/service-comp.service";
 import {CommandeServAjoutComponent} from "../../commandeServices/commande-serv-ajout/commande-serv-ajout.component";
 import {Cloture} from "../../../../../models/Cloture";
+import {DockModule} from "primeng/dock";
+import {RoleEnum, User} from "../../../../../models/user";
+import {UserService} from "../../../../../layout/service/user.service";
+import {SelectButtonModule} from "primeng/selectbutton";
+import {ChipModule} from "primeng/chip";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {FieldsetModule} from "primeng/fieldset";
+import {RadioButtonModule} from "primeng/radiobutton";
+import {CalendarModule} from "primeng/calendar";
+import {Tranche} from "../../../../../models/Tranche";
+import {Facture} from "../../../../../models/Facture";
+import {TrancheService} from "../../../../../layout/service/tranche.service";
+import {FactureService} from "../../../../../layout/service/facture.service";
+
 
 @Component({
     selector: 'app-caisse',
@@ -59,16 +72,19 @@ import {Cloture} from "../../../../../models/Cloture";
         BadgeModule,
         InputGroupModule,
         InputGroupAddonModule, InputTextModule, TableModule,
-        CommonModule, ToggleButtonModule, AutoFocusModule, SidebarModule, FactureComponent, FactureAjoutComponent, RippleModule, TabViewModule, CommandeServAjoutComponent
+        CommonModule, ToggleButtonModule, AutoFocusModule, SidebarModule, FactureComponent, FactureAjoutComponent, RippleModule, TabViewModule, CommandeServAjoutComponent, DockModule, SelectButtonModule, ChipModule, ConfirmDialogModule, FieldsetModule, RadioButtonModule, CalendarModule
     ],
     templateUrl: './caisse.component.html',
     styleUrl: './caisse.component.scss'
 })
+
+
 export class CaisseComponent implements OnInit {
     @ViewChild('dv') dv: DataView | undefined;
     @ViewChild('searchInput') searchInput: ElementRef;
     @ViewChild('dtProduitsFiltres') dtProduitsFiltres: any;
-    @ViewChild('dtProduitsFiltreservice') dtProduitsFiltreservice :any;
+    @ViewChild('dtProduitsFiltreservice') dtProduitsFiltreservice: any;
+    @ViewChild('dt3') table: Table;
     focusIndex = 0;
     searchTerm: string = '';
     searchTermFilter: string = '';
@@ -115,6 +131,16 @@ export class CaisseComponent implements OnInit {
     TotalProductNb: number = 0;
     TotalAndReglement: any = {total: 0, reglement: 0};
 
+    utilisateursClients: User[] = [];
+    public PassClient: User;
+
+
+    stateOptions = [
+        {label: 'Client', TypeUserSelected: 'Client'},
+        {label: 'Passager', TypeUserSelected: 'Passager'}
+    ];
+    TypeUserSelected: string = "Passager";
+
     // Ajoutez cette méthode pour formater la date au format 'YYYY-MM-DD'
     formatDate(date: Date): string {
         const year = date.getFullYear();
@@ -127,9 +153,13 @@ export class CaisseComponent implements OnInit {
     messages1: Message[] = [];
 
     ngOnInit(): void {
-        this.getAllProduits();
-        this.getAllServices()
+        this.getAllProduits()
+        this.getAllServices();
+        this.getAllClient();
+        this.onValueChange();
         this.messages1 = [{severity: 'error', summary: 'Error', detail: 'Pas des images'}];
+
+
     }
 
     ngAfterViewInit(): void {
@@ -142,18 +172,28 @@ export class CaisseComponent implements OnInit {
 
     constructor(private produitService: ProduitService,
                 private serviceCompService: ServiceCompService,
-                public venteService: VenteService,
+                public userService: UserService,
                 private clotureService: ClotureService,
                 private renderer: Renderer2,
                 private route: Router,
                 private messageService: MessageService,
                 private sanitizer: DomSanitizer,
-                private confirmationService: ConfirmationService
+                private confirmationService: ConfirmationService,
+                private trancheService: TrancheService,
+                private factureService: FactureService,
+                private router: Router,
     ) {
         const idrandom = 1;
-        this.selectedVente = new Vente(idrandom, new Date().toString(), 'client ' + idrandom, 0, 0, [], getUserDecodeID());
+        // this.selectedVente = new Vente(idrandom, new Date(), new User() , 0, 0, [], getUserDecodeID());
         this.listeVente.push(this.selectedVente);
         this.reglement = this.selectedVente.total;
+    }
+
+    getAllClient() {
+        this.userService.getUsersClient().subscribe((value: User[]) => {
+            this.utilisateursClients = value
+            // console.log(new JsonPipe().transform(this.utilisateurs) )
+        })
     }
 
     /*
@@ -207,12 +247,42 @@ export class CaisseComponent implements OnInit {
             }
         }
     */
+
+    confirm1() {
+
+
+        this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'Vente Payeé avec Success' });
+        this.selectedVente.paye=true;
+        this.SaveVente();
+
+        this.showPay=false
+
+    }
+
+    confirm2() {
+
+                this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'Vente Non Payeé' });
+        this.selectedVente.paye=false;
+        this.showDialogTranche=true;
+
+
+        this.showPay=false
+
+
+    }
     SaveVente() {
+
+        console.log(new JsonPipe().transform(this.selectedVente))
+
         if (this.selectedVente.lignesVente.length != 0) {
             this.getTotalVente();
             this.selectedVente.reglement = this.reglement;
+
+
             this.produitService.SaveVente(this.selectedVente).subscribe(value => {
                 if (value) {
+
+
                     this.messageService.add({
                         key: 'tc',
                         severity: 'success',
@@ -243,9 +313,11 @@ export class CaisseComponent implements OnInit {
         }
     }
 
+
     getAllProduits() {
         this.produitService.getProduits().subscribe((value: any) => {
             this.produits = value;
+            this.produitsFiltres = value;
         })
     }
 
@@ -337,7 +409,7 @@ export class CaisseComponent implements OnInit {
                 break;
             case 'F10' :
                 this.focusIndex = 10;
-                this.SaveVente();
+                this.showPay=true;
                 break;
             case 'r' :
                 this.focusIndex = 11;
@@ -429,17 +501,19 @@ export class CaisseComponent implements OnInit {
                 break;
             case 10 :
                 this.focusIndex = 10;
-                this.SaveVente();
+                this.showPay=true
                 break;
             case 11 :
                 this.focusIndex = 11;
                 this.searchTable = true;
+
+
                 break;
             case 9: {
                 if (this.selectedVente.lignesVente.length != 0) {
                     Swal.fire({
                         title: "Vous étes sur ?",
-                        text: "supprission définitif",
+                        text: "suprission définitif",
                         icon: "warning",
                         showCancelButton: true,
                         confirmButtonColor: "#3085d6",
@@ -542,7 +616,7 @@ export class CaisseComponent implements OnInit {
                     this.visible = this.IsvisiblePop;
                 }
                 if (this.IsvisiblePop == false)
-                    this.ajouterProduit()
+                    this.ajouterProduit(value)
             });
         }
     }
@@ -551,9 +625,9 @@ export class CaisseComponent implements OnInit {
         this.messageService.add({key: 'tc', severity: 'warn', summary: 'Warn', detail: message});
     }
 
-    ajouterProduitSelectionne(index: number): void {
-        if (index >= 0 && index < this.produitsFiltres.length) {
-            const produitSelectionne = this.produitsFiltres[index];
+    ajouterProduitSelectionne(produit: Produit): void {
+        if (produit) {
+            const produitSelectionne = produit;
 
             const ligneExistante = this.selectedVente.lignesVente.find(ligne => ligne.produit.id === produitSelectionne.id);
 
@@ -603,9 +677,9 @@ export class CaisseComponent implements OnInit {
         })
     }
 
-    ajouterProduit(): void {
+    ajouterProduit(produit: Produit): void {
         if (this.produitsFiltres.length > 0) {
-            this.ajouterProduitSelectionne(0);
+            this.ajouterProduitSelectionne(produit);
             this.getTottalNbProduct()
         }
     }
@@ -751,31 +825,34 @@ export class CaisseComponent implements OnInit {
 
     async showDialog() {
         const {value: nomClient} = await Swal.fire({
-            title: "Client",
+            title: "Client Passager",
             input: "text",
-            inputValue: "client " + (this.listeVente.length + 1),
+            inputValue: "Passager " + (this.listeVente.length + 1),
             inputLabel: "nom client!",
-            inputPlaceholder: "nom du clients"
+            inputPlaceholder: "nom du client passager",
+            showCancelButton: true,
+            confirmButtonText: 'Ajouter nouveau', // Texte du bouton de confirmation
+            cancelButtonText: 'Deja Existe' // Texte du bouton d'annulation
         });
-        if (nomClient) {
 
 
-            if (this.selectedVente.lignesVente.length != 0) {
+        if (this.selectedVente.lignesVente.length != 0) {
 
 
-                this.selectedVente = new Vente(this.listeVente.length + 1, new Date().toString(), nomClient, 0, 0, [], getUserDecodeID());
-                this.listeVente.push(this.selectedVente);
-                this.getTottalNbProduct()
+            // this.selectedVente = new Vente(this.listeVente.length + 1, new Date(), new User(), 0, 0, [], getUserDecodeID());
+            this.selectedVente = new Vente();
+            this.listeVente.push(this.selectedVente);
+            this.getTottalNbProduct()
 
 
-                console.log("ligne Ventes:", this.listeVente);
-            } else {
-                Swal.fire({
-                    title: "Vider  !",
-                    text: "Votre vente est déja vidé",
-                    icon: "error"
-                });
-            }
+            console.log("ligne Ventes:", this.listeVente);
+        } else {
+            Swal.fire({
+                title: "Vider  !",
+                text: "Votre vente est déja vidé",
+                icon: "error"
+            });
+
         }
     }
 
@@ -790,10 +867,180 @@ export class CaisseComponent implements OnInit {
 
 
     protected readonly top = top;
+    public showDialogueClient: boolean = false;
+    public showPay: boolean=false;
+    public showDialogTranche: boolean=false;
+    Newtranche: Tranche = new Tranche();
+    montantFiltreCalcule: boolean = false;
+    totalMontantFiltre: number = 0;
+    newFacture = new Facture();
+
+    deleteTrancheNewFacture(index: number) {
+        if (index > -1) {
+            const trancheToRemove = this.newFacture.tranches[index];
+            this.removeTranche(trancheToRemove, index);
+        }
+    }
+
+    removeTranche(tranche: Tranche, index: number) {
+        this.confirmationService.confirm({
+            message: "Vous ne pourrez pas revenir en arrière !",
+            header: "Es-tu sûr ?",
+            icon: "pi pi-exclamation-triangle",
+            acceptLabel: "Oui, supprimez-le !",
+            rejectLabel: "Non",
+            acceptButtonStyleClass: "custom-accept-button",
+            rejectButtonStyleClass: "custom-reject-button",
+            accept: () => {
+                this.trancheService.deleteTranche(tranche.id).subscribe({
+                    next: () => {
+                        this.messageService.add({
+                            severity: 'success',
+                            summary: 'Supprimé',
+                            detail: 'Votre tranche a été supprimée!',
+                            life: 2000
+                        });
+                        // Mettre à jour la liste locale après la suppression réussie
+                        this.newFacture.tranches.splice(index, 1);
+                    },
+                    error: (err) => {
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Erreur',
+                            detail: 'Il y a eu un problème lors de la suppression.',
+                            life: 2000
+                        });
+                    }
+                });
+            },
+            reject: () => {
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Annuler',
+                    detail: 'La supprission de tranche est annuler!.',
+                    life: 1000
+                });
+            }
+        });
+    }
+
+    public resetMontantFiltreCalcule() {
+
+    }
+    CalculeMontantFiltrer() {
+        const filteredTranche = this.table.filteredValue || this.newFacture.tranches;
+        this.totalMontantFiltre = filteredTranche.reduce((acc, tranche) => acc + tranche.montantTranche, 0);
+        this.montantFiltreCalcule = true;
+    }
+
+
+    AddTrancheToNewFacture() {
+        this.Newtranche.user = new User()
+        this.newFacture.tranches.push(this.Newtranche);
+        this.Newtranche = new Tranche()
+    }
+
+
+
+    returnBack() {
+        this.factureService.returnBack();
+    }
+
+
+    createNewFacture(): void {
+
+
+        // Validation des champs obligatoires
+        if (!this.validateFacture()) {
+            return;
+        }
+
+        console.log('Contenu de la facture à enregistrer :', this.newFacture);
+
+        this.confirmationService.confirm({
+            header: "facture est entièrement réglée  ?",
+            icon: "pi pi-exclamation-triangle",
+            acceptIcon: 'pi pi-check mr-2',
+            rejectIcon: 'pi pi-times mr-2',
+            rejectButtonStyleClass: 'p-button-sm',
+            acceptButtonStyleClass: 'p-button-outlined p-button-sm',
+            accept: () => {
+                this.newFacture.paye = true;
+                this.saveFactureWithVente();
+            },
+            reject: () => {
+                this.newFacture.paye = false;
+                this.saveFactureWithVente();
+            }
+        });
+    }
+
+
+    private saveFactureWithVente() {
+
+        this.newFacture.reglement=this.reglement;
+        this.newFacture.client=this.selectedVente.client;
+
+        console.log("new Facture---"+this.newFacture);
+
+
+
+    }
+
+
+
+
+
+
+
+    validateFacture(): boolean {
+        if (this.newFacture.depot.id == 0) {
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Erreur',
+                detail: 'Aucun Dépot n\'a été sélectionné pour la facture',
+                life: 3000
+
+            });
+            return false;
+        } else if (this.newFacture.lignesFacture.length == 0) {
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Erreur',
+                detail: 'Aucun produit n\'a été sélectionné pour la facture',
+                life: 3000
+
+            });
+            return false;
+        } else if (this.newFacture.client.id == 0 && this.newFacture.typeFacture !== 'FACTURE_ACHAT') {
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Erreur',
+                detail: 'Aucun client n\'a été sélectionné pour la facture',
+                life: 3000
+
+            });
+            return false;
+        } else if (this.newFacture.provider.id == 0 && this.newFacture.typeFacture == 'FACTURE_ACHAT') {
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Erreur',
+                detail: 'Aucun Fournisseur n\'a été sélectionné pour la facture',
+                life: 3000
+
+            });
+            return false;
+
+        }
+        return true;
+    }
 
 
     filterProduits() {
-        if (this.searchTermFilter) {
+        if (!this.searchTermFilter) {
+            this.produitsFiltres = [...this.produits];
+        } else {
+
             this.produitsFiltres = this.produits.filter(produit =>
                 produit.id.toString().includes(this.searchTermFilter) ||
                 produit.nom.includes(this.searchTermFilter) ||
@@ -802,10 +1049,11 @@ export class CaisseComponent implements OnInit {
                 produit.dateExpiration.toString().includes(this.searchTermFilter) ||
                 produit.dateFabrication.toString().includes(this.searchTermFilter)
             );
-        } else {
-            this.produitsFiltres = [...this.produits];
+
+
         }
     }
+
     filterServices() {
         if (this.searchTermFilterService) {
             this.serviceFiltres = this.services.filter(service =>
@@ -819,6 +1067,29 @@ export class CaisseComponent implements OnInit {
             this.serviceFiltres = [...this.services];
         }
     }
+
+    onValueChange() {
+        if (this.TypeUserSelected == 'Passager') {
+            this.userService.getUserByEmail("Passager@client").subscribe(value => {
+                this.selectedVente.client = value;
+
+            })
+
+        } else {
+            this.showDialogueClient = true;
+        }
+
+    }
+
+    public SelectedClient() {
+        this.onValueChange()
+    }
+
+    public selectClient() {
+        this.showDialogueClient = false;
+    }
+
+
 
 }
 

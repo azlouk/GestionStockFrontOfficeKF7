@@ -24,9 +24,9 @@ export class User {
     secretKey:string;
     passwordConfirm: string;
     passwordConfirm1: string;
-    authentifications:any[]=[] ;
+    authentifications:any[] ;
     userSelected:boolean=false;
-    permission:IPermission[]=[];
+    permission:IPermission[];
     pwed:string  ;
 
     constructor(_id: number = 0, _firstname: string = "", _lastname: string = "", _email: string = "", _telephone: number = 0, _adresse: string = "", _role: RoleEnum = RoleEnum.EMPLOYER, _password: string = "", _authentification: Authentification[] = [], _permission: Permission[] = [], _pwed: string = "",_secretKey: string = "") {

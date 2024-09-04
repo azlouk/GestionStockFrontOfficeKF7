@@ -21,34 +21,45 @@
                 </div>
 
                 <!-- Dates -->
-                <div class="flex">
-                    <div class="flex-auto col-12 md:col-12">
-                        <label class="font-bold block mb-2"> Réferance </label>
-                        <input pInputText [(ngModel)]="newCommandeService.reference" readonly/>
+                <div class="grid">
+                    <div class="col-12 md:col-6">
+                        <label class="font-bold block mb-2">Réferance</label>
+                        <input pInputText [(ngModel)]="newCommandeService.reference" readonly />
                     </div>
-                    <div class="flex-auto col-12 md:col-12">
-                        <label class="font-bold block mb-2"> Date de Création </label>
-                        <p-calendar [(ngModel)]="newCommandeService.dateCreation"
-                                    [touchUI]="true"
-                                    [readonlyInput]="true"
-                                    [showIcon]="true" dateFormat="yy-mm-dd"></p-calendar>
+                    <div class="col-12 md:col-6">
+                        <label class="font-bold block mb-2">Date de Création</label>
+                        <p-calendar
+                                [(ngModel)]="newCommandeService.dateCreation"
+                                [touchUI]="true"
+                                [readonlyInput]="true"
+                                [showIcon]="true"
+                                dateFormat="yy-mm-dd"
+                        ></p-calendar>
                     </div>
                 </div>
-                <div class="flex">
-                    <div class="flex-auto col-12 md:col-12">
-                        <label class="font-bold block mb-2"> Date Estimée Fin </label>
-                        <p-calendar [(ngModel)]="newCommandeService.dateEstimeeFin"
-                                    [touchUI]="true"
-                                    [showIcon]="true" dateFormat="yy-mm-dd"></p-calendar>
+
+                <div class="grid">
+                    <div class="col-12 md:col-6">
+                        <label class="font-bold block mb-2">Date Estimée Fin</label>
+                        <p-calendar
+                                [(ngModel)]="newCommandeService.dateEstimeeFin"
+                                [touchUI]="true"
+                                [showIcon]="true"
+                                dateFormat="yy-mm-dd"
+                        ></p-calendar>
                     </div>
-                    <div class="flex-auto col-12 md:col-12">
-                        <label class="font-bold block mb-2"> Date Validation/Sortie </label>
-                        <p-calendar [(ngModel)]="newCommandeService.dateValidationOuSortie"
-                                    [touchUI]="true"
-                                    [showIcon]="true" dateFormat="yy-mm-dd"></p-calendar>
+                    <div class="col-12 md:col-6">
+                        <label class="font-bold block mb-2">Date Validation/Sortie</label>
+                        <p-calendar
+                                [(ngModel)]="newCommandeService.dateValidationOuSortie"
+                                [touchUI]="true"
+                                [showIcon]="true"
+                                dateFormat="yy-mm-dd"
+                        ></p-calendar>
                     </div>
                     <!-- Nom panne description -->
                 </div>
+
                 <div class="flex flex-column gap-2 p-3  col-12 md:col-12">
                     <label class="font-bold fs-5">
                         <span class="pi pi-info-circle text-success font-bold fs-5"></span> Description
@@ -176,8 +187,8 @@
                                     </div>
                                 </p-dialog>
                             </div>
-                            <div class="flex-auto col-12 md:col-6">
-            <span class="p-input-icon-left w-full">
+                            <div class="flex-auto ">
+            <span class="p-input-icon-left ">
                 <i class="pi pi-search"></i>
                 <input pInputText type="text" [(ngModel)]="rechercheProduit"
                        (input)="dtproduit.filterGlobal(rechercheProduit, 'contains')" placeholder="Rechercher ici ..."/>
@@ -370,7 +381,7 @@
                                     [(ngModel)]="newCommandeService.status"
                                     inputId="enCours"
                             ></p-radioButton>
-                            <label for="enCours" class="m-2 font-bold text-blue-600">ENCOURS</label>
+                            <label  class="m-2 font-bold text-blue-600">ENCOURS</label>
                         </div>
                         <div class="p-mr-3 p-mb-2 col-12 md:col-4">
                             <p-radioButton
@@ -379,7 +390,7 @@
                                     [(ngModel)]="newCommandeService.status"
                                     inputId="confirme"
                             ></p-radioButton>
-                            <label for="confirme" class="m-2 font-bold text-green-600">CONFIRME</label>
+                            <label  class="m-2 font-bold text-green-600">CONFIRME</label>
                         </div>
                         <div class="p-mr-3 p-mb-2 col-12 md:col-4">
                             <p-radioButton
@@ -388,7 +399,7 @@
                                     [(ngModel)]="newCommandeService.status"
                                     inputId="retour"
                             ></p-radioButton>
-                            <label for="retour" class="m-2 font-bold text-red-600">RETOUR</label>
+                            <label  class="m-2 font-bold text-red-600">RETOUR</label>
                         </div>
                     </div>
                 </p-fieldset>
@@ -404,7 +415,7 @@
                                     [(ngModel)]="newCommandeService.paiement"
                                     inputId="paiementOui"
                             ></p-radioButton>
-                            <label for="paiementOui" class="m-2 font-bold text-green-600">Payer</label>
+                            <label  class="m-2 font-bold text-green-600">Payer</label>
                         </div>
                         <div class="p-mr-3 p-mb-2 col-12 md:col-6">
                             <p-radioButton
@@ -413,7 +424,7 @@
                                     [(ngModel)]="newCommandeService.paiement"
                                     inputId="paiementNon"
                             ></p-radioButton>
-                            <label for="paiementNon" class="m-2 font-bold text-red-600">Non payer</label>
+                            <label  class="m-2 font-bold text-red-600">Non payer</label>
                         </div>
                     </div>
                 </p-fieldset>

@@ -606,7 +606,6 @@ export class FactureAjoutComponent implements OnInit {
                 historique.prixHistoriqueAchat=l.prixAchat;
                 historique.quantiteHistoriqueAchat=l.quantite;
                 historique.dateMisAjoure = new DatePipe('en-US').transform(historique.dateMisAjoure, 'yyyy-MM-dd') as any;
-
                 l.produit.historiques.push(historique);
 
 

@@ -196,7 +196,7 @@ export class POSComponent implements OnInit,OnDestroy {
                 private ngZone: NgZone
     ) {
         const idrandom = 1;
-        this.selectedVente = new Vente(idrandom, new Date().toString(), 'client ' + idrandom, 0, 0, [], getUserDecodeID());
+        // this.selectedVente = new Vente(idrandom, new Date(), new User(), 0, 0, [], getUserDecodeID());
         this.listeVente.push(this.selectedVente);
         this.reglement = this.selectedVente.total;
     }
@@ -210,9 +210,9 @@ export class POSComponent implements OnInit,OnDestroy {
             this.selectedVente.reglement = this.reglement==0?this.selectedVente.total:this.reglement;
             // alert(new JsonPipe().transform(this.selectedVente))
             this.selectedVente.employer=new User(getUserDecodeID().id)
-            const nameclient=this.selectedVente.nomClient
-            this.selectedVente.nomClient=getTitleTicket();
-            this.selectedVente.dateVente=new Date().toString();
+            const nameclient=this.selectedVente.client.firstname
+            this.selectedVente.client.firstname=getTitleTicket();
+            this.selectedVente.dateVente=new Date();
             this.produitService.SaveVente(this.selectedVente).subscribe(value => {
                 if (value) {
                     this.clearVente();
@@ -265,7 +265,7 @@ export class POSComponent implements OnInit,OnDestroy {
             this.selectedVente.employer = new User(getUserDecodeID().id);
 
             // Sauvegarder la vente via le service produit
-            const nameclient = this.selectedVente.nomClient;
+            const nameclient = this.selectedVente.client.firstname;
 
             this.produitService.SaveVente(this.selectedVente).subscribe(value => {
                 // Vérifier si la sauvegarde a réussi
@@ -706,7 +706,7 @@ export class POSComponent implements OnInit,OnDestroy {
         });
         if (nomClient) {
             if (this.selectedVente.lignesVente.length != 0) {
-                this.selectedVente = new Vente(this.listeVente.length + 1, new Date().toString(), nomClient, 0, 0, [], getUserDecodeID());
+                // this.selectedVente = new Vente(this.listeVente.length + 1, new Date(), nomClient, 0, 0, [], getUserDecodeID());
                 this.listeVente.push(this.selectedVente);
                 this.getTottalNbProduct()
 
@@ -952,13 +952,13 @@ export class POSComponent implements OnInit,OnDestroy {
         const {value: nomClient} = await Swal.fire({
             title: "Client",
             input: "text",
-            inputValue:  this.selectedVente.nomClient,
+            inputValue:  this.selectedVente.client.firstname,
             inputLabel: "nom client!",
             inputPlaceholder: "nom du clients"
         });
         if (nomClient) {
 
-            this.selectedVente.nomClient=nomClient ;
+            this.selectedVente.client.firstname=nomClient ;
             this.listeVente=[...this.listeVente]
 
         }

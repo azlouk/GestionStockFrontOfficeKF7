@@ -17,6 +17,8 @@ import {Historique} from "../../models/historique";
 })
 export class ProduitService {
 
+    listvente: Vente[] = [];
+
     produits: Produit[] = [];
     private api = environment.apiUrl+'/produit'
     private apiarticle = environment.apiUrl+'/articles'
@@ -205,10 +207,11 @@ export class ProduitService {
 
 
     SaveVente(vente:Vente )  {
+
+
+
         const token = getToken();
 
-        // vente.dateVente=new Date();
-        // vente.dateVente = vente.dateVente.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
 
         if (token) {
             // Ajouter le token à l'en-tête de la requête
@@ -233,8 +236,9 @@ export class ProduitService {
             )
 
             const venteSave={
-                "dateVente":  this.datePipe.transform(vente.dateVente,'dd-MM-yyyy HH:mm:ss'),
-                "nomClient": vente.nomClient,
+                "paye": vente.paye,
+                "dateVente":  this.datePipe.transform(vente.dateVente,'dd-MM-yyyy'),
+                "client": {"id":vente.client.id},
                 "total": vente.total,
                 "reglement": vente.reglement,
                 "lignesVente": ligneventes,
@@ -242,7 +246,7 @@ export class ProduitService {
             }
 
 
-            console.error(venteSave)
+            console.info(venteSave)
 
             // Utiliser les headers dans la require
             return this.http.post<any>(this.apivente + '/create', venteSave,{headers} );
@@ -389,4 +393,6 @@ export class ProduitService {
             return new Observable();
         }
     }
+
+
 }

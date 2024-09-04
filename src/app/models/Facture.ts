@@ -41,13 +41,12 @@ export class Facture {
     client: User
     transporteur:User
     provider:User
-    depot: Depot
     tranches: Tranche[]
     paye: boolean
     reglement : number;
     restePayer : number
 
-    constructor(_id?: number, _reference?: string, _lignesFacture?: LigneFacture[], _montant?: number, _montantTaxe?: number, _date?: Date, _dateCreation?: Date, _typeFacture?: factureType, _client?: User, _transporteur?: User, _provider?: User, _depot?: Depot, _tranches?: Tranche[] , _paye?: boolean, _reglement?: number ,_restePayer?:number) {
+    constructor(_id?: number, _reference?: string, _lignesFacture?: LigneFacture[], _montant?: number, _montantTaxe?: number, _date?: Date, _dateCreation?: Date, _typeFacture?: factureType, _client?: User, _transporteur?: User, _provider?: User, _tranches?: Tranche[] , _paye?: boolean, _reglement?: number ,_restePayer?:number) {
         this.id = _id || 0  ;
         this.reference = _reference || '';
         this.lignesFacture = _lignesFacture || [];
@@ -59,7 +58,6 @@ export class Facture {
         this.client = _client || new User();
         this.transporteur = _transporteur || new User();
         this.provider = _provider || new User();
-        this.depot = _depot || new Depot();
         this.tranches = _tranches || [];
         this.paye = _paye || false;
         this.reglement = _reglement || 0;
@@ -154,13 +152,7 @@ export class Facture {
         this.provider = value;
     }
 
-    get _depot(): Depot {
-        return this.depot;
-    }
 
-    set _depot(value: Depot) {
-        this.depot = value;
-    }
 
     get _tranches(): Tranche[] {
         return this.tranches;

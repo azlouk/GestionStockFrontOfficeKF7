@@ -165,6 +165,15 @@ export class AjoutUserComponent implements OnInit {
             icon: 'bi-tools'
         },
         {
+            name: 'Statistiques',
+            tableName: 'statistique',
+            afficher: false,
+            modifier: false,
+            supprimer: false,
+            ajouter: false,
+            icon: 'bi-tools'
+        },
+        {
             name: 'Payement',
             tableName: 'tranche',
             afficher: false,

@@ -12,28 +12,29 @@
     <ng-template pTemplate="content">
         <p-fieldset legend="Détails facture" [toggleable]="true">
             <h3 class="font-bold"></h3>
-            <div class="flex justify-content-between">
-                <div class="p-col-12 p-md-6 d-flex align-items-center">
+            <div class="flex flex-wrap   align-items-center justify-content-center ">
+                <div class="flex-auto">
                     <div class="flex switch-label mb-2 font-bold">
-                        <label>Dépôt</label><p class="text-red-600 ml-1"> *</p>
+                        <label>Dépôt</label>
+                        <p class="text-red-600 ml-1"> *</p>
                     </div>
                     <p-dropdown [options]="depots" optionLabel="nom" placeholder="Sélectionner dépôt"
-                                [(ngModel)]="newFacture.depot" ></p-dropdown>
+                                [(ngModel)]="newFacture.depot"></p-dropdown>
                 </div>
-                <div class="p-col-12 p-md-6 d-flex align-items-center">
+                <div class="flex-auto">
                     <div class="switch-label mb-2 font-bold">
                         <label>Réference facture</label>
                     </div>
                     <input pInputText type="text" [(ngModel)]="newFacture.reference" name="reference"
                            placeholder="Exemple : FACT-00001">
                 </div>
-                <div class="p-col-12 p-md-6 d-flex align-items-center">
+                <div class="flex-auto">
                     <div class="switch-label mb-2 font-bold">
                         <label>Date facture</label>
                     </div>
                     <p-calendar [(ngModel)]="newFacture.date" [showIcon]="true" dateFormat="yy-mm-dd"></p-calendar>
                 </div>
-                <div class="p-col-12 p-md-6 d-flex align-items-center" *ngIf="!isUpdateValide">
+                <div class="flex-auto" *ngIf="!isUpdateValide">
                     <div class="switch-label mb-2 font-bold">
                         <i class="pi pi-file"></i><span>Type facture</span>
                     </div>
@@ -44,8 +45,9 @@
                 </div>
             </div>
         </p-fieldset>
-        <p-fieldset class="m-1" legend="Sélectionner Utilisateurs" [toggleable]="true">
-            <div class="justify-content-end flex align-items-end m-0 p-0">
+        <p-fieldset class="m-1 gap-2" legend="Sélectionner Utilisateurs" [toggleable]="true">
+            <div >
+            <div class="  justify-content-end flex align-items-end m-0 p-1">
                 <button pButton pRipple label="Actualiser" icon="pi pi-refresh" class="p-button-text p-button-primary "
                         (click)="refreshUser()"></button>
                 <button pButton pRipple label="Ajouter" icon="pi pi-user-plus" class="p-button-text p-button-success"
@@ -62,12 +64,10 @@
                     <app-ajout-user></app-ajout-user>
                 </p-dialog>
             </div>
-            <div class="flex p-align-start p-justify-between gap-4 p-3">
-                <div class="col-6 p-md-6 p-card   p-mb-3">
-                    <div class="card-content">
-                        <div class="p-grid p-fluid">
-                            <div class="col-6 p-md-6 p-mb-3">
-                                <label class="text-primary font-bold pi pi-user mb-2"> Transporteur</label>
+            <div class="flex   gap-2 p-3">
+                <div class="col-12 md:col-6 p-card p-mb-3 card-content grid">
+                            <div class="col-12 md:col-6 mb-3">
+                                <label class="text-primary font-bold pi pi-user "> Transporteur</label>
                                 <p-dropdown
                                         [options]="utilisateursTransporteur"
                                         [(ngModel)]="newFacture.transporteur"
@@ -75,13 +75,9 @@
                                         [filter]="true"
                                         placeholder="No Transporteur"></p-dropdown>
                             </div>
-
-
-
-
-
-                            <div class="p-col-12 p-md-12">
-                                <p-table *ngIf="newFacture.transporteur.id !== 0;else noTransporteur" [value]="[newFacture.transporteur] ">
+                            <div class="col-12">
+                                <p-table *ngIf="newFacture.transporteur.id !== 0; else noTransporteur"
+                                         [value]="[newFacture.transporteur]">
                                     <ng-template pTemplate="header">
                                         <tr class="fs-5" style="--bs-table-color: #0056b3">
                                             <th>Nom</th>
@@ -89,9 +85,7 @@
                                             <th>Email</th>
                                             <th>Téléphone</th>
                                         </tr>
-
                                     </ng-template>
-
                                     <ng-template pTemplate="body" let-transporteur>
                                         <tr>
                                             <td>{{ transporteur.firstname }}</td>
@@ -102,20 +96,16 @@
                                     </ng-template>
                                 </p-table>
                                 <ng-template #noTransporteur>
-                                    <span class="fs-5" style="font-weight: 600; color: red;">No Transporteur Assigned</span>
+                                    <span class="fs-5 font-bold text-red-600">No Transporteur Assigned</span>
                                 </ng-template>
-
                             </div>
-                        </div>
-                    </div>
                 </div>
 
-                <div class="col-6 p-md-6 p-card  p-mb-3" *ngIf="newFacture.typeFacture!=='FACTURE_ACHAT'">
-                    <div class="card-content">
-                        <div class="p-grid p-fluid">
-                            <div class="col-6 p-md-6 p-mb-3">
-                                <div class="flex">
-                                <label class="text-primary font-bold pi pi-user mb-2"> Client</label> <p class="text-red-600 ml-1"> *</p>
+                <div class="col-12 md:col-6 p-card p-mb-3 card-content grid" *ngIf="newFacture.typeFacture !== 'FACTURE_ACHAT'">
+                            <div class="col-12 md:col-6 mb-3">
+                                <div class="flex align-items-center">
+                                    <label class="text-primary font-bold pi pi-user mb-2"> Client</label>
+                                    <p class="text-red-600 ml-1"> *</p>
                                 </div>
                                 <p-dropdown
                                         [options]="utilisateursClients"
@@ -124,7 +114,7 @@
                                         [filter]="true"
                                         placeholder="Sélectionner Client"></p-dropdown>
                             </div>
-                            <div class="p-col-12 p-md-12">
+                            <div class="col-12">
                                 <p-table *ngIf="newFacture.client.id !== 0" [value]="[newFacture.client]">
                                     <ng-template pTemplate="header">
                                         <tr class="fs-5" style="--bs-table-color: #0056b3">
@@ -144,16 +134,13 @@
                                     </ng-template>
                                 </p-table>
                             </div>
-                        </div>
-                    </div>
                 </div>
 
-                <div class="col-6 p-md-6 p-card p-mb-3" *ngIf="newFacture.typeFacture=='FACTURE_ACHAT'">
-                    <div class="card-content">
-                        <div class="p-grid p-fluid">
-                            <div class="col-6 p-md-6 p-mb-3">
-                                <div class="flex">
-                                <label class="text-primary font-bold pi pi-user mb-2"> Fournisseur</label><p class="text-red-600 ml-1"> *</p>
+                <div class="col-12 md:col-6 p-card p-mb-3 card-content grid" *ngIf="newFacture.typeFacture === 'FACTURE_ACHAT'">
+                            <div class="col-12 md:col-6 mb-3">
+                                <div class="flex align-items-center">
+                                    <label class="text-primary font-bold pi pi-user mb-2"> Fournisseur</label>
+                                    <p class="text-red-600 ml-1"> *</p>
                                 </div>
                                 <p-dropdown
                                         [options]="providers"
@@ -162,7 +149,7 @@
                                         [filter]="true"
                                         placeholder="Sélectionner Fournisseur"></p-dropdown>
                             </div>
-                            <div class="p-col-12 p-md-12">
+                            <div class="col-12">
                                 <p-table *ngIf="newFacture.provider.id !== 0" [value]="[newFacture.provider]">
                                     <ng-template pTemplate="header">
                                         <tr style="--bs-table-color: #0056b3">
@@ -182,16 +169,16 @@
                                     </ng-template>
                                 </p-table>
                             </div>
-                        </div>
-                    </div>
                 </div>
+            </div>
             </div>
         </p-fieldset>
         <p-fieldset legend="Lignes Facture" [toggleable]="true">
             <div class="flex p-3 pl-4 pr-4 border-round gap-3 justify-content-center bg-gray-100 flex-column md:flex-row">
                 <div class="p-card col-12 md:col-5 justify-content-center mb-3 md:mb-0">
                     <div class="flex">
-                        <h4 class="font-bold">Sélectionner Produits</h4> <p class="text-red-600 ml-1 text-2xl"> *</p>
+                        <h4 class="font-bold">Sélectionner Produits</h4>
+                        <p class="text-red-600 ml-1 text-2xl"> *</p>
                     </div>
                     <p-table
                         #dt1
@@ -200,8 +187,7 @@
                         scrollable="true"
                         scrollHeight="20rem"
                         currentPageReportTemplate="Affichage de {first} à {last} des entrées {totalRecords}"
-                        [globalFilterFields]="['nom', 'description', 'dataqr', 'dateF','dateE']"
-                    >
+                        [globalFilterFields]="['nom', 'description', 'dataqr', 'dateF','dateE']">
                         <ng-template pTemplate="caption">
                             <div class="flex flex-wrap gap-2">
                                 <button pButton label="Effacer" class="p-button-outlined p-button-warning"
@@ -248,11 +234,11 @@
                                 <th>Prix Unit</th>
                                 <th>Prix Gros</th>
                                 <th style="min-width:4rem">
-                                         Qty Disp
-                                 </th>
+                                    Qty Disp
+                                </th>
                                 <th style="min-width:4rem">
-                                         Qty Min Gros
-                                 </th>
+                                    Qty Min Gros
+                                </th>
                                 <th style="min-width:3rem">
                                     <div class="flex align-items-center">
                                         <p field="activity" matchMode="between" display="menu"></p>
@@ -361,13 +347,15 @@
                                 </td>
                                 <td class="fw-bold fs-4 text-red-600" style="width:15%"
                                     *ngIf="newFacture.typeFacture === 'FACTURE_VENTE'">
-                                    <p-cellEditor  >
+                                    <p-cellEditor>
                                         <ng-template pTemplate="input">
-                                            <p-inputNumber [readonly]="newFacture.typeFacture === 'FACTURE_VENTE'" [(ngModel)]="l.prixVente" name="prix"
+                                            <p-inputNumber [readonly]="newFacture.typeFacture === 'FACTURE_VENTE'"
+                                                           [(ngModel)]="l.prixVente" name="prix"
                                                            (ngModelChange)="getPrixCalculateVente(l)"
                                                            mode="decimal" minFractionDigits="1" maxFractionDigits="2">
 
-                                            ></p-inputNumber>
+                                                >
+                                            </p-inputNumber>
 
                                         </ng-template>
                                         <ng-template pTemplate="output">
@@ -383,7 +371,8 @@
                                                            (ngModelChange)="calaculateFactureTotalAcht()"
                                                            mode="decimal" minFractionDigits="1" maxFractionDigits="2">
 
-                                            ></p-inputNumber>
+                                                >
+                                            </p-inputNumber>
                                         </ng-template>
                                         <ng-template pTemplate="output">
                                             {{l.prixAchat }}
@@ -413,25 +402,30 @@
                                 </td>
                             </tr>
 
-                            <p-dialog [(visible)]="typeCalculeDialogue" [style]="{width: '500px'}" header="Choisir La methode de Calcule de Prix" [modal]="true" class="p-fluid">
+                            <p-dialog [(visible)]="typeCalculeDialogue" [style]="{width: '500px'}"
+                                      header="Choisir La methode de Calcule de Prix" [modal]="true" class="p-fluid">
                                 <ng-template pTemplate="content">
                                     <div class="flex justify-content-between w-full">
                                         <div class="flex align-items-center">
-                                            <p-radioButton name="Max" value="MaxValue" [(ngModel)]="l.typeCalcule" inputId="ingredient2"/>
+                                            <p-radioButton name="Max" value="MaxValue" [(ngModel)]="l.typeCalcule"
+                                                           inputId="ingredient2"/>
                                             <label class="ml-2">Max Value</label>
                                         </div>
                                         <div class="flex align-items-center">
-                                            <p-radioButton name="Min" value="MinValue" [(ngModel)]="l.typeCalcule" inputId="ingredient3"/>
+                                            <p-radioButton name="Min" value="MinValue" [(ngModel)]="l.typeCalcule"
+                                                           inputId="ingredient3"/>
                                             <label class="ml-2">Min Value</label>
                                         </div>
                                         <div class="flex align-items-center">
-                                            <p-radioButton name="Moyen" value="MoyenValue" [(ngModel)]="l.typeCalcule" inputId="ingredient4"/>
+                                            <p-radioButton name="Moyen" value="MoyenValue" [(ngModel)]="l.typeCalcule"
+                                                           inputId="ingredient4"/>
                                             <label class="ml-2">Moyen Value</label>
                                         </div>
                                     </div>
                                 </ng-template>
                                 <ng-template pTemplate="footer">
-                                    <button pButton pRipple label="Confirmer" icon="pi pi-times" class="p-button-text" (click)="confirmerRecalculPrix(l)"></button>
+                                    <button pButton pRipple label="Confirmer" icon="pi pi-times" class="p-button-text"
+                                            (click)="confirmerRecalculPrix(l)"></button>
                                 </ng-template>
                             </p-dialog>
 
@@ -482,104 +476,77 @@
 
         </p-fieldset>
         <p-fieldset legend="Somme facture" [toggleable]="true">
-            <div class="flex align-items-center  justify-content-between">
-                <div>
-                    <label class="font-bold text-2xl block m-2">Tax : </label>
+            <div class="flex flex-column md:flex-row align-items-center justify-content-between">
+                <div class="flex flex-column col-12 md:col-4 align-items-center">
+                    <label class="font-bold text-2xl block m-2">Tax :</label>
                     <p-inputNumber [(ngModel)]="newFacture.montantTaxe" [disabled]="false" inputId="percent"
                                    prefix="%"></p-inputNumber>
                 </div>
-                <div class="flex flex-column col-4 ">
-                    <label class="block font-bold mb-2PrimaryColorTitle ml-2 text-2xl">Total : </label>
-                    <label class="text-red-600 font-bold text-center text-3xl rounded-3 m-2 card col-10"> {{getToTalFacture()|number}}
-                        TND</label>
 
+                <div class="flex flex-column col-12 md:col-4 align-items-center">
+                    <label class="block font-bold mb-2PrimaryColorTitle ml-2 text-2xl">Total :</label>
+                    <label class="text-red-600 font-bold text-center text-3xl rounded-3 m-2 card col-10">
+                        {{ getToTalFacture() | number }} TND
+                    </label>
                 </div>
-                <div>
-                    <label class="block font-bold text-2xl m-2">Réglement : </label>
+
+                <div class="flex flex-column col-12 md:col-4 align-items-center">
+                    <label class="block font-bold text-2xl m-2">Réglement :</label>
                     <p-inputNumber [(ngModel)]="newFacture.reglement" inputId="currency-us" mode="currency"
                                    currency="TND" locale="en-US"></p-inputNumber>
                 </div>
             </div>
+
         </p-fieldset>
         <p-fieldset class="m-1" legend="Ajouter tranches" [toggleable]="true">
-            <div class="flex-column">
-                <div class="flex col-12 justify-content-between align-items-center">
-                    <div class="p-field flex flex-column gap-2">
+            <div class="flex flex-column">
+                <div class="flex flex-wrap col-12 justify-content-between align-items-center">
+                    <div class="p-field flex flex-column col-12 md:col-3 gap-2">
                         <label class="text-primary-600 font-bold">Description de la tranche</label>
-                        <input pInputText type="text" [(ngModel)]="Newtranche.description" placeholder="Description"/>
+                        <input pInputText type="text" [(ngModel)]="Newtranche.description" placeholder="Description" />
                     </div>
-                    <div class="p-field flex flex-column gap-2">
+
+                    <div class="p-field flex flex-column col-12 md:col-3 gap-2">
                         <label class="text-primary-600 font-bold">Montant de la tranche</label>
-                        <p-inputNumber [(ngModel)]="Newtranche.montantTranche" mode="currency" currency="TND"
-                                       locale="en-US"></p-inputNumber>
+                        <p-inputNumber [(ngModel)]="Newtranche.montantTranche" mode="currency" currency="TND" locale="en-US"></p-inputNumber>
                     </div>
-                    <div class="p-field flex flex-column gap-2">
+
+                    <div class="p-field flex flex-column col-12 md:col-3 gap-2">
                         <label class="text-primary-600 font-bold">Date d'échéance</label>
-                        <p-calendar [(ngModel)]="Newtranche.dateEcheance" dateFormat="yy-mm-dd"
-                                    [showIcon]="true"></p-calendar>
+                        <p-calendar [(ngModel)]="Newtranche.dateEcheance" dateFormat="yy-mm-dd" [showIcon]="true"></p-calendar>
                     </div>
-                    <div class="p-field  flex flex-column gap-2">
 
+                    <div class="p-field flex flex-column col-12 md:col-3 gap-2">
                         <label class="text-primary-600 font-bold">État de paiement</label>
-                        <div class="p-d-flex p-ai-center">
-                            <p-radioButton
-                                    name="paymentStatus"
-                                    value="true"
-                                    [(ngModel)]="Newtranche.statutPayement"
-                                    inputId="paid"
-                            ></p-radioButton>
-                            <label [for]="Newtranche.statutPayement" class="ml-2" class="ml-2 font-bold text-green-600">Payé
-                            </label>
-
-                            <p-radioButton
-                                    name="paymentStatus"
-                                    value="false"
-                                    [(ngModel)]="Newtranche.statutPayement"
-                                    inputId="notPaid"
-                            ></p-radioButton>
-                            <label [for]="Newtranche.statutPayement" class="ml-2 font-bold text-red-600">Non Payé
-                            </label>
+                        <div class="flex align-items-center">
+                            <p-radioButton name="paymentStatus" value="true" [(ngModel)]="Newtranche.statutPayement" inputId="paid"></p-radioButton>
+                            <label  class="ml-2 font-bold text-green-600">Payé</label>
+                            <p-radioButton name="paymentStatus" value="false" [(ngModel)]="Newtranche.statutPayement" inputId="notPaid"></p-radioButton>
+                            <label  class="ml-2 font-bold text-red-600">Non Payé</label>
                         </div>
                     </div>
-                    <div class="flex gap-2">
-                        <div>
-                            <p-button label="Ajouter" icon="pi pi-plus"
-                                      [outlined]="true"
-                                      class="p-button-text p-button-success p-button-outlined "
-                                      (click)="AddTrancheToNewFacture()"></p-button>
-                        </div>
-                        <div>
-                            <ng-container *ngIf="!montantFiltreCalcule; else montantTemplate">
-                                <p-button label="Calcule Total"
-                                          [outlined]="true"
-                                          class="p-button-rounded p-button-primary p-button-outlined"
-                                          icon="pi pi-check"
-                                          styleClass="p-button-raised p-button-text p-button-success"
-                                          (click)="CalculeMontantFiltrer()"></p-button>
-                            </ng-container>
-                            <ng-template #montantTemplate>
-                                <div>
-        <span style="color: red; font-weight: bold;"
-              class="text-xl">
-            Total Montant :
-        </span>
-                                    <span style="color: red; font-weight: bold;"
-                                          class="text-xl ">
-            {{ totalMontantFiltre }}
-        </span>
-                                </div>
-                            </ng-template>
-                            <p-button label="Rafraîchir"
-                                      [outlined]="true"
-                                      class="p-button-rounded p-button-secondary p-button-outlined"
-                                      icon="pi pi-refresh"
-                                      styleClass="p-button-raised p-button-text p-button-info"
-                                      (click)="resetMontantFiltreCalcule()"></p-button>
-                        </div>
 
+                    <div class="flex flex-column col-12 md:col-3 gap-2">
+                        <p-button label="Ajouter" icon="pi pi-plus" [outlined]="true" class="p-button-text p-button-success p-button-outlined" (click)="AddTrancheToNewFacture()"></p-button>
+                    </div>
 
+                    <div class="flex flex-column col-12 md:col-3 gap-2">
+                        <ng-container *ngIf="!montantFiltreCalcule; else montantTemplate">
+                            <p-button label="Calcule Total" [outlined]="true" class="p-button-rounded p-button-primary p-button-outlined" icon="pi pi-check" styleClass="p-button-raised p-button-text p-button-success" (click)="CalculeMontantFiltrer()"></p-button>
+                        </ng-container>
+                        <ng-template #montantTemplate>
+                            <div>
+                                <span style="color: red; font-weight: bold;" class="text-xl">Total Montant :</span>
+                                <span style="color: red; font-weight: bold;" class="text-xl">{{ totalMontantFiltre }}</span>
+                            </div>
+                        </ng-template>
+                        <div>
+                            <p-button label="Rafraîchir" [outlined]="true" class="p-button-rounded p-button-secondary p-button-outlined" icon="pi pi-refresh" styleClass="p-button-raised p-button-text p-button-info" (click)="resetMontantFiltreCalcule()"></p-button>
+
+                        </div>
                     </div>
                 </div>
+
                 <!-- Tableau pour afficher les tranches ajoutées -->
                 <div class="mt-4 p-2 bg-gray-100" *ngIf="newFacture.tranches && newFacture.tranches.length > 0">
                     <p-table #dt3 [value]="newFacture.tranches" [tableStyle]="{ 'min-width': '50rem' }">
@@ -598,28 +565,32 @@
                                 <td>{{ tr.description }}</td>
                                 <td>{{ tr.montantTranche }}</td>
                                 <td>
-                                    <i class="pi"
-                                       [ngClass]="{ 'text-green-500 pi-check-circle': tr.statutPayement, 'text-red-500 pi-times-circle': !tr.statutPayement }"></i>
+                                    <i class="pi" [ngClass]="{ 'text-green-500 pi-check-circle': tr.statutPayement, 'text-red-500 pi-times-circle': !tr.statutPayement }"></i>
                                 </td>
                                 <td>
-                                    <p-button icon="pi pi-trash" [rounded]="true" severity="danger" [outlined]="true"
-                                              (click)="deleteTrancheNewFacture(index)"></p-button>
+                                    <p-button icon="pi pi-trash" [rounded]="true" severity="danger" [outlined]="true" (click)="deleteTrancheNewFacture(index)"></p-button>
                                 </td>
                             </tr>
                         </ng-template>
                     </p-table>
                 </div>
             </div>
+
         </p-fieldset>
     </ng-template>
     <ng-template pTemplate="footer">
         <h6 class="text-gray-500 font-bold">NB : Les champs avec des étoiles rouges sont des champs obligatoires</h6>
-        <div class="flex justify-content-end align-items-end">
+
+
+
+        <div class="flex flex-column md:flex-row md:justify-content-end md:align-items-end gap-3">
             <button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-text p-button-danger"
                     (click)="returnBack()"></button>
-            <button pButton pRipple label="{{newFacture.id==0?'Ajouter':'Enregistrer'}}" icon="pi pi-check" class="p-button-text p-button-success"
+            <button pButton pRipple label="{{newFacture.id==0?'Ajouter':'Enregistrer'}}" icon="pi pi-check"
+                    class="p-button-text p-button-success"
                     (click)="createNewFacture()"></button>
         </div>
+
     </ng-template>
 </p-card>
 
