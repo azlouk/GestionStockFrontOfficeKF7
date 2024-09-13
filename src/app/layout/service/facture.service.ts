@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import Swal from "sweetalert2";
 import {Facture, FactureInterface, factureType} from "../../models/Facture";
 import {environment} from "../../../environments/environment";
@@ -15,7 +15,6 @@ import {map} from "rxjs/operators";
 import {UserService} from "./user.service";
 import {TrancheService} from "./tranche.service";
 import {ConfirmationService, MessageService} from "primeng/api";
-import {Produit} from "../../models/produit";
 
 @Injectable({
   providedIn: 'root'
@@ -111,6 +110,7 @@ export class FactureService {
                         "prixHistoriqueAchat": value1.prixHistoriqueAchat,
                         "quantiteHistoriqueAchat": value1.quantiteHistoriqueAchat,
                         "dateMisAjoure": value1.dateMisAjoure,
+                        "idFactRefToHist": value1.idFactRefToHist,
 
                     })),
                     "article": {
@@ -122,13 +122,15 @@ export class FactureService {
                     "dateFabrication": value.produit.dateFabrication,
                     "dateExpiration": value.produit.dateExpiration,
                     "taxe": value.produit.taxe,
-                    "filesList": filesListes,
+                    "files": filesListes,
                 },
                 "quantite": value.quantite,
                 "montantTotal": value.montantTotal,
                 "prixVente": value.prixVente,
                 "prixAchat": value.prixAchat,
                 "typeCalcule": value.typeCalcule,
+                "idHistorique": value.idHistorique,
+
             });
         });
 
@@ -240,6 +242,7 @@ export class FactureService {
                         "prixHistoriqueAchat": value1.prixHistoriqueAchat,
                         "quantiteHistoriqueAchat": value1.quantiteHistoriqueAchat,
                         "dateMisAjoure": value1.dateMisAjoure,
+                        "idFactRefToHist": value1.idFactRefToHist,
                     })),
                     "dateFabrication":value.produit.dateFabrication,
                     "dateExpiration":value.produit.dateExpiration,
@@ -257,7 +260,7 @@ export class FactureService {
                 "prixVente": value.prixVente,
                 "prixAchat": value.prixAchat,
                 "typeCalcule": value.typeCalcule,
-                "id":value.id
+                "idHistorique": value.idHistorique,
             })
         })
         const fact={
@@ -280,9 +283,7 @@ export class FactureService {
             "provider":{
                 "id":newFacture.provider.id
             },
-            "depot":{
-                "id":newFacture.depot.id
-            },
+            "depot":newFacture.typeFacture==factureType.ENTREE?{"id":newFacture.depot.id }:null,
             "tranches":newFacture.tranches.map(tr => ({
                 "id": tr.id,
                 "dateEcheance":tr.dateEcheance,
@@ -303,14 +304,8 @@ export class FactureService {
             .set('Authorization', `Bearer ${token}`)
             .set('Content-Type', 'application/json; charset=utf-8');
 
-        return this.http.delete(url, { headers })
-            .pipe(
-                map(() => true),  // Transform the response to true
-                catchError(error => {
-                    console.error('Error deleting facture:', error);
-                    return of(false); // Return false in case of an error
-                })
-            );
+        return this.http.delete<boolean>(url, { headers })
+
     }
 
 
@@ -358,7 +353,15 @@ export class FactureService {
         }
     }
 
-
+    removeFactureWithUpdateProduct(newFacture: Facture): Observable<Facture> {
+        const token = getToken();
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        });
+        const url = `${this.api}/removeFactWithUpdate`;
+        return this.http.put<Facture>(url, newFacture, { headers });
+    }
 
 }
 

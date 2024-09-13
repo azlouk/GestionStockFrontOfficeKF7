@@ -13,7 +13,7 @@
         <p-fieldset legend="Détails facture" [toggleable]="true">
             <h3 class="font-bold"></h3>
             <div class="flex flex-wrap   align-items-center justify-content-center ">
-                <div class="flex-auto">
+                <div class="flex-auto" *ngIf="newFacture.typeFacture==factureType.ENTREE">
                     <div class="flex switch-label mb-2 font-bold">
                         <label>Dépôt</label>
                         <p class="text-red-600 ml-1"> *</p>
@@ -262,8 +262,8 @@
                                 <td class="text-break">
                                     {{ ProduitInter.dataqr }}
                                 </td>
-                                <td>{{ProduitInter.prixUnitaire + ProduitInter.gainUnitaire}}</td>
-                                <td>{{ProduitInter.prixUnitaire + ProduitInter.gainGros}}</td>
+                                <td>{{ProduitInter.prixUnitaire + ProduitInter.gainUnitaire  | number:'1.3-3'}}</td>
+                                <td>{{ProduitInter.prixUnitaire + ProduitInter.gainGros  | number:'1.3-3'}}</td>
                                 <td class="text-break">
                                     {{ ProduitInter.qantite }}
                                 </td>
@@ -375,12 +375,12 @@
                                             </p-inputNumber>
                                         </ng-template>
                                         <ng-template pTemplate="output">
-                                            {{l.prixAchat }}
+                                            {{l.prixAchat  | number:'1.3-3'}}
                                         </ng-template>
                                     </p-cellEditor>
                                 </td>
                                 <td class="fw-bold fs-3 text-black">
-                                    {{getMontantLigne(l)}}
+                                    {{getMontantLigne(l)  | number:'1.3-3'}}
                                 </td>
                                 <td>
                                     <div class="flex align-items-center justify-content-center gap-2">
@@ -402,12 +402,12 @@
                                 </td>
                             </tr>
 
-                            <p-dialog [(visible)]="typeCalculeDialogue" [style]="{width: '500px'}"
+                            <p-dialog *ngIf="newFacture.typeFacture==factureType.ENTREE " [(visible)]="typeCalculeDialogue" [style]="{width: '500px'}"
                                       header="Choisir La methode de Calcule de Prix" [modal]="true" class="p-fluid">
                                 <ng-template pTemplate="content">
                                     <div class="flex justify-content-between w-full">
                                         <div class="flex align-items-center">
-                                            <p-radioButton name="Max" value="MaxValue" [(ngModel)]="l.typeCalcule"
+                                            <p-radioButton name="MaxValue" value="MaxValue" [(ngModel)]="l.typeCalcule"
                                                            inputId="ingredient2"/>
                                             <label class="ml-2">Max Value</label>
                                         </div>
@@ -486,7 +486,7 @@
                 <div class="flex flex-column col-12 md:col-4 align-items-center">
                     <label class="block font-bold mb-2PrimaryColorTitle ml-2 text-2xl">Total :</label>
                     <label class="text-red-600 font-bold text-center text-3xl rounded-3 m-2 card col-10">
-                        {{ getToTalFacture() | number }} TND
+                        {{ getToTalFacture()  | number:'1.3-3' }} TND
                     </label>
                 </div>
 
@@ -563,7 +563,7 @@
                             <tr>
                                 <td>{{ tr.dateEcheance | date :'yyyy-MM-dd' }}</td>
                                 <td>{{ tr.description }}</td>
-                                <td>{{ tr.montantTranche }}</td>
+                                <td>{{ tr.montantTranche  | number:'1.3-3'}}</td>
                                 <td>
                                     <i class="pi" [ngClass]="{ 'text-green-500 pi-check-circle': tr.statutPayement, 'text-red-500 pi-times-circle': !tr.statutPayement }"></i>
                                 </td>

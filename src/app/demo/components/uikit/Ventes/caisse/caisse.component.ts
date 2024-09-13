@@ -1,4 +1,13 @@
-import {Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {
+    AfterViewChecked,
+    ChangeDetectorRef,
+    Component,
+    ElementRef,
+    HostListener,
+    OnInit,
+    Renderer2,
+    ViewChild
+} from '@angular/core';
 import Swal from "sweetalert2";
 import {Vente} from "../../../../../models/Vente";
 import {getUserDecodeID} from "../../../../../../main";
@@ -38,7 +47,7 @@ import {ServiceCompService} from "../../../../../layout/service/service-comp.ser
 import {CommandeServAjoutComponent} from "../../commandeServices/commande-serv-ajout/commande-serv-ajout.component";
 import {Cloture} from "../../../../../models/Cloture";
 import {DockModule} from "primeng/dock";
-import {RoleEnum, User} from "../../../../../models/user";
+import {User} from "../../../../../models/user";
 import {UserService} from "../../../../../layout/service/user.service";
 import {SelectButtonModule} from "primeng/selectbutton";
 import {ChipModule} from "primeng/chip";
@@ -47,9 +56,10 @@ import {FieldsetModule} from "primeng/fieldset";
 import {RadioButtonModule} from "primeng/radiobutton";
 import {CalendarModule} from "primeng/calendar";
 import {Tranche} from "../../../../../models/Tranche";
-import {Facture} from "../../../../../models/Facture";
+import {Facture, factureType} from "../../../../../models/Facture";
 import {TrancheService} from "../../../../../layout/service/tranche.service";
 import {FactureService} from "../../../../../layout/service/facture.service";
+import {LigneFacture} from "../../../../../models/LigneFacture";
 
 
 @Component({
@@ -79,7 +89,7 @@ import {FactureService} from "../../../../../layout/service/facture.service";
 })
 
 
-export class CaisseComponent implements OnInit {
+export class CaisseComponent implements OnInit, AfterViewChecked  {
     @ViewChild('dv') dv: DataView | undefined;
     @ViewChild('searchInput') searchInput: ElementRef;
     @ViewChild('dtProduitsFiltres') dtProduitsFiltres: any;
@@ -90,10 +100,7 @@ export class CaisseComponent implements OnInit {
     searchTermFilter: string = '';
     searchTermFilterService: string = '';
 
-    masquer = true;
-
-
-    produits: Produit[] = [];
+     produits: Produit[] = [];
     services: ServiceComp [] = []
     produitsFiltres: Produit [] = [];
     serviceFiltres: ServiceComp [] = [];
@@ -107,27 +114,22 @@ export class CaisseComponent implements OnInit {
     divVisible: boolean = true;
     visible: boolean = false;
     show: boolean = false;
-    identifiant = 0;
 
 
     position: string = 'top';
     loading: boolean = true;
     IsvisiblePop: boolean = false;
     layout: any = 'list';
-    searchproductselling: any = '';
-    autoimprimer: boolean = false;
-    DateCReation: Date = new Date();
-    visibleimage: boolean = false;
-    newCloture!: FormGroup;
-    frais: number = 0;
+     autoimprimer: boolean = false;
+     visibleimage: boolean = false;
+     frais: number = 0;
     reglement: number = 0;
 
     sidebarVisibleFacture: boolean = false;
     searchTable: boolean = false;
     searchTableService: boolean = false;
 
-    activityValues: number[] = [0, 100];
-    currentDate: string = this.formatDate(new Date());
+
     TotalProductNb: number = 0;
     TotalAndReglement: any = {total: 0, reglement: 0};
 
@@ -162,10 +164,10 @@ export class CaisseComponent implements OnInit {
 
     }
 
-    ngAfterViewInit(): void {
-        this.searchInput.nativeElement.focus();
-    }
+    public ngAfterViewChecked(): void {
+         this.cdRef.detectChanges();
 
+    }
     toggleDivVisibility() {
         this.divVisible = !this.divVisible;
     }
@@ -182,6 +184,7 @@ export class CaisseComponent implements OnInit {
                 private trancheService: TrancheService,
                 private factureService: FactureService,
                 private router: Router,
+                private  cdRef:ChangeDetectorRef
     ) {
         const idrandom = 1;
         // this.selectedVente = new Vente(idrandom, new Date(), new User() , 0, 0, [], getUserDecodeID());
@@ -196,57 +199,7 @@ export class CaisseComponent implements OnInit {
         })
     }
 
-    /*
-        SaveVente() {
-            if (this.selectedVente.lignesVente.length != 0) {
 
-                this.getTotalVente();
-                this.selectedVente.reglement=this.reglement ;
-                this.produitService.SaveVente(this.selectedVente).subscribe(value => {
-                    console.log("Result Vente :" + value);
-                    if (value ) {
-                        this.showTopCenter("Votre Vente est bien enregistré ")
-                        if (this.autoimprimer) {
-                            //let timerInterval: string | number | NodeJS.Timeout | undefined;
-                            Swal.fire({
-                                title: "Auto close alert!",
-                                html: "I will close in <b></b> milliseconds.",
-                                timer: 2000,
-                                timerProgressBar: true,
-                                didOpen: () => {
-                                    Swal.showLoading();
-                                    // @ts-ignore
-                                    // const timer = Swal.getPopup().querySelector("b");
-                                    // timerInterval = setInterval(() => {
-                                    //     // @ts-ignore
-                                    //     timer.textContent = `${Swal.getTimerLeft()}`;
-                                    // }, 100);
-                                },
-                                /!* willClose: () => {
-                                     clearInterval(timerInterval);
-                                 }*!/
-                            }).then((result) => {
-                                /!* Read more about handling dismissals below *!/
-                                if (result.dismiss === Swal.DismissReason.timer) {
-                                    console.log("I was closed by the timer");
-                                    this.imprimer()
-                                }
-                            });
-
-                        } else {
-                            this.clearVente();
-                        }
-                    }
-                })
-            } else {
-                Swal.fire({
-                    title: "Pas de vente ?",
-                    text: "SVP ajouter des produits ",
-                    icon: "info"
-                });
-            }
-        }
-    */
 
     confirm1() {
 
@@ -261,9 +214,9 @@ export class CaisseComponent implements OnInit {
 
     confirm2() {
 
-                this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'Vente Non Payeé' });
+
         this.selectedVente.paye=false;
-        this.showDialogTranche=true;
+       this.createNewFacture()
 
 
         this.showPay=false
@@ -391,7 +344,8 @@ export class CaisseComponent implements OnInit {
                 this.focusIndex = 5;
                 event.preventDefault();
                 console.log(`Focus set to Button 4`);
-                this.focusOnSupprimerButton();
+
+                this.searchTable = true;
                 break;
             case 'F6' :
                 this.focusIndex = 6;
@@ -411,10 +365,7 @@ export class CaisseComponent implements OnInit {
                 this.focusIndex = 10;
                 this.showPay=true;
                 break;
-            case 'r' :
-                this.focusIndex = 11;
-                this.searchTable = true;
-                break;
+
             case 'F9': {
 
                 this.focusIndex = 9;
@@ -780,7 +731,8 @@ export class CaisseComponent implements OnInit {
     getTotalVente(): number {
         const val = this.getSommeTotale() + this.getSommeTaxes() + this.frais;
         this.selectedVente.total = val;
-
+         this.selectedVente.reglement=val;
+         this.reglement=val;
         return this.selectedVente.total;
     }
 
@@ -874,6 +826,7 @@ export class CaisseComponent implements OnInit {
     montantFiltreCalcule: boolean = false;
     totalMontantFiltre: number = 0;
     newFacture = new Facture();
+    public selectedProduct: Produit;
 
     deleteTrancheNewFacture(index: number) {
         if (index > -1) {
@@ -950,38 +903,38 @@ export class CaisseComponent implements OnInit {
     createNewFacture(): void {
 
 
-        // Validation des champs obligatoires
-        if (!this.validateFacture()) {
-            return;
-        }
+        this.saveFactureWithVente();
 
         console.log('Contenu de la facture à enregistrer :', this.newFacture);
 
-        this.confirmationService.confirm({
-            header: "facture est entièrement réglée  ?",
-            icon: "pi pi-exclamation-triangle",
-            acceptIcon: 'pi pi-check mr-2',
-            rejectIcon: 'pi pi-times mr-2',
-            rejectButtonStyleClass: 'p-button-sm',
-            acceptButtonStyleClass: 'p-button-outlined p-button-sm',
-            accept: () => {
-                this.newFacture.paye = true;
-                this.saveFactureWithVente();
-            },
-            reject: () => {
-                this.newFacture.paye = false;
-                this.saveFactureWithVente();
-            }
-        });
     }
 
 
-    private saveFactureWithVente() {
+      saveFactureWithVente() {
 
-        this.newFacture.reglement=this.reglement;
+        this.newFacture.reglement=this.selectedVente.reglement;
+        alert(this.selectedVente.reglement)
         this.newFacture.client=this.selectedVente.client;
+        this.newFacture.lignesFacture=this.selectedVente.lignesVente.map(value => new LigneFacture(0,value.venteQty,value.prixVente*value.venteQty,value.produit,value.produit.prixUnitaire,value.prixVente,'NoAction'))
+        this.newFacture.montant=this.getTotalVente();
+        this.newFacture.typeFacture=factureType.SORTIE ;
+        this.newFacture.montantTaxe=0 ;
+        this.newFacture.dateCreation=this.selectedVente.dateVente ;
+        this.factureService.addFacture(this.newFacture).subscribe(value => {
+             if (value){
+                 this.messageService.add({ severity: 'info', summary: 'Facture est bien enregistré', detail: 'Vente Non Payeé' });
+                 this.clearVente();
+
+
+             }
+        },error => {
+            this.messageService.add({ severity: 'error', summary: 'Rejected', detail: error });
+        })
+
 
         console.log("new Facture---"+this.newFacture);
+
+
 
 
 
@@ -1069,15 +1022,17 @@ export class CaisseComponent implements OnInit {
     }
 
     onValueChange() {
-        if (this.TypeUserSelected == 'Passager') {
+          if (this.TypeUserSelected == 'Passager') {
             this.userService.getUserByEmail("Passager@client").subscribe(value => {
                 this.selectedVente.client = value;
 
             })
 
-        } else {
+        } else if(this.TypeUserSelected == 'CLient'){
             this.showDialogueClient = true;
-        }
+        }else {
+             this.TypeUserSelected='Passager'
+         }
 
     }
 
@@ -1086,8 +1041,10 @@ export class CaisseComponent implements OnInit {
     }
 
     public selectClient() {
-        this.showDialogueClient = false;
+         this.showDialogueClient = false;
     }
+
+
 
 
 

@@ -13,16 +13,7 @@
                                 (click)="refrech()"
                         ></button>
                         </div>
-                    <div class="flex-auto" >
-                        <button
-                                pButton
-                                pRipple
-                                icon="pi pi-key"
-                                (click)="goToClotures()"
-                                class="p-button-outlined p-button-primary"
-                                label="Clotures"
-                        ></button>
-                    </div>
+
                     <div class="flex flex-auto    ">
 
                         <p-button
@@ -51,7 +42,7 @@
         <div class="row  m-2  p-2 ">
             <div class="text-3xl font-bold">Total Ventes</div>
             <div class="text-3xl text-green-500 w-25 shadow-1 m-2 p-2">
-                {{total.toFixed(3)}} TND
+                {{total.toFixed(3)  | number:'1.3-3'}} TND
             </div>
             <div class="   flex justify-content-between flex-wrap  ">
                 <div class="flex-auto">
@@ -98,7 +89,7 @@
                             </div>
 
                             <div class="flex justify-content-end">
-                            <p-button label="Facturation" icon="pi pi-file-check" (click)="transferSelected()" class="ml-2"></p-button>
+                            <p-button label="Collapes to Facture" icon="pi pi-file-check" (click)="transferSelected()" class="ml-2"></p-button>
                             </div>
                         </div>
                     </ng-template>
@@ -182,8 +173,8 @@
                                    [ngClass]="{ 'text-green-500 pi-check-circle': vente.paye==true, 'text-red-500 pi-times-circle': vente.paye==false }"></i>
                             </td>                            <td style="width: 10%" class="fw-bold">{{ vente.dateVente }}</td>
                             <td style="width: 10%" class="fw-bold">{{ vente.client.firstname }} {{ vente.client.lastname }}</td>
-                            <td style="width: 10%" class="text-success fw-bold">{{ vente.total }} TND</td>
-                            <td style="width: 10%" class="text-success fw-bold">{{ vente.reglement }} TND</td>
+                            <td style="width: 10%" class="text-success fw-bold">{{ vente.total   | number:'1.3-3'}} TND</td>
+                            <td style="width: 10%" class="text-success fw-bold">{{ vente.reglement  | number:'1.3-3' }} TND</td>
                             <td style="width: 10%" class="fw-bold">{{ vente.employer.firstname }} {{ vente.employer.firstname }}</td>
                             <td style="width: 25%">
                                 <p-table [value]="vente.lignesVente" class="shadow-lg m-2 rounded-2 w-100">
@@ -206,7 +197,7 @@
                                                           styleClass="p-button-rounded p-button-primary p-button-text"></p-button>
                                             </td>
                                             <td>{{ ligneVente.qtyV }}</td>
-                                            <td class="text-success">{{ ligneVente.prixVente | currency: 'TND': 'TND' }}</td>
+                                            <td class="text-success">{{ ligneVente.prixVente | currency: 'TND': 'TND'  | number:'1.3-3'}}</td>
                                         </tr>
                                     </ng-template>
                                 </p-table>
@@ -218,101 +209,6 @@
                         </tr>
                     </ng-template>
                 </p-table>
-
-
-
-<!--                <p-table #dt-->
-<!--                         [scrollable]="true"-->
-<!--                         [value]="ventes"-->
-<!--                         [(selection)]="selectedVentes"-->
-<!--                         [globalFilterFields]="['id', 'client.firstname', 'client.lastname', 'dateVente', 'total', 'reglement', 'employer.lastname', 'employer.firstname', 'lignesVente.produit.nom', 'lignesVente.produit.dataQr']"-->
-<!--                         [rows]="10"-->
-<!--                         [showCurrentPageReport]="true"-->
-<!--                         [rowsPerPageOptions]="[10, 25, 50]"-->
-<!--                         [loading]="loading"-->
-<!--                         [paginator]="true"-->
-<!--                         currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords} éléments"-->
-<!--                         [sortField]="'dateVente'"-->
-<!--                         [sortOrder]="-1"-->
-<!--                         [rowHover]="true"-->
-<!--                         dataKey="id">-->
-
-<!--                    <ng-template pTemplate="caption">-->
-<!--                        <div class="flex">-->
-<!--            <span class="p-input-icon-left" style="justify-content: flex-end;">-->
-<!--                <i class="pi pi-search"></i>-->
-<!--                <input pInputText type="text" [(ngModel)]="searchTerm" (input)="dt.filterGlobal(searchTerm, 'contains')"-->
-<!--                       placeholder="Rechercher ..." class="p-inputtext"/>-->
-<!--            </span>-->
-<!--                            <p-button label="Transférer" icon="pi pi-external-link" (click)="transferSelected()" class="ml-2"></p-button>-->
-<!--                        </div>-->
-<!--                    </ng-template>-->
-
-<!--                    <ng-template pTemplate="header">-->
-<!--                        <tr class="fs-4">-->
-<!--                            <th style="width: 5%">-->
-<!--                                <p-tableHeaderCheckbox></p-tableHeaderCheckbox>-->
-<!--                            </th>-->
-<!--                            <th pSortableColumn="id">ID<p-sortIcon field="id"></p-sortIcon></th>-->
-<!--                            <th pSortableColumn="client.firstname">Nom Client<p-sortIcon field="client.firstname"></p-sortIcon></th>-->
-<!--                            <th pSortableColumn="dateVente">Date Vente<p-sortIcon field="dateVente"></p-sortIcon></th>-->
-<!--                            <th pSortableColumn="total" style="width: 10%; color:#0056b3">-->
-<!--                                <p-sortIcon field="total"></p-sortIcon>Total-->
-<!--                            </th>-->
-<!--                            <th pSortableColumn="employer.lastname" style="width: 10%; color:#0056b3">-->
-<!--                                <p-sortIcon field="employer.lastname"></p-sortIcon>Employé-->
-<!--                            </th>-->
-<!--                            <th style="width: 35%; color:#0056b3">Lignes de Vente</th>-->
-<!--                            <th style="width: 5%"></th>-->
-<!--                        </tr>-->
-<!--                    </ng-template>-->
-
-<!--                    <ng-template pTemplate="body" let-vente let-rowIndex="rowIndex">-->
-<!--                        <tr [ngClass]="{'row-even': (rowIndex % 2 === 0), 'row-odd': (rowIndex % 2 !== 0)}">-->
-<!--                            <td>-->
-<!--                                <p-tableCheckbox [value]="vente"></p-tableCheckbox>-->
-<!--                            </td>-->
-<!--                            <td style="width: 10%" class="fw-bold">{{ vente.id }}</td>-->
-<!--                            <td style="width: 10%" class="fw-bold">{{ vente.client.firstname }} {{ vente.client.lastname }}</td>-->
-<!--                            <td style="width: 10%" class="fw-bold">{{ vente.dateVente | date:'dd/MM/yyyy' }}</td>-->
-<!--                            <td style="width: 10%" class="text-success fw-bold">{{ vente.total | currency:'TND' }}</td>-->
-<!--                            <td style="width: 10%" class="fw-bold">{{ vente.employer.lastname }} {{ vente.employer.firstname }}</td>-->
-<!--                            <td style="width: 35%">-->
-<!--                                <p-table [value]="vente.lignesVente" class="shadow-lg m-2 rounded-2 w-100">-->
-<!--                                    <ng-template pTemplate="header">-->
-<!--                                        <tr>-->
-<!--                                            <th style="width: 35%">Produit</th>-->
-<!--                                            <th style="width: 30%">Quantité</th>-->
-<!--                                            <th style="width: 30%">Prix de Vente</th>-->
-<!--                                            <th class="float-end" style="width: 5%">-->
-<!--                                                <p-button icon="pi pi-eye" (click)="visibleLigneVente(vente)"-->
-<!--                                                          styleClass="p-button-rounded-sm p-button-primary p-button-outlined p-button-text"></p-button>-->
-<!--                                            </th>-->
-<!--                                        </tr>-->
-<!--                                    </ng-template>-->
-<!--                                    <ng-template pTemplate="body" let-ligneVente let-rowIndex="rowIndex">-->
-<!--                                        <tr [ngClass]="{'row-even': (rowIndex % 2 === 0), 'row-odd': (rowIndex % 2 !== 0)}" *ngIf="showTable || vente.visible">-->
-<!--                                            <td>-->
-<!--                                                {{ ligneVente.produit.nom }}-->
-<!--                                                <p-button icon="pi pi-eye" (click)="detailproduit(ligneVente.produit)"-->
-<!--                                                          styleClass="p-button-rounded p-button-primary p-button-text"></p-button>-->
-<!--                                            </td>-->
-<!--                                            <td>{{ ligneVente.qtyV }}</td>-->
-<!--                                            <td class="text-success">{{ ligneVente.prixVente | currency:'TND' }}</td>-->
-<!--                                        </tr>-->
-<!--                                    </ng-template>-->
-<!--                                </p-table>-->
-<!--                            </td>-->
-<!--                            <td style="width: 5%">-->
-<!--                                <p-button icon="pi pi-times" (click)="removeVente(vente.id)"-->
-<!--                                          styleClass="p-button-rounded p-button-danger p-button-text p-button-raised"></p-button>-->
-<!--                            </td>-->
-<!--                        </tr>-->
-<!--                    </ng-template>-->
-<!--                </p-table>-->
-
-
-
 
 
 

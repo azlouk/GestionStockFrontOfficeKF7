@@ -65,6 +65,7 @@ export class ClotureComponent implements OnInit {
       this.clotures = data;
       this.loading = false;
       this.cdr.detectChanges(); // Trigger change detection
+      console.log(data)
     });
   }
 

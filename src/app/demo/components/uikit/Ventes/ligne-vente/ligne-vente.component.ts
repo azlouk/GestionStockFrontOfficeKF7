@@ -289,7 +289,7 @@ export class LigneVenteComponent implements OnInit {
                         Swal.fire({
 
                             title: "Succès",
-                            text: "Transfert de facturation réussi.",
+                            text: "Transfert et collapes de factures réussi.",
                             icon: "success"
                         });
                     },
@@ -304,21 +304,7 @@ export class LigneVenteComponent implements OnInit {
                     }
                 });
 
-        //         // Réinitialiser selectedVentes après tentative de transfert
-        //         this.selectedVentes = [];
-        //     } else {
-        //         Swal.fire({
-        //             title: "Échec de la facturation!",
-        //             text: "Votre liste de ventes n'appartient pas à un seul client!",
-        //             icon: "error"
-        //         });
-        //     }
-        // } else {
-        //     Swal.fire({
-        //         title: "Attention",
-        //         text: "Aucune vente sélectionnée pour le transfert.",
-        //         icon: "warning"
-        //     });
+            this.router.navigate(['/uikit/Ventes']);
         }
     }
 

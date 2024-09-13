@@ -16,12 +16,12 @@
         <div class="flex flex-column align-items-center">
             <label class="mb-2 font-bold">Focus</label>
             <button pButton type="button" label="F 3" icon="pi pi-search" class="p-button-outlined p-button-primary"
-                    [ngClass]="{'activeBtn': isButtonFocused(3)}" (click)="onButtonClick(3)" accesskey="R"></button>
+                    [ngClass]="{'activeBtn': isButtonFocused(3)}" (click)="onButtonClick(3)" accesskey="F3"></button>
         </div>
         <div class="flex flex-column align-items-center">
             <label class="mb-2 font-bold">Recherche</label>
-            <button pButton type="button" label="R" icon="pi pi-search" class="p-button-outlined p-button-primary"
-                    [ngClass]="{'activeBtn': isButtonFocused(11)}" (click)="onButtonClick(11)" accesskey="F3"></button>
+            <button pButton type="button" label="F5" icon="pi pi-search" class="p-button-outlined p-button-primary"
+                    [ngClass]="{'activeBtn': isButtonFocused(11)}" (click)="onButtonClick(11)" accesskey="F5"></button>
         </div>
         <div class="flex flex-column align-items-center">
             <label class="mb-2 font-bold">Vider</label>
@@ -77,341 +77,356 @@
 
     <div class="card flex align-items-center flex-column w-full   gap-2 m-auto">
 
-        <div class=" flex overflow-hidden flex-wrap w-full">
-            <div class="flex align-items-center   flex-wrap ">
+                    <div class=" flex overflow-hidden flex-wrap w-full  card">
+
+                            <!-- Search Input Section -->
+                            <div class="flex-grow-1 flex-shrink-1 card  flex-row align-items-center justify-content-center  font-bold p-4 m-3 border-round">
+                                <div class="flex-row w-full ">
+                                    <div class="flex-auto mb-2">
+                                        <p-checkbox label="Afficher détails" [(ngModel)]="IsvisiblePop" data-bs-toggle="tooltip" [binary]="true"
+                                                    inputId="binary"></p-checkbox>
+                                    </div>
+                                    <div class="flex-auto mb-4">
+                                        <p-inputGroup>
+                                            <p-inputGroupAddon>
+                                                <i class="pi pi-barcode" style="font-size: 2rem; color:#3737d4"></i>
+                                            </p-inputGroupAddon>
+                                            <input #searchInput pInputText placeholder="Code à barre" [(ngModel)]="searchTerm"
+                                                   (ngModelChange)="search()" type="text">
+                                        </p-inputGroup>
+                                    </div>
 
 
-                <!-- Search Input Section -->
-                <div class="flex-row align-items-center justify-content-center  font-bold p-4 m-3 border-round">
-                    <div class="flex-row w-full ">
-                        <div class="flex-auto mb-2">
-                            <p-checkbox label="Afficher" [(ngModel)]="IsvisiblePop" data-bs-toggle="tooltip" [binary]="true"
-                                        inputId="binary"></p-checkbox>
+                                </div>
+                                <label class="mb-2  font-bold ">Type Client</label>
+
+                                <div class="flex align-items-center justify-content-between gap-3">
+
+                                <div class=" flex  flex-column gap-3 mt-2   card  p-2">
+
+                                    <div class="flex flex-wrap gap-3 ">
+                                        <div class="flex align-items-center">
+                                            <p-radioButton
+                                                    name="Passager"
+                                                    value="Passager"
+                                                    [(ngModel)]="TypeUserSelected"
+                                                    inputId="pass1" />
+                                            <label   class="ml-2">
+                                                Passager
+                                            </label>
+                                        </div>
+
+                                        <div class="flex align-items-center gap-2">
+                                            <p-radioButton
+                                                    name="Client"
+                                                    value="Client"
+                                                    [(ngModel)]="TypeUserSelected"
+                                                    inputId="ingredient2" />
+                                            <label  class="ml-2">
+                                                Client
+                                            </label>
+                                            <span *ngIf="TypeUserSelected=='Client'" class=" pi pi-eye  cursor-pointer text-blue-500 " (click)="showDialogueClient=!showDialogueClient"></span>
+                                        </div>
+                                   </div>
+                                    <div class=" flex justify-content-center   gap-2 flex-wrap" *ngIf="TypeUserSelected == 'Client'" >
+                                         <p-chip label="{{selectedVente.client.firstname.toString()}}" icon="pi pi-user" [removable]="false" [styleClass]="'custom-green-chip'" />
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
+
                         </div>
-                        <div class="flex-auto mb-4">
-                            <p-inputGroup>
-                                <p-inputGroupAddon>
-                                    <i class="pi pi-barcode" style="font-size: 2rem; color:#3737d4"></i>
-                                </p-inputGroupAddon>
-                                <input #searchInput pInputText placeholder="Code à barre" [(ngModel)]="searchTerm"
-                                       (ngModelChange)="search()" type="text">
-                            </p-inputGroup>
+                        <!-- Frais and Reglement Section -->
+                            <div class="flex-shrink-0  flex-column  flex align-items-center justify-content-center  font-bold p-4 m-3 border-round gap-3">
+                            <div class="flex flex-column  ">
+                                <label htmlFor="frais">Frais</label>
+                                <p-inputNumber
+                                        pTooltip="Frais supp"
+                                        [(ngModel)]="frais"
+                                        mode="currency"
+                                        inputId="currency-tunisia"
+                                        currency="TND"
+                                        currencyDisplay="code"
+                                        locale="en-IN">
+                                </p-inputNumber>
+                            </div>
+
+                            <div class="flex flex-column ">
+                                <label htmlFor="reglement">Réglement</label>
+                                <p-inputNumber [(ngModel)]="reglement" pTooltip="reglement"
+                                               mode="currency" inputId="currency-india" currency="TND" currencyDisplay="code"
+                                               locale="en-IN"></p-inputNumber>
+                            </div>
                         </div>
+                        <!-- Total Vente Section -->
+                           <div class="flex-grow-1 flex-shrink-1 card bg-black-alpha-10 flex flex-column      align-items-center justify-content-center       font-bold p-4 m-3 border-round">
+                            <h4 class="text-red-600 text-6xl">{{getTotalVente() | currency :'TND': ''  | number:'1.3-3'}}</h4>
+                            <h3 class="text-red-600">TND</h3>
+                            </div>
 
 
-                    </div>
-                    <label class="mb-2  font-bold ">Type Client</label>
 
-                    <div class="flex align-items-center justify-content-between gap-3">
 
-                    <div class=" flex justify-content-start mt-2">
-                        <p-selectButton
-                                [options]="stateOptions"
-                                [(ngModel)]="TypeUserSelected"
-                                (ngModelChange)="onValueChange()"
-
-                        optionLabel="label"
-                                optionValue="TypeUserSelected" />
-                    </div>
-                        <div class=" flex align-items-center gap-2 flex-wrap" *ngIf="TypeUserSelected == 'Client'" >
-                            <p-chip label={{selectedVente.client.firstname}} icon="pi pi-user" [removable]="true" [styleClass]="'custom-green-chip'" />
-                        </div>
-                    </div>
                 </div>
+                    <div class=" card flex flex-column w-full">
+                    <p-table
+                            [value]="selectedVente.lignesVente"
+                            selectionMode="single"
+                            [(selection)]="selectedProduct"
+                            [metaKeySelection]="true" dataKey="id"
+                            class="w-wrap "   [tableStyle]="{'min-width': '50rem'}"
+                            styleClass="p-datatable-striped" >
+                        <!-- Header -->
+                        <ng-template pTemplate="header">
+                            <tr  >
+                                <th class="  text-primary font-bold">Nom Produit</th>
+                                <th class="  text-primary font-bold">Code Barre</th>
+                                <th class="  text-primary font-bold">Date</th>
+                                <th class="  text-primary font-bold">Qty Min Gros</th>
+                                <th class="  text-primary font-bold">Prix Vente (TND)</th>
+                                <th class="  text-primary font-bold">Quantité vente</th>
+                                <th class="  text-primary font-bold">Total</th>
+                                <th class="flex-auto text-primary font-bold">
+                                    <p-avatar icon="pi pi-box"   pBadge [value]="TotalProductNb + ''"
 
+                                              [style]="{'background-color': '#ffffff', color: 'rgba(107,232,80,0.73)'}">
+                                    </p-avatar>
+                                </th>
+                            </tr>
+                        </ng-template>
 
+                        <!-- Body -->
+                        <ng-template pTemplate="body" let-ligneVente let-index="rowIndex">
+                            <tr >
+                                <td  >
+                                    <span class="font-bold fs-3">{{ ligneVente.produit.nom }}</span>
+                                </td>
+                                <td  >
+                                    <span class="pi pi-qrcode text-success fs-3"></span>{{ ligneVente.produit.dataqr }}
+                                </td>
+                                <td >
+                                    <label class="flex"> FAB : {{ ligneVente.produit.dateFabrication | date: 'yyyy-MM-dd' }}</label>
+                                     <label class="flex">EXP : {{ ligneVente.produit.dateExpiration | date: 'yyyy-MM-dd' }}</label>
+                                </td>
+                                <td >
+                                    {{ ligneVente.produit.minQuantiteGros }}
+                                </td>
+                                <td >{{ ligneVente.prixVente  | number:'1.3-3' }}</td>
+                                <td >
+                                    <p-inputNumber
+                                            [(ngModel)]="ligneVente.venteQty"
+                                            [showButtons]="true"
+                                            (ngModelChange)="updatePrixVente(ligneVente)" [min]="1"
+                                            [max]="ligneVente.produit.qantite"
+                                            buttonLayout="horizontal"
+                                            spinnerMode="horizontal"
+                                            inputId="horizontal"
+                                            [inputStyle]="{'width': '50px'}"
+                                            decrementButtonClass="p-button-danger"
+                                            incrementButtonClass="p-button-success"
+                                            incrementButtonIcon="pi pi-plus"
+                                            decrementButtonIcon="pi pi-minus" />
+                                </td>
+                                <td  >{{ ligneVente.venteQty * ligneVente.prixVente | number }}</td>
+                                <td >
+                                    <p-button icon="pi pi-trash" styleClass="p-button-raised p-button-text p-button-warning"
+                                              id="suppLigneVente" (click)="supprimerProduit(index)"></p-button>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                     </div>
+                                <p-dialog
+                                        header="Produits"
+                                        [modal]="true"
+                                        [visible]="IsvisiblePop"
+                                        [style]="{ width: '50rem' }"
+                                        [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+                                        [maximizable]="true">
+                                    <p-table [value]="produitsFiltres" class="p-table">
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Code Barre/QR</th>
+                                                <th>Nom</th>
+                                                <th>Prix Unitaire</th>
+                                                <th>Prix Gros</th>
+                                                <th>Quantité</th>
+                                                <th>Qte Gros Min</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-produit>
+                                            <tr>
+                                                <td>{{ produit.id }}</td>
+                                                <td>{{ produit.dataqr }}</td>
+                                                <td>{{ produit.nom }}</td>
+                                                <td>{{ produit.prixUnitaire + produit.gainUnitaire }}</td>
+                                                <td>{{ produit.prixGros + produit.gainGros }}</td>
+                                                <td>{{ produit.qantite }}</td>
+                                                <td>{{ produit.minQuantiteGros }}</td>
+                                                <td>
+                                                    <button pButton type="button" label="F2" icon="pi pi-cart-plus" id="addp{{produit.id}}"
+                                                            #ajouterProduitButton
+                                                            class="p-button-rounded p-button-outlined p-button-text p-button-success mr-2"
+                                                            (click)="ajouterProduit(produit)"></button>
+                                                </td>
+                                            </tr>
+                                        </ng-template>
+                                    </p-table>
 
+                                </p-dialog>
+                                <p-dialog
+                                        header="Produits"
+                                        [visible]="searchTable"
+                                        [modal]="true"
+                                        [style]="{ width: '70rem' }"
+                                        [closable]="false"
+                                        position="top">
+                                    <input pInputText type="text" [(ngModel)]="searchTermFilter"
+                                           (input)="filterProduits()"
+                                           placeholder="Rechercher ici ..."/>
+                                    <p-table #dtProduitsFiltres [value]="produitsFiltres"
+                                             [globalFilterFields]="['nom', 'description', 'dataqr', 'dateF', 'dateE']" class="p-table">
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Code Barre/QR</th>
+                                                <th>Nom</th>
+                                                <th>Prix Unitaire</th>
+                                                <th>Prix Gros</th>
+                                                <th>Quantité</th>
+                                                <th>Qte Gros Min</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-produit>
+                                            <tr>
+                                                <td>{{ produit.id }}</td>
+                                                <td>{{ produit.dataqr }}</td>
+                                                <td>{{ produit.nom }}</td>
+                                                <td>{{ produit.prixUnitaire + produit.gainUnitaire }}</td>
+                                                <td>{{ produit.prixGros + produit.gainGros }}</td>
+                                                <td>{{ produit.qantite }}</td>
+                                                <td>{{ produit.minQuantiteGros }}</td>
+                                                <td>
+                                                    <button pButton type="button" label="F2" icon="pi pi-cart-plus" id="addp{{produit.id}}"
+                                                            #ajouterProduitButton
+                                                            class="p-button-rounded p-button-outlined p-button-text p-button-success mr-2"
+                                                            (click)="ajouterProduit(produit)"></button>
+                                                </td>
+                                            </tr>
+                                        </ng-template>
+                                    </p-table>
+                                    <p-footer>
+                                        <div style="display: flex; justify-content: flex-end; width: 100%;">
+                                            <button pButton pRipple label="Fermer" icon="pi pi-times" class="p-button-text p-button-danger"
+                                                    (click)="searchTable=false"></button>
+                                        </div>
+                                    </p-footer>
+                                </p-dialog>
+                                <p-toast position="top-center" class="bg-info" key="tc"></p-toast>
+                                <p-dialog header="Clôture Caisse" [maximizable]="true" [modal]="true" [(visible)]="show"
+                                          [style]="{ width: '40vw' }">
+                                    <ng-template pTemplate="content">
+                                        <div class="subscribe  m-5 justify-content-center">
+                                            <div>
+                                                <h1 class="text-center text-primary">Sauvegarder la clôture de caisse</h1>
+                                                <div class="container-lg mt-2 shadow-lg p-3 mb-5 bg-body-tertiary rounded">
+                                                    <h4 class=" bi-lock font-bold">Détails de la clôture</h4>
+                                                    <div class="colorShadow flex flex-column md:flex-row gap-3 p-2">
+                                                        <div class="col-6  ">
+                                                            <span class="font-bold text-6xl text-primary">Total clôture</span>
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <span class="ml-2 text-6xl text-red-600 font-bold">{{TotalAndReglement.total.toFixed(3)  }}</span>
+                                                            <span class="font-bold text-red-600">TND</span>
+                                                        </div>
+                                                    </div>
 
+                                                    <div class=" card flex">
+                                                        <div class="flex-auto ">
+                                                            <label class="font-bold text-6xl text-red-600">Montant Espéce </label>
+                                                            <p-inputNumber inputId="espece" [size]="24" pTooltip=" prix unitaire  d'achat"
+                                                                           mode="currency" inputId="currency-india" currency="TND"
+                                                                           currencyDisplay="code" locale="en-IN"
+                                                                           [(ngModel)]="cloture.montantClotureEspece"></p-inputNumber>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class=" flex justify-content-end align-items-end">
+                                                <button pButton type="button" label="Clôture" icon="pi pi-calculator"
+                                                        class="p-button-rounded p-button-outlined p-button-text p-button-success mr-2"
+                                                        (click)="saveCloture()"></button>
+                                            </div>
+                                        </div>
 
-            </div>
-
-            <!-- Frais and Reglement Section -->
-            <div class="flex-grow-1 flex-column flex-shrink-1 flex align-items-center justify-content-center  font-bold p-4 m-3 border-round gap-3">
-                <div class="flex flex-column  ">
-                    <label htmlFor="frais">Frais</label>
-                    <p-inputNumber
-                            pTooltip="Frais supp"
-                            [(ngModel)]="frais"
-                            mode="currency"
-                            inputId="currency-tunisia"
-                            currency="TND"
-                            currencyDisplay="code"
-                            locale="en-IN">
-                    </p-inputNumber>
-                </div>
-
-                <div class="flex flex-column ">
-                    <label htmlFor="reglement">Réglement</label>
-                    <p-inputNumber [ngModel]="getTotalVente()" pTooltip="reglement" (ngModelChange)="reglement = $event"
-                                   mode="currency" inputId="currency-india" currency="TND" currencyDisplay="code"
-                                   locale="en-IN"></p-inputNumber>
-                </div>
-            </div>
-            <!-- Total Vente Section -->
-            <div class=" card flex flex-column flex-grow-1 flex-shrink-0 flex align-items-center justify-content-center  font-bold p-4 m-3 border-round">
-                <h4 class="text-red-600">{{getTotalVente() | currency :'TND': '' }}</h4>
-                <h3 class="text-red-600">TND</h3>
-            </div>
-        </div>
-
+                                    </ng-template>
+                                </p-dialog>
+                                <p-sidebar [(visible)]="sidebarVisibleFacture" [fullScreen]="true">
+                                    <ng-template pTemplate="header">
+                                        <span class="font-semibold text-xl">
+                                        </span>
+                                    </ng-template>
+                                    <app-facture-ajout></app-facture-ajout>
+                                </p-sidebar>
+                                <p-dialog
+                                        header="Services"
+                                        [visible]="searchTableService"
+                                        [modal]="true"
+                                        [style]="{ width: '70rem' }"
+                                        [closable]="false"
+                                        position="top">
+                                    <input pInputText type="text" [(ngModel)]="searchTermFilterService"
+                                           (input)="filterServices()"
+                                           placeholder="Rechercher ici ..."/>
+                                    <p-table #dtProduitsFiltreservice [value]="serviceFiltres"
+                                             [globalFilterFields]="['nomServiceComp', 'description', 'dataqr', 'dateF', 'dateE']" class="p-table">
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Nom</th>
+                                                <th>Description</th>
+                                                <th>g</th>
+                                                <th>Quantité</th>
+                                                <th>Qte Gros Min</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-produit>
+                                            <tr>
+                                                <td>{{ produit.id }}</td>
+                                                <td>{{ produit.dataqr }}</td>
+                                                <td>{{ produit.nom }}</td>
+                                                <td>{{ produit.prixUnitaire + produit.gainUnitaire }}</td>
+                                                <td>{{ produit.prixGros + produit.gainGros }}</td>
+                                                <td>{{ produit.qantite }}</td>
+                                                <td>{{ produit.minQuantiteGros }}</td>
+                                                <td>
+                                                    <button pButton type="button" label="F2" icon="pi pi-cart-plus" id="addp{{produit.id}}"
+                                                            #ajouterProduitButton
+                                                            class="p-button-rounded p-button-outlined p-button-text p-button-success mr-2"
+                                                            (click)="ajouterProduit(produit)"></button>
+                                                </td>
+                                            </tr>
+                                        </ng-template>
+                                    </p-table>
+                                    <p-footer>
+                                        <div style="display: flex; justify-content: flex-end; width: 100%;">
+                                            <button pButton pRipple label="Fermer" icon="pi pi-times" class="p-button-text p-button-danger"
+                                                    (click)="searchTableService=false"></button>
+                                        </div>
+                                    </p-footer>
+                                </p-dialog>
 
     </div>
 
 
-
-
-
-
-
-
-
-
-    <div>
-        <p-table [value]="selectedVente.lignesVente" class="w-wrap ">
-            <!-- Header -->
-            <ng-template pTemplate="header">
-                <tr class="flex flex-wrap justify-content-center align-items-center  text-white p-2">
-                    <th class="flex-auto text-primary font-bold">Nom Produit</th>
-                    <th class="flex-auto text-primary font-bold">Code Barre</th>
-                    <th class="flex-auto text-primary font-bold">Date</th>
-                    <th class="flex-auto text-primary font-bold">Qty Min Gros</th>
-                    <th class="flex-auto text-primary font-bold">Prix Vente (TND)</th>
-                    <th class="flex-auto text-primary font-bold">Quantité vente</th>
-                    <th class="flex-auto text-primary font-bold">Total</th>
-                    <th class="flex-auto text-primary font-bold">
-                        <p-avatar icon="pi pi-box" pBadge [value]="TotalProductNb + ''"
-                                  styleClass="mr-5"
-                                  [style]="{'background-color': '#b9c7ce', color: '#1a1717'}">
-                        </p-avatar>
-                    </th>
-                </tr>
-            </ng-template>
-
-            <!-- Body -->
-            <ng-template pTemplate="body" let-ligneVente let-index="rowIndex">
-                <tr class="flex flex-wrap justify-content-center align-items-center p-2">
-                    <td class="flex-auto">
-                        <span class="font-bold fs-3">{{ ligneVente.produit.nom }}</span>
-                    </td>
-                    <td class="flex-auto">
-                        <span class="pi pi-qrcode text-success fs-3"></span>{{ ligneVente.produit.dataqr }}
-                    </td>
-                    <td class="flex-auto fs-6 text-muted">
-                        FAB : {{ ligneVente.produit.dateFabrication | date: 'yyyy-MM-dd' }}<br>
-                        EXP : {{ ligneVente.produit.dateExpiration | date: 'yyyy-MM-dd' }}
-                    </td>
-                    <td class="flex-auto">{{ ligneVente.produit.minQuantiteGros }}</td>
-                    <td class="flex-auto text-danger fs-3 fw-bold">{{ ligneVente.prixVente | number }}</td>
-                    <td class="flex-auto">
-                        <p-inputNumber [(ngModel)]="ligneVente.venteQty" showButtons="true" buttonLayout="vertical"
-                                       spinnerMode="vertical" inputId="horizontal"
-                                       decrementButtonClass="p-button-raised p-button-text p-button-danger"
-                                       incrementButtonClass="p-button-raised p-button-text p-button-success"
-                                       incrementButtonIcon="pi pi-plus"
-                                       decrementButtonIcon="pi pi-minus"
-                                       (ngModelChange)="updatePrixVente(ligneVente)" [min]="1"
-                                       [max]="ligneVente.produit.qantite">
-                        </p-inputNumber>
-                    </td>
-                    <td class=" text-danger fs-2 fw-bold">{{ ligneVente.venteQty * ligneVente.prixVente | number }}</td>
-                    <td class=" flex-auto">
-                        <p-button icon="pi pi-trash" styleClass="p-button-raised p-button-text p-button-warning"
-                                  id="suppLigneVente" (click)="supprimerProduit(index)"></p-button>
-                    </td>
-                </tr>
-            </ng-template>
-        </p-table>
-    </div>
-    <p-dialog
-            header="Produits"
-            [modal]="true"
-            [visible]="IsvisiblePop && produitsFiltres.length > 0 && searchTerm !== ''"
-            [style]="{ width: '50rem' }"
-            [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
-            [maximizable]="true">
-        <p-table [value]="produitsFiltres" class="p-table">
-            <ng-template pTemplate="header">
-                <tr>
-                    <th>ID</th>
-                    <th>Code Barre/QR</th>
-                    <th>Nom</th>
-                    <th>Prix Unitaire</th>
-                    <th>Prix Gros</th>
-                    <th>Quantité</th>
-                    <th>Qte Gros Min</th>
-                    <th>Action</th>
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-produit>
-                <tr>
-                    <td>{{ produit.id }}</td>
-                    <td>{{ produit.dataqr }}</td>
-                    <td>{{ produit.nom }}</td>
-                    <td>{{ produit.prixUnitaire + produit.gainUnitaire }}</td>
-                    <td>{{ produit.prixGros + produit.gainGros }}</td>
-                    <td>{{ produit.qantite }}</td>
-                    <td>{{ produit.minQuantiteGros }}</td>
-                    <td>
-                        <button pButton type="button" label="F2" icon="pi pi-cart-plus" id="addp{{produit.id}}"
-                                #ajouterProduitButton
-                                class="p-button-rounded p-button-outlined p-button-text p-button-success mr-2"
-                                (click)="ajouterProduit(produit)"></button>
-                    </td>
-                </tr>
-            </ng-template>
-        </p-table>
-
-    </p-dialog>
-    <p-dialog
-            header="Produits"
-            [visible]="searchTable"
-            [modal]="true"
-            [style]="{ width: '70rem' }"
-            [closable]="false"
-            position="top">
-        <input pInputText type="text" [(ngModel)]="searchTermFilter"
-               (input)="filterProduits()"
-               placeholder="Rechercher ici ..."/>
-        <p-table #dtProduitsFiltres [value]="produitsFiltres"
-                 [globalFilterFields]="['nom', 'description', 'dataqr', 'dateF', 'dateE']" class="p-table">
-            <ng-template pTemplate="header">
-                <tr>
-                    <th>ID</th>
-                    <th>Code Barre/QR</th>
-                    <th>Nom</th>
-                    <th>Prix Unitaire</th>
-                    <th>Prix Gros</th>
-                    <th>Quantité</th>
-                    <th>Qte Gros Min</th>
-                    <th>Action</th>
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-produit>
-                <tr>
-                    <td>{{ produit.id }}</td>
-                    <td>{{ produit.dataqr }}</td>
-                    <td>{{ produit.nom }}</td>
-                    <td>{{ produit.prixUnitaire + produit.gainUnitaire }}</td>
-                    <td>{{ produit.prixGros + produit.gainGros }}</td>
-                    <td>{{ produit.qantite }}</td>
-                    <td>{{ produit.minQuantiteGros }}</td>
-                    <td>
-                        <button pButton type="button" label="F2" icon="pi pi-cart-plus" id="addp{{produit.id}}"
-                                #ajouterProduitButton
-                                class="p-button-rounded p-button-outlined p-button-text p-button-success mr-2"
-                                (click)="ajouterProduit(produit)"></button>
-                    </td>
-                </tr>
-            </ng-template>
-        </p-table>
-        <p-footer>
-            <div style="display: flex; justify-content: flex-end; width: 100%;">
-                <button pButton pRipple label="Fermer" icon="pi pi-times" class="p-button-text p-button-danger"
-                        (click)="searchTable=false"></button>
-            </div>
-        </p-footer>
-    </p-dialog>
-    <p-toast position="top-center" class="bg-info" key="tc"></p-toast>
-    <p-dialog header="Clôture Caisse" [maximizable]="true" [modal]="true" [(visible)]="show"
-              [style]="{ width: '40vw' }">
-        <ng-template pTemplate="content">
-            <div class="subscribe  m-5 justify-content-center">
-                <div>
-                    <h1 class="text-center text-primary">Sauvegarder la clôture de caisse</h1>
-                    <div class="container-lg mt-2 shadow-lg p-3 mb-5 bg-body-tertiary rounded">
-                        <h4 class=" bi-lock font-bold">Détails de la clôture</h4>
-                        <div class="colorShadow flex flex-column md:flex-row gap-3 p-2">
-                            <div class="col-6  ">
-                                <span class="font-bold text-6xl text-primary">Total clôture</span>
-                            </div>
-                            <div class="col-6">
-                                <span class="ml-2 text-6xl text-red-600 font-bold">{{TotalAndReglement.total.toFixed(3)  }}</span>
-                                <span class="font-bold text-red-600">TND</span>
-                            </div>
-                        </div>
-
-                        <div class=" card flex">
-                            <div class="flex-auto ">
-                                <label class="font-bold text-6xl text-red-600">Montant Espéce </label>
-                                <p-inputNumber inputId="espece" [size]="24" pTooltip=" prix unitaire  d'achat"
-                                               mode="currency" inputId="currency-india" currency="TND"
-                                               currencyDisplay="code" locale="en-IN"
-                                               [(ngModel)]="cloture.montantClotureEspece"></p-inputNumber>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class=" flex justify-content-end align-items-end">
-                    <button pButton type="button" label="Clôture" icon="pi pi-calculator"
-                            class="p-button-rounded p-button-outlined p-button-text p-button-success mr-2"
-                            (click)="saveCloture()"></button>
-                </div>
-            </div>
-
-        </ng-template>
-    </p-dialog>
-    <p-sidebar [(visible)]="sidebarVisibleFacture" [fullScreen]="true">
-        <ng-template pTemplate="header">
-            <span class="font-semibold text-xl">
-            </span>
-        </ng-template>
-        <app-facture-ajout></app-facture-ajout>
-    </p-sidebar>
-
-
-    <p-dialog
-            header="Services"
-            [visible]="searchTableService"
-            [modal]="true"
-            [style]="{ width: '70rem' }"
-            [closable]="false"
-            position="top">
-        <input pInputText type="text" [(ngModel)]="searchTermFilterService"
-               (input)="filterServices()"
-               placeholder="Rechercher ici ..."/>
-        <p-table #dtProduitsFiltreservice [value]="serviceFiltres"
-                 [globalFilterFields]="['nomServiceComp', 'description', 'dataqr', 'dateF', 'dateE']" class="p-table">
-            <ng-template pTemplate="header">
-                <tr>
-                    <th>ID</th>
-                    <th>Nom</th>
-                    <th>Description</th>
-                    <th>g</th>
-                    <th>Quantité</th>
-                    <th>Qte Gros Min</th>
-                    <th>Action</th>
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-produit>
-                <tr>
-                    <td>{{ produit.id }}</td>
-                    <td>{{ produit.dataqr }}</td>
-                    <td>{{ produit.nom }}</td>
-                    <td>{{ produit.prixUnitaire + produit.gainUnitaire }}</td>
-                    <td>{{ produit.prixGros + produit.gainGros }}</td>
-                    <td>{{ produit.qantite }}</td>
-                    <td>{{ produit.minQuantiteGros }}</td>
-                    <td>
-                        <button pButton type="button" label="F2" icon="pi pi-cart-plus" id="addp{{produit.id}}"
-                                #ajouterProduitButton
-                                class="p-button-rounded p-button-outlined p-button-text p-button-success mr-2"
-                                (click)="ajouterProduit(produit)"></button>
-                    </td>
-                </tr>
-            </ng-template>
-        </p-table>
-        <p-footer>
-            <div style="display: flex; justify-content: flex-end; width: 100%;">
-                <button pButton pRipple label="Fermer" icon="pi pi-times" class="p-button-text p-button-danger"
-                        (click)="searchTableService=false"></button>
-            </div>
-        </p-footer>
-    </p-dialog>
-
-</div>
-
-<div class="card flex flex-wrap gap-0 m-auto align-items-center">
-    <p-dialog
+        <p-dialog
             [(visible)]="showDialogueClient"
             header="Sélectionner le client"
             [modal]="true"
@@ -428,7 +443,7 @@
                             [options]="utilisateursClients"
                             [(ngModel)]="selectedVente.client"
                             optionLabel="firstname"
-                            (onChange)="SelectedClient()"
+
                             [filter]="true"
                             filterBy="selectedVente.client.firstname"
                             placeholder="Sélectionner Client"
@@ -463,8 +478,7 @@
             <button pButton pRipple icon="pi pi-check" label="Sélectionné" (click)="selectClient()"></button>
         </div>
     </p-dialog>
-
-        <p-dialog
+         <p-dialog
                 [(visible)]="showPay"
                 header="Vente Payé ou non"
                 [modal]="true"
@@ -478,15 +492,11 @@
                 <p-button (onClick)="confirm2()" label="Non Paye" severity="danger" [outlined]="true" />
             </div>
         </p-dialog>
-    <p-toast />
-
-
-    <p-dialog
+         <p-dialog
             [(visible)]="showDialogTranche"
             header="Vente Payé ou non"
             [modal]="true"
-            [style]="{ 'width': '70%', 'max-width': '1200px', 'height': 'auto', 'max-height': '100vh' }"
-    >
+            [style]="{ 'width': '70%', 'max-width': '1200px', 'height': 'auto', 'max-height': '100vh' }">
 
         <p-fieldset class="m-1" legend="Ajouter tranches" [toggleable]="true">
             <div class="flex flex-column">
@@ -583,5 +593,8 @@
 
         </ng-template>
     </p-dialog>
-</div>
+         <p-toast />
 
+
+
+</div>

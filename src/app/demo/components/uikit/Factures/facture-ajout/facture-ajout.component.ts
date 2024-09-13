@@ -1,9 +1,9 @@
 import {ChangeDetectorRef, Component, Input, OnInit, ViewChild} from '@angular/core';
 import {Facture, factureType} from "../../../../../models/Facture";
 import {Depot} from "../../../../../models/Depot";
-import {CodeModel, Produit} from "../../../../../models/produit";
+import {Produit} from "../../../../../models/produit";
 import {RoleEnum, User} from "../../../../../models/user";
-import {FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {LigneFacture} from "../../../../../models/LigneFacture";
 import {FactureService} from "../../../../../layout/service/facture.service";
 import {DepotService} from "../../../../../layout/service/depot.service";
@@ -13,7 +13,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {CalendarModule} from "primeng/calendar";
 import {ListboxModule} from "primeng/listbox";
 import {Table, TableModule} from "primeng/table";
-import {CommonModule, DatePipe, DecimalPipe, JsonPipe} from "@angular/common";
+import {CommonModule, DatePipe, DecimalPipe} from "@angular/common";
 import {InputNumberModule} from "primeng/inputnumber";
 import {MessagesModule} from "primeng/messages";
 import {DropdownModule} from "primeng/dropdown";
@@ -28,7 +28,6 @@ import {InputTextModule} from "primeng/inputtext";
 import {Tranche} from "../../../../../models/Tranche";
 import {AjoutUserComponent} from "../../users/ajout-user/ajout-user.component";
 import {TrancheService} from "../../../../../layout/service/tranche.service";
-import {Article} from "../../../../../models/Article";
 import {ProduitAjoutComponent} from "../../Products/produit-ajout/produit-ajout.component";
 import {RadioButtonModule} from "primeng/radiobutton";
 import {ConfirmationService, MessageService} from "primeng/api";
@@ -43,8 +42,6 @@ import {InputTextareaModule} from "primeng/inputtextarea";
 import {NgxBarcode6Module} from "ngx-barcode6";
 import {DialogService} from "../../../../../layout/service/dialogue-user.service";
 import {Historique} from "../../../../../models/historique";
-import {LigneVente} from "../../../../../models/LigneVente";
-import {Vente} from "../../../../../models/Vente";
 
 @Component({
     selector: 'app-facture-ajout',
@@ -119,7 +116,7 @@ export class FactureAjoutComponent implements OnInit {
     typeCalculeDialogue: boolean = false;
     typeCalcule: string = '';
     public newPrix: number=0;
-
+        fuctureId:any
     clear(table: Table) {
         table.clear();
     }
@@ -153,21 +150,33 @@ export class FactureAjoutComponent implements OnInit {
 
     async ngOnInit(): Promise<void> {
         this.updateRootFromCurrentPath();
-        const id = this.route.snapshot.paramMap.get('id');
+      this.fuctureId = this.route.snapshot.paramMap.get('id');
         try {
-            if (id) {
-                try {
-                    this.newFacture = await this.factureService.getFactureById(Number(id)).toPromise()
+            // if (id) {
+            //     try {
+            //         this.newFacture = await this.factureService.getFactureById().subscribe()
+            //         this.isUpdateValide = true
+            //         if (Array.isArray(this.newFacture.lignesFacture)) {
+            //             this.newFacture.lignesFacture = this.newFacture.lignesFacture;
+            //         } else {
+            //             console.warn("Facture _lignesFacture is not an array or is undefined", this.newFacture.lignesFacture);
+            //         }
+            //     } catch (e) {
+            //         this.router.navigate(['uikit/facture']);
+            //     }
+            //
+            // }
+
+            if(this.fuctureId){
+                this.factureService.getFactureById(this.fuctureId).subscribe(value => {
+                    this.newFacture = value;
                     this.isUpdateValide = true
                     if (Array.isArray(this.newFacture.lignesFacture)) {
                         this.newFacture.lignesFacture = this.newFacture.lignesFacture;
                     } else {
                         console.warn("Facture _lignesFacture is not an array or is undefined", this.newFacture.lignesFacture);
                     }
-                } catch (e) {
-                    this.router.navigate(['uikit/facture']);
-                }
-
+                },error => console.log(error))
             }
 
             this.getAllTranches();
@@ -319,7 +328,7 @@ export class FactureAjoutComponent implements OnInit {
     }
 
     validateFacture(): boolean {
-        if (this.newFacture.depot.id == 0) {
+        if ( this.newFacture.typeFacture==factureType.ENTREE && this.newFacture.depot.id == 0 ) {
             this.messageService.add({
                 severity: 'error',
                 summary: 'Erreur',
@@ -601,23 +610,23 @@ export class FactureAjoutComponent implements OnInit {
     public onRowEditSave(l: LigneFacture) {
         if (this.newFacture.typeFacture === 'FACTURE_ACHAT')
             if (l.prixAchat !== l.produit.prixUnitaire) {
+        //         this.typeCalculeDialogue = true;
+        //         let historique :Historique=new Historique()
+        //         historique.prixHistoriqueAchat=l.prixAchat;
+        //         historique.quantiteHistoriqueAchat=l.quantite;
+        //         historique.dateMisAjoure = new DatePipe('en-US').transform(historique.dateMisAjoure, 'yyyy-MM-dd') as any;
+        //         l.produit.historiques.push(historique);
+        //
                 this.typeCalculeDialogue = true;
-                let historique :Historique=new Historique()
-                historique.prixHistoriqueAchat=l.prixAchat;
-                historique.quantiteHistoriqueAchat=l.quantite;
-                historique.dateMisAjoure = new DatePipe('en-US').transform(historique.dateMisAjoure, 'yyyy-MM-dd') as any;
-                l.produit.historiques.push(historique);
-
 
             }
-
 
 
     }
 
 
     public onRowEditInit(l: LigneFacture) {
-
+        console.log("produitIdA Updated"+l.produit.id)
 
         this.produitService.getProduitById(l.produit.id).subscribe(value => {
             l.produit=value ;
@@ -741,5 +750,7 @@ export class FactureAjoutComponent implements OnInit {
                 ?"Ajouter facture vente"
                 :"Ajouter facture achat"
     }
+
+
 }
 

@@ -3,62 +3,62 @@ import {File} from "./File";
 import {Historique} from "./historique";
 
 
-
-export interface CodeModel{
-    id?:string;
-    code?:string;
+export interface CodeModel {
+    id?: string;
+    code?: string;
 }
 
 export class Produit {
-            id: number;
-            nom: string;
-            prixUnitaire: number;
+    id: number;
+    nom: string;
+    prixUnitaire: number;
 
-            prixGros: number;
-            description: string;
-            qantite: number;
-            image: Blob;
-            gainUnitaire: number;
-            gainGros: number;
-            files:File[];
-            dateExpiration: Date;
-            dateFabrication: Date;
-            minQuantiteGros: number;
-            taxe: number;
-            enable: boolean;
-            dataqr: string;
-            qantiteFacture:number;
-            article:Article;
-            levelstock:number ;
-            showDetails:boolean ;
-            checkedService: boolean ;
-            subdataqr :string[];
-            historiques: Historique [];
+    prixGros: number;
+    description: string;
+    qantite: number;
+    image: Blob;
+    gainUnitaire: number;
+    gainGros: number;
+    files: File[];
+    dateExpiration: Date;
+    dateFabrication: Date;
+    minQuantiteGros: number;
+    taxe: number;
+    enable: boolean;
+    dataqr: string;
+    qantiteFacture: number;
+    article: Article;
+    levelstock: number;
+    showDetails: boolean;
+    checkedService: boolean;
+    subdataqr: string[];
+    historiques: Historique [];
 
 
-    constructor(_id: number=0, _nom: string="",_prixUnitaire: number=0, _prixGros: number=0, _description: string="", _qantite: number=0, _image: Blob=new Blob(), _gainUnitaire: number=0, _gainGros: number=0, _files: File[]=[], _dateExpiration: Date=new Date(), _dateFabrication:Date=new Date(), _minQuantiteGros: number=0, _taxe: number=0, _enable: boolean=false, _dataqr: string="", _qantiteFacture: number=0, _article: Article=new Article(), _levelstock: number=0, _showDetails: boolean=false, _checkedService: boolean=false, _subdataqr: string[]=[],_historiques : Historique []= []) {
-        this.id = _id ;
-        this.nom = _nom ;
-         this.prixUnitaire = _prixUnitaire ;
-        this.prixGros = _prixGros ;
-        this.description = _description ;
-        this.qantite = _qantite ;
-        this.image = _image ;
-        this.gainUnitaire = _gainUnitaire ;
-        this.gainGros = _gainGros ;
-        this.files= _files;
-        this.dateExpiration = _dateExpiration ;
-        this.dateFabrication = _dateFabrication ;
-        this.minQuantiteGros = _minQuantiteGros ;
-        this.taxe = _taxe ;
-        this.enable = _enable ;
-        this.dataqr = _dataqr ;
-        this.qantiteFacture = _qantiteFacture ;
-        this.article = _article ;
-        this.levelstock = _levelstock ;
-        this.showDetails = _showDetails ;
-        this.checkedService = _checkedService ;
-        this.subdataqr = _subdataqr ;
+    constructor(_id: number = 0, _nom: string = "", _prixUnitaire: number = 0, _prixGros: number = 0, _description: string = "", _qantite: number = 0, _image: Blob = new Blob(), _gainUnitaire: number = 0, _gainGros: number = 0, _files: File[] = [], _dateExpiration: Date = new Date(), _dateFabrication: Date = new Date(), _minQuantiteGros: number = 0, _taxe: number = 0, _enable: boolean = false, _dataqr: string = "", _qantiteFacture: number = 0, _article: Article = new Article(), _levelstock: number = 0, _showDetails: boolean = false, _checkedService: boolean = false, _subdataqr: string[] = [], _historiques: Historique [] = []) {
+        this.id = _id;
+        this.nom = _nom;
+        this.prixUnitaire = _prixUnitaire;
+        this.prixGros = _prixGros;
+        this.description = _description;
+        this.qantite = _qantite;
+        this.image = _image;
+        this.gainUnitaire = _gainUnitaire;
+        this.gainGros = _gainGros;
+        this.files = _files;
+        this.dateExpiration = _dateExpiration;
+        this.dateFabrication = _dateFabrication;
+
+        this.minQuantiteGros = _minQuantiteGros;
+        this.taxe = _taxe;
+        this.enable = _enable;
+        this.dataqr = _dataqr;
+        this.qantiteFacture = _qantiteFacture;
+        this.article = _article;
+        this.levelstock = _levelstock;
+        this.showDetails = _showDetails;
+        this.checkedService = _checkedService;
+        this.subdataqr = _subdataqr;
         this.historiques = _historiques;
     }
 
@@ -263,6 +263,7 @@ export class Produit {
             dateFabrication: this.dateFabrication ? this.dateFabrication.toISOString().split('T')[0] : null
         };
     }
+
     static copy(produit: Produit): Produit {
         const newProduit = new Produit();
 

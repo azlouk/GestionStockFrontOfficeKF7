@@ -44,6 +44,12 @@ export class ProduitService {
                 ) {
     }
 
+
+
+
+
+
+
     getProduits(): Observable<Produit[]> {
         const url = `${this.api}/read`;
         const token = getToken();
@@ -132,29 +138,35 @@ export class ProduitService {
 
     }
 
+    shouldStayOnSamePageOrder():boolean {
+        const currentUrl = this.router.url;
+        return currentUrl.includes('/edit-produit');
+    }
+
     modifierProduit(nouveauProduit: Produit ,uploadFiles :any[]): any {
-        const token = getToken();
 
-        if (token) {
+            const token = getToken();
 
-            // Ajouter le token à l'en-tête de la requête
-            const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-            let formData = new FormData();
-            const produit=nouveauProduit
-            formData.append('produit',  new Blob([JSON
-                .stringify(produit)], {
-                type: 'application/json'
-            }));
-            for (let i = 0; i < uploadFiles.length; i++) {
-                formData.append('file', uploadFiles[i]);
+            if (token) {
+
+                // Ajouter le token à l'en-tête de la requête
+                const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+                let formData = new FormData();
+                const produit = nouveauProduit
+                formData.append('produit', new Blob([JSON
+                    .stringify(produit)], {
+                    type: 'application/json'
+                }));
+                for (let i = 0; i < uploadFiles.length; i++) {
+                    formData.append('file', uploadFiles[i]);
+                }
+
+                // Utiliser les headers dans la require
+                return this.http.put<any>(this.api + '/update', formData, {headers});
+            } else {
+                // Gérer le cas où le token n'est pas disponible
+                return new Observable(); // Vous pouvez également renvoyer une erreur ou effectuer d'autres actions
             }
-
-            // Utiliser les headers dans la require
-            return this.http.put<any>(this.api + '/update', formData,{headers} );
-        } else {
-            // Gérer le cas où le token n'est pas disponible
-            return new Observable(); // Vous pouvez également renvoyer une erreur ou effectuer d'autres actions
-        }
 
     }
 

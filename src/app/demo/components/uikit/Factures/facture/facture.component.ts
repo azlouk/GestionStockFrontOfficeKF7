@@ -1,10 +1,10 @@
-import {booleanAttribute, Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {Facture, FactureInterface, factureType} from "../../../../../models/Facture";
 import {User} from "../../../../../models/user";
 import {Produit} from "../../../../../models/produit";
 import {FactureService} from "../../../../../layout/service/facture.service";
 import {ActivatedRoute, Router} from "@angular/router";
-import {Table, TableModule} from "primeng/table";
+import {Table, TableModule, TableRowCollapseEvent, TableRowExpandEvent} from "primeng/table";
 import {AvatarModule} from "primeng/avatar";
 import {BadgeModule} from "primeng/badge";
 import {DialogModule} from "primeng/dialog";
@@ -12,9 +12,9 @@ import {DropdownModule} from "primeng/dropdown";
 import {FormsModule} from "@angular/forms";
 import {InputTextModule} from "primeng/inputtext";
 import {InputTextareaModule} from "primeng/inputtextarea";
-import {CurrencyPipe, DatePipe, NgClass, NgForOf, NgIf} from "@angular/common";
-import {ConfirmationService, MessageService, PrimeTemplate} from "primeng/api";
-import {Ripple, RippleModule} from "primeng/ripple";
+import {CurrencyPipe, DatePipe, DecimalPipe, NgClass, NgForOf, NgIf} from "@angular/common";
+import {ConfirmationService, MessageService} from "primeng/api";
+import {RippleModule} from "primeng/ripple";
 import {ToastModule} from "primeng/toast";
 import {ToolbarModule} from "primeng/toolbar";
 import {SliderModule} from "primeng/slider";
@@ -22,10 +22,8 @@ import {TagModule} from "primeng/tag";
 import {MultiSelectModule} from "primeng/multiselect";
 import {SplitButtonModule} from "primeng/splitbutton";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
-import {b} from "@fullcalendar/core/internal-common";
 import {TriStateCheckboxModule} from "primeng/tristatecheckbox";
 import {RadioButtonModule} from "primeng/radiobutton";
-import {Observable} from "rxjs/internal/Observable";
 import {OverlayPanelModule} from "primeng/overlaypanel";
 import {CheckboxModule} from "primeng/checkbox";
 import {AutoCompleteCompleteEvent, AutoCompleteModule} from "primeng/autocomplete";
@@ -34,6 +32,10 @@ import {FieldsetModule} from "primeng/fieldset";
 import {Tranche} from "../../../../../models/Tranche";
 import {TreeTableModule} from "primeng/treetable";
 import {TabViewModule} from "primeng/tabview";
+import {RatingModule} from "primeng/rating";
+import {ProduitService} from "../../../../../layout/service/produit.service";
+import {Historique} from "../../../../../models/historique";
+import {LigneFacture} from "../../../../../models/LigneFacture";
 
 @Component({
     selector: 'app-facture',
@@ -67,7 +69,9 @@ import {TabViewModule} from "primeng/tabview";
         AutoCompleteModule,
         FieldsetModule,
         TreeTableModule,
-        TabViewModule
+        TabViewModule,
+        DecimalPipe,
+        RatingModule
     ],
     templateUrl: './facture.component.html',
     styleUrl: './facture.component.scss'
@@ -129,17 +133,28 @@ export class FactureComponent implements OnInit {
     header: string;
     public balance: any = 0;
 
+///p-dialogue deleteFactureAnd change prix
+
+    openDialogueChangedPrix:boolean=false;
+
+    produits!: Produit[];
+
+    expandedRows = {};
     showDialog() {
         this.visible = true;
     }
 
     constructor(
+
+
         public factureService: FactureService,
         public userService: UserService,
         private router: Router,
         private messageService: MessageService,
         private confirmationService: ConfirmationService,
-        public activatedRoute: ActivatedRoute) {
+        public activatedRoute: ActivatedRoute,
+    private produitService: ProduitService
+    ) {
     }
 
 
@@ -155,8 +170,47 @@ export class FactureComponent implements OnInit {
         if (iddParam !== null) {
             this.idd = +iddParam;
         }
+
+
+
     }
 
+
+
+    getStatusSeverity(status: string) {
+        switch (status) {
+            case 'PENDING':
+                return 'warning';
+            case 'DELIVERED':
+                return 'success';
+            case 'CANCELLED':
+                return 'danger';
+            default:
+                return 'unknown'; // Or any other fallback value
+        }
+    }
+
+    onRowExpand(event: TableRowExpandEvent) {
+        // this.messageService.add({ severity: 'info', summary: 'Product Expanded', detail: event.data.name, life: 3000 });
+    }
+
+    onRowCollapse(event: TableRowCollapseEvent) {
+        // this.messageService.add({ severity: 'success', summary: 'Product Collapsed', detail: event.data.name, life: 3000 });
+    }
+
+
+    expandAll() {
+        this.expandedRows = this.produits.reduce((acc, p) => (acc[p.id] = true) && acc, {});
+    }
+
+    collapseAll() {
+        this.expandedRows = {};
+    }
+
+    onDialogClose() {
+        // Clear expanded rows when the dialog closes
+        this.expandedRows = {};
+    }
 
     searchFirstName(event: AutoCompleteCompleteEvent) {
         this.userService.getUsers().subscribe(users => {
@@ -212,7 +266,7 @@ export class FactureComponent implements OnInit {
     }
 
     goToFactureDetails(id: number): void {
-        this.router.navigate(['uikit/facture/', id]);
+        this.router.navigate(['uikit/facture/',id]);
     }
 
     editFacture(id: number) {
@@ -282,53 +336,71 @@ export class FactureComponent implements OnInit {
         this.valuepaye = null;
     }
 
-    deleteFacture(id: number): void {
+    deleteFacture(facture: FactureInterface) {
+
+        this.factureDeleted = facture; // Store the facture that is going to be deleted
+
         this.confirmationService.confirm({
-            header: "Êtes-vous sûr ?",
-            message: "Vous ne pourrez pas revenir en arrière !",
-            icon: "pi pi-exclamation-triangle",
-            acceptLabel: "Oui, supprimer",
-            rejectLabel: "Annuler",
-            acceptButtonStyleClass: 'p-button-outlined p-button-danger',
-            rejectButtonStyleClass: 'p-button-outlined p-button-primary',
+            message: 'Êtes-vous sûr de vouloir supprimer cette facture?',
+            header: 'Confirmation de suppression',
+            icon: 'pi pi-exclamation-triangle',
             accept: () => {
-                this.factureService.deleteFacture(id).subscribe(
-                    (response) => {
-                        console.log('Facture supprimée avec succès:', response);
-                        this.messageService.add({
-                            severity: 'success',
-                            summary: 'Supprimée',
-                            detail: 'Votre facture a été supprimée avec succès!'
-                        });
-                        this.getAllFactures();
-                    },
-                    (error) => {
-                        console.error('Erreur lors de la suppression de la facture:', error);
-                        this.messageService.add({
-                            severity: 'error',
-                            summary: 'Erreur',
-                            detail: 'Une erreur est survenue lors de la suppression de la facture.'
-                        });
-                    }
-                );
+                if(facture.typeFacture==factureType.ENTREE)
+                {
+                    this.openDialogueChangedPrix = true;  // Show the confirmation dialog
+
+                }else {
+                    this.factureService.deleteFacture(facture.id).subscribe(value => {
+                        this.getAllFactures(); // Refresh the factures list after deletion
+
+                    })
+                }
             },
             reject: () => {
                 this.messageService.add({
                     severity: 'error',
                     summary: 'Annuler!',
-                    detail: 'La supprission de facture est annuler!'
+                    detail: 'La suppression de la facture est annulée!',
                 });
-                this.getAllFactures();
+                this.getAllFactures(); // Refresh the factures list
             }
         });
     }
 
-    public AjouterFcture() {
+
+
+    confirmDeleteFacture(facture:any) {
+        this.factureService.removeFactureWithUpdateProduct(facture).subscribe(
+            (response) => {
+                console.log('Facture supprimée avec succès:', response);
+
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Supprimée',
+                    detail: 'Votre facture a été supprimée avec succès!',
+                });
+
+                this.getAllFactures(); // Refresh the factures list after deletion
+            },
+            (error) => {
+                console.error('Erreur lors de la suppression de la facture:', error);
+
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Erreur',
+                    detail: 'Une erreur est survenue lors de la suppression de la facture.',
+                });
+            }
+        );
+        this.openDialogueChangedPrix = false;
+        console.log(this.factureDeleted)
 
     }
 
-    public deleteSelectedFacture() {
 
+    updateFacturePrix(ligneFacture: LigneFacture, historique: Historique) {
+         ligneFacture.produit.prixUnitaire = historique.prixHistoriqueAchat;
+        console.info(this.factureDeleted)
     }
 
     CalculeMontantFiltrer(): number {
@@ -349,6 +421,8 @@ export class FactureComponent implements OnInit {
     totalMontantTranches: number = 0;
     montantTranchesPayees: number = 0;
     montantTranchesNonPayees: number = 0;
+    public factureDeleted: FactureInterface={};
+    public PrixChoisie: number;
 
 
     calculateMontants() {

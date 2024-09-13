@@ -3,79 +3,81 @@ import {ServiceService} from "../layout/service/service.service";
 import {ServiceComp} from "./ServiceComp";
 
 export class LigneFacture {
-    private _id: number;
-    private _produit: Produit;
-    private _quantite: number;
-    private _montantTotal: number;
-    private _prixAchat : number;
-    private _prixVente : number;
-    private _typeCalcule: string;
+     id: number;
+     produit: Produit;
+     quantite: number;
+    montantTotal: number;
+    prixAchat: number;
+    prixVente: number;
+    typeCalcule: string;
+     idHistorique:number;
 
-    constructor(id?: number,  quantite?: number, montantTotal?:number, produit?:Produit,prixAchat?:number, prixVente?: number, typeCalcule?: string) {
-        this._id = id || 0;
-         this._produit = produit || new Produit();
-        this._quantite = quantite || 0;
-        this._montantTotal = montantTotal || 0;
-        this._prixAchat = prixAchat || produit!=undefined?produit.prixUnitaire:0;
-        this._prixVente = prixVente || produit!=undefined ? produit!.prixUnitaire+produit.gainUnitaire:0;
-        this._typeCalcule=typeCalcule || "NoAction" ;
+    constructor(_id?: number, _quantite?: number, _montantTotal?: number, _produit?: Produit, _prixAchat?: number, _prixVente?: number, _typeCalcule?: string, _idHistorique?: number) {
+        this.id = _id || 0;
+        this.produit = _produit || new Produit();
+        this.quantite = _quantite || 0;
+        this.montantTotal = _montantTotal || 0;
+        this.prixAchat = _prixAchat || _produit != undefined ? _produit.prixUnitaire : 0;
+        this.prixVente = _prixVente || _produit != undefined ? _produit!.prixUnitaire + _produit.gainUnitaire : 0;
+        this.typeCalcule = _typeCalcule || "NoAction";
+        this.idHistorique = _idHistorique || 0;
+
+
     }
 
-
-    get id(): number {
-        return this._id;
+    public get _id(): number {
+        return this.id;
     }
 
-    set id(value: number) {
-        this._id = value;
+    public set _id(value: number) {
+        this.id = value;
     }
 
-    get typeCalcule(): string {
-        return this._typeCalcule;
+    public get _produit(): Produit {
+        return this.produit;
     }
 
-    set typeCalcule(value: string) {
-        this._typeCalcule = value;
+    public set _produit(value: Produit) {
+        this.produit = value;
     }
 
-    get produit(): Produit {
-        return this._produit;
+    public get _quantite(): number {
+        return this.quantite;
     }
 
-    set produit(value: Produit) {
-        this._produit = value;
+    public set _quantite(value: number) {
+        this.quantite = value;
     }
 
-    get quantite(): number {
-        return this._quantite;
+    public get _montantTotal(): number {
+        return this.montantTotal;
     }
 
-    set quantite(value: number) {
-        this._quantite = value;
+    public set _montantTotal(value: number) {
+        this.montantTotal = value;
     }
 
-    get montantTotal(): number {
-        return this._montantTotal;
+    public get _prixAchat(): number {
+        return this.prixAchat;
     }
 
-    set montantTotal(value: number) {
-        this._montantTotal = value;
+    public set _prixAchat(value: number) {
+        this.prixAchat = value;
     }
 
-    get prixAchat(): number {
-        return this._prixAchat;
+    public get _prixVente(): number {
+        return this.prixVente;
     }
 
-    set prixAchat(value: number) {
-        this._prixAchat = value;
+    public set _prixVente(value: number) {
+        this.prixVente = value;
     }
 
-
-    public get prixVente(): number {
-        return this._prixVente;
+    public get _typeCalcule(): string {
+        return this.typeCalcule;
     }
 
-    public set prixVente(value: number) {
-        this._prixVente = value;
+    public set _typeCalcule(value: string) {
+        this.typeCalcule = value;
     }
 }
