@@ -1,12 +1,12 @@
 {
-    "name": "sakai-ng",
+    "name": "kf7",
     "version": "17.0.0",
     "main": "main.js",
     "license": "MIT",
     "scripts": {
         "ng": "ng",
         "start": "ng serve",
-        "build": "ng build",
+        "build": "ng build --configuration=production",
         "test": "ng test",
         "lint": "ng lint",
         "e2e": "ng e2e",

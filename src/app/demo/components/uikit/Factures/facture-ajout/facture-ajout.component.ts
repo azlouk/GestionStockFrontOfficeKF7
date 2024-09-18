@@ -13,7 +13,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {CalendarModule} from "primeng/calendar";
 import {ListboxModule} from "primeng/listbox";
 import {Table, TableModule} from "primeng/table";
-import {CommonModule, DatePipe, DecimalPipe} from "@angular/common";
+import {CommonModule, DecimalPipe} from "@angular/common";
 import {InputNumberModule} from "primeng/inputnumber";
 import {MessagesModule} from "primeng/messages";
 import {DropdownModule} from "primeng/dropdown";
@@ -449,49 +449,42 @@ export class FactureAjoutComponent implements OnInit {
 
     addToFacture(produitInterface: Produit) {
         const existingProduct = this.newFacture.lignesFacture.findIndex(product => product.produit.id === produitInterface.id);
-        console.log(produitInterface.prixUnitaire)
 
 
-        if (produitInterface.qantite > 0) {
 
-            if (existingProduct >= 0) {
-                if (this.newFacture.lignesFacture[existingProduct].quantite < this.newFacture.lignesFacture[existingProduct].produit.qantite) {
-                    this.newFacture.lignesFacture[existingProduct].quantite += 1;
-
-                } else {
-                    this.messageService.add({
-                        severity: 'error',
-                        summary: 'Produit epiusé',
-                        detail: 'Le quantité insufisant !',
-                        life: 3000
-                    });
-                }
-
-            } else {
-                // si le produit n'existe pas créer une nouvelle ligne de facture
-                const ligneFacture: LigneFacture = new LigneFacture(new Date().getTime(), 1, 0, Produit.copy(produitInterface), produitInterface.prixUnitaire, produitInterface.prixUnitaire + produitInterface.gainUnitaire,'');
-                // ligneFacture.produit = produitInterface;
-                // ligneFacture.quantite = 1;
-                ligneFacture.montantTotal = ligneFacture.prixAchat * ligneFacture.quantite
-                this.newFacture.lignesFacture.push(ligneFacture);
-                this.messageService.add({
-                    severity: 'success',
-                    summary: 'Produit ajouté à la facture',
-                    detail: 'Le produit a été ajouté avec succès à la facture !',
-                    life: 3000
-                });
-            }
-            this.calaculateFactureTotalAcht();
-        } else {
+        if (produitInterface.qantite > 0 || this.newFacture.typeFacture=='FACTURE_ACHAT'  ) {
+                        if (existingProduct >= 0) {
+                                    if (this.newFacture.lignesFacture[existingProduct].quantite < this.newFacture.lignesFacture[existingProduct].produit.qantite  || this.newFacture.typeFacture=='FACTURE_ACHAT') {
+                                        this.newFacture.lignesFacture[existingProduct].quantite += 1;
+                                    } else {
+                                        this.messageService.add({
+                                            severity: 'error',
+                                            summary: 'Produit epiusé',
+                                            detail: 'Le quantité insufisant !',
+                                            life: 3000
+                                        });
+                                    }
+                        }
+                        else {
+                                        const ligneFacture: LigneFacture = new LigneFacture(new Date().getTime(), 1, 0, Produit.copy(produitInterface), produitInterface.prixUnitaire, produitInterface.prixUnitaire + produitInterface.gainUnitaire,'');
+                                        ligneFacture.montantTotal = ligneFacture.prixAchat * ligneFacture.quantite
+                                        this.newFacture.lignesFacture.push(ligneFacture);
+                                        this.messageService.add({
+                                            severity: 'success',
+                                            summary: 'Produit ajouté à la facture',
+                                            detail: 'Le produit a été ajouté avec succès à la facture !',
+                                            life: 3000
+                                        });
+                        }
+                        this.calaculateFactureTotalAcht();
+        }
+       else {
             this.messageService.add({
                 severity: 'error',
                 summary: 'Produit epiusé',
                 detail: 'Le quantité insufisant !',
                 life: 3000
             });
-            if (this.newFacture.typeFacture === 'FACTURE_ACHAT')
-                this.newFacture.lignesFacture[existingProduct].quantite = this.newFacture.lignesFacture[existingProduct].produit.qantite
-
         }
     }
 

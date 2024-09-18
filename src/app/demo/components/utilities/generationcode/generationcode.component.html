@@ -30,8 +30,15 @@
 <div id="contenuImprimerCodeBarreTEst"    [hidden]="true">
     <div *ngFor="let indexCode of numbersArray"   >
 
-        <ngx-barcode6 class="fw-bold" [bc-width]="1" [bc-format]="'CODE128'"   [bc-height]="27"   id="contenuImprimerCodeBarreTEst{{indexCode}}" [bc-value]="valueCodeBarre" [bc-display-value]="true"></ngx-barcode6>
-
+        <ngx-barcode6
+                class="fw-bold"
+                [bc-width]="60"
+                [bc-format]="'CODE128'"
+                [bc-height]="30"
+                id="contenuImprimerCodeBarreTEst{{indexCode}}"
+                [bc-value]="valueCodeBarre"
+                [bc-display-value]="true">
+        </ngx-barcode6>
     </div>
 </div>
 

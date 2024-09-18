@@ -377,28 +377,12 @@ export class ProduitAjoutComponent implements OnInit {
     }
 
     imprimer(id: string): boolean {
-        /* Read more about handling dismissals below */
-        const contenuImprimer = document.getElementById(id);
+        const printContents = document.getElementById(id).innerHTML;
+        const originalContents = document.body.innerHTML;
 
-
-        if (contenuImprimer) {
-            // Ouvrez une nouvelle fenêtre avec des dimensions spécifiées
-            const fenetreImpression = window.open('', 'PRINT', 'width=1000,height=800');
-
-            if (fenetreImpression) {
-                // Ajoutez le contenu à la fenêtre d'impression
-                fenetreImpression.document.write(contenuImprimer.innerHTML);
-
-                // Appelez la fonction d'impression
-                fenetreImpression.document.close();
-                fenetreImpression.print();
-                fenetreImpression.close();
-            } else {
-                // Gestion d'erreur si la fenêtre n'a pas pu être ouverte
-                console.error('La fenêtre d\'impression n\'a pas pu être ouverte.');
-                return false
-            }
-        }
+        document.body.innerHTML = printContents;
+        window.print();
+        document.body.innerHTML = originalContents;
 
         return true;
     }
