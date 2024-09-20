@@ -178,7 +178,7 @@ export class ProduitsComponent implements OnInit {
             product.files.forEach((file: File) => {
                 if (file && file.path) {
 
-                    this.imageUrl = `http://localhost:8081/img/${file.name}`;
+                    this.imageUrl = `http://localhost:8082/img/${file.name}`;
 
                     let safeUrl = this.sanitizer.bypassSecurityTrustUrl(this.imageUrl);
                     safeImages.push(safeUrl);

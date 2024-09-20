@@ -86,16 +86,12 @@ export class FactureAjoutComponent implements OnInit {
     newFacture = new Facture();
     depots: Depot[] = [];
     produits: Produit[] = [];
-    utilisateurs: User[] = [];
     utilisateursClients: User[] = [];
     providers: User[] = [];
     produitsFiltres: Produit[];
     tranches: Tranche[] = [];
-    newProduct: Produit = new Produit();
     rechercheProduit: string = '';
     userForm: FormGroup;
-    roles = Object.values(RoleEnum);
-    autoReference: boolean = true;
     composantBVisible = false;
     utilisateursTransporteur: User[] = [];
 
@@ -152,20 +148,7 @@ export class FactureAjoutComponent implements OnInit {
         this.updateRootFromCurrentPath();
       this.fuctureId = this.route.snapshot.paramMap.get('id');
         try {
-            // if (id) {
-            //     try {
-            //         this.newFacture = await this.factureService.getFactureById().subscribe()
-            //         this.isUpdateValide = true
-            //         if (Array.isArray(this.newFacture.lignesFacture)) {
-            //             this.newFacture.lignesFacture = this.newFacture.lignesFacture;
-            //         } else {
-            //             console.warn("Facture _lignesFacture is not an array or is undefined", this.newFacture.lignesFacture);
-            //         }
-            //     } catch (e) {
-            //         this.router.navigate(['uikit/facture']);
-            //     }
-            //
-            // }
+
 
             if(this.fuctureId){
                 this.factureService.getFactureById(this.fuctureId).subscribe(value => {
@@ -603,13 +586,7 @@ export class FactureAjoutComponent implements OnInit {
     public onRowEditSave(l: LigneFacture) {
         if (this.newFacture.typeFacture === 'FACTURE_ACHAT')
             if (l.prixAchat !== l.produit.prixUnitaire) {
-        //         this.typeCalculeDialogue = true;
-        //         let historique :Historique=new Historique()
-        //         historique.prixHistoriqueAchat=l.prixAchat;
-        //         historique.quantiteHistoriqueAchat=l.quantite;
-        //         historique.dateMisAjoure = new DatePipe('en-US').transform(historique.dateMisAjoure, 'yyyy-MM-dd') as any;
-        //         l.produit.historiques.push(historique);
-        //
+
                 this.typeCalculeDialogue = true;
 
             }
@@ -632,7 +609,7 @@ export class FactureAjoutComponent implements OnInit {
     confirmerRecalculPrix(ligne:LigneFacture): void {
 
         if (ligne.typeCalcule) {
-
+            console.log("typeCalcule"+ligne.typeCalcule)
            ligne.produit.prixUnitaire= this.calculerNouveauPrix(ligne.typeCalcule,ligne)
 
 
@@ -714,15 +691,16 @@ export class FactureAjoutComponent implements OnInit {
 
         switch (typeCalcule) {
             case 'MaxValue':
-                nouveauPrix = Math.max(...historiques.map(h => h.prixHistoriqueAchat));
+                nouveauPrix = Math.max(ligneFacture.prixAchat,ligneFacture.produit.prixUnitaire);
                 break;
             case 'MinValue':
-                nouveauPrix = Math.min(...historiques.map(h => h.prixHistoriqueAchat));
+                nouveauPrix = Math.min(ligneFacture.prixAchat,ligneFacture.produit.prixUnitaire);
                 break;
             case 'MoyenValue':
-                const total = historiques.reduce((sum, h) => sum + h.prixHistoriqueAchat, 0);
-                nouveauPrix = total / historiques.length;
+
+                nouveauPrix=(((ligneFacture.prixAchat*ligneFacture.quantite)+(ligneFacture.produit.prixUnitaire*ligneFacture.produit.qantite))/(ligneFacture.quantite+ligneFacture.produit.qantite));
                 break;
+
             default:
                 throw new Error(`Type de calcul inconnu: ${typeCalcule}`);
         }
