@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
 import {ButtonModule} from "primeng/button";
 import {InputNumberModule} from "primeng/inputnumber";
 import {InputTextModule} from "primeng/inputtext";
@@ -30,6 +30,7 @@ import {ArticleService} from "../../../../../layout/service/article.service";
 import {ArticleComponent} from "../../Articles/article/article.component";
 import {DialogService} from "../../../../../layout/service/dialogue-user.service";
 import {Historique} from "../../../../../models/historique";
+import html2canvas from "html2canvas";
 
 @Component({
     selector: 'app-produit-ajout',
@@ -62,7 +63,7 @@ import {Historique} from "../../../../../models/historique";
     templateUrl: './produit-ajout.component.html',
     styleUrl: './produit-ajout.component.scss'
 })
-export class ProduitAjoutComponent implements OnInit {
+export class ProduitAjoutComponent implements OnInit, AfterViewInit {
     newProduct: Produit = (new Produit());
     selectedImage: any;
     SelectedFile: Blob = new Blob();
@@ -98,6 +99,7 @@ export class ProduitAjoutComponent implements OnInit {
                 public dialogueService: DialogService,
                 private route: ActivatedRoute,
                 private sanitizer: DomSanitizer,
+                private renderer: Renderer2,
                 private router: Router, private messageService: MessageService, private confirmationService: ConfirmationService) {
         this.data = "kndjh";
 
@@ -377,14 +379,62 @@ export class ProduitAjoutComponent implements OnInit {
     }
 
     imprimer(id: string): boolean {
-        const printContents = document.getElementById(id).innerHTML;
-        const originalContents = document.body.innerHTML;
+        const element = document.getElementById('barcode-container');
 
-        document.body.innerHTML = printContents;
-        window.print();
-        document.body.innerHTML = originalContents;
+        if (element) {
+            html2canvas(element, { scale: 2 }).then(canvas => { // Increased scale for better quality
+                const imgData = canvas.toDataURL('image/png');
+                const printWindow = window.open('', '', 'height=500,width=700'); // Size for 60mm x 30mm in pixels
 
-        return true;
+                if (printWindow) {
+                    printWindow.document.write(`
+            <html>
+            <head>
+              <title>Print Barcode</title>
+              <style>
+                @media print {
+                  @page {
+                    size: 38mm 25mm; /* Set the paper size */
+                    margin: 0; /* Remove default margins */
+                  }
+                  body {
+                    margin:0px;
+                    padding: 0px;
+                    width: 38mm;
+                    height: 25mm;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                  }
+                  img {
+                    width: 30mm; /* Set image width to 60mm */
+                    height: 25mm; /* Set image height to 30mm */
+                    object-fit: cover; /* Ensure image covers the area */
+                  }
+                  .custom-barcode svg text {
+        font-size: 12px; /* Adjust the font size */
+        fill: red; /* Change the text color */
+        font-family: Arial, sans-serif; /* Change the font family */
+    }
+                }
+              </style>
+            </head>
+            <body>
+              <img class="custom-barcode" src="${imgData}" />
+            </body>
+            </html>
+          `);
+
+                    printWindow.document.close(); // Close the document stream
+                    printWindow.focus(); // Focus on the print window
+                    printWindow.onload = () => {
+                        printWindow.print(); // Trigger the print dialog
+                        printWindow.close(); // Close the print window after printing
+                    };
+                }
+            });
+        }
+        return true
     }
 
     private updateShowButtun(): void {
@@ -473,6 +523,11 @@ export class ProduitAjoutComponent implements OnInit {
     shouldStayOnSamePageFacture():boolean {
         const currentUrl = this.router.url;
         return currentUrl.includes('/update-facture');
+    }
+
+    ngAfterViewInit(): void {
+
+
     }
 
 }

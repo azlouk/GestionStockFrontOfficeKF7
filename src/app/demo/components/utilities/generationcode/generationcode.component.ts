@@ -37,36 +37,12 @@ export class GenerationcodeComponent implements OnInit {
 
     }
 
-    imprimer(): boolean {
-        /* Read more about handling dismissals below */
-        const contenuImprimer = document.getElementById('contenuImprimerCodeBarreTEst');
 
-
-        if (contenuImprimer) {
-            // Ouvrez une nouvelle fenêtre avec des dimensions spécifiées
-            const fenetreImpression = window.open('', 'PRINT', 'width=1000,height=800');
-
-            if (fenetreImpression) {
-                // Ajoutez le contenu à la fenêtre d'impression
-                fenetreImpression.document.write(contenuImprimer.innerHTML);
-
-                // Appelez la fonction d'impression
-                fenetreImpression.document.close();
-                fenetreImpression.print();
-                fenetreImpression.close();
-            } else {
-                // Gestion d'erreur si la fenêtre n'a pas pu être ouverte
-                console.error('La fenêtre d\'impression n\'a pas pu être ouverte.');
-                return false
-            }
-        }
-        return true;
-    }
 
 
     async GenationCode() {
         const dattt: string = new Date().getTime() + '';
-        this.valueCodeBarre = this.Sufix + '-' + dattt.slice(dattt.length - 7, dattt.length);
+        this.valueCodeBarre =  dattt.slice(dattt.length - 8, dattt.length);
 
         this.numbersArray = await Array.from({length: this.nbcodeBarre}, (_, index) => index);
 
