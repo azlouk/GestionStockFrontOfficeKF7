@@ -46,12 +46,11 @@ import {CardModule} from "primeng/card";
 import {TagModule} from "primeng/tag";
 import {RatingModule} from "primeng/rating";
 import {ToolbarModule} from "primeng/toolbar";
-import {Cloture} from "../../../../../models/Cloture";
-import {File} from "../../../../../models/File";
-import {GalleriaModule} from "primeng/galleria";
-import {environment} from "../../../../../../environments/environment";
+
 import {RippleModule} from "primeng/ripple";
 import {TooltipModule} from "primeng/tooltip";
+import {Cloture} from "../../../../../models/Cloture";
+
 
 @Component({
     selector: 'app-pos',

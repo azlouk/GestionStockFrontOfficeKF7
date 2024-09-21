@@ -14,13 +14,13 @@ RUN npm run build
 
 # Use Nginx to serve the Angular app
 FROM nginx:latest
-COPY --from=build /app/dist/tuniselfrontend/browser /usr/share/nginx/html
+COPY --from=build /app/dist/kf7 /usr/share/nginx/html
 
 # Copy custom Nginx configuration if needed
 COPY nginx.conf /etc/nginx/nginx.conf
 
 # Expose port 80
-EXPOSE 80
+EXPOSE 90
 
 # Start Nginx
 CMD ["nginx", "-g", "daemon off;"]

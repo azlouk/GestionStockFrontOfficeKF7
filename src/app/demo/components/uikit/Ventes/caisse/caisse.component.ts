@@ -45,8 +45,7 @@ import {TabViewModule} from "primeng/tabview";
 import {ServiceComp} from "../../../../../models/ServiceComp";
 import {ServiceCompService} from "../../../../../layout/service/service-comp.service";
 import {CommandeServAjoutComponent} from "../../commandeServices/commande-serv-ajout/commande-serv-ajout.component";
-import {Cloture} from "../../../../../models/Cloture";
-import {DockModule} from "primeng/dock";
+ import {DockModule} from "primeng/dock";
 import {User} from "../../../../../models/user";
 import {UserService} from "../../../../../layout/service/user.service";
 import {SelectButtonModule} from "primeng/selectbutton";
@@ -60,6 +59,7 @@ import {Facture, factureType} from "../../../../../models/Facture";
 import {TrancheService} from "../../../../../layout/service/tranche.service";
 import {FactureService} from "../../../../../layout/service/facture.service";
 import {LigneFacture} from "../../../../../models/LigneFacture";
+import {Cloture} from "../../../../../models/Cloture";
 
 
 @Component({
