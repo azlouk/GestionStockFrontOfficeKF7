@@ -98,7 +98,12 @@
 
 
                                 </div>
-                                <label class="mb-2  font-bold ">Type Client</label>
+
+                                <div class="flex align-items-center mb-2">
+                                    <label class="font-bold mr-2">Type Client</label>
+                                    <button pButton pRipple label="Ajouter" icon="pi pi-user-plus"
+                                            class="p-button-text p-button-success" (click)="addUser()"></button>
+                                </div>
 
                                 <div class="flex align-items-center justify-content-between gap-3">
 
@@ -132,6 +137,7 @@
                                          <p-chip label="{{selectedVente.client.firstname.toString()}}" icon="pi pi-user" [removable]="false" [styleClass]="'custom-green-chip'" />
                                     </div>
                                 </div>
+
                             </div>
 
 
@@ -154,12 +160,12 @@
                                 </p-inputNumber>
                             </div>
 
-                            <div class="flex flex-column ">
-                                <label htmlFor="reglement">Réglement</label>
-                                <p-inputNumber [(ngModel)]="reglement" pTooltip="reglement"
-                                               mode="currency" inputId="currency-india" currency="TND" currencyDisplay="code"
-                                               locale="en-IN"></p-inputNumber>
-                            </div>
+                                <div class="flex flex-column">
+                                    <label >Réglement</label>
+                                    <p-inputNumber [(ngModel)]="reglement" pTooltip="reglement"
+                                                   mode="currency" inputId="currency-india" currency="TND" currencyDisplay="code"
+                                                   locale="en-IN"></p-inputNumber>
+                                </div>
                         </div>
                         <!-- Total Vente Section -->
                            <div class="flex-grow-1 flex-shrink-1 card bg-black-alpha-10 flex flex-column      align-items-center justify-content-center       font-bold p-4 m-3 border-round">
@@ -437,6 +443,7 @@
                 <div class="flex align-items-center">
                     <label class="text-primary font-bold pi pi-user mb-2">Client</label>
                     <p class="text-red-600 ml-1">*</p>
+
                 </div>
                 <div class="flex align-items-center">
                     <p-dropdown
@@ -474,6 +481,8 @@
             </div>
         </div>
 
+
+
         <div class="flex justify-content-end mt-2">
             <button pButton pRipple icon="pi pi-check" label="Sélectionné" (click)="selectClient()"></button>
         </div>
@@ -492,6 +501,19 @@
                 <p-button (onClick)="confirm2()" label="Non Paye" severity="danger" [outlined]="true" />
             </div>
         </p-dialog>
+
+    <div class=" flex justify-content-center">
+        <p-dialog
+                header="Ajouter Utilisateur"
+                [modal]="true"
+                [(visible)]="dialogueService.showAddUserSubject"
+                [style]="{ width: '100rem' }"
+                [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+                [maximizable]="true">
+            <app-ajout-user></app-ajout-user>
+        </p-dialog>
+    </div>
+
          <p-dialog
             [(visible)]="showDialogTranche"
             header="Vente Payé ou non"

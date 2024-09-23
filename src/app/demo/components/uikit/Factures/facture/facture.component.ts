@@ -118,7 +118,6 @@ export class FactureComponent implements OnInit {
 
     items: any[] | undefined;
 
-    selectedItem: any;
 
     suggestions: any[] | undefined;
 

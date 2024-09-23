@@ -47,6 +47,7 @@ export class Facture {
     reglement : number;
     restePayer : number
 
+    private IsshowingDiolog:false ;
     constructor(_id?: number, _reference?: string,_depot?:Depot, _lignesFacture?: LigneFacture[], _montant?: number, _montantTaxe?: number, _date?: Date, _dateCreation?: Date, _typeFacture?: factureType, _client?: User, _transporteur?: User, _provider?: User, _tranches?: Tranche[] , _paye?: boolean, _reglement?: number ,_restePayer?:number) {
         this.id = _id || 0  ;
         this.reference = _reference || '';
@@ -63,7 +64,8 @@ export class Facture {
         this.tranches = _tranches || [];
         this.paye = _paye || false;
         this.reglement = _reglement || 0;
-        this.restePayer = _restePayer || 0
+        this.restePayer = _restePayer || 0;
+        this.IsshowingDiolog=false ;
     }
 
     get _id(): number {
@@ -209,4 +211,6 @@ export class Facture {
     updateRestePayer(): void {
         this.restePayer = this.montant - this.getSommeTranches();
     }
+
+
 }

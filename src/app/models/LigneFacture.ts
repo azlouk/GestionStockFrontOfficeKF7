@@ -11,6 +11,7 @@ export class LigneFacture {
     prixVente: number;
     typeCalcule: string;
      idHistorique:number;
+     IsshowingDiolog: boolean;
 
     constructor(_id?: number, _quantite?: number, _montantTotal?: number, _produit?: Produit, _prixAchat?: number, _prixVente?: number, _typeCalcule?: string, _idHistorique?: number) {
         this.id = _id || 0;
@@ -21,6 +22,7 @@ export class LigneFacture {
         this.prixVente = _prixVente || _produit != undefined ? _produit!.prixUnitaire + _produit.gainUnitaire : 0;
         this.typeCalcule = _typeCalcule || "NoAction";
         this.idHistorique = _idHistorique || 0;
+        this.IsshowingDiolog=false
 
 
     }
@@ -79,5 +81,13 @@ export class LigneFacture {
 
     public set _typeCalcule(value: string) {
         this.typeCalcule = value;
+    }
+
+    public get _IsshowingDiolog(): boolean {
+        return this.IsshowingDiolog;
+    }
+
+    public set _IsshowingDiolog(value: boolean) {
+        this.IsshowingDiolog = value;
     }
 }

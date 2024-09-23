@@ -14,7 +14,7 @@
                         ></button>
                         </div>
 
-                    <div class="flex flex-auto    ">
+                    <div class=" flex-auto ">
 
                         <p-button
                                 icon="pi pi-eye"
@@ -23,7 +23,7 @@
                                 label="Afficher listes ventes"
                         ></p-button>
                     </div>
-                    <div class="flex flex-auto  ">
+                    <div class=" flex-auto  ">
 
                     <p-avatar
                                 *ngIf="displayusers"
@@ -39,7 +39,7 @@
             </p-toolbar>
 
 
-        <div class="row  m-2  p-2 ">
+        <div class="  w-full    ">
             <div class="text-3xl font-bold">Total Ventes</div>
             <div class="text-3xl text-green-500 w-25 shadow-1 m-2 p-2">
                 {{total.toFixed(3)  | number:'1.3-3'}} TND
@@ -61,7 +61,7 @@
                           styleClass="p-button-outlined p-button-primary  " label="Calculer"></p-button>
                 </div>
             </div>
-            <div *ngIf="displayusers">
+            <div *ngIf="displayusers" class="flex flex-wrap">
                 <p-table #dt
                          [scrollable]="true"
                          [value]="ventes"
@@ -197,8 +197,9 @@
                                                           styleClass="p-button-rounded p-button-primary p-button-text"></p-button>
                                             </td>
                                             <td>{{ ligneVente.qtyV }}</td>
-                                            <td class="text-success">{{ ligneVente.prixVente | currency: 'TND': 'TND'  | number:'1.3-3'}}</td>
+                                            <td class="text-success">{{ ligneVente.prixVente | number:'1.3-3'}} TND</td>
                                         </tr>
+
                                     </ng-template>
                                 </p-table>
                             </td>

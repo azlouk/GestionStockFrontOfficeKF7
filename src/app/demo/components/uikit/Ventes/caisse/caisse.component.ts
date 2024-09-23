@@ -45,7 +45,8 @@ import {TabViewModule} from "primeng/tabview";
 import {ServiceComp} from "../../../../../models/ServiceComp";
 import {ServiceCompService} from "../../../../../layout/service/service-comp.service";
 import {CommandeServAjoutComponent} from "../../commandeServices/commande-serv-ajout/commande-serv-ajout.component";
- import {DockModule} from "primeng/dock";
+import {Cloture} from "../../../../../models/Cloture";
+import {DockModule} from "primeng/dock";
 import {User} from "../../../../../models/user";
 import {UserService} from "../../../../../layout/service/user.service";
 import {SelectButtonModule} from "primeng/selectbutton";
@@ -59,7 +60,8 @@ import {Facture, factureType} from "../../../../../models/Facture";
 import {TrancheService} from "../../../../../layout/service/tranche.service";
 import {FactureService} from "../../../../../layout/service/facture.service";
 import {LigneFacture} from "../../../../../models/LigneFacture";
-import {Cloture} from "../../../../../models/Cloture";
+import {DialogService} from "../../../../../layout/service/dialogue-user.service";
+import {AjoutUserComponent} from "../../users/ajout-user/ajout-user.component";
 
 
 @Component({
@@ -82,7 +84,7 @@ import {Cloture} from "../../../../../models/Cloture";
         BadgeModule,
         InputGroupModule,
         InputGroupAddonModule, InputTextModule, TableModule,
-        CommonModule, ToggleButtonModule, AutoFocusModule, SidebarModule, FactureComponent, FactureAjoutComponent, RippleModule, TabViewModule, CommandeServAjoutComponent, DockModule, SelectButtonModule, ChipModule, ConfirmDialogModule, FieldsetModule, RadioButtonModule, CalendarModule
+        CommonModule, ToggleButtonModule, AutoFocusModule, SidebarModule, FactureComponent, FactureAjoutComponent, RippleModule, TabViewModule, CommandeServAjoutComponent, DockModule, SelectButtonModule, ChipModule, ConfirmDialogModule, FieldsetModule, RadioButtonModule, CalendarModule, AjoutUserComponent
     ],
     templateUrl: './caisse.component.html',
     styleUrl: './caisse.component.scss'
@@ -184,7 +186,8 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
                 private trancheService: TrancheService,
                 private factureService: FactureService,
                 private router: Router,
-                private  cdRef:ChangeDetectorRef
+                private  cdRef:ChangeDetectorRef,
+                public dialogueService:DialogService
     ) {
         const idrandom = 1;
         // this.selectedVente = new Vente(idrandom, new Date(), new User() , 0, 0, [], getUserDecodeID());
@@ -216,7 +219,7 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
 
 
         this.selectedVente.paye=false;
-       this.createNewFacture()
+       this.createNewFacture();
 
 
         this.showPay=false
@@ -362,8 +365,17 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
                 this.toggleDivVisibility();
                 break;
             case 'F10' :
+
+                alert(this.selectedVente.client.email)
+                if(this.newFacture.client.email==='Passager@client')
+                {
+                    this.selectedVente.paye=true;
+                    this.createNewFacture()
+                }
+                else {
                 this.focusIndex = 10;
                 this.showPay=true;
+                }
                 break;
 
             case 'F9': {
@@ -451,8 +463,17 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
                 this.toggleDivVisibility();
                 break;
             case 10 :
-                this.focusIndex = 10;
-                this.showPay=true
+                if(this.selectedVente.client.email==='Passager@client')
+                {
+                    this.selectedVente.paye=true;
+                    this.SaveVente();
+                }
+                else {
+                    this.focusIndex = 10;
+                    this.showPay=true
+                }
+
+
                 break;
             case 11 :
                 this.focusIndex = 11;
@@ -1045,8 +1066,8 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
     }
 
 
-
-
-
+    addUser() {
+        this.dialogueService.openDialog();
+    }
 }
 

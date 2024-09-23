@@ -17,7 +17,7 @@
                     </div>
                 </ng-template>
             </p-toolbar>
-
+<div class="flex flex-wrap">
             <p-table #dt [value]="tranches" responsiveLayout="scroll" [rows]="10"
                      [globalFilterFields]="['dateEcheance','description','m']" [paginator]="true"
                      [rowsPerPageOptions]="[5,10,20,30,50]" [showCurrentPageReport]="true"
@@ -89,7 +89,9 @@
                         </td>
                     </tr>
                 </ng-template>
-            </p-table>        </div>
+            </p-table>
+</div>
+</div>
     </div>
 </div>
 <p-dialog [(visible)]="ajoutTr" [style]="{height: '550px',width: '500px'}" header="Depot Details" [modal]="true"

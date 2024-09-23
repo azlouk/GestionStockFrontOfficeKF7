@@ -48,6 +48,7 @@ export class LigneVenteComponent implements OnInit {
 
     ngOnInit(): void {
         this.loadVentes();
+
     }
 
     loadVentes(): void {
@@ -304,7 +305,8 @@ export class LigneVenteComponent implements OnInit {
                     }
                 });
 
-            this.router.navigate(['/uikit/Ventes']);
+            this.router.navigate(['/uikit/facture']);
+
         }
     }
 
