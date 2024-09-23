@@ -174,8 +174,8 @@
             </div>
         </p-fieldset>
         <p-fieldset legend="Lignes Facture" [toggleable]="true">
-            <div class="flex p-3 pl-4 pr-4 border-round gap-3 justify-content-center bg-gray-100 flex-column md:flex-row">
-                <div class="p-card col-12 md:col-5 justify-content-center mb-3 md:mb-0">
+            <div class="flex p-3 pl-4 pr-4 border-round gap-3 justify-content-center bg-gray-100 flex-column ">
+                <div class="p-card col-12 md:col-12 justify-content-center mb-3 md:mb-0">
                     <div class="flex">
                         <h4 class="font-bold">Sélectionner Produits</h4>
                         <p class="text-red-600 ml-1 text-2xl"> *</p>
@@ -219,13 +219,13 @@
                         </ng-template>
                         <ng-template pTemplate="header">
                             <tr>
-                                <th style="min-width:4rem">
+                                <th >
                                     <div class="flex align-items-center">
                                         Nom
                                         <p type="text" field="nom" display="menu"></p>
                                     </div>
                                 </th>
-                                <th style="min-width:4rem">
+                                <th >
                                     <div class="flex align-items-center">
                                         Code
                                         <p type="text" field="dataqr" display="menu"></p>
@@ -234,13 +234,13 @@
                                 <th>Prix {{newFacture.typeFacture=='FACTURE_VENTE'?'vente':'achat'}}</th>
                                 <th>Gain Unitaire</th>
                                 <th>Gain Gros</th>
-                                <th style="min-width:4rem">
+                                <th >
                                     Qty Disp
                                 </th>
-                                <th style="min-width:4rem">
+                                <th >
                                     Qty Min Gros
                                 </th>
-                                <th style="min-width:3rem">
+                                <th >
                                     <div class="flex align-items-center">
                                         <p field="activity" matchMode="between" display="menu"></p>
                                         <ng-template pTemplate="filter" let-filter="filterCallback">
@@ -286,26 +286,28 @@
                         </ng-template>
                     </p-table>
                 </div>
-                <div class="p-card col-12 md:col-7 justify-content-center">
+                <div class="p-card col-12 md:col-12 justify-content-center">
                     <h3 class="font-bold mt-2">List de lignes facture</h3>
-                    <p-table [value]="newFacture.lignesFacture" dataKey="id" [scrollable]="true"
-                             responsiveLayout="scroll" editMode="row">
+                    <p-table [value]="newFacture.lignesFacture" dataKey="id"
+                             responsiveLayout="scroll" editMode="row"
+                             [tableStyle]="{ 'min-width': '75rem' }">
                         <ng-template pTemplate="header">
                             <tr>
-                                <th pSortableColumn="nom" style="width:20%">Intitulé produit
+                                <th pSortableColumn="nom" >Intitulé produit
                                     <p-sortIcon field="nom"></p-sortIcon>
                                 </th>
-                                <th pSortableColumn="quantite" style="width:20%">
+                                <th pSortableColumn="quantite" >
                                     Quantité {{newFacture.typeFacture == 'FACTURE_VENTE' ? 'vente' : 'achat'}}
                                     <p-sortIcon field="quantite"></p-sortIcon>
                                 </th>
-                                <th style="width:20%">
+                                <th >
                                     Prix {{newFacture.typeFacture == 'FACTURE_VENTE' ? 'vente' : 'achat'}} (TND)
                                 </th>
-                                <th pSortableColumn="montantTotal" style="width:20%">
+                                <th pSortableColumn="montantTotal" >
                                     Total {{newFacture.typeFacture == 'FACTURE_VENTE' ? 'vente' : 'achat'}}(TND)
                                     <p-sortIcon field="price"></p-sortIcon>
                                 </th>
+                                <th></th>
                                 <th></th>
                                 <th></th>
                             </tr>
@@ -381,8 +383,13 @@
                                         </ng-template>
                                     </p-cellEditor>
                                 </td>
+
                                 <td class="fw-bold fs-3 text-black">
                                     {{getMontantLigne(l)  | number:'1.3-3'}}
+                                </td>
+                                <td>
+
+                                    {{l.typeCalcule}}
                                 </td>
                                 <td>
                                     <div class="flex align-items-center justify-content-center gap-2">
@@ -404,54 +411,28 @@
                                 </td>
                             </tr>
 
-                            <p-dialog *ngIf="newFacture.typeFacture==factureType.ENTREE " [(visible)]="typeCalculeDialogue" [style]="{width: '500px'}"
-                                      header="Choisir La methode de Calcule de Prix" [modal]="true" class="p-fluid">
-                                <ng-template pTemplate="content">
-                                    <div class="flex justify-content-between w-full">
-                                        <div class="flex align-items-center">
-                                            <p-radioButton name="MaxValue" value="MaxValue" [(ngModel)]="l.typeCalcule"
-                                                           inputId="ingredient2"/>
-                                            <label class="ml-2">Max Value</label>
-                                        </div>
-                                        <div class="flex align-items-center">
-                                            <p-radioButton name="Min" value="MinValue" [(ngModel)]="l.typeCalcule"
-                                                           inputId="ingredient3"/>
-                                            <label class="ml-2">Min Value</label>
-                                        </div>
-                                        <div class="flex align-items-center">
-                                            <p-radioButton name="Moyen" value="MoyenValue" [(ngModel)]="l.typeCalcule"
-                                                           inputId="ingredient4"/>
-                                            <label class="ml-2">Moyen Value</label>
-                                        </div>
-                                    </div>
-                                </ng-template>
-                                <ng-template pTemplate="footer">
-                                    <button pButton pRipple label="Confirmer" icon="pi pi-times" class="p-button-text"
-                                            (click)="confirmerRecalculPrix(l)"></button>
-                                </ng-template>
-                            </p-dialog>
 
-                            <!--      <p-dialog [(visible)]="typeCalculeDialogue" [style]="{width: '500px'}"
+                         <p-dialog [(visible)]="l.IsshowingDiolog"  [style]="{width: '500px'}"
                                             header="Choisir La methode de Calcule de Prix" [modal]="true" class="p-fluid">
                                       <ng-template pTemplate="content">
                                           <div class="flex justify-content-between w-full">
                                               <div class="flex align-items-center">
                                                   <p-radioButton name="Max" value="MaxValue"
-                                                                 [(ngModel)]="l.produit.typeCalcule" inputId="ingredient2"/>
+                                                                 [(ngModel)]="l.typeCalcule" inputId="ingredient2"/>
                                                   <label class="ml-2">
                                                       Max Value
                                                   </label>
                                               </div>
                                               <div class="flex align-items-center">
                                                   <p-radioButton name="Min" value="MinValue"
-                                                                 [(ngModel)]="l.produit.typeCalcule" inputId="ingredient3"/>
+                                                                 [(ngModel)]="l.typeCalcule" inputId="ingredient3"/>
                                                   <label class="ml-2">
                                                       Min Value
                                                   </label>
                                               </div>
                                               <div class="flex align-items-center">
                                                   <p-radioButton name="Moyen" value="MoyenValue"
-                                                                 [(ngModel)]="l.produit.typeCalcule" inputId="ingredient4"/>
+                                                                 [(ngModel)]="l.typeCalcule" inputId="ingredient4"/>
                                                   <label class="ml-2">
                                                       Moyen Value
                                                   </label>
@@ -460,9 +441,9 @@
                                       </ng-template>
                                       <ng-template pTemplate="footer">
                                           <button pButton pRipple label="Confirmer" icon="pi pi-times" class="p-button-text"
-                                                  (click)="hideDialog()"></button>
+                                                  (click)="confirmerRecalculPrix(l)"></button>
                                       </ng-template>
-                                  </p-dialog>-->
+                                  </p-dialog>
                         </ng-template>
                         <ng-template pTemplate="emptymessage">
                             <tr>

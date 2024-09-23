@@ -21,6 +21,7 @@
                     </div>
                 </ng-template>
             </p-toolbar>
+            <div class="flex flex-wrap">
             <p-table #dt [value]="commandes" responsiveLayout="scroll" [rows]="10"
                      [globalFilterFields]="['id', 'dateCreation', 'dateEstimeeFin', 'dateValidationOuSortie', 'status', 'prixTotal', 'paiement', 'avance', 'descriptionPanne', 'nomPanne']"
                      [paginator]="true" [rowsPerPageOptions]="[5,10,20,30,50]"
@@ -122,6 +123,7 @@
                     </tr>
                 </ng-template>
             </p-table>
+            </div>
             <p-confirmDialog #confirmDialog></p-confirmDialog>
         </div>
     </div>

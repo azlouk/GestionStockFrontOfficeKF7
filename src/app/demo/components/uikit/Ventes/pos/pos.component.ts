@@ -882,8 +882,7 @@ export class POSComponent implements OnInit,OnDestroy {
 
         if (product && product.files && product.files.length > 0) {
 
-            console.log(safeImages)
-            return this.sanitizer.bypassSecurityTrustUrl(`http://localhost:8081/img/${product.files[0].name}`);
+            return this.sanitizer.bypassSecurityTrustUrl(`http://localhost:8082/img/${product.files[0].name}`);
         }
 
         return this.defaultImageUrl ;

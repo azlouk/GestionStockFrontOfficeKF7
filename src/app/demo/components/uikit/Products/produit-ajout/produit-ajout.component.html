@@ -88,7 +88,9 @@
                     <h5 class="text-bluegray-600 font-bold">Prix & Quantité</h5>
                 </div>
                 <div class="flex">
-                    <div class="flex flex-column gap-2 p-3">
+
+                <div class="flex">
+                    <div class="flex flex-column gap-1 p-1">
                         <label class="form-label font-bold fs-5">Prix unitaire </label>
                         <p-inputNumber pTooltip="prix unitaire d'achat"
                                        [min]="0"
@@ -97,7 +99,7 @@
                                        inputId="currency-india" currency="TND"
                                        currencyDisplay="code" locale="en-IN"></p-inputNumber>
                     </div>
-                    <div class="flex flex-column gap-2 p-3">
+                    <div class="flex flex-column gap-1 p-1">
                         <label class="form-label font-bold fs-5"> Gain unitaire</label>
                         <p-inputNumber pTooltip="Gain de produit pour le prix unitaire d'achat"
                                        [(ngModel)]="newProduct.gainUnitaire"
@@ -110,19 +112,10 @@
                     </div>
                 </div>
 
-                <div class="col" [hidden]="true">
-                    <label class="form-label font-bold fs-5">Prix gros </label>
-                    <p-inputNumber pTooltip="prix gros d'achat"
-                                   [(ngModel)]="newProduct.prixGros"
-                                   [min]="0"
-                                   mode="currency"
-                                   inputId="currency-india" currency="TND"
-                                   currencyDisplay="code"
-                                   locale="en-IN"></p-inputNumber>
-                </div>
-                <div class="flex">
 
-                    <div class="flex flex-column gap-2 p-3">
+
+
+                    <div class="flex flex-column gap-1 p-1">
                         <label class="form-label font-bold fs-5">Gain gros </label>
                         <p-inputNumber pTooltip="Gain de produit pour le prix gros"
                                        [(ngModel)]="newProduct.gainGros"
@@ -131,7 +124,7 @@
                                        currencyDisplay="code"
                                        locale="en-IN"></p-inputNumber>
                     </div>
-                    <div class="flex flex-column gap-2 p-3">
+                    <div class="flex flex-column gap-1 p-1">
                         <label class="form-label font-bold fs-5">Tax (TVA) </label>
                         <p-inputNumber [(ngModel)]="newProduct.taxe" mode="currency"
                                        [min]="0"
