@@ -16,7 +16,7 @@
                 </div>
             </div>
             <span class="text-500">Montant Achat Total</span>
-            <span class="text-red-500 font-bold pl-2">{{servicestatistic.statistic.totalprixunitaire }} TND  </span>
+            <span class="text-red-500 font-bold pl-2">{{servicestatistic.statistic.totalprixunitaire | number:'1.3-3'}} TND  </span>
         </div>
     </div>
     <div class="col-12 lg:col-6 xl:col-3">
@@ -32,11 +32,11 @@
             <div class="flex justify-content-around">
                 <div>
                     <span class="block text-500 font-medium mb-3">Unitaire</span>
-                    <div class="text-900 text-green-500 font-bold text-l">TND {{servicestatistic.statistic.totalgainunitaire}}</div>
+                    <div class="text-900 text-green-500 font-bold text-l">TND {{servicestatistic.statistic.totalgainunitaire | number:'1.3-3'}}</div>
                 </div>
                 <div>
                     <span class="block text-500 font-medium mb-3">Gros</span>
-                    <div class="text-900 text-green-500 font-bold text-l">TND {{servicestatistic.statistic.totalgaingros}}</div>
+                    <div class="text-900 text-green-500 font-bold text-l">TND {{servicestatistic.statistic.totalgaingros | number:'1.3-3'}}</div>
                 </div>
             </div>
 
@@ -56,11 +56,11 @@
             <div class="flex justify-content-around">
                 <div>
                     <span class="block text-500 font-medium mb-3">Somme de ventes</span>
-                    <div class="text-900 text-red-500 font-bold text-xl">TND {{servicestatistic.statistic.totalVentes}}</div>
+                    <div class="text-900 text-red-500 font-bold text-xl">TND {{servicestatistic.statistic.totalVentes| number:'1.3-3'}}</div>
                 </div>
                 <div>
                     <span class="block text-500 font-medium mb-3">gain</span>
-                    <div class="text-900 text-green-500 font-bold text-l">TND {{servicestatistic.statistic.totalGainVentes}}</div>
+                    <div class="text-900 text-green-500 font-bold text-l">TND {{servicestatistic.statistic.totalGainVentes | number:'1.3-3'}}</div>
                 </div>
             </div>
 

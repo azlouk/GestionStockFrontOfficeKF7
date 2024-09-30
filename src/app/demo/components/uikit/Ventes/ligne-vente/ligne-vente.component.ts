@@ -58,7 +58,7 @@ export class LigneVenteComponent implements OnInit {
                 this.ventes = ventes;
                 this.loading=false ;
                 this.getAllTotal();
-                console.log('Ventes:', new JsonPipe().transform(ventes));
+
             },
             (error: any) => {
                 console.error('Error fetching ventes:', error);
@@ -73,26 +73,8 @@ export class LigneVenteComponent implements OnInit {
                 );})
     }
 
-    // loadVentes(): void {
-    //   this.loading = true;
-    //   this.venteService.getVentes().subscribe(
-    //     (ventes: Vente[]) => {
-    //       this.ventes = ventes;
-    //       this.loading = false;
-    //       this.getAllTotal();
-    //       console.log('Ventes:', JSON.stringify(ventes));
-    //     },
-    //     (error: any) => {
-    //       console.error('Error fetching ventes:', error);
-    //       this.displayusers = false;
-    //       Swal.fire({
-    //         icon: 'error',
-    //         title: 'Oops...',
-    //         text: "Vous n'avez pas la permission s'il vous plaît contacter l'administrateur."
-    //       });
-    //     }
-    //   );
-    // }
+
+
     goToClotures(): void {
         this.router.navigate(['/uikit/cloture']); // Redirection vers la page de modification avec l'ID du produit
     }
@@ -184,18 +166,9 @@ export class LigneVenteComponent implements OnInit {
         vente.visible = !vente.visible
     }
 
-    /*total:number=0;
-    DateStart: Date=new Date();
-    DateFin:Date=new Date();
-    getAllTotal() {
-        this.total=0  ;
-        this.ventes.forEach(value => {
-            console.log(value.dateVente)
-            if(new Date(value.dateVente+"").getTime()>=new Date(this.DateStart).getTime() && new Date(value.dateVente+"").getTime()<=new Date(this.DateFin).getTime() )
-                this.total+=value.total;
 
-        })
-    }*/
+
+
     total: number = 0;
     DateStart: Date = new Date();
     DateFin: Date = new Date();
@@ -205,11 +178,11 @@ export class LigneVenteComponent implements OnInit {
         const startTime = new Date(this.DateStart).getTime();
         const endTime = new Date(this.DateFin).getTime();
 
-        console.log("DateStart:", this.DateStart);
-        console.log("DateFin:", this.DateFin);
+
+
 
         this.ventes.forEach(value => {
-            console.log("Raw dateVente:", value.dateVente);
+
 
             // Convertir value.dateVente en objet Date
             const parts = value.dateVente.toString().split(' ');
@@ -230,60 +203,30 @@ export class LigneVenteComponent implements OnInit {
                 parseInt(timeParts[2])   // secondes
             ).getTime();
 
-            console.log("venteTime:", venteTime, "startTime:", startTime, "endTime:", endTime);
+
 
             if (!isNaN(venteTime) && venteTime >= startTime && venteTime <= endTime) {
                 this.total += value.total;
             }
-            console.log("total après traitement de la vente:", this.total);
+
         });
 
-        console.log("total final:", this.total);
+
     }
 
 
     selectedVentes:Vente[] = [];
     listTransfer:Vente[] = [];
-    // transferSelected() {
-    //
-    //     if (this.selectedVentes.length > 0) {
-    //         const firstClient = this.selectedVentes[0].client;
-    //         const allSameClient = this.selectedVentes.every(vente => vente.client === firstClient);
-    //
-    //         if (allSameClient) {
-    //
-    //             this.listTransfer.push(...this.selectedVentes);
-    //             console.info(this.listTransfer);
-    //
-    //             this.venteService.transferFacturation(this.listTransfer).subscribe({
-    //
-    //             })
-    //
-    //
-    //
-    //         } else {
-    //
-    //             Swal.fire({
-    //                 title: "Fails Facturation !",
-    //                 text: "Votre Liste vente n'appartient pas a un seul Client!",
-    //                 icon: "error"
-    //             });
-    //         }
-    //         this.selectedVentes = [];
-    //     }
-    // }
+
+
 
     transferSelected() {
         if (this.selectedVentes && this.selectedVentes.length > 0) {
-            // const firstClient = this.selectedVentes[0].client;
-            // const allSameClient = this.selectedVentes.every(vente => vente.client.id === firstClient.id); // Vérifier par ID
-            //
-            // if (allSameClient) {
+
                 this.listTransfer.push(...this.selectedVentes);
-            //     console.info("listTransfer"+new JsonPipe().transform(this.listTransfer));
-            //
+
             //     // Appel au service pour le transfert
-            console.info("listTransfer ts"+new JsonPipe().transform(this.listTransfer));
+
 
             this.venteService.transferFacturation(this.listTransfer).subscribe({
                     next: () => {

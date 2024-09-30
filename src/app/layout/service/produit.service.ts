@@ -64,7 +64,7 @@ export class ProduitService {
     getProduitById(id: number): Observable<Produit> {
         const url = `${this.api}/findById`;
         const token = getToken();
-        console.log(token)
+
         if (token) {
             const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type","application/json; charset=utf8" );
 
@@ -78,7 +78,7 @@ export class ProduitService {
         const url = `${this.api}/getAllProductByArticle`;
 
         const token = getToken();
-        console.log(token)
+
         if (token) {
             // Ajouter le token à l'en-tête de la requête
             const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type","application/json; charset=utf8" );
@@ -128,7 +128,7 @@ export class ProduitService {
                 formData.append('file', uploadFiles[i]);
             }
 
-            console.log(produit)
+
             // Utiliser les headers dans la require
             return this.http.post<any>(this.api + '/create', formData,{headers} );
         } else {
@@ -258,7 +258,7 @@ export class ProduitService {
             }
 
 
-            console.info(venteSave)
+
 
             // Utiliser les headers dans la require
             return this.http.post<any>(this.apivente + '/create', venteSave,{headers} );

@@ -198,7 +198,7 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
     getAllClient() {
         this.userService.getUsersClient().subscribe((value: User[]) => {
             this.utilisateursClients = value
-            // console.log(new JsonPipe().transform(this.utilisateurs) )
+
         })
     }
 
@@ -228,7 +228,7 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
     }
     SaveVente() {
 
-        console.log(new JsonPipe().transform(this.selectedVente))
+
 
         if (this.selectedVente.lignesVente.length != 0) {
             this.getTotalVente();
@@ -283,8 +283,8 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
             (services: ServiceComp[]) => {
                 this.services = services;
                 this.loading = false;
-                //this.calculerCout();
-                console.table(services);
+
+
             },
             (error: any) => {
                 console.error('Error fetching services:', error);
@@ -314,14 +314,14 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
         switch (event.key) {
             case 'F1':
                 this.focusIndex = 1;
-                console.log(`Focus set to Button 0`);
+
                 this.sidebarVisibleFacture = true;
 
                 break;
             case 'F2':
                 this.focusIndex = 2;
                 event.preventDefault();
-                console.log(`Focus set to Button 1`);
+
                 // Déclencher le clic sur le bouton "Ajouter Produit"
                 if (this.ajouterProduitButton != undefined)
                     this.ajouterProduitButton.nativeElement.click();
@@ -334,19 +334,18 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
                 this.searchTerm = '';
                 this.focusIndex = 3;
                 event.preventDefault();
-                console.log(`Focus set to Button 2`);
+
                 this.focusOnSearchInput();
                 break;
             case 'F4':
                 this.focusIndex = 4;
                 event.preventDefault();
-                console.log(`Focus set to Button 3`);
+
                 this.showDialog();
                 break;
             case 'F5':
                 this.focusIndex = 5;
                 event.preventDefault();
-                console.log(`Focus set to Button 4`);
 
                 this.searchTable = true;
                 break;
@@ -357,7 +356,7 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
             case 'F7':
                 this.focusIndex = 7;
                 event.preventDefault();
-                console.log(`Focus set to Button 6!`);
+
                 this.showClotureDIv();
                 break;
             case 'F8' :
@@ -425,7 +424,7 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
             case 2:
                 this.focusIndex = 2;
 
-                console.log(`Focus set to Button 1`);
+
                 // Déclencher le clic sur le bouton "Ajouter Produit"
                 if (this.ajouterProduitButton != undefined)
                     this.ajouterProduitButton.nativeElement.click();
@@ -436,17 +435,17 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
 
                 this.searchTerm = '';
                 this.focusIndex = 3;
-                console.log(`Focus set to Button 2`);
+
                 this.focusOnSearchInput();
                 break;
             case 4:
                 this.focusIndex = 4;
-                console.log(`Focus set to Button 3`);
+
                 this.showDialog();
                 break;
             case 5:
                 this.focusIndex = 5;
-                console.log(`Focus set to Button 4`);
+
                 this.focusOnSupprimerButton();
                 break;
             case 6 :
@@ -455,7 +454,7 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
                 break;
             case 7:
                 this.focusIndex = 7;
-                console.log(`Focus set to Button 6!`);
+
                 this.showClotureDIv();
                 break;
             case 8 :
@@ -559,7 +558,7 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
     loadFile(filesList: File[]): void {
         this.safeImageUrl = [];
         this.visibleimage = true;
-        console.error(filesList)
+
         filesList.forEach(value => {
             this.produitService.getImageProduit(value.name).subscribe(
                 (data: Blob) => {
@@ -772,7 +771,7 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
 
         this.clotureService.SaveCloture(this.cloture).subscribe(
             value => {
-                console.log(value);
+
                 this.show = false;
 
                 // Utiliser SweetAlert pour afficher un message de succès
@@ -818,7 +817,7 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
             this.getTottalNbProduct()
 
 
-            console.log("ligne Ventes:", this.listeVente);
+
         } else {
             Swal.fire({
                 title: "Vider  !",
@@ -834,7 +833,7 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
 
         this.selectedVente = vente;
 
-        console.log("SelectedVente", this.selectedVente)
+
 
     }
 
@@ -926,7 +925,7 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
 
         this.saveFactureWithVente();
 
-        console.log('Contenu de la facture à enregistrer :', this.newFacture);
+
 
     }
 
@@ -953,7 +952,7 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
         })
 
 
-        console.log("new Facture---"+this.newFacture);
+
 
 
 

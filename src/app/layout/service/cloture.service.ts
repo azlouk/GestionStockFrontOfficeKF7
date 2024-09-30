@@ -19,7 +19,6 @@ export class ClotureService {
 
     SaveCloture(cloture: Cloture): Observable<any> {
         const token = getToken();
-        console.log(new JsonPipe().transform(cloture));
 
 
         if (token) {
@@ -37,7 +36,7 @@ export class ClotureService {
                 },
             };
 
-            console.error(new JsonPipe().transform(clotureSave.employer));
+
 
             // Use the headers in the request
             return this.http.put<any>(`${this.api}/cloture/clotureemployer`, clotureSave, {
@@ -50,9 +49,9 @@ export class ClotureService {
     }
 
     addCloture(newCloture: Cloture): Observable<Cloture> {
-        console.log("Data cloture", newCloture);
+
         const token = getToken();
-        console.log(token);
+
         if (token) {
             const headers = new HttpHeaders()
                 .set('Authorization', `Bearer ${token}`)
@@ -72,7 +71,7 @@ export class ClotureService {
 
     getClotures(): Observable<any[]> {
         const token = getToken();
-        console.log(token)
+
 
         if (token) {
             // Ajouter le token à l'en-tête de la requête
@@ -87,7 +86,7 @@ export class ClotureService {
     getClotureById(id: number): Observable<Cloture> {
         const url = `${this.api}/cloture/getClotureById/${id}`; // Corrected URL path
         const token = getToken();
-        console.log(token);
+
 
         if (token) {
             // Add the token to the request header
@@ -110,7 +109,7 @@ export class ClotureService {
             'dateCloture':this.datePipe.transform(date,'dd-MM-yyyy HH:mm:ss'),
         }
 
-        console.error(data);
+
 
         if (token) {
             // Add the token to the request header
@@ -126,7 +125,7 @@ export class ClotureService {
 
         // Récupérer le token d'authentification depuis le stockage local (à adapter selon votre méthode d'authentification)
         const token = getToken();
-        console.log(token)
+
         if (token) {
             // Ajouter le token à l'en-tête de la requête
             const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type", "application/json; charset=utf8");
@@ -141,7 +140,7 @@ export class ClotureService {
     }
     getCloturesFiltrer(id:number): Observable<any[]> {
         const token = getToken();
-        console.log(token)
+
         if (token) {
             // Ajouter le token à l'en-tête de la requête
             const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type", "application/json; charset=utf8");

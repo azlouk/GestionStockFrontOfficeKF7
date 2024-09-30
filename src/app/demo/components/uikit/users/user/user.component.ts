@@ -70,8 +70,8 @@ export class UserComponent {
     getAllUsers(){
         this.userService.getUsers().subscribe((value :User[])=>{
             this.users=value ;
-            console.error(""+new JsonPipe().transform(this.users))
-            console.log(value)
+
+
 
 
         },error => {
@@ -115,7 +115,7 @@ export class UserComponent {
     }
 
     editUser(user: User): void {
-        console.log('Utilisateur sélectionné pour modification :', user.id);
+
         this.router.navigate(['/uikit/Edit-user', user.id]);
     }
     // Importez les modules nécessaires
@@ -134,7 +134,7 @@ export class UserComponent {
                 this.userService.deleteUser(user).subscribe(
                     (response: any) => {
                         // Gestion de la réponse en tant que texte
-                        console.log( response)
+
                         if (response==true) {
                             Swal.fire('Supprimé', 'L\'utilisateur a été supprimé avec succès', 'success');
                             this.getAllUsers();
@@ -151,7 +151,7 @@ export class UserComponent {
                 Swal.fire('Annulé', 'La suppression a été annulée', 'info');
             }
         });
-        console.log("utilisateur" , this.user)
+
     }
 
     deleteService(userId: number): void {

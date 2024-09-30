@@ -58,7 +58,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.venteservice.getVentes().subscribe(value => {
             this.ventes = value;
         })
-        // console.log(getUserDecodeID().id);
+
         const token = getToken();
         //alert(token)
         if (token == null || token === '404') {
@@ -79,7 +79,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     getServiceStatisticTotalQuantityFormatted(): string {
         const totalQuantiteProduitParUnite = this.servicestatistic.statistic.totalQuantiteProduitParUnite;
-        // console.log('Données brutes :', totalQuantiteProduitParUnite);
+
 
         let formattedResult = '';
 
@@ -97,7 +97,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     async loadData(): Promise<void> {
         try {
             const value = await this.servicestatistic.getStatistic().toPromise();
-            console.log(value);
+
             this.servicestatistic.statistic = value;
             // this.chartProduitsParUnite();
         } catch (error) {
@@ -115,7 +115,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 //get ventes et gains par jour!
     getVenteDay() {
         this.servicestatistic.getVentesGainParJour().subscribe(data => {
-            console.log('Données de ventes et gains par jour reçues :', data);
+
 
             if (data) {
                 const sortedVentesData = this.sortDataByDate(data['ventes']);
@@ -165,7 +165,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 //get factures et gains par jour!
     getfactureByDay(): void {
         this.servicestatistic.getFacturesGainParJour().subscribe(data => {
-            console.log('Données des factures et gains reçues :', data);
+
 
             if (data) {
                 const sortedVentesData = this.sortDataByDate(data.ventes);
@@ -220,7 +220,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     getVentesEtGainsParMois(): void {
         this.servicestatistic.getVentesEtGainsParMois().subscribe(data => {
-            console.log('Données des ventes et gains reçues :', data);
+
 
             if (data) {
                 const sortedVentesData = this.sortDataByDate(data['ventes']);
@@ -294,7 +294,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     getFacturesEtGainsParMois(): void {
         this.servicestatistic.getFacturesEtGainsParMois().subscribe(data => {
-            console.log('Données des factures et gains par mois reçues :', data);
+
 
             if (data) {
                 const sortedVentesData = this.sortDataByDate(data['ventes']);

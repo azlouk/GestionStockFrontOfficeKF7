@@ -226,9 +226,9 @@ export class POSComponent implements OnInit,OnDestroy {
                             timerProgressBar: true,
 
                         }).then((result) => {
-                            /* Read more about handling dismissals below */
+
                             if (result.dismiss === Swal.DismissReason.timer) {
-                                // console.log("I was closed by the timer");
+
                             }
                         });
 
@@ -305,8 +305,8 @@ export class POSComponent implements OnInit,OnDestroy {
             });
         }
         this.clearVente();
-        // Afficher dans la console les détails de la vente sélectionnée (pour vérification)
-        console.log('selected vente', this.selectedVente);
+
+
     }
     getAllProduits() {
         this.loading=true ;
@@ -314,7 +314,7 @@ export class POSComponent implements OnInit,OnDestroy {
             this.produits = value;
             this.loading=false ;
             this.cdr.detectChanges();
-            console.table(this.produits)
+
         })
     }
     getProduitByQtyventeOrder(){
@@ -325,7 +325,7 @@ export class POSComponent implements OnInit,OnDestroy {
             this.produitsOrderBy = value;
             this.changeTable();
         })
-        // console.log("produits recants:",this.produitsOrderBy)
+
     }
     goHome(){
         this.route.navigate([""])
@@ -567,7 +567,7 @@ export class POSComponent implements OnInit,OnDestroy {
     getAllArticles() {
         this.produitService.getArticles().subscribe((value: Article[]) => {
             this.articles = value;
-            console.table(this.articles)
+
 
         }, error => {
             // this.displayusers = false;
@@ -661,7 +661,7 @@ export class POSComponent implements OnInit,OnDestroy {
     showClotureDIv() {
         this.clotureService.getTotalClotureNow(new Date()).subscribe(value => {
             this.TotalAndReglement = value;
-            console.error(value)
+
         })
 
         this.show = !this.show
@@ -672,7 +672,7 @@ export class POSComponent implements OnInit,OnDestroy {
         this.cloture.dateCloture = new Date();
         this.clotureService.SaveCloture(this.cloture).subscribe(
             value => {
-                // console.log(value);
+
                 this.show = false;
 
                 // Utiliser SweetAlert pour afficher un message de succès
@@ -710,7 +710,7 @@ export class POSComponent implements OnInit,OnDestroy {
                 this.listeVente.push(this.selectedVente);
                 this.getTottalNbProduct()
 
-                // console.log("ligne Ventes:", this.listeVente);
+
             } else {
                 Swal.fire({
                     title: "Vider  !",
@@ -724,8 +724,8 @@ export class POSComponent implements OnInit,OnDestroy {
 
     calculatorInput(value: string) {
         try {
-            // console.log("Value Data : "+this.calculateValue)
-            // console.log("Data pressed: "+value)
+
+
             if(this.calculateValue=='0'){
                 this.calculateValue='' ;
             }
@@ -757,7 +757,8 @@ export class POSComponent implements OnInit,OnDestroy {
                     break;
 
                 case 'R': {
-                    // console.log(typeof this.calculateValue)
+
+
                     const newCalcule: string = this.calculateValue.toString().slice(0, -1);
                     this.calculateValue = newCalcule;
                     if (this.calculateValue === '') {
@@ -774,7 +775,8 @@ export class POSComponent implements OnInit,OnDestroy {
                     } catch (error) {
                         this.calculateValue = '0'
                         this.calculatorScreenValue = '0'
-                        // console.log(error)
+
+
                     }
 
 
@@ -794,7 +796,8 @@ export class POSComponent implements OnInit,OnDestroy {
                     } catch (error) {
                         this.calculatorScreenValue='0' ;
                         this.calculateValue='0' ;
-                        //  console.log(error)
+
+
                     }
                     break;
 
@@ -811,20 +814,22 @@ export class POSComponent implements OnInit,OnDestroy {
                         }
                     } catch (e) {
 
-                        // console.log(e)
+
+
                     }
             }
             this.getTotalOperation();
         } catch (e) {
             this.calculatorScreenValue='0' ;
             this.calculateValue='0' ;
-            // console.log('log : error ch')
+
+
         }
 
 
     }
     evaluateCalculator(value :string):boolean {
-        //  console .log((this.calculateValue.match(/[\+\-\*\/]/g) || []).length < 1)
+
         return (this.calculateValue.match(/[\+\-\*\/]/g) || []).length < 1 ;
     }
 

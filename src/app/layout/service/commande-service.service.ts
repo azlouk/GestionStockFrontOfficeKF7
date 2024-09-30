@@ -23,7 +23,7 @@ export class CommandeServiceService {
 
   getAllCommandes(): Observable<CommandeServ[]> {
     const token = localStorage.getItem('token');
-    console.log(token);
+
     if (token) {
       // Ajouter le token à l'en-tête de la requête
       const headers = new HttpHeaders()
@@ -113,7 +113,7 @@ export class CommandeServiceService {
       }))
     };
 
-    console.log("Commande envoyée:", commande);
+
     return this.http.post<CommandeServ>(this.api, commande, { headers }).pipe(
         catchError((error: HttpErrorResponse) => {
           console.error('Erreur lors de l\'ajout de la commande:', error);
@@ -191,7 +191,7 @@ export class CommandeServiceService {
         description: service.descriptionServiceComp
       }))
     };
-    console.log("Commande mise à jour:", commande);
+
     return this.http.put<CommandeServ>(`${this.api}/${c.id}`, commande, { headers }).pipe(
         catchError((error: HttpErrorResponse) => {
           console.error('Erreur lors de la mise à jour de la commande:', error);

@@ -81,7 +81,7 @@ export class UpdateUserComponent implements OnInit {
                 this.userService.getUserById(userId).subscribe(
                     (user) => {
                         this.user = user;
-                        console.error("User :=> "+new JsonPipe().transform(this.user))
+
                         for (let i = 0; i < this.permissions.length; i++) {
                             this.permissions[i].supprimer=user.permission.find(value => value.api==='delete' && this.permissions[i].tableName===value.tableName)!=undefined;
                             if(this.permissions[i].supprimer===true){
@@ -102,7 +102,7 @@ export class UpdateUserComponent implements OnInit {
                         }
                         this.userService.getUsersPassword(this.user.id).subscribe((value :User) => {
                             this.user.password=value.password ;
-                            console.log(value)
+
                         })
                         console.log('user EDit From Data :', new JsonPipe().transform(this.user));
                     },
@@ -122,13 +122,13 @@ export class UpdateUserComponent implements OnInit {
             header: 'Remember your Secret key?',
             message: ` ${this.secretKeyU}`,
             accept: () => {
-                console.log("accept"+this.secretKeyU)
+
                 this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted your secret Key', life: 3000 });
             },
             reject: () => {
                 this.secretKeyU="";
                 this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'Secret Key rejected', life: 3000 });
-                console.log("reject"+this.secretKeyU)
+
 
             }
         });
@@ -137,7 +137,7 @@ export class UpdateUserComponent implements OnInit {
     }
     sauvegarderModification(): void {
         this.user.secretKey=this.secretKeyU;
-        // console.log (new JsonPipe().transform(this.user))
+
         if(this.user.firstname.trim()==''){
             Swal.fire('Erreur nom ', 'nom vide ', 'error');
         }else if(this.user.lastname.trim()==''){
@@ -210,23 +210,23 @@ export class UpdateUserComponent implements OnInit {
     }
     getPermission(tablename:string, apiT:string) {
         const foundPermission=this.userPermission.find(value => value.tableName==tablename && (value.api==apiT || apiT.substring(0,apiT.length-1)==value.api  )) ;
-        // alert(apiT.substring(0,apiT.length-1))
+
         if(foundPermission!==undefined){
-            // alert(JSON.stringify(foundPermission)) ;
-            //console.log("Table Permisiion  before delete :"+ new JsonPipe().transform(this.userPermission))
+
+
             let tab: IPermission[]=[];
             this.userPermission.forEach(value => {
                 if(!(value.tableName==tablename && apiT.substring(0,apiT.length-1)==value.api )){
                     tab.push(value)
                 }
             })
-            //console.log("Table Permisiion  after delete :"+ new JsonPipe().transform(tab))
+
             this.userPermission=tab ;
         } else {
             this.userPermission.push({api:apiT,tableName:tablename})
         }
         this.user.permission=this.userPermission;
-        console.log("Table Permisiion :"+ new JsonPipe().transform(this.user.permission))
+
     }
 
 

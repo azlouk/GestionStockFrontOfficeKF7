@@ -13,7 +13,7 @@ export class POSService  {
     constructor( private http : HttpClient) { }
     getArticles(): Observable< Article []> {
         const token = getToken();
-        console.log(token)
+
 
         if (token) {
             // Ajouter le token à l'en-tête de la requête

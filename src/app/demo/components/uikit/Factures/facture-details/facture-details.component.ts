@@ -109,7 +109,7 @@ export class FactureDetailsComponent implements OnInit {
 
     public getNewPrice(l: LigneFacture) {
 
-      console.log("getNewPrice"+this.facture.typeFacture)
+
     return this.facture.typeFacture!="FACTURE_VENTE"?l.prixAchat:l.prixVente;
     }
 }

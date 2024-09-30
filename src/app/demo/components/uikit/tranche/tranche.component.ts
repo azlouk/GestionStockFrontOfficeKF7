@@ -62,8 +62,9 @@ export class TrancheComponent implements OnInit{
         (tranches: Tranche[]) => {
           this.tranches = tranches;
           this.loading=false ;
-          //this.calculerCout();
-          console.log('Services:', tranches);
+
+
+
         },
         (error: any) => {
           console.error('Error fetching ventes:', error);
@@ -88,7 +89,7 @@ export class TrancheComponent implements OnInit{
     this.router.navigate(['/tranche-add']);
   }
   modifierTranche(tranche :Tranche){
-    console.log('tranche sélectionné pour modification :', tranche.id);
+
     this.router.navigate(['/tranche-edit', tranche.id]);
   }
 

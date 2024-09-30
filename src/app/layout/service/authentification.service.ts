@@ -19,7 +19,6 @@ export class AuthentificationService {
 
     login(username: string, password: string): Observable<any> {
         const body = { "email":username, "password":password };
-        console.error(JSON.stringify(body))
         this.loggedIn = true;
         localStorage.setItem('loggedIn', 'true');
         return this.http.post<any>(this.api+'/authenticate', body);

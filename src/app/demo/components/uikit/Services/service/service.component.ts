@@ -56,7 +56,7 @@ export class ServiceComponent implements OnInit{
           this.services = services;
           this.loading = false;
           //this.calculerCout();
-          console.table(services);
+
         },
         (error: any) => {
           console.error('Error fetching services:', error);

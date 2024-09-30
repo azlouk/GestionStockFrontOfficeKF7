@@ -25,6 +25,5 @@ export class AppTopBarComponent {
 
     logout() {
         this.authService.logout();
-        console.log('Token after logout:', getToken());
     }
 }

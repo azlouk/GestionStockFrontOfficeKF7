@@ -169,7 +169,7 @@ export class FactureAjoutComponent implements OnInit {
             this.getAllProduits();
             this.getAllDepots();
 
-            console.log("Facture récupérée !!", this.newFacture);
+
         } catch (error) {
             console.error("Erreur lors du chargement des données :", error);
         }
@@ -182,13 +182,13 @@ export class FactureAjoutComponent implements OnInit {
     getAllDepots() {
         this.depotService.getdepots().subscribe((value: Depot[]) => {
             this.depots = value;
-            console.log(this.depots);
-            //console.log('List of services:', this.services);
+
+
         });
     }
 
     filtrerProduits(recherche: string) {
-        console.log(recherche)
+
         this.produitsFiltres = this.produits.filter((produit: Produit) => {
             return produit.nom.includes(recherche) ||
                 produit.dataqr.includes(recherche)
@@ -198,14 +198,14 @@ export class FactureAjoutComponent implements OnInit {
     getAllClient() {
         this.userService.getUsersClient().subscribe((value: User[]) => {
             this.utilisateursClients = value
-            // console.log(new JsonPipe().transform(this.utilisateurs) )
+
         })
     }
 
     getAllTranches() {
         this.trancheService.getTranches().subscribe((value: Tranche[]) => {
             this.tranches = value
-            // console.log(new JsonPipe().transform(this.tranches) )
+
         })
     }
 
@@ -224,7 +224,7 @@ export class FactureAjoutComponent implements OnInit {
     getAllProduits() {
         this.produitService.getProduits().subscribe((value: any) => {
             this.produits = value;
-            // console.error(""+new JsonPipe().transform(this.produits))
+
         })
     }
 
@@ -236,7 +236,7 @@ export class FactureAjoutComponent implements OnInit {
             return;
         }
 
-        console.log('Contenu de la facture à enregistrer :', this.newFacture);
+
 
         this.confirmationService.confirm({
             header: "facture est entièrement réglée  ?",
@@ -597,8 +597,8 @@ export class FactureAjoutComponent implements OnInit {
 
 
     public onRowEditInit(l: LigneFacture) {
-        console.log("produitIdA Updated"+l.produit.id)
-//  teste si l'update ou ajout////////////////
+
+        //  teste si l'update ou ajout////////////////
         this.produitService.getProduitById(l.produit.id).subscribe(value => {
             l.produit=value ;
 
@@ -609,7 +609,7 @@ export class FactureAjoutComponent implements OnInit {
 
     confirmerRecalculPrix(ligne: LigneFacture): void {
         if (ligne.typeCalcule) {
-            console.log("Type de calcul sélectionné: " + ligne.typeCalcule);
+
             ligne.produit.prixUnitaire = this.calculerNouveauPrix(ligne.typeCalcule, ligne);
         } else {
             console.warn('Veuillez sélectionner un type de calcul.');
