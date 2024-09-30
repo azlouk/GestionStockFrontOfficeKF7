@@ -38,13 +38,13 @@ export class UserService {
 //             header: 'Remember your Secret key?',
 //             message: ` ${this.secretKey}`,
 //             accept: () => {
-//                 console.log("accept"+this.secretKey)
+
 //                 this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted your secret Key', life: 3000 });
 //             },
 //             reject: () => {
 //                 this.secretKey="";
 //                 this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
-//                 console.log("reject"+this.secretKey)
+
 //
 //             }
 //         });
@@ -62,7 +62,7 @@ export class UserService {
             const v = c === 'x' ? r : (r & 0x3 | 0x8);
             return v.toString(16);
 
-            console.log("randomU"+v.toString(16))
+
 
         });
     }
@@ -209,7 +209,7 @@ export class UserService {
             }
 
 
-            console.log("update passs", new JsonPipe().transform(datauser))
+
 
 
 
@@ -245,32 +245,37 @@ export class UserService {
         switch (newUser.role.toLowerCase()) {
             case 'admin': {
                 return 'admin' ;
-                console.log(newUser.role)
+
                 break
             }
             case 'manager': {
                 return 'manager' ;
-                console.log(newUser.role)
+
 
                 break
             }
-            case 'responsable' :{        console.log(newUser.role)
+            case 'responsable' :{
+
                 return 'responsable' ;
                 break ;
             }
-            case  'client' :{        console.log(newUser.role)
+            case  'client' :{
+
                 return 'client' ;
                 break
             }
-            case 'employer' :{        console.log(newUser.role)
+            case 'employer' :{
+
                 return 'employer' ;
                 break ;
             }
-            case 'transporteur' :{        console.log(newUser.role)
+            case 'transporteur' :{
+
                 return 'transporteur' ;
                 break ;
             }
-            case  'provider' : {        console.log(newUser.role)
+            case  'provider' : {
+
                 return 'provider' ;
                 break ;
             }
@@ -305,7 +310,7 @@ export class UserService {
 
     getUsersPassword(id:number): Observable<User> {
         const token = getToken();
-        console.log(token)
+
 
         if (token) {
             // Ajouter le token à l'en-tête de la requête
@@ -320,7 +325,7 @@ export class UserService {
 
     exist(tableName:String) {
         const token = getToken();
-        console.log(token)
+
 
         if (token) {
             // Ajouter le token à l'en-tête de la requête
@@ -334,7 +339,7 @@ export class UserService {
             }
             this.http.post<boolean>(environment.apiUrl + '/permission/checkpermission', data, { headers }).subscribe(value => {
                 this.permission=value ;
-                console.log("=======1111111>><>>>>>> "+new JsonPipe().transform(this.permission=value));
+
             })
 
         }else {

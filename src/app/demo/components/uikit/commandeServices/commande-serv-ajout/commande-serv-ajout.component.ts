@@ -152,18 +152,14 @@ export class CommandeServAjoutComponent implements OnInit {
         })
     }
     addNewCommande(): void {
-        console.log("Commande avant envoi:", JSON.stringify(this.newCommandeService));
-        console.log("Client avant envoi:", JSON.stringify(this.newCommandeService.client));
-        console.log("Role du client:", this.newCommandeService.client.role);
-        console.log("Nombre de produits:", this.newCommandeService.produits.length);
+
 
         // Formater les dates
         this.newCommandeService.dateCreation = formatDate(new Date(this.newCommandeService.dateCreation), 'yyyy-MM-dd', 'en-US');
         this.newCommandeService.dateEstimeeFin = formatDate(new Date(this.newCommandeService.dateEstimeeFin), 'yyyy-MM-dd', 'en-US');
         this.newCommandeService.dateValidationOuSortie = formatDate(new Date(this.newCommandeService.dateValidationOuSortie), 'yyyy-MM-dd', 'en-US');
 
-        console.log("Date de validation ou sortie:", this.newCommandeService.dateValidationOuSortie);
-        console.log("ID du client:", this.newCommandeService.client.id);
+
 
         if (this.newCommandeService.id) {
             // Si un ID est présent, mettre à jour la commande existante
@@ -279,7 +275,6 @@ export class CommandeServAjoutComponent implements OnInit {
             this.newCommandeService.totalProduits += quantity * price;
         });
 
-        console.log("Total Price:", this.newCommandeService.totalProduits);
     }
 
     handleQuantityChange(c: any): void {
@@ -298,7 +293,6 @@ export class CommandeServAjoutComponent implements OnInit {
         this.newCommandeService.prixTotal = this.newCommandeService.totalProduits +
             this.newCommandeService.totalCoutService +
             this.newCommandeService.prixSupplimentaire;
-        console.log("Total Facture:", this.newCommandeService.prixTotal);
     }
 
     getCoutService(): void {
@@ -308,7 +302,6 @@ export class CommandeServAjoutComponent implements OnInit {
             const cout = service.coutService || 0; // Default to 0 if coutService is null or undefined
             this.newCommandeService.totalCoutService += cout;
         });
-        console.log("Total Service Cost:", this.newCommandeService.totalCoutService);
     }
 
     deleteProduct(index: number): void {

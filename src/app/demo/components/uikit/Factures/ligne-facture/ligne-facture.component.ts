@@ -28,7 +28,7 @@ export class LigneFactureComponent implements OnInit {
 
     ngOnInit(): void {
         this.getAllProduits() ;
-        console.log("Produits", this.produits)
+
     }
 
     toggleDivVisibility() {
@@ -44,7 +44,7 @@ export class LigneFactureComponent implements OnInit {
     getAllProduits(){
         this.produitService.getProduits().subscribe((value :any)=>{
             this.produits=value ;
-            console.error(""+new JsonPipe().transform(this.produits))
+
         })
     }
     @HostListener('document:keydown', ['$event'])
@@ -53,7 +53,7 @@ export class LigneFactureComponent implements OnInit {
             case 'F2':
                 this.focusIndex = 0;
                 event.preventDefault();
-                console.log(`Focus set to Button 1`);
+
                 // Déclencher le clic sur le bouton "Ajouter Produit"
                 this.ajouterProduitButton.nativeElement.click();
                 this.searchTerm = '';
@@ -63,19 +63,19 @@ export class LigneFactureComponent implements OnInit {
             case 'F3':
                 this.focusIndex = 1;
                 event.preventDefault();
-                console.log(`Focus set to Button 2`);
+
                 this.focusOnSearchInput();
                 break;
             case 'F4':
                 this.focusIndex = 2;
                 event.preventDefault();
-                console.log(`Focus set to Button 3`);
+
                 this.focusOnQuantityInput();
                 break;
             case 'F5':
                 this.focusIndex = 3;
                 event.preventDefault();
-                console.log(`Focus set to Button 3`);
+
                 this.focusOnSupprimerButton();
                 break;
             case 'F6' :

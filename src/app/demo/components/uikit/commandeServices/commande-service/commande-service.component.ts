@@ -59,7 +59,6 @@ export class CommandeServiceComponent implements OnInit{
     this.commandesService.getAllCommandes().subscribe(
         (data: CommandeServ[]) => {
           this.commandes = data;
-          console.table(this.commandes)
 
         },
         (error) => {

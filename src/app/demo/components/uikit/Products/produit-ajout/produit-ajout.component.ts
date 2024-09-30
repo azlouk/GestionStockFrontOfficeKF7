@@ -136,7 +136,7 @@ export class ProduitAjoutComponent implements OnInit, AfterViewInit {
                 // Attendre que les articles soient chargés
                 const articles = await this.produitService.getArticles().toPromise();
                 this.articles = articles;
-                console.log("Produit récupéré !!", this.newProduct);
+
             } catch (error) {
                 console.error("Erreur lors du chargement des données :", error);
             }
@@ -239,7 +239,7 @@ export class ProduitAjoutComponent implements OnInit, AfterViewInit {
     }
 
     confirm() {
-        console.log(this.newProduct._dataqr)
+
         this.codeISvalide = true;
         if (this.newProduct._dataqr.trim() !== '') {
             this.produitService.getProduitByQrNom(this.newProduct._dataqr).subscribe(value => {
@@ -275,7 +275,7 @@ export class ProduitAjoutComponent implements OnInit, AfterViewInit {
             this.produitService.getImageProduit(value.name).subscribe(
                 (data: Blob) => {
                     this.uploadedFiles.push(data)
-                    console.log(this.uploadedFiles)
+
                     const reader = new FileReader();
                     reader.onloadend = () => {
                         const blobUrl = URL.createObjectURL(data);
@@ -335,7 +335,7 @@ export class ProduitAjoutComponent implements OnInit, AfterViewInit {
         this.subdataqr.forEach(value => {
             if (code.id !== value.code)
                 data.push(value)
-            console.log(value)
+
         });
         this.subdataqr = data;
     }
@@ -444,7 +444,7 @@ export class ProduitAjoutComponent implements OnInit, AfterViewInit {
     private updateRootFromCurrentPath(): void {
         this.root = this.router.url; // Récupère le chemin actuel
         this.updateShowButtun();
-        console.log("root", this.root)
+
     }
 
     clearFiles() {

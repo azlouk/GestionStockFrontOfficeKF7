@@ -16,7 +16,7 @@ export class ServiceCompService {
 
   getServices(): Observable<ServiceComp[]> {
     const token = getToken();
-    console.log(token)
+
     if (token) {
       const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type", "application/json; charset=utf8");
       return this.http.get<ServiceComp[]>(`${this.api}/read`,{headers});
@@ -26,7 +26,7 @@ export class ServiceCompService {
   }
   getServiceById(id:any): Observable<ServiceComp> {
     const token = getToken();
-    console.log(token)
+
     if (token) {
       // Ajouter le token à l'en-tête de la requête
       const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type", "application/json; charset=utf8");
@@ -75,7 +75,7 @@ export class ServiceCompService {
   updateService(newService: ServiceComp): Observable<ServiceComp> {
     const token = getToken();
 
-    console.error(newService);
+
     if (token) {
       const headers = new HttpHeaders()
           .set('Authorization', `Bearer ${token}`)
@@ -87,7 +87,7 @@ export class ServiceCompService {
         serv.users.push({ id: value.id });
       });
 
-      console.log(JSON.stringify(serv));
+
       return this.http.put<any>(`${this.api}/update`, serv, { headers });
     } else {
       return new Observable(); // Gérer le cas où le token n'est pas disponible
@@ -96,7 +96,7 @@ export class ServiceCompService {
 
   deleteService(serviceId: number): Observable<any> {
     const token = getToken();
-    console.log(token)
+
     if (token) {
       // Ajouter le token à l'en-tête de la requête
       const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type", "application/json; charset=utf8");

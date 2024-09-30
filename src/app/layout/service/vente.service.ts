@@ -29,7 +29,7 @@ export class VenteService {
 
         // Récupérer le token d'authentification depuis le stockage local (à adapter selon votre méthode d'authentification)
         const token = getToken();
-        console.log(token)
+
         if (token) {
             // Ajouter le token à l'en-tête de la requête
             const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type","application/json; charset=utf8" );
@@ -47,7 +47,7 @@ export class VenteService {
 
         // Récupérer le token d'authentification depuis le stockage local (à adapter selon votre méthode d'authentification)
         const token = getToken();
-        console.log(token)
+
         if (token) {
             // Ajouter le token à l'en-tête de la requête
             const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type","application/json; charset=utf8" );
@@ -67,14 +67,14 @@ export class VenteService {
         const headers = new HttpHeaders()
             .set('Authorization', `Bearer ${token}`)
             .set('Content-Type', 'application/json; charset=utf8');
-        console.error({"ventes":listVente})
+
         return this.http.post<any>(url, listVente, { headers }).pipe(
             catchError((error) => {
                 console.error('Erreur lors du transfert de facturation', error);
                 return throwError(() => new Error('Une erreur est survenue lors du transfert de facturation.'));
             })
         );
-        console.info("listTransfer service"+new JsonPipe().transform(listVente));
+
 
     }
 

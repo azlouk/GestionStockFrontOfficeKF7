@@ -47,12 +47,12 @@ export class FactureService {
     getAllDepots() {
         this.depotService.getdepots().subscribe((value: Depot[]) => {
             this.depots = value;
-            //  console.log('List of services:', this.services);
+
         });
     }
     getFactures(): Observable<any> {
         const token = getToken();
-        console.log(token)
+
         if (token) {
             const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type", "application/json; charset=utf8");
             return this.http.get<Facture[]>(this.api + '/read', {headers});
@@ -178,9 +178,9 @@ export class FactureService {
             })
         };
 
-        console.error(fact);
+
         const url = `${this.api}/create`;
-        console.log("fact Json"+fact);
+
         return this.http.post<Facture>(url, fact, {headers});
     }
 
@@ -292,7 +292,7 @@ export class FactureService {
                 'user':null,
             }))
         };
-        console.info(fact);
+
         const url = `${this.api}/update`;
         return this.http.put<Facture>(url, fact, { headers });
     }
@@ -334,7 +334,7 @@ export class FactureService {
     }
     exist(tableName:String) {
         const token = getToken();
-        console.log(token)
+
         if (token) {
             // Ajouter le token à l'en-tête de la requête
             const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type", "application/json; charset=utf8");
@@ -346,7 +346,7 @@ export class FactureService {
             }
             this.http.post<boolean>(environment.apiUrl + '/permission/checkpermission', data, { headers }).subscribe(value => {
                 this.permission=value ;
-                console.log("=======1111111>><>>>>>> "+new JsonPipe().transform(this.permission=value));
+
             })
         }else {
             this.permission =false ;

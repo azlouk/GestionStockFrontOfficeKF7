@@ -392,14 +392,12 @@ export class FactureComponent implements OnInit {
             }
         );
         this.openDialogueChangedPrix = false;
-        console.log(this.factureDeleted)
 
     }
 
 
     updateFacturePrix(ligneFacture: LigneFacture, historique: Historique) {
          ligneFacture.produit.prixUnitaire = historique.prixHistoriqueAchat;
-        console.info(this.factureDeleted)
     }
 
     CalculeMontantFiltrer(): number {

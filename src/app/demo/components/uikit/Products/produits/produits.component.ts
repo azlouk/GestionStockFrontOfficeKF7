@@ -70,6 +70,10 @@ import {Historique} from "../../../../../models/historique";
 export class ProduitsComponent implements OnInit {
 
 
+    first = 0;
+    rows = 10;
+
+
     imageUrl = ""
 
     idd?: number;
@@ -98,6 +102,33 @@ export class ProduitsComponent implements OnInit {
         this.getAllProduits();
     }
 
+
+    next() {
+        this.first = this.first + this.rows;
+    }
+
+    prev() {
+        this.first = this.first - this.rows;
+    }
+
+    reset() {
+        this.first = 0;
+    }
+
+    pageChange(event) {
+        this.first = event.first;
+        this.rows = event.rows;
+    }
+
+    isLastPage(): boolean {
+        return this.produits ? this.first === this.produits.length - this.rows : true;
+    }
+
+    isFirstPage(): boolean {
+        return this.produits ? this.first === 0 : true;
+    }
+
+
     clear(table: Table) {
         table.clear();
         this.filter.nativeElement.value = '';
@@ -109,7 +140,7 @@ export class ProduitsComponent implements OnInit {
         this.produitService.getProduits().subscribe(
             (value: Produit[]) => {
                 this.produits = value;
-                console.log(new JsonPipe().transform(this.produits))
+
                 this.loadingdata = false;
             },
             error => {
@@ -136,7 +167,7 @@ export class ProduitsComponent implements OnInit {
             if (result.isConfirmed) {
                 this.produitService.supprimerProduit(id).subscribe(
                     (response: any) => {
-                        console.log(response)
+
                         if (response) {
                             this.getAllProduits();
                             Swal.fire('Supprimé', response.message, 'success');
@@ -214,7 +245,7 @@ export class ProduitsComponent implements OnInit {
                 console.error(error)
             }
         );
-        console.log(this.historiques)
+
     }
 
 

@@ -200,13 +200,13 @@ export class AjoutUserComponent implements OnInit {
             header: 'Remember your Secret key?',
             message: `${this.secretKey}`,
             accept: () => {
-                console.log("accept" + this.secretKey);
+
                 this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted your secret Key', life: 3000 });
             },
             reject: () => {
                 this.secretKey = "";
                 this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'Secret Key rejected', life: 3000 });
-                console.log("reject" + this.secretKey);
+
             }
         });
         return this.secretKey;
@@ -241,7 +241,7 @@ export class AjoutUserComponent implements OnInit {
                     user.secretKey=this.secretKey;
 
                     user.pseudo = userData.pseudo;
-                    console.log("error data" + user)
+
                     break
                 }
                 case 'manager': {
@@ -251,7 +251,7 @@ export class AjoutUserComponent implements OnInit {
                     user.secretKey=this.secretKey;
 
                     user.attributManager = userData.attributManager;
-                    console.log("error data" + user)
+
 
                     break
                 }
@@ -261,7 +261,7 @@ export class AjoutUserComponent implements OnInit {
                     user.password = userData.motdepasseconfirm;
                     user.secretKey=this.secretKey;
 
-                    console.log("error data" + user)
+
                     break;
                 }
                 case  'client' : {
@@ -270,7 +270,7 @@ export class AjoutUserComponent implements OnInit {
                     user.password = "client";
                     user.soldeClient = userData.solde;
                     user.typeClient = userData.typeClient;
-                    console.log("error data" + user)
+
                     break
                 }
                 case 'employer' : {
@@ -280,14 +280,14 @@ export class AjoutUserComponent implements OnInit {
                     user.secretKey=this.secretKey;
                     user.typeEmployer = userData.typeEmployer;
                     user.tacheEmployer = userData.tacheEmployer;
-                    console.log("error data" + user)
+
                     break;
                 }
                 case 'transporteur' : {
                     user.pseudo = 'transporteur';
                     user.responsableDepotNo = ''
                     user.password = "trasporteur";
-                    console.log("error data" + user)
+
                     break;
                 }
                 case  'fournisseur' : {
@@ -299,18 +299,18 @@ export class AjoutUserComponent implements OnInit {
                     user.adresseSociete = userData.adresseSociete;
                     user.telephoneSociete = userData.telephoneSociete;
                     user.role = "PROVIDER"
-                    console.log("error data" + user)
+
                     break;
                 }
             }
             this.userService.addUser(user).subscribe(
                 (response) => {
-                    console.log("===========>>>>>>>>>>>" + response)
+
                     if (response) {
 
                         this.userForm.reset();
                         if (this.shouldStayOnSamePage()) {
-                            console.log(this.shouldStayOnSamePage())
+
                             this.dialogueUser.closeDialog();
                             this.userService.getUsers();
 
@@ -399,12 +399,12 @@ export class AjoutUserComponent implements OnInit {
                     tab.push(value)
                 }
             })
-            //console.log("Table Permisiion  after delete :"+ new JsonPipe().transform(tab))
+
             this.userPermission = tab;
         } else {
             this.userPermission.push({api: apiT, tableName: tablename})
         }
-        console.log("Table Permisiion :" + new JsonPipe().transform(this.userPermission))
+
     }
 
     getAPI(name: string | undefined): string {
