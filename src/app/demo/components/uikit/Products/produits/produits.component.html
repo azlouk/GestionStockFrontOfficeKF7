@@ -25,7 +25,6 @@
 <!--////////////table Paginator//////////////////-->
 
 
-
     <div class="card">
         <div class="mb-3">
             <p-button
@@ -48,20 +47,20 @@
         </div>
 
     <p-table
-        #dt
-        [value]="produits"
-        [paginator]="true"
-        [rows]="rows"
-        [first]="first"
-        [globalFilterFields]="['id', 'nom', 'description', 'quantite', 'article.nom', 'dataqr', 'prixUnitaire', 'dateFabrication', 'dateExpiration']"
-        responsiveLayout="scroll"
-        [rowsPerPageOptions]="[5, 10, 20, 30]"
-        [showCurrentPageReport]="true"
-        currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords} élements"
-        (onPage)="pageChange($event)"
-        selectionMode="multiple"
-        [rowHover]="true"
-        dataKey="id"
+            [value]="produitsPage.content"
+            [paginator]="true"
+            [rows]="pageSize"
+            [totalRecords]="produitsPage.totalElements"
+            [first]="first"
+            [globalFilterFields]="['id', 'nom', 'description', 'quantite', 'article.nom', 'dataqr', 'prixUnitaire', 'dateFabrication', 'dateExpiration']"
+            responsiveLayout="scroll"
+            [rowsPerPageOptions]="[ 10, 100, 1000,10000,100000]"
+            [showCurrentPageReport]="true"
+            currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords} élements"
+            (onPage)="onPageChange($event)"
+            selectionMode="multiple"
+            [rowHover]="true"
+            dataKey="id"
     >
         <ng-template pTemplate="caption">
             <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">

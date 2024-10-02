@@ -11,6 +11,7 @@ import {Article} from "../../models/Article";
 import {Produit} from "../../models/produit";
 import Swal from "sweetalert2";
 import {Historique} from "../../models/historique";
+import {Page} from "../../models/page";
 
 @Injectable({
   providedIn: 'root'
@@ -51,7 +52,7 @@ export class ProduitService {
 
 
     getProduits(): Observable<Produit[]> {
-        const url = `${this.api}/read`;
+        const url = `${this.api}/DtoRead`;
         const token = getToken();
         if (token) {
             const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type","application/json; charset=utf8" );
@@ -61,6 +62,23 @@ export class ProduitService {
             return new Observable();
         }
     }
+
+    LoadProduits(page: number, size: number): Observable<Page<Produit>> {
+        const url = `${this.api}/DtoRead?page=${page}&size=${size}`;
+        const token = getToken();
+
+        if (token) {
+            const headers = new HttpHeaders()
+                .set('Authorization', `Bearer ${token}`)
+                .set('Content-Type', 'application/json; charset=utf-8');
+
+            return this.http.get<Page<Produit>>(url, { headers });
+        } else {
+            return new Observable();
+        }
+    }
+
+
     getProduitById(id: number): Observable<Produit> {
         const url = `${this.api}/findById`;
         const token = getToken();
