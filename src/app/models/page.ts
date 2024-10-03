@@ -4,4 +4,7 @@ export interface Page<T> {
     totalPages: number;    // Nombre total de pages
     size: number;          // Taille de la page
     number: number;        // Numéro de la page actuelle (0-indexé)
+
+
+
 }

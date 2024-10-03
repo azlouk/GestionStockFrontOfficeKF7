@@ -16,45 +16,29 @@
                 <ng-template pTemplate="right">
                     <div class="col-2 float-end d-flex d-inline ">
                         <p-avatar *ngIf="displayusers" class="float-end" icon="pi pi-box" pBadge styleClass="mr-5"
-                                  [value]="produits.length+''" size="large"
+                                  [value]="produitsPage.size+''" size="large"
                                   [style]="{ 'background-color': '#b9c7ce', color: '#1a1717' }"></p-avatar>
                     </div>
                 </ng-template>
             </p-toolbar>
-<div class="flex flex-wrap">
+<div class="flex flex-wrap w-full">
 <!--////////////table Paginator//////////////////-->
 
 
-    <div class="card">
-        <div class="mb-3">
-            <p-button
-                    type="button"
-                    icon="pi pi-chevron-left"
-                    (onClick)="prev()"
-                    [disabled]="isFirstPage()"
-                    styleClass="p-button-text" />
-            <p-button
-                    type="button"
-                    icon="pi pi-refresh"
-                    (onClick)="reset()"
-                    styleClass="p-button-text" />
-            <p-button
-                    type="button"
-                    icon="pi pi-chevron-right"
-                    (onClick)="next()"
-                    [disabled]="isLastPage()"
-                    styleClass="p-button-text" />
-        </div>
+    <div class="card w-full" >
+
 
     <p-table
+            #ds
             [value]="produitsPage.content"
             [paginator]="true"
             [rows]="pageSize"
+            [loading]="loadingdata"
             [totalRecords]="produitsPage.totalElements"
             [first]="first"
             [globalFilterFields]="['id', 'nom', 'description', 'quantite', 'article.nom', 'dataqr', 'prixUnitaire', 'dateFabrication', 'dateExpiration']"
             responsiveLayout="scroll"
-            [rowsPerPageOptions]="[ 10, 100, 1000,10000,100000]"
+            [rowsPerPageOptions]="[ 10, 50, 100,250,500]"
             [showCurrentPageReport]="true"
             currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords} élements"
             (onPage)="onPageChange($event)"
@@ -62,12 +46,33 @@
             [rowHover]="true"
             dataKey="id"
     >
+
         <ng-template pTemplate="caption">
+
+            <div class="mb-3">
+                <p-button
+                        type="button"
+                        icon="pi pi-chevron-left"
+                        (onClick)="prev()"
+                        [disabled]="isFirstPage()"
+                        styleClass="p-button-text" />
+                <p-button
+                        type="button"
+                        icon="pi pi-refresh"
+                        (onClick)="reset()"
+                        styleClass="p-button-text" />
+                <p-button
+                        type="button"
+                        icon="pi pi-chevron-right"
+                        (onClick)="next()"
+                        [disabled]="isLastPage()"
+                        styleClass="p-button-text" />
+            </div>
             <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
                 <h5 class="m-0">gestion des produits</h5>
                 <span class="block mt-2 md:mt-0 p-input-icon-left">
                 <i class="pi pi-search"></i>
-                <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..."
+                <input pInputText type="text" (input)="onGlobalFilter(ds, $event)" placeholder="Search..."
                        class="w-full sm:w-auto"/>
             </span>
             </div>

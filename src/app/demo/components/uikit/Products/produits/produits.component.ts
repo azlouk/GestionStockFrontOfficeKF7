@@ -89,8 +89,11 @@ export class ProduitsComponent implements OnInit {
     loadingdata: boolean = false;
     loading: boolean = false;
     @ViewChild('filter') filter!: ElementRef;
+    initTabProduit: Produit[]=[];
+    produitsPage: Page<Produit>={
+        content:this.initTabProduit,number:0,size:0,totalPages:0,totalElements:0
 
-    produitsPage!: Page<Produit>;
+    };
     currentPage: number = 0;
     pageSize: number = 10; // Nombre d'éléments par page
 
@@ -106,15 +109,16 @@ export class ProduitsComponent implements OnInit {
 
     ngOnInit() {
         this.getAllProduits();
-        // this.LoadProduits(0, 10);
         this.loadProduits(this.currentPage, this.pageSize);
     }
 
 
-    loadProduits(page: number=0, size: number=10) {
+    loadProduits(page: number, size: number) {
+        this.loadingdata=true ;
         this.produitService.LoadProduits(page, size).subscribe(
             (data: Page<Produit>) => {
                 this.produitsPage = data;
+                this.loadingdata=false;
             },
             (error) => {
                 console.error('Erreur lors du chargement des produits', error);
@@ -170,26 +174,33 @@ export class ProduitsComponent implements OnInit {
     }
 
     onPageChange(event: any) {
-        this.currentPage = event.page;
-        this.pageSize = event.rows;
-        this.loadProduits(this.currentPage, this.pageSize);
+        this.currentPage = event.page==undefined?0:event.page;
+        this.pageSize = event.rows==undefined?10:event.rows
+         this.loadProduits(this.currentPage, this.pageSize);
+
     }
 
     next() {
         if (!this.isLastPage()) {
             this.currentPage++;
-        }
+            this.loadProduits(this.currentPage, this.pageSize);
+         }
     }
 
     prev() {
         if (!this.isFirstPage()) {
             this.currentPage--;
+            this.loadProduits(this.currentPage, this.pageSize);
+
         }
+
     }
 
 
     reset() {
         this.currentPage = 0; // Réinitialise à la première page
+        this.loadProduits(this.currentPage, 10);
+
     }
 
     pageChange(event) {
