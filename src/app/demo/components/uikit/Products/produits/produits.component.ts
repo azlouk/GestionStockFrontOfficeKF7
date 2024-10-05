@@ -9,7 +9,6 @@ import {PickListModule} from "primeng/picklist";
 import {RatingModule} from "primeng/rating";
 import {ConfirmationService, MessageService, SharedModule} from "primeng/api";
 import Swal from 'sweetalert2';
-import {ProductService} from "../../../../service/product.service";
 import {FormsModule} from "@angular/forms";
 import {ProduitService} from "../../../../../layout/service/produit.service";
 import {Produit} from "../../../../../models/produit";
@@ -17,7 +16,7 @@ import {MultiSelectModule} from "primeng/multiselect";
 import {ProgressBarModule} from "primeng/progressbar";
 import {SliderModule} from "primeng/slider";
 import {Table, TableModule} from "primeng/table";
-import {Router} from "@angular/router";
+import {Router, RouterLink} from "@angular/router";
 import {RippleModule} from "primeng/ripple";
 import {ToastModule} from "primeng/toast";
 import {ToolbarModule} from "primeng/toolbar";
@@ -64,7 +63,8 @@ import {Article} from "../../../../../models/Article";
         NgIf,
         GalleriaModule,
         AvatarModule,
-        BadgeModule
+        BadgeModule,
+        RouterLink
     ],
     templateUrl: './produits.component.html',
     styleUrl: './produits.component.scss'
@@ -97,18 +97,18 @@ export class ProduitsComponent implements OnInit {
     currentPage: number = 0;
     pageSize: number = 10; // Nombre d'éléments par page
 
-    constructor(private productService: ProductService,
+    constructor(
                 private produitService: ProduitService,
                 private messageService: MessageService,
                 private confirmationService: ConfirmationService,
                 private router: Router,
                 private sanitizer: DomSanitizer) {
-        this.produits = this.fetchProducts();
+        //this.produits = this.fetchProducts();// ?????
 
     }
 
     ngOnInit() {
-        this.getAllProduits();
+     //   this.getAllProduits();
         this.loadProduits(this.currentPage, this.pageSize);
     }
 
@@ -126,46 +126,6 @@ export class ProduitsComponent implements OnInit {
         );
     }
 
-    // Méthode à appeler lors de la navigation entre les pages
-
-
-    fetchProducts(): Produit[] {
-        // Créez un tableau de produits avec des données d'exemple
-        return Array.from({ length: 100 }, (_, i) => {
-            return new Produit(
-                i + 1, // id
-                `Produit ${i + 1}`, // nom
-                Math.random() * 100, // prixUnitaire
-                Math.random() * 100, // prixGros
-                `Description du produit ${i + 1}`, // description
-                Math.floor(Math.random() * 50), // qantite
-                new Blob(), // image
-                Math.random() * 10, // gainUnitaire
-                Math.random() * 10, // gainGros
-                [], // files
-                new Date(Date.now() + Math.random() * 10000000000), // dateExpiration
-                new Date(Date.now() - Math.random() * 10000000000), // dateFabrication
-                Math.floor(Math.random() * 10), // minQuantiteGros
-                Math.random() * 20, // taxe
-                true, // enable
-                `Data QR ${i + 1}`, // dataqr
-                Math.floor(Math.random() * 20), // qantiteFacture
-                new Article(), // article (assurez-vous que l'objet Article est correctement instancié)
-                Math.floor(Math.random() * 100), // levelstock
-                false, // showDetails
-                false, // checkedService
-                [], // subdataqr
-                [] // historiques
-            );
-        });
-    }
-
-
-
-    // fetchProducts() {
-    //     // Remplacez cela par la logique pour obtenir vos produits
-    //     return Array.from({ length: 100 }, (_, i) => ({ id: i + 1, name: `Produit ${i + 1}` }));
-    // }
 
 
     get currentProducts() {

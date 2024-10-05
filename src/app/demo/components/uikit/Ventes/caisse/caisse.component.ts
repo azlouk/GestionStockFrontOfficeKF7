@@ -62,6 +62,7 @@ import {FactureService} from "../../../../../layout/service/facture.service";
 import {LigneFacture} from "../../../../../models/LigneFacture";
 import {DialogService} from "../../../../../layout/service/dialogue-user.service";
 import {AjoutUserComponent} from "../../users/ajout-user/ajout-user.component";
+import {Page} from "../../../../../models/page";
 
 
 @Component({
@@ -94,7 +95,6 @@ import {AjoutUserComponent} from "../../users/ajout-user/ajout-user.component";
 export class CaisseComponent implements OnInit, AfterViewChecked  {
     @ViewChild('dv') dv: DataView | undefined;
     @ViewChild('searchInput') searchInput: ElementRef;
-    @ViewChild('dtProduitsFiltres') dtProduitsFiltres: any;
     @ViewChild('dtProduitsFiltreservice') dtProduitsFiltreservice: any;
     @ViewChild('dt3') table: Table;
     focusIndex = 0;
@@ -104,7 +104,21 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
 
      produits: Produit[] = [];
     services: ServiceComp [] = []
-    produitsFiltres: Produit [] = [];
+////Attribut of TableWithPagination
+
+
+    initTabProduit: Produit[]=[];
+    produitsFiltres: Page<Produit>={
+        content:this.initTabProduit,number:0,size:0,totalPages:0,totalElements:0
+
+    };
+
+    currentPage: number = 0;
+    pageSize: number = 10;
+    first = 0;
+    rows = 10;
+
+
     serviceFiltres: ServiceComp [] = [];
 
     cloture: Cloture = new Cloture();
@@ -157,14 +171,61 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
     messages1: Message[] = [];
 
     ngOnInit(): void {
-        this.getAllProduits()
+        this.loadProduits(this.currentPage, this.pageSize);
         this.getAllServices();
         this.getAllClient();
         this.onValueChange();
         this.messages1 = [{severity: 'error', summary: 'Error', detail: 'Pas des images'}];
-
+        this.loadingdata=true ;
 
     }
+
+
+    onPageChange(event: any) {
+        this.currentPage = event.page==undefined?0:event.page;
+        this.pageSize = event.rows==undefined?10:event.rows
+        this.loadProduits(this.currentPage, this.pageSize);
+
+    }
+
+    next() {
+        if (!this.isLastPage()) {
+            this.currentPage++;
+            this.loadProduits(this.currentPage, this.pageSize);
+        }
+    }
+
+    prev() {
+        if (!this.isFirstPage()) {
+            this.currentPage--;
+            this.loadProduits(this.currentPage, this.pageSize);
+
+        }
+
+    }
+
+
+    reset() {
+        this.currentPage = 0; // Réinitialise à la première page
+        this.loadProduits(this.currentPage, 10);
+
+    }
+
+    pageChange(event) {
+        this.first = event.first;
+        this.rows = event.rows;
+    }
+
+    isFirstPage() {
+        return this.currentPage === 0;
+    }
+
+    isLastPage() {
+        return (this.currentPage + 1) * this.pageSize >= this.produits.length;
+    }
+
+
+
 
     public ngAfterViewChecked(): void {
          this.cdRef.detectChanges();
@@ -270,11 +331,17 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
     }
 
 
-    getAllProduits() {
-        this.produitService.getProduits().subscribe((value: any) => {
-            this.produits = value;
-            this.produitsFiltres = value;
-        })
+    loadProduits(page: number, size: number) {
+        this.loadingdata=true ;
+        this.produitService.LoadProduits(page, size).subscribe(
+            (data: Page<Produit>) => {
+                this.produitsFiltres = data;
+                this.loadingdata=false;
+            },
+            (error) => {
+                console.error('Erreur lors du chargement des produits', error);
+            }
+        );
     }
 
     getAllServices(): void {
@@ -580,10 +647,10 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
 
     search(): void {
         if (this.searchTerm.trim() !== '') {
-            this.produitsFiltres = []
+            this.produitsFiltres.content = []
             this.produitService.getProduitByQrNom(this.searchTerm).subscribe((value: Produit) => {
                 if (value != null) {
-                    this.produitsFiltres.push(value);
+                    this.produitsFiltres.content.push(value);
                     this.visible = this.IsvisiblePop;
                 }
                 if (this.IsvisiblePop == false)
@@ -649,7 +716,7 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
     }
 
     ajouterProduit(produit: Produit): void {
-        if (this.produitsFiltres.length > 0) {
+        if (this.produitsFiltres.content.length > 0) {
             this.ajouterProduitSelectionne(produit);
             this.getTottalNbProduct()
         }
@@ -744,9 +811,7 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
 
     }
 
-    clear(table: Table) {
-        table.clear();
-    }
+
 
     getTotalVente(): number {
         const val = this.getSommeTotale() + this.getSommeTaxes() + this.frais;
@@ -847,6 +912,7 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
     totalMontantFiltre: number = 0;
     newFacture = new Facture();
     public selectedProduct: Produit;
+    public loadingdata: boolean=false;
 
     deleteTrancheNewFacture(index: number) {
         if (index > -1) {
@@ -1011,10 +1077,10 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
 
     filterProduits() {
         if (!this.searchTermFilter) {
-            this.produitsFiltres = [...this.produits];
+            this.produitsFiltres.content = [...this.produits];
         } else {
 
-            this.produitsFiltres = this.produits.filter(produit =>
+            this.produitsFiltres.content = this.produits.filter(produit =>
                 produit.id.toString().includes(this.searchTermFilter) ||
                 produit.nom.includes(this.searchTermFilter) ||
                 produit.description.includes(this.searchTermFilter) ||
@@ -1067,6 +1133,10 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
 
     addUser() {
         this.dialogueService.openDialog();
+    }
+
+    onGlobalFilter(table: Table, event: Event) {
+        table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
     }
 }
 

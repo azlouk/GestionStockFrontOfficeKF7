@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IconsComponent } from './icons/icons.component';
 import { UtilitiesRoutingModule } from './utilities-routing.module';
 import { InputTextModule } from 'primeng/inputtext';
 import { BrowserModule } from '@angular/platform-browser';
@@ -15,6 +14,6 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
         BrowserAnimationsModule,
         CommonModule
     ],
-    declarations: [IconsComponent]
+    declarations: []
 })
 export class UtilitiesModule { }

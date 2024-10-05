@@ -162,8 +162,7 @@ export class ProduitService {
     }
 
     modifierProduit(nouveauProduit: Produit ,uploadFiles :any[]): any {
-
-            const token = getToken();
+             const token = getToken();
 
             if (token) {
 
@@ -178,7 +177,7 @@ export class ProduitService {
                 for (let i = 0; i < uploadFiles.length; i++) {
                     formData.append('file', uploadFiles[i]);
                 }
-
+                console.log(nouveauProduit)
                 // Utiliser les headers dans la require
                 return this.http.put<any>(this.api + '/update', formData, {headers});
             } else {
