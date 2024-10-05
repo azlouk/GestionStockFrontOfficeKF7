@@ -86,8 +86,8 @@ export class FactureComponent implements OnInit {
     activityValues: number[] = [0, 100];
     root: string | undefined;
     factures: Facture[] = [];
-    Facturefilred: FactureInterface[] = [];
-    FacturefilredSuplim: FactureInterface[] = [];
+    Facturefilred: Facture[] = [];
+    FacturefilredSuplim: Facture[] = [];
 
     client: User = new User();
     searchTerm: string = '';
@@ -96,7 +96,7 @@ export class FactureComponent implements OnInit {
     idf?: number;
     idd?: number;
     visibleTranche: boolean = false;
-    newFacture: FactureInterface;
+    newFacture: Facture;
 
     visible: boolean = false;
 
@@ -256,7 +256,10 @@ export class FactureComponent implements OnInit {
 
     getAllFactures() {
         this.loading = true;
-        this.factureService.getFactures().subscribe((value: FactureInterface[]) => {
+        this.factureService.getFactures().subscribe((value: Facture[]) => {
+
+            console.error(value)
+
             this.factureService.FactureInter = [...value]
             this.loading = false;
             this.Facturefilred = [...value]
@@ -335,7 +338,7 @@ export class FactureComponent implements OnInit {
         this.valuepaye = null;
     }
 
-    deleteFacture(facture: FactureInterface) {
+    deleteFacture(facture: Facture) {
 
         this.factureDeleted = facture; // Store the facture that is going to be deleted
 
@@ -368,7 +371,7 @@ export class FactureComponent implements OnInit {
 
 
 
-    confirmDeleteFacture(facture:any) {
+    confirmDeleteFacture(facture:Facture) {
         this.factureService.removeFactureWithUpdateProduct(facture).subscribe(
             (response) => {
                 console.log('Facture supprimée avec succès:', response);
@@ -408,7 +411,7 @@ export class FactureComponent implements OnInit {
     }
 
 
-    showDialogTranches(facture: FactureInterface) {
+    showDialogTranches(facture: Facture) {
         this.newFacture = facture;
         this.visibleTranche = true;
         this.calculateMontants();
@@ -418,7 +421,7 @@ export class FactureComponent implements OnInit {
     totalMontantTranches: number = 0;
     montantTranchesPayees: number = 0;
     montantTranchesNonPayees: number = 0;
-    public factureDeleted: FactureInterface={};
+    public factureDeleted: Facture=new Facture();
     public PrixChoisie: number;
 
 

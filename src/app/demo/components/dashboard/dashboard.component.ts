@@ -1,18 +1,15 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { Product } from '../../api/product';
-import { ProductService } from '../../service/product.service';
-import { Subscription, debounceTime } from 'rxjs';
+ import { Subscription } from 'rxjs';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
 import {StatistiquesService} from "../../../layout/service/statistiques.service";
 import {VenteService} from "../../../layout/service/vente.service";
 import {Router} from "@angular/router";
 import {getToken} from "../../../../main";
-import {JsonPipe} from "@angular/common";
 import {Produit} from "../../../models/produit";
 import {Vente} from "../../../models/Vente";
-import {an} from "@fullcalendar/core/internal-common";
-import {ChartData, ChartOptions, ChartType} from "chart.js";
+import { ChartType} from "chart.js";
 
 @Component({
     templateUrl: './dashboard.component.html',
@@ -44,7 +41,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     chartDataCommande: any;
     chartDataCommandeMois: any;
-    constructor(private productService: ProductService, public layoutService: LayoutService,
+    constructor( public layoutService: LayoutService,
                 private route: Router, public servicestatistic: StatistiquesService, private venteservice: VenteService) {
 
     }

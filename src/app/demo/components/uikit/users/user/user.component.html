@@ -17,88 +17,88 @@
                     </div>
                 </ng-template>
             </p-toolbar>
-                    <div class=" card flex flex-wrap w-full border-1 border-bluegray-500">
-                                <p-table #dt [value]="users" responsiveLayout="scroll" [rows]="10"
-                                         [globalFilterFields]="['id','nom','prenom','email','telephone','adresse','role']" [paginator]="true"
-                                         [rowsPerPageOptions]="[5,10,20,30]" [showCurrentPageReport]="true"
-                                         currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords} élements"
-                                         selectionMode="multiple" [rowHover]="true" dataKey="id">
-                                    <ng-template pTemplate="caption">
-                                        <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
-                                            <h5 class="m-0">Gestion des utilisateurs</h5>
+<div class="flex flex-wrap">
+            <p-table #dt [value]="users" responsiveLayout="scroll" [rows]="10"
+                     [globalFilterFields]="['id','nom','prenom','email','telephone','adresse','role']" [paginator]="true"
+                     [rowsPerPageOptions]="[5,10,20,30]" [showCurrentPageReport]="true"
+                     currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords} élements"
+                     selectionMode="multiple" [rowHover]="true" dataKey="id">
+                <ng-template pTemplate="caption">
+                    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                        <h5 class="m-0">Gestion des utilisateurs</h5>
 
-                                            <span class="block mt-2 md:mt-0 p-input-icon-left">
-                                                <i class="pi pi-search"></i>
-                                                <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Rechercher..."
-                                                       class="w-full sm:w-auto"/>
-                                            </span>
-                                        </div>
-                                    </ng-template>
-                                    <ng-template pTemplate="header">
-                                        <tr>
-                                            <th  >
-                                                <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-                                            </th>
-                                            <th pSortableColumn="id">Code
-                                                <p-sortIcon field="id"></p-sortIcon>
-                                            </th>
-                                            <th pSortableColumn="lastname">Nom
-                                                <p-sortIcon field="lastname"></p-sortIcon>
-                                            </th>
-                                            <th pSortableColumn="firstname">Prénom
-                                                <p-sortIcon field="firstname"></p-sortIcon>
-                                            </th>
-                                            <th pSortableColumn="email">Email
-                                                <p-sortIcon field="email"></p-sortIcon>
-                                            </th>
-                                            <th pSortableColumn="telephone">Téléphone
-                                                <p-sortIcon field="telephone"></p-sortIcon>
-                                            </th>
-                                            <th pSortableColumn="adresse">Adresse
-                                                <p-sortIcon field="adresse"></p-sortIcon>
-                                            </th>
-                                            <th pSortableColumn="role">Rôle
-                                                <p-sortIcon field="role"></p-sortIcon>
-                                            </th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </ng-template>
-                                    <ng-template pTemplate="body" let-user>
-                                        <tr>
-                                            <td>
-                                                <p-tableCheckbox [value]="user"></p-tableCheckbox>
-                                            </td>
-                                            <td  ><span class="p-column-title">Code</span>{{ user.id }}
-                                            </td>
-                                            <td   ><span class="p-column-title">Nom</span>{{ user.lastname }}
-                                            </td>
-                                            <td  ><span
-                                                    class="p-column-title">Prénom</span>{{ user.firstname }}
-                                            </td>
-                                            <td  ><span class="p-column-title">Email</span>{{ user.email }}
-                                            </td>
-                                            <td  ><span
-                                                    class="p-column-title">Téléphone</span>{{ user.telephone }}
-                                            </td>
-                                            <td  ><span
-                                                    class="p-column-title">Adresse</span>{{ user.adresse }}
-                                            </td>
-                                            <td  ><span
-                                                    class="p-column-title">Rôle</span>{{ user.role.toString()=="PROVIDER"?"FOURNISSEUR":user.role }}
-                                            </td>
-                                            <td>
-                                                <div class="flex">
-                                                    <button pButton pRipple icon="pi pi-pencil"
-                                                            class="p-button-rounded p-button-success mr-2"
-                                                            (click)="editUser(user)"></button>
-                                                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
-                                                            (click)="deleteUser(user)"></button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </ng-template>
-                                </p-table>
+                        <span class="block mt-2 md:mt-0 p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Rechercher..."
+                                   class="w-full sm:w-auto"/>
+                        </span>
                     </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 3rem">
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <th pSortableColumn="id">Code
+                            <p-sortIcon field="id"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="lastname">Nom
+                            <p-sortIcon field="lastname"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="firstname">Prénom
+                            <p-sortIcon field="firstname"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="email">Email
+                            <p-sortIcon field="email"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="telephone">Téléphone
+                            <p-sortIcon field="telephone"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="adresse">Adresse
+                            <p-sortIcon field="adresse"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="role">Rôle
+                            <p-sortIcon field="role"></p-sortIcon>
+                        </th>
+                        <th>Actions</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-user>
+                    <tr>
+                        <td>
+                            <p-tableCheckbox [value]="user"></p-tableCheckbox>
+                        </td>
+                        <td style="width:14%; min-width:10rem;"><span class="p-column-title">Code</span>{{ user.id }}
+                        </td>
+                        <td style="width:14%; min-width:10rem;"><span class="p-column-title">Nom</span>{{ user.lastname }}
+                        </td>
+                        <td style="width:14%; min-width:10rem;"><span
+                                class="p-column-title">Prénom</span>{{ user.firstname }}
+                        </td>
+                        <td style="width:14%; min-width:10rem;"><span class="p-column-title">Email</span>{{ user.email }}
+                        </td>
+                        <td style="width:14%; min-width:10rem;"><span
+                                class="p-column-title">Téléphone</span>{{ user.telephone }}
+                        </td>
+                        <td style="width:14%; min-width:10rem;"><span
+                                class="p-column-title">Adresse</span>{{ user.adresse }}
+                        </td>
+                        <td style="width:14%; min-width:10rem;"><span
+                                class="p-column-title">Rôle</span>{{ user.role.toString()=="PROVIDER"?"FOURNISSEUR":user.role }}
+                        </td>
+                        <td>
+                            <div class="flex">
+                                <button pButton pRipple icon="pi pi-pencil"
+                                        class="p-button-rounded p-button-success mr-2"
+                                        (click)="editUser(user)"></button>
+                                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
+                                        (click)="deleteUser(user)"></button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+</div>
         </div>
     </div>
 </div>

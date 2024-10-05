@@ -6,12 +6,11 @@ import {DepotService} from "./depot.service";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {ProduitService} from "./produit.service";
 import {Router} from "@angular/router";
-import {DatePipe, JsonPipe} from "@angular/common";
+import {DatePipe} from "@angular/common";
 import {Depot} from "../../models/Depot";
-import {catchError, Observable, of} from "rxjs";
+import {Observable} from "rxjs";
 import {getToken, getUserDecodeID} from "../../../main";
-import {User} from "../../models/user";
-import {map} from "rxjs/operators";
+import {RoleEnum, User} from "../../models/user";
 import {UserService} from "./user.service";
 import {TrancheService} from "./tranche.service";
 import {ConfirmationService, MessageService} from "primeng/api";
@@ -20,7 +19,7 @@ import {ConfirmationService, MessageService} from "primeng/api";
   providedIn: 'root'
 })
 export class FactureService {
-    FactureInter : FactureInterface[]=[];
+    FactureInter : Facture[]=[];
     factures: Facture[] = []; // Initialisation du tableau de factures
     // @ts-ignore
     depots: Depot[] = this.getAllDepots();
@@ -55,7 +54,7 @@ export class FactureService {
 
         if (token) {
             const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type", "application/json; charset=utf8");
-            return this.http.get<Facture[]>(this.api + '/read', {headers});
+            return this.http.get<Facture[]>(this.api + '/readDto', {headers});
 
         }else {
             return  new Observable<Facture[]>() ;
@@ -74,6 +73,9 @@ export class FactureService {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
         });
+
+         console.error(newFacture)
+
 
         let filesListes: any[] = [];
         newFacture.lignesFacture.forEach((value) => {
@@ -133,7 +135,7 @@ export class FactureService {
 
             });
         });
-
+newFacture.lignesFacture.map(value => { value.id=null})
         const fact = {
             "reference": newFacture.reference,
             "date": this.datePipe.transform(newFacture.date, 'yyyy-MM-dd'),
@@ -180,8 +182,7 @@ export class FactureService {
 
 
         const url = `${this.api}/create`;
-
-        return this.http.post<Facture>(url, fact, {headers});
+         return this.http.post<Facture>(url, newFacture, {headers});
     }
 
     getFactureById(id: number ):Observable <Facture>  {
@@ -359,6 +360,7 @@ export class FactureService {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
         });
+        console.info(newFacture)
         const url = `${this.api}/removeFactWithUpdate`;
         return this.http.put<Facture>(url, newFacture, { headers });
     }
