@@ -323,30 +323,37 @@ export class UserService {
     }
 
 
-    exist(tableName:String) {
-        const token = getToken();
-
+    exist(tableName: string) {
+        const token = getToken(); // Assuming getToken() fetches the JWT token
 
         if (token) {
-            // Ajouter le token à l'en-tête de la requête
-            const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type", "application/json; charset=utf8");
-            let data :any={
+            // Set Authorization and Content-Type headers
+            const headers = new HttpHeaders()
+                .set('Authorization', `Bearer ${token}`)
+                .set("Content-Type", "application/json; charset=utf8");
+
+            // Prepare the data payload with the decoded user ID and table name
+            const data: any = {
                 "user": {
-                    "id": getUserDecodeID().id
+                    "id": getUserDecodeID().id // Assuming getUserDecodeID() extracts user ID from the token
                 },
-                "tableName": tableName,
+                "tableName": tableName
+            };
 
-            }
-            this.http.post<boolean>(environment.apiUrl + '/permission/checkpermission', data, { headers }).subscribe(value => {
-                this.permission=value ;
+            // Perform POST request to check permission
+            this.http.post<boolean>(`${environment.apiUrl}/permission/checkpermission`, data, { headers })
+                .subscribe(value => {
+                    this.permission = value; // Update permission status based on response
+                }, error => {
+                    console.error('Error checking permission', error); // Handle errors
+                    this.permission = false; // Set permission to false on error
+                });
 
-            })
-
-        }else {
-            this.permission =[] ;
-
+        } else {
+            this.permission = false; // No token, so no permission
         }
     }
+
 
     // getEncodedPassword(pass: string): Observable<string> {
     //   return this.http.post<string>(`${this.api+'/user'}/encodePass`, { password: pass });
@@ -354,9 +361,21 @@ export class UserService {
 
 
     getUserByEmail(email: string): Observable<User> {
+        const token = getToken(); // Assuming getToken() returns the stored JWT token
+
+        // Set the Authorization header with the Bearer token
+        const headers = new HttpHeaders()
+            .set('Authorization', `Bearer ${token}`)
+            .set("Content-Type", "application/json; charset=utf8");
+
         const url = `${this.api}/user/email/${email}`;
-        return this.http.get<User>(url);
+
+        // Pass the headers in the HTTP GET request
+        return this.http.get<User>(url, { headers });
     }
+
+
+
 
 }
 

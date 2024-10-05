@@ -31,6 +31,8 @@ import {log} from "@angular-devkit/build-angular/src/builders/ssr-dev-server";
 import {AvatarModule} from "primeng/avatar";
 import {BadgeModule} from "primeng/badge";
 import {Historique} from "../../../../../models/historique";
+import {Page} from "../../../../../models/page";
+import {Article} from "../../../../../models/Article";
 
 @Component({
     selector: 'app-produits',
@@ -87,8 +89,13 @@ export class ProduitsComponent implements OnInit {
     loadingdata: boolean = false;
     loading: boolean = false;
     @ViewChild('filter') filter!: ElementRef;
+    initTabProduit: Produit[]=[];
+    produitsPage: Page<Produit>={
+        content:this.initTabProduit,number:0,size:0,totalPages:0,totalElements:0
 
-    responsiveOptions: any[];
+    };
+    currentPage: number = 0;
+    pageSize: number = 10; // Nombre d'éléments par page
 
     constructor(private productService: ProductService,
                 private produitService: ProduitService,
@@ -96,23 +103,104 @@ export class ProduitsComponent implements OnInit {
                 private confirmationService: ConfirmationService,
                 private router: Router,
                 private sanitizer: DomSanitizer) {
+        this.produits = this.fetchProducts();
+
     }
 
     ngOnInit() {
         this.getAllProduits();
+        this.loadProduits(this.currentPage, this.pageSize);
     }
 
 
+    loadProduits(page: number, size: number) {
+        this.loadingdata=true ;
+        this.produitService.LoadProduits(page, size).subscribe(
+            (data: Page<Produit>) => {
+                this.produitsPage = data;
+                this.loadingdata=false;
+            },
+            (error) => {
+                console.error('Erreur lors du chargement des produits', error);
+            }
+        );
+    }
+
+    // Méthode à appeler lors de la navigation entre les pages
+
+
+    fetchProducts(): Produit[] {
+        // Créez un tableau de produits avec des données d'exemple
+        return Array.from({ length: 100 }, (_, i) => {
+            return new Produit(
+                i + 1, // id
+                `Produit ${i + 1}`, // nom
+                Math.random() * 100, // prixUnitaire
+                Math.random() * 100, // prixGros
+                `Description du produit ${i + 1}`, // description
+                Math.floor(Math.random() * 50), // qantite
+                new Blob(), // image
+                Math.random() * 10, // gainUnitaire
+                Math.random() * 10, // gainGros
+                [], // files
+                new Date(Date.now() + Math.random() * 10000000000), // dateExpiration
+                new Date(Date.now() - Math.random() * 10000000000), // dateFabrication
+                Math.floor(Math.random() * 10), // minQuantiteGros
+                Math.random() * 20, // taxe
+                true, // enable
+                `Data QR ${i + 1}`, // dataqr
+                Math.floor(Math.random() * 20), // qantiteFacture
+                new Article(), // article (assurez-vous que l'objet Article est correctement instancié)
+                Math.floor(Math.random() * 100), // levelstock
+                false, // showDetails
+                false, // checkedService
+                [], // subdataqr
+                [] // historiques
+            );
+        });
+    }
+
+
+
+    // fetchProducts() {
+    //     // Remplacez cela par la logique pour obtenir vos produits
+    //     return Array.from({ length: 100 }, (_, i) => ({ id: i + 1, name: `Produit ${i + 1}` }));
+    // }
+
+
+    get currentProducts() {
+        const start = this.currentPage * this.pageSize;
+        return this.produits.slice(start, start + this.pageSize);
+    }
+
+    onPageChange(event: any) {
+        this.currentPage = event.page==undefined?0:event.page;
+        this.pageSize = event.rows==undefined?10:event.rows
+         this.loadProduits(this.currentPage, this.pageSize);
+
+    }
+
     next() {
-        this.first = this.first + this.rows;
+        if (!this.isLastPage()) {
+            this.currentPage++;
+            this.loadProduits(this.currentPage, this.pageSize);
+         }
     }
 
     prev() {
-        this.first = this.first - this.rows;
+        if (!this.isFirstPage()) {
+            this.currentPage--;
+            this.loadProduits(this.currentPage, this.pageSize);
+
+        }
+
     }
 
+
     reset() {
-        this.first = 0;
+        this.currentPage = 0; // Réinitialise à la première page
+        this.loadProduits(this.currentPage, 10);
+
     }
 
     pageChange(event) {
@@ -120,12 +208,12 @@ export class ProduitsComponent implements OnInit {
         this.rows = event.rows;
     }
 
-    isLastPage(): boolean {
-        return this.produits ? this.first === this.produits.length - this.rows : true;
+    isFirstPage() {
+        return this.currentPage === 0;
     }
 
-    isFirstPage(): boolean {
-        return this.produits ? this.first === 0 : true;
+    isLastPage() {
+        return (this.currentPage + 1) * this.pageSize >= this.produits.length;
     }
 
 
@@ -154,6 +242,22 @@ export class ProduitsComponent implements OnInit {
             }
         );
     }
+
+    // LoadProduits(page: number = 0, size: number = 10) {
+    //     this.produitService.getProduits(page, size).subscribe(
+    //         (data: Page<Produit>) => {
+    //             this.produitsPage = data; // Stocke les produits et les métadonnées de pagination
+    //         },
+    //         (error) => {
+    //             console.error('Erreur lors du chargement des produits', error);
+    //         }
+    //     );
+    // }
+    // onPageChange(event: any) {
+    //     const page = event.page;
+    //     const size = event.rows;
+    //     this.getAllProduits(page, size); // Appelle la méthode avec les nouvelles valeurs de page et taille
+    // }
 
     supprimerProduit(id: number): void {
         Swal.fire({

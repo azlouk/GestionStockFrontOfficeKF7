@@ -58,7 +58,7 @@
                                                             <div class="mb-3"> description: {{product.description}}</div>
                                                         </div>
                                                         <div class="flex justify-content-between footer">
-                                                            <span class="text-2xl font-semibold text-red-400">{{product.prixUnitaire + product.gainUnitaire}} TND</span>
+                                                            <span class="text-2xl font-semibold text-red-400">{{product.prixUnitaire + product.gainUnitaire | number:'1.3-3'}} TND</span>
                                                             <button pButton pRipple icon="pi pi-cart-plus" class="p-button-rounded p-button-outlined p-button-success" (click)="addProductToSale(product)"></button>
                                                         </div>
                                                     </div>
