@@ -34,10 +34,32 @@
                                placeholder="Rechercher par Nom ou Code à barre..." (click)="changeFocusSearch()"/>
                         <i class="pi pi-spin pi-box text-success"></i>
                     </span>
-                    <p-dataView #dv [value]="produits" [layout]="layout" [paginator]="true" [rows]="12"
-                                [loading]="loading" [rowsPerPageOptions]="[6,12,18,24,30,42 ]"
-                                [filterBy]="'nom,dataqr,subdataqr,dateFabrication,dateExpiration,description,qantite,prixUnitaire,gainGros,minQuantiteGros,article.nom,article.id'">
+                    <p-dataView #dv
+                                [value]="produits.content"
+                                [layout]="layout"
+                                [paginator]="true"
+                                [rows]="12"
+                                [loading]="loading"
+                                [rowsPerPageOptions]="[6,12,18,24,30,42 ]"
+                                [filterBy]="'nom,dataqr,subdataqr,dateFabrication,dateExpiration,description,qantite,prixUnitaire,gainGros,minQuantiteGros,article.nom,article.id'"
+
+                                [paginator]="true"
+                                [rows]="pageSize"
+                                [loading]="loading"
+                                [totalRecords]="produits.totalElements"
+                                [first]="first"
+                                responsiveLayout="scroll"
+                                [rowsPerPageOptions]="[ 10, 50, 100,250,500]"
+                                [showCurrentPageReport]="true"
+                                currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords} élements"
+                                (onPage)="onPageChange($event)"
+                                selectionMode="multiple"
+                                dataKey="id"
+
+
+                    >
                         <ng-template pTemplate="grid" let-produits>
+
                             <div class="grid grid-nogutter">
                                 <div class="col-12 sm:col-6 md:col-4 xl:col-2 p-2" *ngFor="let product of produits">
                                     <div class="p-2 border-3 surface-border surface-card border-round flex flex-column">
