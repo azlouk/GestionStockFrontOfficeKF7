@@ -7,6 +7,8 @@ import {Router} from "@angular/router";
 import {environment} from "../../../environments/environment";
 import {getToken, getUserDecodeID} from "../../../main";
 import {RoleEnum, User} from "../../models/user";
+import {Page} from "../../models/page";
+import {Produit} from "../../models/produit";
 
 
 @Injectable({
@@ -27,6 +29,21 @@ export class UserService {
                 this.filteredUsers = users;
             });
 
+    }
+
+    LoadUsers(page: number, size: number): Observable<Page<User>> {
+        const url = `${this.api}/user/DtoReadPage?page=${page}&size=${size}`;
+        const token = getToken();
+
+        if (token) {
+            const headers = new HttpHeaders()
+                .set('Authorization', `Bearer ${token}`)
+                .set('Content-Type', 'application/json; charset=utf-8');
+
+            return this.http.get<Page<User>>(url, {headers});
+        } else {
+            return new Observable();
+        }
     }
 
 // public loadGenarate() :void{
