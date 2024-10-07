@@ -36,6 +36,7 @@ import {RatingModule} from "primeng/rating";
 import {ProduitService} from "../../../../../layout/service/produit.service";
 import {Historique} from "../../../../../models/historique";
 import {LigneFacture} from "../../../../../models/LigneFacture";
+import {Page} from "../../../../../models/page";
 
 @Component({
     selector: 'app-facture',
@@ -77,6 +78,20 @@ import {LigneFacture} from "../../../../../models/LigneFacture";
     styleUrl: './facture.component.scss'
 })
 export class FactureComponent implements OnInit {
+
+    initTabFacture: Facture[]=[];
+    facturesPage: Page<Facture>={
+        content:this.initTabFacture,number:0,size:0,totalPages:0,totalElements:0
+
+    };
+    currentPage: number = 0;
+    pageSize: number = 10; //
+    loadingdata: boolean = false;
+    first = 0;
+    rows = 10;
+
+
+
 
     @ViewChild('dt2') table: Table;
     montantFiltreCalcule: boolean = false;
@@ -158,6 +173,8 @@ export class FactureComponent implements OnInit {
 
 
     ngOnInit(): void {
+        this.loadFacture(this.currentPage, this.pageSize);
+
         this.getAllFactures();
         this.calculateMontants();
         this.root = this.router.url.split('/')[1];
@@ -174,6 +191,62 @@ export class FactureComponent implements OnInit {
 
     }
 
+    loadFacture(page: number, size: number) {
+        this.loadingdata=true ;
+        this.factureService.LoadFactures(page, size).subscribe(
+            (data: Page<Facture>) => {
+                this.facturesPage = data;
+                this.loadingdata=false;
+            },
+            (error) => {
+                console.error('Erreur lors du chargement des produits', error);
+            }
+        );
+    }
+
+
+    onPageChange(event: any) {
+        this.currentPage = event.page==undefined?0:event.page;
+        this.pageSize = event.rows==undefined?10:event.rows
+        this.loadFacture(this.currentPage, this.pageSize);
+
+    }
+
+    next() {
+        if (!this.isLastPage()) {
+            this.currentPage++;
+            this.loadFacture(this.currentPage, this.pageSize);
+        }
+    }
+
+    prev() {
+        if (!this.isFirstPage()) {
+            this.currentPage--;
+            this.loadFacture(this.currentPage, this.pageSize);
+
+        }
+
+    }
+
+
+    reset() {
+        this.currentPage = 0; // Réinitialise à la première page
+        this.loadFacture(this.currentPage, 10);
+
+    }
+
+    pageChange(event) {
+        this.first = event.first;
+        this.rows = event.rows;
+    }
+
+    isFirstPage() {
+        return this.currentPage === 0;
+    }
+
+    isLastPage() {
+        return (this.currentPage + 1) * this.pageSize >= this.produits.length;
+    }
 
 
     getStatusSeverity(status: string) {
@@ -423,6 +496,7 @@ export class FactureComponent implements OnInit {
     montantTranchesNonPayees: number = 0;
     public factureDeleted: Facture=new Facture();
     public PrixChoisie: number;
+
 
 
     calculateMontants() {
