@@ -41,24 +41,24 @@ function createWindow() {
     console.error("Error setting default zoom level:", e);
   }
 
-  win.loadFile('dist/sakai-ng/index.html');
+  win.loadFile('dist/kf7/index.html');
   const jarPath = path.join(__dirname, 'app.jar');
 
   // Spawn Java process if not already running
-  if (!isJavaProcessRunning()) {
-    javaProcess = spawn('java', ['-jar', jarPath]);
-
-    // Handle Java process events
-    javaProcess.stdout.on('data', (data) => {
-      console.log(`Java Output: ${data}`);
-    });
-    javaProcess.stderr.on('data', (data) => {
-      console.error(`Java Error: ${data}`);
-    });
-    javaProcess.on('close', (code) => {
-      console.log(`Java process exited with code ${code}`);
-    });
-  }
+  // if (!isJavaProcessRunning()) {
+  //   javaProcess = spawn('java', ['-jar', jarPath]);
+  //
+  //   // Handle Java process events
+  //   javaProcess.stdout.on('data', (data) => {
+  //     console.log(`Java Output: ${data}`);
+  //   });
+  //   javaProcess.stderr.on('data', (data) => {
+  //     console.error(`Java Error: ${data}`);
+  //   });
+  //   javaProcess.on('close', (code) => {
+  //     console.log(`Java process exited with code ${code}`);
+  //   });
+  // }
 
   // Set zoom level limits and handle zoom changes
   try {

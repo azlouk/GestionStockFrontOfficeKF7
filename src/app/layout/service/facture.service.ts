@@ -313,8 +313,9 @@ newFacture.lignesFacture.map(value => { value.id=null})
             }))
         };
 
+        console.log(newFacture)
         const url = `${this.api}/update`;
-        return this.http.put<Facture>(url, fact, { headers });
+        return this.http.put<Facture>(url, newFacture, { headers });
     }
 
     deleteFacture(id: number): Observable<boolean> {

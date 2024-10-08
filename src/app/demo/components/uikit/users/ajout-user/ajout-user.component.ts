@@ -82,7 +82,7 @@ export class AjoutUserComponent implements OnInit {
             email: ['', [Validators.required, Validators.email]],
             tel: [],
             adresse: ['', Validators.required],
-            role: ['', Validators.required],
+            role: ['EMPLOYER', Validators.required],
             motdepasse: [''],
             secretKey:[''],
             motdepasseconfirm: [''],
@@ -333,7 +333,7 @@ export class AjoutUserComponent implements OnInit {
                 text: 'Vérifiez bien les champs!'
             });
         }
-        this.userForm.reset();
+        //this.userForm.reset();
     }
 
     dispalyDepot() {
@@ -456,6 +456,8 @@ export class AjoutUserComponent implements OnInit {
         this.getPermission(permission.tableName, isSelected ? 'update' : 'updaten');
         this.getPermission(permission.tableName, isSelected ? 'delete' : 'deleten');
     }
+
+    protected readonly RoleEnum = RoleEnum;
 
 }
 

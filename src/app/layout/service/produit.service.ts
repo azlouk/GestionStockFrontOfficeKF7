@@ -133,14 +133,14 @@ export class ProduitService {
             let formData = new FormData();
             const produit = nouveauProduit
             formData.append('produit', new Blob([JSON
-                .stringify(produit)], {
+                .stringify(produit.toJSON())], {
                 type: 'application/json'
             }));
             for (let i = 0; i < uploadFiles.length; i++) {
                 formData.append('file', uploadFiles[i]);
             }
 
-
+            console.log(produit.toJSON())
             // Utiliser les headers dans la require
             return this.http.post<any>(this.api + '/create', formData, {headers});
         } else {

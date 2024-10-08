@@ -230,9 +230,10 @@ export class FactureComponent implements OnInit {
 
 
     reset() {
+
         this.currentPage = 0; // Réinitialise à la première page
         this.loadFacture(this.currentPage, 10);
-
+        this.totalMontantFiltre=0 ;
     }
 
     pageChange(event) {
@@ -390,7 +391,7 @@ export class FactureComponent implements OnInit {
     refrech() {
         this.resetForm()
 
-        this.getAllFactures();
+        this.loadFacture(this.currentPage,this.pageSize);
 
         this.totalFiltre = null
 
@@ -409,6 +410,7 @@ export class FactureComponent implements OnInit {
         this.valuetelephone = '';
         this.valueemail = '';
         this.valuepaye = null;
+        this.reset() ;
     }
 
     deleteFacture(facture: Facture) {
@@ -426,8 +428,7 @@ export class FactureComponent implements OnInit {
 
                 }else {
                     this.factureService.deleteFacture(facture.id).subscribe(value => {
-                        this.getAllFactures(); // Refresh the factures list after deletion
-
+                        this.loadFacture(this.currentPage,this.pageSize)
                     })
                 }
             },
@@ -528,7 +529,7 @@ export class FactureComponent implements OnInit {
 
 
 
-    public rechecheAvancee() {
+    public rechercheAvancee() {
         this.Facturefilred = this.FacturefilredSuplim.filter(fact => {
             let match = true;
             let typeMatch: boolean = false;
@@ -585,14 +586,15 @@ export class FactureComponent implements OnInit {
         this.nbreTranche = this.calculeTrancheFiltre().totalTranches;
         this.totalTranchepaye = this.calculeTrancheFiltre().totalPaid;
         this.totalTrancheNonpaye = this.calculeTrancheFiltre().totalUnpaid;
-
+    this.facturesPage.content=[...this.Facturefilred] ;
+    this.CalculeMontantFiltrer() ;
     }
 
     private matchFacture(entity: any): boolean {
         if (!entity) return false;
 
-        let firstnameMatch = this.valuefirstname ? entity.firstname.toLowerCase().includes(this.valuefirstname.toLowerCase()) : true;
-        let lastnameMatch = this.valuelastname ? entity.lastname.toLowerCase().includes(this.valuelastname.toLowerCase()) : true;
+        let firstnameMatch = this.valuefirstname ? entity.firstname.toLowerCase().includes(this.valuefirstname.toLowerCase().trim()) : true;
+        let lastnameMatch = this.valuelastname ? entity.lastname.toLowerCase().includes(this.valuelastname.toLowerCase().trim()) : true;
         let emailMatch = this.valueemail ? entity.email.toLowerCase().includes(this.valueemail.toLowerCase()) : true;
         let telephoneMatch = this.valuetelephone ? entity.telephone.includes(this.valuetelephone) : true;
 

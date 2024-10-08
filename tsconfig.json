@@ -2,6 +2,9 @@
 {
     "compileOnSave": false,
     "compilerOptions": {
+      "paths": {
+        "@models/*": ["models/*"]
+      },
       "baseUrl": "./",
       "outDir": "./dist/out-tsc",
       "forceConsistentCasingInFileNames": true,

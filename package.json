@@ -30,6 +30,7 @@
         "@fullcalendar/interaction": "^6.0.3",
         "@fullcalendar/timegrid": "^6.0.3",
         "chart.js": "^3.9.1",
+        "html2canvas": "^1.4.1",
         "jsbarcode": "^3.11.6",
         "jwt-decode": "^4.0.0",
         "ngx-barcode6": "^1.0.24",

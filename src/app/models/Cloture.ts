@@ -1,7 +1,8 @@
-import {Tranche} from './Tranche';
 import {Employer} from "./employer";
+import {Tranche} from "./Tranche";
 
-export class Cloture {
+
+export    class Cloture {
     id: number;
     etatCloture: boolean = true;
     dateCloture: Date;
