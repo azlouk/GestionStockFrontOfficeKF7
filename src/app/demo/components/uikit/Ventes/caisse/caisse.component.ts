@@ -63,6 +63,7 @@ import {LigneFacture} from "../../../../../models/LigneFacture";
 import {DialogService} from "../../../../../layout/service/dialogue-user.service";
 import {AjoutUserComponent} from "../../users/ajout-user/ajout-user.component";
 import {Page} from "../../../../../models/page";
+import {log} from "@angular-devkit/build-angular/src/builders/ssr-dev-server";
 
 
 @Component({
@@ -177,9 +178,13 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
         this.onValueChange();
         this.messages1 = [{severity: 'error', summary: 'Error', detail: 'Pas des images'}];
         this.loadingdata=true ;
-
+      this.userConnect();
     }
-
+userConnect(){
+        this.clotureService.getUserConnecte().subscribe(value => {
+            alert(value)
+        },error => {alert('no')})
+}
 
     onPageChange(event: any) {
         this.currentPage = event.page==undefined?0:event.page;
@@ -295,7 +300,10 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
             this.getTotalVente();
             this.selectedVente.reglement = this.reglement;
 
-
+            this.clotureService.getUserConnecte();
+            this.clotureService.getUserConnecte().subscribe(value => {
+                // this.cloture.employer=value;
+            });
             this.produitService.SaveVente(this.selectedVente).subscribe(value => {
                 if (value) {
 
@@ -533,6 +541,7 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
                 {
                     this.selectedVente.paye=true;
                     this.SaveVente();
+
                 }
                 else {
                     this.focusIndex = 10;
@@ -833,7 +842,10 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
     saveCloture() {
         this.cloture.employer.id = getUserDecodeID().id;
         this.cloture.dateCloture = new Date();
-
+        // this.clotureService.getUserConnecte();
+        //   this.clotureService.getUserConnecte().subscribe(value => {
+        //       this.cloture.employer=value;
+        //   });
         this.clotureService.SaveCloture(this.cloture).subscribe(
             value => {
 

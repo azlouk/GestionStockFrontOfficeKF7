@@ -199,7 +199,7 @@ export class FactureComponent implements OnInit {
                 this.loadingdata=false;
             },
             (error) => {
-                console.error('Erreur lors du chargement des produits', error);
+                console.error('Erreur lors du chargement des factures', error);
             }
         );
     }

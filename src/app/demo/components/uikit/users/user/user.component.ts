@@ -94,7 +94,7 @@ export class UserComponent {
                 this.loadingdata=false;
             },
             (error) => {
-                console.error('Erreur lors du chargement des produits', error);
+                console.error('Erreur lors du chargement des Users', error);
             }
         );
     }

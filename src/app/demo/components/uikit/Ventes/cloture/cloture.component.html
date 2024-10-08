@@ -9,22 +9,39 @@
             <div>
                 <span class="p-input-icon-left" style="justify-content: flex-end;">
                     <i class="pi pi-search"></i>
-                    <input pInputText type="text" [(ngModel)]="searchTerm" (input)="dtCloture.filterGlobal(searchTerm, 'contains')"
-                    placeholder="Rechercher ... " class="p-inputtext"/>
+                    <input pInputText type="text" [(ngModel)]="searchTerm"
+                           (input)="dtCloture.filterGlobal(searchTerm, 'contains')"
+                           placeholder="Rechercher ... " class="p-inputtext"/>
                 </span>
             </div>
 
         </div>
         <div class="row m-2 shadow-lg p-2">
             <div class="flex flex-wrap">
-                <p-table #dtCloture [scrollable]="true" [value]="clotures"
+                <p-table #dtCloture
+                         [value]="CloturesPage.content"
+
+                         [scrollable]="true"
                          [globalFilterFields]="['cloture.id','cloture.montantClotureValide']"
                          [rows]="10"
                          [showCurrentPageReport]="true"
-                         [rowsPerPageOptions]="[10, 25, 50]"
-                         [loading]="loading"
                          [lazy]="true"
-                         [paginator]="true">
+                         [paginator]="true"
+
+
+                         currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords} élements"
+
+                         [loading]="loadingdata"
+                         [totalRecords]="CloturesPage.totalElements"
+                         [first]="first"
+                         [rowsPerPageOptions]="[ 10, 50, 100,250,500]"
+                         (onPage)="onPageChange($event)"
+                         selectionMode="multiple"
+                         [rowHover]="true"
+                         dataKey="id"
+
+
+                >
                     <ng-template pTemplate="header">
                         <tr>
                             <th pSortableColumn="id" style="width: 10%; color:#0056b3">

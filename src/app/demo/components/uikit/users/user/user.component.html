@@ -27,14 +27,12 @@
                      [showCurrentPageReport]="true"
                      currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords} élements"
                      selectionMode="multiple"
-                     [rowHover]="true"
 
                      [loading]="loadingdata"
                      [totalRecords]="UsersPage.totalElements"
                      [first]="first"
                      [rowsPerPageOptions]="[ 10, 50, 100,250,500]"
                      (onPage)="onPageChange($event)"
-                     selectionMode="multiple"
                      [rowHover]="true"
                      dataKey="id"
 
