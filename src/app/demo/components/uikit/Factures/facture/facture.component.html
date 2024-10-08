@@ -24,7 +24,7 @@
             <!-- Avatar avec badge aligné à la fin -->
             <div class="col-2 float-end d-flex d-inline ">
                 <p-avatar icon="pi pi-file" pBadge
-                          [value]="Facturefilred.length+''" size="large"
+                          [value]="facturesPage.content.length+''" size="large"
                           [style]="{ 'background-color': '#b9c7ce', color: '#1a1717' }"></p-avatar>
             </div>
 
@@ -211,9 +211,7 @@
                                           (click)="CalculeMontantFiltrer()"></p-button>
                             </ng-container>
                             <ng-template #montantTemplate>
-                        <span style="color: red; font-weight: bold;">
-                            Total Montant Filtré: {{ totalMontantFiltre }}
-                        </span>
+
                             </ng-template>
                         </div>
                     </th>
@@ -356,16 +354,23 @@
 
             <!-- Text Inputs -->
             <div class="flex flex-column gap-4">
+                <label class="text-red-500">Nb nom et prénom ignore espace et maj</label>
                 <div class="flex align-items-center gap-3 mb-3">
                     <label for="firstname" class="font-semibold w-6rem">First Name</label>
+
                     <input pInputText id="firstname" class="flex-auto" [(ngModel)]="valuefirstname"
+
                            autocomplete="off"/>
                 </div>
+
                 <div class="flex align-items-center gap-3 mb-3">
                     <label for="lastname" class="font-semibold w-6rem">Last Name</label>
+
                     <input pInputText id="lastname" class="flex-auto" [(ngModel)]="valuelastname"
                            autocomplete="off"/>
+
                 </div>
+
                 <div class="flex align-items-center gap-3 mb-3">
                     <label for="telephone" class="font-semibold w-6rem">Telephone</label>
                     <input pInputText id="telephone" class="flex-auto" [(ngModel)]="valuetelephone"
@@ -382,6 +387,13 @@
                     <span *ngIf="valuepaye === false">Non Payé</span>
                     <span *ngIf="valuepaye === null">Payé et Non Payé</span>
                 </div>
+         <div class="flex align-items-center gap-3 mb-3">
+                            <label for="paye" class="font-semibold w-6rem">Montant Total</label>
+                        <span  class="font-semibold w-6rem bolder ">
+                             {{ totalMontantFiltre | number }}
+                        </span>
+
+                        </div>
 
             </div>
         </div>
@@ -391,7 +403,7 @@
             </div>
             <!-- Search Button -->
             <div class="flex justify-content-end">
-                <p-button label="Recherche" (onClick)="rechecheAvancee()"/>
+                <p-button label="Recherche" (onClick)="rechercheAvancee()"/>
             </div>
         </div>
 

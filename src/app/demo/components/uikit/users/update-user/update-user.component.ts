@@ -183,7 +183,7 @@ export class UpdateUserComponent implements OnInit {
                                     this.router.navigate(['/auth/login']);
                                     // RedirectToLogin(this.router) ;
                                 }else {
-                                    this.router.navigate(['/uikit/users']);
+                                    this.router.navigate(['/uikit/Users']);
                                 }},
                             (error) => {
                                 console.error('Erreur lors de la modification de l\'utilisateur :', error);

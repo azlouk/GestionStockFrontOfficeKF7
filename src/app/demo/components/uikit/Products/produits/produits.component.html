@@ -236,8 +236,11 @@
                         class="p-column-title">Telephone</span>{{ historique.dateMisAjoure }}
                 </td>
                 <td style="width:14%; min-width:10rem;">
-                    <span *ngIf="historique.idFactRefToHist!==null" class="p-column-title" routerLink="uikit/update-facture/{{historique.idFactRefToHist}}">ID Facture</span>{{ historique.idFactRefToHist }}
-                    <span *ngIf="historique.idFactRefToHist==null"  class="p-column-title">ID Facture</span>Pas facture
+
+
+                    <p-button *ngIf="historique.idFactRefToHist" label="{{ historique.idFactRefToHist }}" [link]="true"   [routerLink]="['/uikit/update-facture', historique.idFactRefToHist]"/>
+
+
                 </td>
 
 

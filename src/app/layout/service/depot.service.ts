@@ -126,7 +126,7 @@ export class DepotService {
 
     addDepot(nouveauDepot : Depot):Observable<any> {
         const token = getToken();
-
+        console.log(nouveauDepot)
         if (token) {
             // Ajouter le token à l'en-tête de la requête
             const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type", "application/json; charset=utf8");

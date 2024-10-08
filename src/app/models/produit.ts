@@ -1,6 +1,7 @@
 import {Article} from "./Article";
 import {File} from "./File";
 import {Historique} from "./historique";
+import Swal from "sweetalert2";
 
 
 export interface CodeModel {
@@ -293,4 +294,46 @@ export class Produit {
 
         return newProduit;
     }
+
+    toJSON() {
+        return {
+            id: this.id,
+            nom: this.nom,
+            prixUnitaire: this.prixUnitaire,
+            prixGros: this.prixGros,
+            description: this.description,
+            qantite: this.qantite,
+            gainUnitaire: this.gainUnitaire,
+            gainGros: this.gainGros,
+            dateExpiration: this.formatDate(this.dateExpiration), // Format as needed
+            dateFabrication: this.formatDate(this.dateFabrication), // Format as needed
+            minQuantiteGros: this.minQuantiteGros,
+            taxe: this.taxe,
+            enable: this.enable,
+            dataqr: this.dataqr,
+            qantiteFacture: this.qantiteFacture,
+            article: this.article,
+            levelstock: this.levelstock,
+            showDetails: this.showDetails,
+            checkedService: this.checkedService,
+            subdataqr: this.subdataqr,
+            historiques: this.historiques,
+            files: this.files // If needed, you might want to convert these to a format suitable for sending
+        };
+    }
+
+    private formatDate(date: Date): string {
+        if (!(date instanceof Date)) {
+            date = new Date(date); // Convert it to a Date object if it's not already
+        }
+
+        // Ensure it's a valid date
+        if (!isNaN(date.getTime())) {
+            return date.toISOString().split('T')[0]; // e.g., "2024-10-06"
+        } else {
+            throw new Error('Invalid date');
+
+        }
+    }
+
 }

@@ -51,8 +51,9 @@
                                     placeholder="Sélectionner rôle"></p-dropdown>
                     </div>
                     <div class="card flex flex-column justify-content-center mt-4 "
-                         *ngIf="userForm.value.role.toLowerCase()=='employer'||userForm.value.role.toLowerCase()=='responsable' || userForm.value.role.toLowerCase()=='manager'|| userForm.value.role.toLowerCase()=='admin'">
+                      *ngIf="userForm.value.role==RoleEnum.EMPLOYER||userForm.value.role==RoleEnum.RESPONSABLE || userForm.value.role==RoleEnum.MANAGER|| userForm.value.role==RoleEnum.ADMIN">
 
+                        {{userForm.value.role}}
 
                         <label class="bold text-3xl mt-3">Clé : <label
                                 class="text-2xl">{{secretKey == '' ? 'Pas de clé sécurité' : secretKey}}</label></label>
@@ -67,7 +68,7 @@
                 </div>
 
                 <div class="p-fluid p-formgrid p-grid mt-4"
-                     *ngIf="userForm.value.role.toLowerCase()=='employer'||userForm.value.role.toLowerCase()=='responsable' || userForm.value.role.toLowerCase()=='manager'|| userForm.value.role.toLowerCase()=='admin'">
+                     *ngIf="userForm.value.role==RoleEnum.EMPLOYER||userForm.value.role==RoleEnum.RESPONSABLE || userForm.value.role==RoleEnum.MANAGER|| userForm.value.role==RoleEnum.ADMIN">
                     <div class="p-field p-col-12 p-md-6  mt-4">
                         <label class="mt-2" for="motdepasse">Mot de passe</label>
                         <p-password id="motdepasse" formControlName="motdepasse" type="password"
