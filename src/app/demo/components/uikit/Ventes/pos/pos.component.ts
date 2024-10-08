@@ -46,11 +46,13 @@ import {CardModule} from "primeng/card";
 import {TagModule} from "primeng/tag";
 import {RatingModule} from "primeng/rating";
 import {ToolbarModule} from "primeng/toolbar";
-
+import {Cloture} from "../../../../../models/Cloture";
+import {File} from "../../../../../models/File";
+import {GalleriaModule} from "primeng/galleria";
+import {environment} from "../../../../../../environments/environment";
 import {RippleModule} from "primeng/ripple";
 import {TooltipModule} from "primeng/tooltip";
-import {Cloture} from "../../../../../models/Cloture";
-
+import {Page} from "../../../../../models/page";
 
 @Component({
     selector: 'app-pos',
@@ -94,14 +96,27 @@ export class POSComponent implements OnInit,OnDestroy {
     searchTerm: string = '';
     searchTerm1: string = '';
     searchText: string = '';
-    produits: Produit[] = [];
+
+    initTabProduit: Produit[]=[];
+    produits: Page<Produit>={
+        content:this.initTabProduit,number:0,size:0,totalPages:0,totalElements:0
+    };
+
+
+    currentPage: number = 0;
+    pageSize: number = 10;
+    first = 0;
+    rows = 10;
+
+
     produitsOrderBy: Produit[] = [];
-    produitsFiltres: Produit [] = [];
+
     cloture: Cloture = new Cloture();
     listeVente: Vente[] = [];
     visibleDetails: boolean=false;
 
     selectedVente: Vente = new Vente();
+
     divVisible: boolean = true;
     visible: boolean = false;
     show: boolean = false;
@@ -129,8 +144,7 @@ export class POSComponent implements OnInit,OnDestroy {
     produit: Produit = new Produit();
     calculateValue: string='0';
 
-    rows = 10; // Number of rows to be fetched initially
-    lazyLoad = true; // Set to true for lazy loading
+
     public widthWindow:any ;
     public heigthWindow:any ;
 
@@ -146,21 +160,13 @@ export class POSComponent implements OnInit,OnDestroy {
         this.heigthWindow=window.innerHeight/2 ;
         this.messages1 = [{severity: 'error', summary: 'Error', detail: 'Pas des images'}];
         this.getAllArticles();
-        this.getAllProduits() ;
+        this.loadProduits(this.currentPage, this.pageSize);
+        this.loading=true;
     }
 
-    onResize($event:any) {
-        this.widthWindow=window.innerWidth ;
-        this.heigthWindow=window.innerHeight/2 ;
 
-    }
 
-    formatDate(date: Date): string {
-        const year = date.getFullYear();
-        const month = ('0' + (date.getMonth() + 1)).slice(-2);
-        const day = ('0' + date.getDate()).slice(-2);
-        return `${year}-${month}-${day}`;
-    }
+
     getTitle(){
         return getTitleTicket()==''?'pas de titre':getTitleTicket()
     }
@@ -179,9 +185,7 @@ export class POSComponent implements OnInit,OnDestroy {
 
         }
     }
-    toggleDivVisibility() {
-        this.divVisible = !this.divVisible;
-    }
+
 
     constructor(private produitService: ProduitService,
                 public venteService: VenteService,
@@ -207,7 +211,6 @@ export class POSComponent implements OnInit,OnDestroy {
         if (this.selectedVente.lignesVente.length != 0) {
             this.getTotalVente();
             this.selectedVente.reglement = this.reglement==0?this.selectedVente.total:this.reglement;
-            // alert(new JsonPipe().transform(this.selectedVente))
             this.selectedVente.employer=new User(getUserDecodeID().id)
             const nameclient=this.selectedVente.client.firstname
             this.selectedVente.client.firstname=getTitleTicket();
@@ -215,7 +218,8 @@ export class POSComponent implements OnInit,OnDestroy {
             this.produitService.SaveVente(this.selectedVente).subscribe(value => {
                 if (value) {
                     this.clearVente();
-                    this.getAllProduits()
+                    this.loadProduits(this.currentPage, this.pageSize);
+
                     this.showTopCenter("Votre Vente est bien enregistré ")
                     if (this.selectedVente.isPrint) {
                         Swal.fire({
@@ -307,15 +311,34 @@ export class POSComponent implements OnInit,OnDestroy {
 
 
     }
-    getAllProduits() {
+    // getAllProduits() {
+    //     this.loading=true ;
+    //     this.produitService.getProduits().subscribe((value: Produit[]) => {
+    //         this.produits.content = value;
+    //         this.loading=false ;
+    //         // this.cdr.detectChanges();
+    //
+    //     })
+    // }
+    loadProduits(page: number, size: number) {
         this.loading=true ;
-        this.produitService.getProduits().subscribe((value: Produit[]) => {
-            this.produits = value;
-            this.loading=false ;
-            this.cdr.detectChanges();
-
-        })
+        this.produitService.LoadProduits(page, size).subscribe(
+            (data: Page<Produit>) => {
+                this.produits = data;
+                this.loading=false ;
+            },
+            (error) => {
+                console.error('Erreur lors du chargement des produits', error);
+            }
+        );
     }
+    onPageChange(event: any) {
+        this.currentPage = event.page==undefined?0:event.page;
+        this.pageSize = event.rows==undefined?10:event.rows
+        this.loadProduits(this.currentPage, this.pageSize);
+
+    }
+
     getProduitByQtyventeOrder(){
         this.produitService.getProduitOrderByQtyVDesc().subscribe((value: Produit[]) => {
             value.forEach((value1:Produit) => {
@@ -432,10 +455,10 @@ export class POSComponent implements OnInit,OnDestroy {
     search(): void {
         // Filtrer les produits en fonction du terme de recherche
         if (this.searchTerm.trim() !== '') {
-            this.produitsFiltres = []
+            this.produits.content = []
             this.produitService.getProduitByQrNom(this.searchTerm).subscribe((value: Produit) => {
                 if (value != null) {
-                    this.produitsFiltres.push(value);
+                    this.produits.content.push(value);
 
                     this.visible = this.IsvisiblePop;
                 }
@@ -452,8 +475,8 @@ export class POSComponent implements OnInit,OnDestroy {
     }
 
     ajouterProduitSelectionne(index: number): void {
-        if (index >= 0 && index < this.produitsFiltres.length) {
-            const produitSelectionne = this.produitsFiltres[index];
+        if (index >= 0 && index < this.produits.content.length) {
+            const produitSelectionne = this.produit[index];
             const ligneExistante = this.selectedVente.lignesVente.find(ligne => ligne.produit.id === produitSelectionne.id);
             if (ligneExistante) {
                 // Si une ligne existe déjà, incrémenter la quantité si elle n'a pas atteint la limite
@@ -502,7 +525,7 @@ export class POSComponent implements OnInit,OnDestroy {
     }
 
     ajouterProduit(): void {
-        if (this.produitsFiltres.length > 0) {
+        if (this.produits.content.length > 0) {
             this.ajouterProduitSelectionne(0);
             this.getTottalNbProduct()
         }
@@ -859,13 +882,13 @@ export class POSComponent implements OnInit,OnDestroy {
 
     changeTable() {
         if (this.searchText.trim() !== ''){
-            this.getAllProduits()
+            this.loadProduits(this.currentPage, this.pageSize);
         }
         else {
             this.produitsOrderBy.forEach((value1:Produit) => {
                 this.loadFile(value1) ;
             })
-            this.produits=this.produitsOrderBy;
+            this.produits.content=this.produitsOrderBy;
 
         }
     }

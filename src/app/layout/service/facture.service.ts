@@ -14,6 +14,8 @@ import {RoleEnum, User} from "../../models/user";
 import {UserService} from "./user.service";
 import {TrancheService} from "./tranche.service";
 import {ConfirmationService, MessageService} from "primeng/api";
+import {Page} from "../../models/page";
+import {Produit} from "../../models/produit";
 
 @Injectable({
   providedIn: 'root'
@@ -60,6 +62,23 @@ export class FactureService {
             return  new Observable<Facture[]>() ;
         }
     }
+
+    LoadFactures(page: number, size: number): Observable<Page<Facture>> {
+        const url = `${this.api}/DtoReadPage?page=${page}&size=${size}`;
+        const token = getToken();
+
+        if (token) {
+            const headers = new HttpHeaders()
+                .set('Authorization', `Bearer ${token}`)
+                .set('Content-Type', 'application/json; charset=utf-8');
+
+            return this.http.get<Page<Facture>>(url, { headers });
+        } else {
+            return new Observable();
+        }
+    }
+
+
     getTypesFacture(): string[] {
         const typeKeys = Object.keys(factureType) as Array<keyof typeof factureType>;
         return typeKeys.map(key => factureType[key]);
