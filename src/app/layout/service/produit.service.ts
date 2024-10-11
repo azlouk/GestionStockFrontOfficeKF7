@@ -12,6 +12,7 @@ import {Produit} from "../../models/produit";
 import Swal from "sweetalert2";
 import {Historique} from "../../models/historique";
 import {Page} from "../../models/page";
+import {Tranche} from "../../models/Tranche";
 
 @Injectable({
     providedIn: 'root'
@@ -412,4 +413,49 @@ export class ProduitService {
     }
 
 
+    getProduitByNom(nom: string): Observable<Produit[]> {
+        const url = `${this.api}/findByNom/${nom}`; // Corrected URL path
+        const token = getToken();
+
+
+        if (token) {
+            // Add the token to the request header
+            const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type", "application/json; charset=utf8");
+
+            return this.http.get<Produit[]>(url, { headers });
+        } else {
+            return new Observable<Produit[]>();
+        }
+    }
+
+    getProduitByQrCode(code: string): Observable<Produit[]> {
+        const url = `${this.api}/findByDataqr/${code}`; // Corrected URL path
+        const token = getToken();
+
+
+        if (token) {
+            // Add the token to the request header
+            const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type", "application/json; charset=utf8");
+
+            return this.http.get<Produit[]>(url, { headers });
+        } else {
+            return new Observable<Produit[]>();
+        }
+    }
+
+
+    getListeNomProduit(): Observable<string[]> {
+        const url = `${this.api}/getListNomProduit`; // Corrected URL path
+        const token = getToken();
+
+
+        if (token) {
+            // Add the token to the request header
+            const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type", "application/json; charset=utf8");
+
+            return this.http.get<string[]>(url, { headers });
+        } else {
+            return new Observable<string[]>();
+        }
+    }
 }
