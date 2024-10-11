@@ -11,24 +11,6 @@ export enum factureType{
     VIDE = ""
 }
 
-export interface FactureInterface{
-    id?: number
-    reference?: string
-    lignesFacture?: LigneFacture []
-    montant?: number
-    montantTaxe? : number
-    date?: string
-    dateCreation?: Date
-    typeFacture?:factureType
-    client?: User
-    provider?: User
-    transporteur?: User
-    depot?: Depot
-    tranches?: Tranche[]
-    paye?: boolean
-    reglement ?: number;
-
-}
 export class Facture {
     id: number
     reference: string

@@ -61,7 +61,7 @@
                           styleClass="p-button-outlined p-button-primary  " label="Calculer"></p-button>
                 </div>
             </div>
-            <div *ngIf="displayusers" class="flex flex-wrap">
+            <div *ngIf="displayusers" class=" card flex flex-wrap">
                 <p-table #dt
                          [scrollable]="true"
                          [value]="ventes"
@@ -69,7 +69,7 @@
                          [globalFilterFields]="['paye', 'client.firstname', 'client.lastname', 'dateVente', 'total', 'reglement', 'employer.lastname', 'employer.firstname', 'lignesVente.produit.nom', 'lignesVente.produit.dataQr']"
                          [rows]="10"
                          [showCurrentPageReport]="true"
-                         [rowsPerPageOptions]="[10, 25, 50]"
+                         [rowsPerPageOptions]="[5,10, 25, 50]"
                          [loading]="loading"
                          [paginator]="true"
                          currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords} éléments"
@@ -96,23 +96,23 @@
 
                     <ng-template pTemplate="header">
                         <tr class="fs-4">
-                            <th style="width: 5%">
+                            <th style="">
                                 <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                             </th>
                             <th pSortableColumn="paye">Payé<p-sortIcon field="paye"></p-sortIcon></th>
-                            <th pSortableColumn="dateVente">Date <p-sortIcon field="dateVente"></p-sortIcon></th>
+                            <th pSortableColumn="dateVente">Date Vente <p-sortIcon field="dateVente"></p-sortIcon></th>
                             <th pSortableColumn="client.firstname"> Client<p-sortIcon field="client.firstname"></p-sortIcon></th>
-                            <th pSortableColumn="total" style="width: 10%; color:#0056b3">
+                            <th pSortableColumn="total" style=" color:#0056b3">
                                 <p-sortIcon field="total"></p-sortIcon>Total
                             </th>
-                            <th pSortableColumn="reglement" style="width: 10%; color:#0056b3">
+                            <th pSortableColumn="reglement" style=" color:#0056b3">
                                 <p-sortIcon field="reglement"></p-sortIcon>Reglement
                             </th>
-                            <th pSortableColumn="employer.lastname" style="width: 10%; color:#0056b3">
+                            <th pSortableColumn="employer.lastname" style=" color:#0056b3">
                                 <p-sortIcon field="employer.lastname"></p-sortIcon>Employé
                             </th>
-                            <th style="width: 25%; color:#0056b3">Lignes de Vente</th>
-                            <th style="width: 5%"></th>
+                            <th style=" color:#0056b3">Lignes de Vente</th>
+                            <th style=""></th>
                         </tr>
                         <tr>
                             <th>
@@ -171,12 +171,12 @@
 
                                 <i class="pi"
                                    [ngClass]="{ 'text-green-500 pi-check-circle': vente.paye==true, 'text-red-500 pi-times-circle': vente.paye==false }"></i>
-                            </td>                            <td style="width: 10%" class="fw-bold">{{ vente.dateVente }}</td>
-                            <td style="width: 10%" class="fw-bold">{{ vente.client.firstname }} {{ vente.client.lastname }}</td>
-                            <td style="width: 10%" class="text-success fw-bold">{{ vente.total   | number:'1.3-3'}} TND</td>
-                            <td style="width: 10%" class="text-success fw-bold">{{ vente.reglement  | number:'1.3-3' }} TND</td>
-                            <td style="width: 10%" class="fw-bold">{{ vente.employer.firstname }} {{ vente.employer.firstname }}</td>
-                            <td style="width: 25%">
+                            </td>                            <td style="" class="fw-bold">{{ vente.dateVente }}</td>
+                            <td style="" class="fw-bold">{{ vente.client.firstname }} {{ vente.client.lastname }}</td>
+                            <td style="" class="text-success fw-bold">{{ vente.total   | number:'1.3-3'}} TND</td>
+                            <td style="" class="text-success fw-bold">{{ vente.reglement  | number:'1.3-3' }} TND</td>
+                            <td style="" class="fw-bold">{{ vente.employer.firstname }} {{ vente.employer.firstname }}</td>
+                            <td style="">
                                 <p-table [value]="vente.lignesVente" class="shadow-lg m-2 rounded-2 w-100">
                                     <ng-template pTemplate="header">
                                         <tr>

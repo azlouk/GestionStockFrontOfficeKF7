@@ -32,6 +32,8 @@ import {BadgeModule} from "primeng/badge";
 import {Historique} from "../../../../../models/historique";
 import {Page} from "../../../../../models/page";
 import {Article} from "../../../../../models/Article";
+import {PaginatorModule} from "primeng/paginator";
+import {RadioButtonModule} from "primeng/radiobutton";
 
 @Component({
     selector: 'app-produits',
@@ -64,13 +66,17 @@ import {Article} from "../../../../../models/Article";
         GalleriaModule,
         AvatarModule,
         BadgeModule,
-        RouterLink
+        RouterLink,
+        PaginatorModule,
+        RadioButtonModule
     ],
     templateUrl: './produits.component.html',
     styleUrl: './produits.component.scss'
 })
 export class ProduitsComponent implements OnInit {
 
+
+    typeRecherche!: string;
 
     first = 0;
     rows = 10;
@@ -80,6 +86,7 @@ export class ProduitsComponent implements OnInit {
 
     idd?: number;
     produits: Produit[] = [];
+    ListRechercherProduits:Produit[]=[];
     historiques: Historique[] = [];
     selectedProducts: Produit [] = [];
     deleteProductsDialog: boolean = false;
@@ -108,20 +115,33 @@ export class ProduitsComponent implements OnInit {
     }
 
     ngOnInit() {
-     //   this.getAllProduits();
+       this.getAllProduits();
         this.loadProduits(this.currentPage, this.pageSize);
     }
 
 
+    // loadProduits(page: number, size: number) {
+    //     this.loadingdata=true ;
+    //     this.produitService.LoadProduits(page, size).subscribe(
+    //         (data: Page<Produit>) => {
+    //             this.produitsPage = data;
+    //             this.loadingdata=false;
+    //         },
+    //         (error) => {
+    //             console.error('Erreur lors du chargement des produits', error);
+    //         }
+    //     );
+    // }
     loadProduits(page: number, size: number) {
-        this.loadingdata=true ;
+        this.loadingdata = true;
         this.produitService.LoadProduits(page, size).subscribe(
             (data: Page<Produit>) => {
                 this.produitsPage = data;
-                this.loadingdata=false;
+                this.loadingdata = false;
             },
             (error) => {
                 console.error('Erreur lors du chargement des produits', error);
+                this.loadingdata = false; // Arrêter le chargement en cas d'erreur
             }
         );
     }
@@ -134,11 +154,14 @@ export class ProduitsComponent implements OnInit {
     }
 
     onPageChange(event: any) {
+        console.log( new JsonPipe().transform(event ))
         this.currentPage = event.page==undefined?0:event.page;
         this.pageSize = event.rows==undefined?10:event.rows
-         this.loadProduits(this.currentPage, this.pageSize);
+
+      this.loadProduits(this.currentPage,this.pageSize  );
 
     }
+
 
     next() {
         if (!this.isLastPage()) {
@@ -164,16 +187,22 @@ export class ProduitsComponent implements OnInit {
     }
 
     pageChange(event) {
+        this.currentPage = event.page;  // Numéro de la page actuelle (index basé sur 0)
+        this.pageSize = event.rows;     // Nombre d'éléments par page
         this.first = event.first;
-        this.rows = event.rows;
+        this.currentPage = Math.floor(this.first / this.pageSize);
+        this.loadProduits(this.currentPage, this.pageSize);
     }
 
     isFirstPage() {
         return this.currentPage === 0;
     }
 
+
+
+
     isLastPage() {
-        return (this.currentPage + 1) * this.pageSize >= this.produits.length;
+        return (this.currentPage + 1) * this.pageSize >= this.produitsPage.totalElements;
     }
 
 
@@ -188,7 +217,7 @@ export class ProduitsComponent implements OnInit {
         this.produitService.getProduits().subscribe(
             (value: Produit[]) => {
                 this.produits = value;
-
+                this.ListRechercherProduits=value;
                 this.loadingdata = false;
             },
             error => {
@@ -233,7 +262,8 @@ export class ProduitsComponent implements OnInit {
                     (response: any) => {
 
                         if (response) {
-                            this.getAllProduits();
+                            this.loadProduits(this.currentPage, this.pageSize);
+
                             Swal.fire('Supprimé', response.message, 'success');
                         } else {
                             Swal.fire('Erreur', 'La suppression a réussi, mais aucun message de confirmation n\'a été reçu.', 'error');
@@ -251,10 +281,29 @@ export class ProduitsComponent implements OnInit {
     }
 
 
-    onGlobalFilter(table: Table, event: Event) {
-        table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+    // onGlobalFilter(table: Table, event: Event) {
+    //     table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+    // }
+    filteredListRechercherProduits: any[] = [];
+    onGlobalFilter(event: Event) {
+        const filterValue = (event.target as HTMLInputElement).value.toLowerCase();
+
+
+
+        // Filtrer manuellement ListRechercherProduits
+        this.produitsPage.content = this.ListRechercherProduits.filter((produit) => {
+            console.log("produitRechercher"+produit)
+            return this.applyFilter(produit, filterValue);
+        });
     }
 
+    // Fonction pour vérifier si un produit correspond au filtre
+    applyFilter(produit: any, filterValue: string): boolean {
+        // Vous pouvez adapter cette fonction pour inclure les champs pertinents
+        return produit.nom.toLowerCase().includes(filterValue) ;
+            // produit.dataqr.toLowerCase().includes(filterValue);
+
+    }
     modifierProduit(id: number): void {
         this.router.navigate(['/uikit/edit-produit', id]); // Redirection vers la page de modification avec l'ID du produit
     }
@@ -290,7 +339,8 @@ export class ProduitsComponent implements OnInit {
     protected readonly JSON = JSON;
 
     refresh() {
-        this.getAllProduits();
+        this.loadProduits(this.currentPage, this.pageSize);
+
         this.router.navigate(['/uikit/produits']);
     }
 

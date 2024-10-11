@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import Swal from "sweetalert2";
-import {Facture, FactureInterface, factureType} from "../../models/Facture";
+import {Facture, factureType} from "../../models/Facture";
 import {environment} from "../../../environments/environment";
 import {DepotService} from "./depot.service";
 import {HttpClient, HttpHeaders} from "@angular/common/http";

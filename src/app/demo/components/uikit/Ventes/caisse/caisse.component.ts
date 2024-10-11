@@ -183,7 +183,7 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
 userConnect(){
         this.clotureService.getUserConnecte().subscribe(value => {
             alert(value)
-        },error => {alert('no')})
+        },error => {error})
 }
 
     onPageChange(event: any) {
@@ -1011,7 +1011,6 @@ userConnect(){
       saveFactureWithVente() {
 
         this.newFacture.reglement=this.selectedVente.reglement;
-        alert(this.selectedVente.reglement)
         this.newFacture.client=this.selectedVente.client;
         this.newFacture.lignesFacture=this.selectedVente.lignesVente.map(value => new LigneFacture(0,value.venteQty,value.prixVente*value.venteQty,value.produit,value.produit.prixUnitaire,value.prixVente,'NoAction'))
         this.newFacture.montant=this.getTotalVente();

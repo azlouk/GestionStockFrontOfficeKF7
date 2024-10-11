@@ -40,7 +40,6 @@ export class ProduitService {
                 private router: Router,
                 private datePipe: DatePipe,
                 private confirmationService: ConfirmationService,
-                private messageService: MessageService,
     ) {
     }
 
@@ -58,7 +57,7 @@ export class ProduitService {
     }
 
     LoadProduits(page: number, size: number): Observable<Page<Produit>> {
-        const url = `${this.api}/DtoRead?page=${page}&size=${size}`;
+        const url = `${this.api}/DtoReadPage?page=${page}&size=${size}`;
         const token = getToken();
 
         if (token) {

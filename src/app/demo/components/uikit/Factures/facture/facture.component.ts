@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {Facture, FactureInterface, factureType} from "../../../../../models/Facture";
+import {Facture, factureType} from "../../../../../models/Facture";
 import {User} from "../../../../../models/user";
 import {Produit} from "../../../../../models/produit";
 import {FactureService} from "../../../../../layout/service/facture.service";
@@ -175,7 +175,7 @@ export class FactureComponent implements OnInit {
     ngOnInit(): void {
         this.loadFacture(this.currentPage, this.pageSize);
 
-        this.getAllFactures();
+        // this.getAllFactures();
         this.calculateMontants();
         this.root = this.router.url.split('/')[1];
         const idpParam = <string>this.activatedRoute.snapshot.paramMap.get('idp')
@@ -328,18 +328,18 @@ export class FactureComponent implements OnInit {
 
     }
 
-    getAllFactures() {
-        this.loading = true;
-        this.factureService.getFactures().subscribe((value: Facture[]) => {
-
-            console.error(value)
-
-            this.factureService.FactureInter = [...value]
-            this.loading = false;
-            this.Facturefilred = [...value]
-            this.FacturefilredSuplim = [...value]
-        });
-    }
+    // getAllFactures() {
+    //     this.loading = true;
+    //     this.factureService.getFactures().subscribe((value: Facture[]) => {
+    //
+    //         console.error(value)
+    //
+    //         this.factureService.FactureInter = [...value]
+    //         this.loading = false;
+    //         this.Facturefilred = [...value]
+    //         this.FacturefilredSuplim = [...value]
+    //     });
+    // }
 
     goToFactureDetails(id: number): void {
         this.router.navigate(['uikit/facture/',id]);
@@ -352,14 +352,14 @@ export class FactureComponent implements OnInit {
     addFacture() {
         this.router.navigate(['/uikit/add-facture']);
     }
-
-    onSearch(): void {
-        if (this.searchTerm.trim() !== '') {
-            this.factures = this.factureService.searchFacture(this.searchTerm.toLowerCase());
-        } else {
-            this.getAllFactures();
-        }
-    }
+    //
+    // onSearch(): void {
+    //     if (this.searchTerm.trim() !== '') {
+    //         this.factures = this.factureService.searchFacture(this.searchTerm.toLowerCase());
+    //     } else {
+    //         this.getAllFactures();
+    //     }
+    // }
 
     selectFacture(facture: Facture) {
         this.idf = facture.id;
@@ -438,7 +438,7 @@ export class FactureComponent implements OnInit {
                     summary: 'Annuler!',
                     detail: 'La suppression de la facture est annulée!',
                 });
-                this.getAllFactures(); // Refresh the factures list
+                this.loadFacture(this.currentPage,this.pageSize)
             }
         });
     }
@@ -455,8 +455,8 @@ export class FactureComponent implements OnInit {
                     summary: 'Supprimée',
                     detail: 'Votre facture a été supprimée avec succès!',
                 });
-
-                this.getAllFactures(); // Refresh the factures list after deletion
+                this.loadFacture(this.currentPage,this.pageSize)
+                // this.getAllFactures(); // Refresh the factures list after deletion
             },
             (error) => {
                 console.error('Erreur lors de la suppression de la facture:', error);
