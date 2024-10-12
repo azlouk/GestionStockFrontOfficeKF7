@@ -1,22 +1,17 @@
-const { app, BrowserWindow, screen,dialog } = require('electron');
-const { spawn } = require('child_process');
+const { app, BrowserWindow, screen, globalShortcut } = require('electron');
+const { execSync, spawn } = require('child_process');
 const path = require('path');
+
 let win;
 let javaProcess;
 
-const DEFAULT_ZOOM_FACTOR = 1.5; // Set default zoom factor to zoom in by default
-
-function isJavaProcessRunning() {
-  try {
-    // Execute a command to list Java processes
-    const output = execSync('jps').toString();
-    // Check if the output contains the name of your JAR file or any Java-related process you expect to be running
-    return output.includes('app.jar');
-  } catch (error) {
-    // Handle any errors, e.g., if 'jps' command is not available
-    console.error('Error checking Java processes:', error);
-    return false;
-  }
+// Function to calculate zoom factor based on screen scale factor
+function calculateZoomFactor() {
+  const primaryDisplay = screen.getPrimaryDisplay();
+  console.log(primaryDisplay)
+  const scaleFactor = primaryDisplay.scaleFactor; // Get the scale factor
+  const defaultZoomFactor = 1.5; // Default zoom factor
+  return defaultZoomFactor * scaleFactor; // Adjust zoom based on scale factor
 }
 
 function createWindow() {
@@ -24,67 +19,26 @@ function createWindow() {
   win = new BrowserWindow({
     width: width,
     height: height,
+    resizable:true,
     webPreferences: {
       nodeIntegration: true,
     },
+    icon: path.join(__dirname, 'kifa7i.png'), // Update the path to your icon
     fullscreen: false,
   });
 
-  // Set default zoom factor to zoom in by default
-  win.webContents.zoomFactor = DEFAULT_ZOOM_FACTOR;
+  // Set zoom factor based on screen scale
+  const zoomFactor = calculateZoomFactor();
+  win.webContents.setZoomFactor(zoomFactor);
+  console.log("Default Zoom Factor set to - ", zoomFactor * 100, "%");
 
-  // Set default zoom factor
-  try {
-    win.webContents.setZoomFactor(DEFAULT_ZOOM_FACTOR);
-    console.log("Default Zoom Factor set to - ", DEFAULT_ZOOM_FACTOR * 100, "%");
-  } catch (e) {
-    console.error("Error setting default zoom level:", e);
-  }
-
+  // Load the HTML file
   win.loadFile('dist/kf7/index.html');
-  const jarPath = path.join(__dirname, 'app.jar');
 
-  // Spawn Java process if not already running
-  // if (!isJavaProcessRunning()) {
-  //   javaProcess = spawn('java', ['-jar', jarPath]);
-  //
-  //   // Handle Java process events
-  //   javaProcess.stdout.on('data', (data) => {
-  //     console.log(`Java Output: ${data}`);
-  //   });
-  //   javaProcess.stderr.on('data', (data) => {
-  //     console.error(`Java Error: ${data}`);
-  //   });
-  //   javaProcess.on('close', (code) => {
-  //     console.log(`Java process exited with code ${code}`);
-  //   });
-  // }
-
-  // Set zoom level limits and handle zoom changes
-  try {
-    win.webContents.setVisualZoomLevelLimits(1, 4)
-      .then(console.log("Zoom Levels Have been Set between 100% and 500%"))
+  // Set zoom level limits
+  win.webContents.setVisualZoomLevelLimits(1, 4)
+      .then(() => console.log("Zoom Levels Have been Set between 100% and 400%"))
       .catch((err) => console.log(err));
-
-    win.webContents.on("zoom-changed", (event, zoomDirection) => {
-      console.log(zoomDirection);
-      var currentZoom = win.webContents.getZoomFactor();
-      console.log("Current Zoom Factor - ", currentZoom);
-
-      if (zoomDirection === "in" && currentZoom < 4) {
-        win.webContents.zoomFactor = currentZoom + 0.20;
-        console.log("Zoom Factor In  ", win.webContents.zoomFactor );
-      }
-
-      if (zoomDirection === "out") {
-        // Calculate the new zoom factor based on screen dimensions
-        win.webContents.zoomFactor = currentZoom - 0.20;
-        console.log("Zoom Factor Out ", win.webContents.zoomFactor   );
-      }
-    });
-  } catch (e) {
-    console.error("Error setting zoom level:", e);
-  }
 
   // Dynamically adjust window size based on screen size
   win.on('resize', () => {
@@ -95,9 +49,38 @@ function createWindow() {
   win.on('closed', () => {
     win = null;
   });
+
+  // Apply zoom with a delay
+  function applyZoomWithDelay() {
+    setTimeout(() => {
+      win.webContents.setZoomFactor(zoomFactor);
+      console.log("Zoom Factor applied with delay: ", zoomFactor * 100, "%");
+    }, 500); // Adjust the delay time as needed
+  }
+
+  // Apply zoom after window events
+  win.on('show', applyZoomWithDelay);
+  win.on('focus', applyZoomWithDelay);
+  win.on('maximize', applyZoomWithDelay);
+  win.on('restore', applyZoomWithDelay);
 }
 
-app.on('ready', createWindow);
+app.on('ready', () => {
+  createWindow();
+
+  // Register a keyboard shortcut to focus the window (optional)
+  globalShortcut.register('CommandOrControl+I', () => {
+    if (win) {
+      win.show();
+    } else {
+      createWindow();
+    }
+  });
+});
+
+app.on('will-quit', () => {
+  globalShortcut.unregisterAll();
+});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
