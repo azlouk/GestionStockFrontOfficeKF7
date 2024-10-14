@@ -61,40 +61,47 @@
                 <h5 class="font-bold text-2xl">Liste des produits</h5>
 
                 <div class="block mt-2 md:mt-0 p-input-icon-left">
-                    <!-- Section des boutons radio -->
-                    <div class="flex flex-column gap-2 mb-3">
-                        <div class="flex align-items-center">
-                            <p-radioButton
-                                    name="pizza"
-                                    value="Cheese"
-                                    [(ngModel)]="typeRecherche"
-                                    inputId="ingredient1"
-                            />
-                            <label  class="ml-2">Cheese</label>
-                        </div>
 
-                        <div class="flex align-items-center">
-                            <p-radioButton
-                                    name="pizza"
-                                    value="Mushroom"
-                                    [(ngModel)]="typeRecherche"
-                                    inputId="ingredient2"
-                            />
-                            <label  class="ml-2">Mushroom</label>
+                    <div class="block mt-2 md:mt-0 p-input-icon-left">
+                        <div class="card flex flex-column gap-3 justify-content-center">
+                            <!-- Section des boutons radio en ligne -->
+                            <div class="flex flex-row gap-4 align-items-center">
+                                <div class="flex align-items-center">
+                                    <p-radioButton
+                                            name="choixRech"
+                                            value="nom"
+                                            [(ngModel)]="typeRecherche"
+                                            inputId="ingredient1"
+                                    />
+                                    <label  class="ml-2">Nom Produit</label>
+                                </div>
+
+                                <div class="flex align-items-center">
+                                    <p-radioButton
+                                            name="choixRech"
+                                            value="dataqr"
+                                            [(ngModel)]="typeRecherche"
+                                            inputId="ingredient2"
+                                    />
+                                    <label  class="ml-2">Qr Code</label>
+                                </div>
+                            </div>
+
+                            <div class="flex align-items-center">
+                                <i class="pi pi-search mr-2"></i>
+                                <p-autoComplete
+                                        [(ngModel)]="selectedItem"
+                                        [suggestions]="suggestions"
+                                        (keydown.enter)="rechercheProduit($event)"
+                                        (completeMethod)="search($event)"
+                                        class="w-full sm:w-auto"
+                                        placeholder="Recherche dans la page">
+                                </p-autoComplete>
+
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Section de la recherche -->
-                    <div class="flex align-items-center">
-                        <i class="pi pi-search mr-2"></i>
-                        <input
-                                pInputText
-                                type="text"
-                                (keydown.enter)="onGlobalFilter($event)"
-                                placeholder="Recherche dans la page"
-                                class="w-full sm:w-auto"
-                        />
-                    </div>
                 </div>
 
             </div>

@@ -34,6 +34,8 @@ import {Page} from "../../../../../models/page";
 import {Article} from "../../../../../models/Article";
 import {PaginatorModule} from "primeng/paginator";
 import {RadioButtonModule} from "primeng/radiobutton";
+import * as events from "events";
+import {AutoCompleteCompleteEvent, AutoCompleteModule} from "primeng/autocomplete";
 
 @Component({
     selector: 'app-produits',
@@ -68,7 +70,8 @@ import {RadioButtonModule} from "primeng/radiobutton";
         BadgeModule,
         RouterLink,
         PaginatorModule,
-        RadioButtonModule
+        RadioButtonModule,
+        AutoCompleteModule
     ],
     templateUrl: './produits.component.html',
     styleUrl: './produits.component.scss'
@@ -104,6 +107,11 @@ export class ProduitsComponent implements OnInit {
     currentPage: number = 0;
     pageSize: number = 10; // Nombre d'éléments par page
 
+
+    indexProduits: { [key: string]: string[] } = {};
+    listNomProduit: string[] = [];
+
+
     constructor(
                 private produitService: ProduitService,
                 private messageService: MessageService,
@@ -117,6 +125,16 @@ export class ProduitsComponent implements OnInit {
     ngOnInit() {
        this.getAllProduits();
         this.loadProduits(this.currentPage, this.pageSize);
+
+        this.produitService.getListeNomProduit().subscribe(
+            (produits: string[]) => {
+                this.listNomProduit = produits; // Sauvegarde la liste complète de produits
+                this.buildIndex(); // Créer l'index inversé
+            },
+            (error) => {
+                console.error('Erreur lors de la récupération des noms de produits', error);
+            }
+        );
     }
 
 
@@ -347,6 +365,7 @@ export class ProduitsComponent implements OnInit {
     public visibleShowDetails: boolean = false;
 
 
+
     public showDetail(id: Number) {
         this.visibleShowDetails = true;
 
@@ -367,4 +386,82 @@ export class ProduitsComponent implements OnInit {
         this.visibleShowDetails = false;
 
     }
+
+    public rechercheProduit(event: Event) {
+        const inputValue = (event.target as HTMLInputElement).value;
+
+        // Si l'input est vide, on récupère la liste complète des produits
+        if (!inputValue) {
+            this.loadProduits(this.currentPage, this.pageSize);
+
+            return;
+        }
+        if (this.typeRecherche==="nom")
+        {
+            console.log(this.typeRecherche)
+            this.produitService.getProduitByNom((event.target as HTMLInputElement).value).subscribe(
+                (value: Produit[]) => {
+                    this.produitsPage.content=value;
+                },
+                error => {
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Oops...',
+                        detail: "Vous n'avez pas un produit par ce nom.",
+                    });
+                }
+            );
+        }
+        if (this.typeRecherche==="dataqr")
+        {
+            this.produitService.getProduitByQrCode((event.target as HTMLInputElement).value).subscribe(
+                (value: Produit[]) => {
+                    this.produitsPage.content=value;
+                },
+                error => {
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Oops...',
+                        detail: "Vous n'avez pas un produit par ce code Qr.",
+                    });
+                }
+            );
+        }
+
+    }
+
+    items: any[] | undefined;
+
+    selectedItem: any;
+
+    suggestions: any[] | undefined;
+
+
+// Construction de l'index pour une recherche plus rapide
+    buildIndex() {
+        this.listNomProduit.forEach(nomProduit => {
+            const nom = nomProduit.toLowerCase();
+            for (let i = 0; i < nom.length - 2; i++) {
+                const key = nom.substring(i, i + 3); // Créer des sous-chaînes de 3 caractères
+                if (!this.indexProduits[key]) {
+                    this.indexProduits[key] = [];
+                }
+                this.indexProduits[key].push(nomProduit);
+            }
+        });
+    }
+
+// Méthode de recherche dans l'auto-complete
+    search(event: AutoCompleteCompleteEvent) {
+        const query = event.query.toLowerCase();
+        const key = query.substring(0, 3); // Recherche uniquement avec les premiers 3 caractères
+
+        // Récupérer les résultats de l'index
+        const results = this.indexProduits[key] || [];
+
+        // Filtrer les résultats pour affiner la recherche
+        this.suggestions = results
+            .filter((nomProduit) => nomProduit.toLowerCase().includes(query)); // Pas besoin de .map() si on travaille déjà avec les noms
+    }
+
 }
