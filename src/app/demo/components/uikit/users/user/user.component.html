@@ -1,5 +1,5 @@
-<div class="grid">
-    <div class="col-12">
+<div class="grid  ">
+    <div class="col-12  ">
         <div class="card px-6 py-6">
             <p-toast></p-toast>
             <p-toolbar styleClass="mb-4">
@@ -17,7 +17,7 @@
                     </div>
                 </ng-template>
             </p-toolbar>
-<div class="flex flex-wrap">
+<div class="card">
             <p-table #dt
                      [value]="UsersPage.content"
                      responsiveLayout="scroll"
@@ -36,7 +36,9 @@
                      [rowHover]="true"
                      dataKey="id"
 
-
+                      scrollHeight="600px"
+                     [scrollable]="true"
+                     [tableStyle]="{'max-width':'50rem'}"
 
 
             >
@@ -53,7 +55,7 @@
                 </ng-template>
                 <ng-template pTemplate="header">
                     <tr>
-                        <th style="width: 3rem">
+                        <th  >
                             <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                         </th>
                         <th pSortableColumn="id">Code
@@ -85,22 +87,22 @@
                         <td>
                             <p-tableCheckbox [value]="user"></p-tableCheckbox>
                         </td>
-                        <td style="width:14%; min-width:10rem;"><span class="p-column-title">Code</span>{{ user.id }}
+                        <td ><span class="p-column-title">Code</span>{{ user.id }}
                         </td>
-                        <td style="width:14%; min-width:10rem;"><span class="p-column-title">Nom</span>{{ user.lastname }}
+                        <td ><span class="p-column-title">Nom</span>{{ user.lastname }}
                         </td>
-                        <td style="width:14%; min-width:10rem;"><span
+                        <td ><span
                                 class="p-column-title">Prénom</span>{{ user.firstname }}
                         </td>
-                        <td style="width:14%; min-width:10rem;"><span class="p-column-title">Email</span>{{ user.email }}
+                        <td ><span class="p-column-title">Email</span>{{ user.email }}
                         </td>
-                        <td style="width:14%; min-width:10rem;"><span
+                        <td ><span
                                 class="p-column-title">Téléphone</span>{{ user.telephone }}
                         </td>
-                        <td style="width:14%; min-width:10rem;"><span
+                        <td ><span
                                 class="p-column-title">Adresse</span>{{ user.adresse }}
                         </td>
-                        <td style="width:14%; min-width:10rem;"><span
+                        <td ><span
                                 class="p-column-title">Rôle</span>{{ user.role.toString()=="PROVIDER"?"FOURNISSEUR":user.role }}
                         </td>
                         <td>

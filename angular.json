@@ -40,7 +40,7 @@
                                 {
                                     "type": "initial",
                                     "maximumWarning": "1mb",
-                                    "maximumError": "5mb"
+                                    "maximumError": "3mb"
                                 },
                                 {
                                     "type": "anyComponentStyle",
@@ -48,7 +48,22 @@
                                     "maximumError": "4kb"
                                 }
                             ],
-                            "outputHashing": "all"
+                            "outputHashing": "all",
+                            "fileReplacements": [
+                                {
+                                    "replace": "src/environments/environment.ts",
+                                    "with": "src/environments/environment.prod.ts"
+                                }
+                            ],
+                            "optimization": true,
+                            "buildOptimizer": true,
+                            "sourceMap": false,
+                            "extractLicenses": true,
+                            "vendorChunk": false,
+                            "namedChunks": false,
+                            "aot": true,
+                            "serviceWorker": false,
+                            "progress": true
                         },
                         "development": {
                             "buildOptimizer": false,
@@ -103,6 +118,6 @@
         }
     },
     "cli": {
-      "analytics": false
+        "analytics": false
     }
 }

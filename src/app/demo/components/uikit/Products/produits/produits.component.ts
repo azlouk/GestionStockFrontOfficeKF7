@@ -79,7 +79,7 @@ import {AutoCompleteCompleteEvent, AutoCompleteModule} from "primeng/autocomplet
 export class ProduitsComponent implements OnInit {
 
 
-    typeRecherche!: string;
+    typeRecherche: string='nom';
 
     first = 0;
     rows = 10;
@@ -129,6 +129,7 @@ export class ProduitsComponent implements OnInit {
         this.produitService.getListeNomProduit().subscribe(
             (produits: string[]) => {
                 this.listNomProduit = produits; // Sauvegarde la liste complète de produits
+                console.log(this.listNomProduit)
                 this.buildIndex(); // Créer l'index inversé
             },
             (error) => {
@@ -401,7 +402,16 @@ export class ProduitsComponent implements OnInit {
             console.log(this.typeRecherche)
             this.produitService.getProduitByNom((event.target as HTMLInputElement).value).subscribe(
                 (value: Produit[]) => {
-                    this.produitsPage.content=value;
+                    if(value.length!=0) {
+
+                        this.produitsPage.content = value;
+                        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Résultat trouvés : '+value.length+" produits" });
+
+                    }                    else {
+                        this.messageService.add({ severity: 'info', summary: 'Info', detail: 'Résultat trouvés : '+value.length+" produits" });
+
+
+                    }
                 },
                 error => {
                     this.messageService.add({
@@ -452,6 +462,7 @@ export class ProduitsComponent implements OnInit {
     }
 
 // Méthode de recherche dans l'auto-complete
+
     search(event: AutoCompleteCompleteEvent) {
         const query = event.query.toLowerCase();
         const key = query.substring(0, 3); // Recherche uniquement avec les premiers 3 caractères

@@ -7,16 +7,119 @@ import { setToken } from "../../../../../main";
 import Swal from "sweetalert2";
 import { LoginService } from "../../../../layout/service/login.service";
 import {UserService} from "../../../../layout/service/user.service";
+import {ElectronService} from "../../../../layout/service/electron-service.service";
 
 @Component({
     selector: 'app-login',
     templateUrl: './login.component.html',
     styles: [`
+      /* Responsive form container */
+      .responsive-form {
+        width: 100%;
+        max-width: 700px; /* Limit width for larger screens */
+        margin: 0 auto;
+      }
+
+      /* Full-width input fields */
+      .p-inputtext,
+      .custom-password-width .p-password-input,
+      .custom-password-width input {
+        width: 100% !important;
+      }
+
+      /* Responsive for smaller devices */
+      @media (max-width: 600px) {
+        .responsive-form {
+          padding: 0 1rem; /* Add padding on small screens */
+        }
+
+        .p-inputtext,
+        .custom-password-width {
+          width: 100% !important;
+        }
+      }
+
+      /* Eye icon adjustments */
       :host ::ng-deep .pi-eye,
       :host ::ng-deep .pi-eye-slash {
-        transform:scale(1.6);
+        transform: scale(1.6);
         margin-right: 1rem;
         color: var(--primary-color) !important;
+      }
+      /* Container with responsive layout */
+      .responsive-container {
+         
+        width: 100%;
+        padding: 0 1rem;
+      }
+
+      /* Custom gradient for the form box */
+      .custom-box-gradient {
+        border-radius: 56px;
+        padding: 0.3rem;
+        background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%);
+      }
+
+      /* Responsive form card */
+      .responsive-card {
+        border-radius: 53px;
+        max-width: 500px;
+        max-height:500px;
+        margin: 0 auto;
+      }
+
+      /* Responsive input fields */
+      .responsive-input,
+      .responsive-password input {
+        padding: 1rem;
+        width: 100%;
+      }
+
+      /* Responsive checkbox and other elements */
+      .responsive-checkbox {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .responsive-button {
+        font-size: 1.2rem;
+      }
+
+      /* Media queries for smaller screens */
+      @media (max-width: 768px) {
+        .responsive-card {
+          padding: 1rem;
+        }
+
+        .responsive-input,
+        .responsive-password input {
+          width: 100%;
+        }
+
+        .responsive-checkbox {
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .responsive-button {
+          width: 100%;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .text-3xl {
+          font-size: 1.8rem;
+        }
+
+        .responsive-input,
+        .responsive-password input {
+          font-size: 1rem;
+          padding: 0.8rem;
+        }
+
+        .responsive-button {
+          font-size: 1rem;
+        }
       }
     `]
 })
@@ -40,7 +143,7 @@ export class LoginComponent {
     errorMessage: string = 'Votre mot de passe ne pas été mis à jour';
     successMessage: string = 'Votre mot de passe a été mis à jour.';
 
-    constructor(private authService: AuthentificationService, private router: Router,
+    constructor(private electronService:ElectronService, private authService: AuthentificationService, private router: Router,
                 public layoutService: LayoutService, private loginService: LoginService,private userService: UserService,
     ) { }
 
@@ -51,6 +154,7 @@ export class LoginComponent {
             (response: any) => {
                 setToken(response.token);
                 this.router.navigate(['/']);
+
             },
             error => {
                 Swal.fire({ title: "Erreur", text: "Vérifiez vos données", icon: "error" });
@@ -133,4 +237,6 @@ export class LoginComponent {
 
 
     }
+
+
 }

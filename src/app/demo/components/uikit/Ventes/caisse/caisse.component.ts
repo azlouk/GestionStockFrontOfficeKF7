@@ -62,8 +62,6 @@ import {FactureService} from "../../../../../layout/service/facture.service";
 import {LigneFacture} from "../../../../../models/LigneFacture";
 import {DialogService} from "../../../../../layout/service/dialogue-user.service";
 import {AjoutUserComponent} from "../../users/ajout-user/ajout-user.component";
-import {Page} from "../../../../../models/page";
-import {log} from "@angular-devkit/build-angular/src/builders/ssr-dev-server";
 
 
 @Component({
@@ -96,6 +94,7 @@ import {log} from "@angular-devkit/build-angular/src/builders/ssr-dev-server";
 export class CaisseComponent implements OnInit, AfterViewChecked  {
     @ViewChild('dv') dv: DataView | undefined;
     @ViewChild('searchInput') searchInput: ElementRef;
+    @ViewChild('dtProduitsFiltres') dtProduitsFiltres: any;
     @ViewChild('dtProduitsFiltreservice') dtProduitsFiltreservice: any;
     @ViewChild('dt3') table: Table;
     focusIndex = 0;
@@ -103,23 +102,9 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
     searchTermFilter: string = '';
     searchTermFilterService: string = '';
 
-     produits: Produit[] = [];
+    produits: Produit[] = [];
     services: ServiceComp [] = []
-////Attribut of TableWithPagination
-
-
-    initTabProduit: Produit[]=[];
-    produitsFiltres: Page<Produit>={
-        content:this.initTabProduit,number:0,size:0,totalPages:0,totalElements:0
-
-    };
-
-    currentPage: number = 0;
-    pageSize: number = 10;
-    first = 0;
-    rows = 10;
-
-
+    produitsFiltres: Produit [] = [];
     serviceFiltres: ServiceComp [] = [];
 
     cloture: Cloture = new Cloture();
@@ -137,9 +122,9 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
     loading: boolean = true;
     IsvisiblePop: boolean = false;
     layout: any = 'list';
-     autoimprimer: boolean = false;
-     visibleimage: boolean = false;
-     frais: number = 0;
+    autoimprimer: boolean = false;
+    visibleimage: boolean = false;
+    frais: number = 0;
     reglement: number = 0;
 
     sidebarVisibleFacture: boolean = false;
@@ -172,68 +157,17 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
     messages1: Message[] = [];
 
     ngOnInit(): void {
-        this.loadProduits(this.currentPage, this.pageSize);
+        this.getAllProduits()
         this.getAllServices();
         this.getAllClient();
         this.onValueChange();
         this.messages1 = [{severity: 'error', summary: 'Error', detail: 'Pas des images'}];
-        this.loadingdata=true ;
-      this.userConnect();
-    }
-userConnect(){
-        this.clotureService.getUserConnecte().subscribe(value => {
-            alert(value)
-        },error => {error})
-}
 
-    onPageChange(event: any) {
-        this.currentPage = event.page==undefined?0:event.page;
-        this.pageSize = event.rows==undefined?10:event.rows
-        this.loadProduits(this.currentPage, this.pageSize);
 
     }
-
-    next() {
-        if (!this.isLastPage()) {
-            this.currentPage++;
-            this.loadProduits(this.currentPage, this.pageSize);
-        }
-    }
-
-    prev() {
-        if (!this.isFirstPage()) {
-            this.currentPage--;
-            this.loadProduits(this.currentPage, this.pageSize);
-
-        }
-
-    }
-
-
-    reset() {
-        this.currentPage = 0; // Réinitialise à la première page
-        this.loadProduits(this.currentPage, 10);
-
-    }
-
-    pageChange(event) {
-        this.first = event.first;
-        this.rows = event.rows;
-    }
-
-    isFirstPage() {
-        return this.currentPage === 0;
-    }
-
-    isLastPage() {
-        return (this.currentPage + 1) * this.pageSize >= this.produits.length;
-    }
-
-
-
 
     public ngAfterViewChecked(): void {
-         this.cdRef.detectChanges();
+        this.cdRef.detectChanges();
 
     }
     toggleDivVisibility() {
@@ -285,7 +219,7 @@ userConnect(){
 
 
         this.selectedVente.paye=false;
-       this.createNewFacture();
+        this.createNewFacture();
 
 
         this.showPay=false
@@ -300,10 +234,7 @@ userConnect(){
             this.getTotalVente();
             this.selectedVente.reglement = this.reglement;
 
-            this.clotureService.getUserConnecte();
-            this.clotureService.getUserConnecte().subscribe(value => {
-                // this.cloture.employer=value;
-            });
+
             this.produitService.SaveVente(this.selectedVente).subscribe(value => {
                 if (value) {
 
@@ -339,17 +270,11 @@ userConnect(){
     }
 
 
-    loadProduits(page: number, size: number) {
-        this.loadingdata=true ;
-        this.produitService.LoadProduits(page, size).subscribe(
-            (data: Page<Produit>) => {
-                this.produitsFiltres = data;
-                this.loadingdata=false;
-            },
-            (error) => {
-                console.error('Erreur lors du chargement des produits', error);
-            }
-        );
+    getAllProduits() {
+        this.produitService.getProduits().subscribe((value: any) => {
+            this.produits = value;
+            this.produitsFiltres = value;
+        })
     }
 
     getAllServices(): void {
@@ -447,8 +372,8 @@ userConnect(){
                     this.createNewFacture()
                 }
                 else {
-                this.focusIndex = 10;
-                this.showPay=true;
+                    this.focusIndex = 10;
+                    this.showPay=true;
                 }
                 break;
 
@@ -541,7 +466,6 @@ userConnect(){
                 {
                     this.selectedVente.paye=true;
                     this.SaveVente();
-
                 }
                 else {
                     this.focusIndex = 10;
@@ -656,10 +580,10 @@ userConnect(){
 
     search(): void {
         if (this.searchTerm.trim() !== '') {
-            this.produitsFiltres.content = []
+            this.produitsFiltres = []
             this.produitService.getProduitByQrNom(this.searchTerm).subscribe((value: Produit) => {
                 if (value != null) {
-                    this.produitsFiltres.content.push(value);
+                    this.produitsFiltres.push(value);
                     this.visible = this.IsvisiblePop;
                 }
                 if (this.IsvisiblePop == false)
@@ -725,7 +649,7 @@ userConnect(){
     }
 
     ajouterProduit(produit: Produit): void {
-        if (this.produitsFiltres.content.length > 0) {
+        if (this.produitsFiltres.length > 0) {
             this.ajouterProduitSelectionne(produit);
             this.getTottalNbProduct()
         }
@@ -820,13 +744,15 @@ userConnect(){
 
     }
 
-
+    clear(table: Table) {
+        table.clear();
+    }
 
     getTotalVente(): number {
         const val = this.getSommeTotale() + this.getSommeTaxes() + this.frais;
         this.selectedVente.total = val;
-         this.selectedVente.reglement=val;
-         this.reglement=val;
+        this.selectedVente.reglement=val;
+        this.reglement=val;
         return this.selectedVente.total;
     }
 
@@ -842,10 +768,7 @@ userConnect(){
     saveCloture() {
         this.cloture.employer.id = getUserDecodeID().id;
         this.cloture.dateCloture = new Date();
-        // this.clotureService.getUserConnecte();
-        //   this.clotureService.getUserConnecte().subscribe(value => {
-        //       this.cloture.employer=value;
-        //   });
+
         this.clotureService.SaveCloture(this.cloture).subscribe(
             value => {
 
@@ -924,7 +847,6 @@ userConnect(){
     totalMontantFiltre: number = 0;
     newFacture = new Facture();
     public selectedProduct: Produit;
-    public loadingdata: boolean=false;
 
     deleteTrancheNewFacture(index: number) {
         if (index > -1) {
@@ -1008,9 +930,10 @@ userConnect(){
     }
 
 
-      saveFactureWithVente() {
+    saveFactureWithVente() {
 
         this.newFacture.reglement=this.selectedVente.reglement;
+        alert(this.selectedVente.reglement)
         this.newFacture.client=this.selectedVente.client;
         this.newFacture.lignesFacture=this.selectedVente.lignesVente.map(value => new LigneFacture(0,value.venteQty,value.prixVente*value.venteQty,value.produit,value.produit.prixUnitaire,value.prixVente,'NoAction'))
         this.newFacture.montant=this.getTotalVente();
@@ -1018,12 +941,12 @@ userConnect(){
         this.newFacture.montantTaxe=0 ;
         this.newFacture.dateCreation=this.selectedVente.dateVente ;
         this.factureService.addFacture(this.newFacture).subscribe(value => {
-             if (value){
-                 this.messageService.add({ severity: 'info', summary: 'Facture est bien enregistré', detail: 'Vente Non Payeé' });
-                 this.clearVente();
+            if (value){
+                this.messageService.add({ severity: 'info', summary: 'Facture est bien enregistré', detail: 'Vente Non Payeé' });
+                this.clearVente();
 
 
-             }
+            }
         },error => {
             this.messageService.add({ severity: 'error', summary: 'Rejected', detail: error });
         })
@@ -1088,10 +1011,10 @@ userConnect(){
 
     filterProduits() {
         if (!this.searchTermFilter) {
-            this.produitsFiltres.content = [...this.produits];
+            this.produitsFiltres = [...this.produits];
         } else {
 
-            this.produitsFiltres.content = this.produits.filter(produit =>
+            this.produitsFiltres = this.produits.filter(produit =>
                 produit.id.toString().includes(this.searchTermFilter) ||
                 produit.nom.includes(this.searchTermFilter) ||
                 produit.description.includes(this.searchTermFilter) ||
@@ -1119,7 +1042,7 @@ userConnect(){
     }
 
     onValueChange() {
-          if (this.TypeUserSelected == 'Passager') {
+        if (this.TypeUserSelected == 'Passager') {
             this.userService.getUserByEmail("Passager@client").subscribe(value => {
                 this.selectedVente.client = value;
 
@@ -1128,8 +1051,8 @@ userConnect(){
         } else if(this.TypeUserSelected == 'CLient'){
             this.showDialogueClient = true;
         }else {
-             this.TypeUserSelected='Passager'
-         }
+            this.TypeUserSelected='Passager'
+        }
 
     }
 
@@ -1138,16 +1061,12 @@ userConnect(){
     }
 
     public selectClient() {
-         this.showDialogueClient = false;
+        this.showDialogueClient = false;
     }
 
 
     addUser() {
         this.dialogueService.openDialog();
-    }
-
-    onGlobalFilter(table: Table, event: Event) {
-        table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
     }
 }
 
