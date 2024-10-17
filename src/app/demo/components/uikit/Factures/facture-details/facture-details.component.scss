@@ -1,24 +1,24 @@
 @media print {
-  body {
-    margin: 2cm; /* Ajustez cette valeur selon vos besoins */
-  }
+  //body {
+  //  margin: 2cm; /* Ajustez cette valeur selon vos besoins */
+  //}
 
   /* Style général pour ajuster les éléments à imprimer */
-  .grid, .p-card, .col-12, .card {
-    width: 100%;
-    display: block;
-    margin: 2em;
-  }
+  //.grid, .p-card, .col-12, .card {
+  //  width: 100%;
+  //  display: block;
+  //  margin: 2em;
+  //}
 
 
 
 
   /* Ajustement pour les tables scrollables */
-  .p-datatable-scrollable-body,
-  .p-datatable-scrollable-header,
-  .p-datatable-scrollable-wrapper {
-    overflow: visible !important;
-  }
+  //.p-datatable-scrollable-body,
+  //.p-datatable-scrollable-header,
+  //.p-datatable-scrollable-wrapper {
+  //  overflow: visible !important;
+  //}
 
   ///* Ajustement pour les éléments flex */
   //.flex, .justify-content-between, .align-items-center, .m-8, .m-6, .m-4, .m-5 {

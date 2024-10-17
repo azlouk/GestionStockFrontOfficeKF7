@@ -1,320 +1,363 @@
 
 <p-confirmDialog *ngIf="showButtunprod" ></p-confirmDialog>
-<p-card >
+<div class="col-12 sm:col-12 card p-2 w-full" >
     <p-toast *ngIf="showButtunprod" ></p-toast>
-    <ng-template pTemplate="header" >
         <div class="flex gap-2 justify-content-between p-3   ">
-          <h2 class="text-primary-600 font-bold m-3">Ajouter un produit</h2>
-        <p-button  *ngIf="showButtunprod"
-            icon="pi pi-times"
-            (click)="returnBack()"
-            styleClass="p-button-rounded p-button-danger p-button-text p-button-raised">
-        </p-button>
+          <h2 class="text-cyan-500 font-bold m-3">Ajouter un produit</h2>
+
         </div>
-    </ng-template>
-    <ng-template pTemplate="content">
 
+            <div class=" flex flex-column gap-2 sm:flex-row  justify-content-between ">
+                <!---------------- Information de produit ----------------->
+                <div class="flex flex-column gap-2 card   ">
+                    <div class="">
+                        <h5 class="text-black-alpha-90 font-bold">Information de produit</h5>
+                    </div>
 
-        <div class="flex     flex-wrap gap-2    ">
-            <div class="flex-auto card  ">
-                <div class="PrimaryColorTitle fs-3 font-bold">
-                    <h5 class="text-bluegray-600 font-bold">Information de produit</h5>
-                </div>
+                    <div class="flex flex-column gap-2 ">
+                        <label for="nomproduit" class="font-bold fs-5 text-cyan-700">
+                            <span class="pi pi-tags  font-bold"></span> Nom produit
+                        </label>
+                        <input class=" w-full" pInputText id="nomproduit"
+                               aria-describedby="username-help"
+                               [(ngModel)]="newProduct.nom"/>
 
-                <div class="flex flex-column gap-2 p-3">
-                    <label for="nomproduit" class="font-bold fs-5">
-                        <span class="pi pi-tags text-success font-bold"></span> Nom produit
-                    </label>
-                    <input class="form-control" pInputText id="nomproduit"
-                           aria-describedby="username-help"
-                           [(ngModel)]="newProduct.nom"/>
-                    <small id="nomproduit-help">Vérifier bien que votre nom est significatif</small>
-                </div>
+                        <small id="nomproduit-help">Vérifier bien que votre nom est significatif</small>
+                    </div>
 
-                <div class="flex flex-column gap-2 p-3">
-                    <label class="font-bold fs-5">
-                        <span class="pi pi-info-circle text-success font-bold fs-5"></span> Déscription
-                    </label>
-                    <textarea rows="5" cols="30"
-                              [(ngModel)]="newProduct.description"
-                              pInputTextarea
-                              [autoResize]="true"></textarea>
-                </div>
+                    <div class="flex flex-column gap-2 text-cyan-700">
+                        <label class="font-bold fs-5">
+                            <span class="pi pi-info-circle  font-bold fs-5"></span> Déscription
+                        </label>
+                        <textarea class="w-full" rows="5" cols="30"
+                                  [(ngModel)]="newProduct.description"
+                                  pInputTextarea
+                                  [autoResize]="true"></textarea>
+                    </div>
 
-                <div class="flex gap-2 p-2 justify-content-between align-items-center flex-wrap">
-                    <div class="flex flex-column gap-1 p-col-12 p-md-5 p-lg-4">
+                    <div class="flex flex-column gap-2 text-cyan-700 ">
                         <label class="font-bold fs-5">Date de fabrication</label>
+
                         <p-calendar [(ngModel)]="newProduct.dateFabrication"
                                     dateFormat="yy-mm-dd"
-                                    [touchUI]="true"
-                                    [readonlyInput]="true"></p-calendar>
+                                    [style]="{'width': '100%'}"
+                        />
                     </div>
 
-                    <div class="flex flex-column gap-1 p-col-12 p-md-5 p-lg-4">
+                    <div class="flex flex-column gap-2 w-full text-cyan-700">
                         <label class="font-bold fs-5">Date d'expiration</label>
+
                         <p-calendar [(ngModel)]="newProduct.dateExpiration"
                                     dateFormat="yy-mm-dd"
-                                    [touchUI]="true"
-                                    [readonlyInput]="true"></p-calendar>
+                                    [style]="{'width': '100%'}"
+                        />
                     </div>
+                    <div class="flex flex-column gap-2 text-cyan-700">
+                            <label class="font-bold fs-5">Sélection d'article</label>
+                            <div class="w-full ">
+                    <p-inputGroup>
 
-                    <div class="flex flex-column gap-1 p-col-12 p-md-5 p-lg-4">
-                        <label class="font-bold fs-5">Sélection d'article</label>
                         <p-dropdown [options]="articles"
                                     [(ngModel)]="newProduct.article"
                                     optionLabel="nom"
                                     [filter]="true"
                                     filterBy="nom"
-                                    [showClear]="true"
+                                    [showClear]="false"
+                                    [style]="{'width': '100%'}"
                                     placeholder="Select Article">
-                            <ng-template let-article pTemplate="item">
-                                <div class="flex align-items-center gap-2">
-                                    <p>{{ article.nom }}</p>
-                                </div>
-                            </ng-template>
                         </p-dropdown>
-                    </div>
-
-                    <div class="flex flex-column gap-1 p-col-12 p-md-2 p-lg-2">
                         <button pButton pRipple label="" icon="pi pi-plus"
-                                class="p-button-rounded p-button-success"
+                                class=" p-button-success border-round ml-1"
                                 (click)="openPopArticle()"></button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex-auto card">
-                <div class="PrimaryColorTitle fs-3 font-bold">
-                    <h5 class="text-bluegray-600 font-bold">Prix & Quantité</h5>
-                </div>
-                <div class="flex">
-
-                <div class="flex">
-                    <div class="flex flex-column gap-1 p-1">
-                        <label class="form-label font-bold fs-5">Prix unitaire </label>
-                        <p-inputNumber pTooltip="prix unitaire d'achat"
-                                       [min]="0"
-                                       [(ngModel)]="newProduct.prixUnitaire"
-                                       (ngModelChange)="setprixgros()" mode="currency"
-                                       inputId="currency-india" currency="TND"
-                                       currencyDisplay="code" locale="en-IN"></p-inputNumber>
-                    </div>
-                    <div class="flex flex-column gap-1 p-1">
-                        <label class="form-label font-bold fs-5"> Gain unitaire</label>
-                        <p-inputNumber pTooltip="Gain de produit pour le prix unitaire d'achat"
-                                       [(ngModel)]="newProduct.gainUnitaire"
-                                       (ngModelChange)="setGain()"
-                                       [min]="0"
-                                       mode="currency"
-                                       inputId="currency-india" currency="TND"
-                                       currencyDisplay="code"
-                                       locale="en-IN"></p-inputNumber>
-                    </div>
-                </div>
-
-
-
-
-                    <div class="flex flex-column gap-1 p-1">
-                        <label class="form-label font-bold fs-5">Gain gros </label>
-                        <p-inputNumber pTooltip="Gain de produit pour le prix gros"
-                                       [(ngModel)]="newProduct.gainGros"
-                                       [min]="0"
-                                       mode="currency" inputId="currency-india" currency="TND"
-                                       currencyDisplay="code"
-                                       locale="en-IN"></p-inputNumber>
-                    </div>
-                    <div class="flex flex-column gap-1 p-1">
-                        <label class="form-label font-bold fs-5">Tax (TVA) </label>
-                        <p-inputNumber [(ngModel)]="newProduct.taxe" mode="currency"
-                                       [min]="0"
-                                       inputId="currency-india" currency="TND"
-                                       currencyDisplay="code" locale="en-IN"></p-inputNumber>
-                    </div>
-                </div>
-                <div class="row g-3 p-2 shadow-sm">
-                    <div class="col">
-                        <label class="form-label font-bold fs-5">Quantité actuelle </label>
-                        <p-inputNumber [(ngModel)]="newProduct.qantite"
-                                       (ngModelChange)="setQtyGros()"
-                                       [showButtons]="true"
-                                       [min]="0"
-                                       inputId="minmax-buttons" [min]="0" inputId="locale-us"
-                                       mode="decimal"
-                                       locale="en-US"
-                                       [minFractionDigits]="3"></p-inputNumber>
-                    </div>
-                    <div class="col">
-                        <label class="form-label font-bold fs-5">Quantité min gros </label>
-                        <p-inputNumber [(ngModel)]="newProduct.minQuantiteGros"
-
-                                       [showButtons]="true" inputId="minmax-buttons" [min]="0"
-                                       [min]="0"
-                                       inputId="locale-us"
-                                       mode="decimal" locale="en-US"
-                                       [minFractionDigits]="3"></p-inputNumber>
-                    </div>
-                    <div class="col">
-                        <label class="form-label font-bold fs-5">Min niveau stock </label>
-                        <p-inputNumber [(ngModel)]="newProduct.levelstock"
-                                       [showButtons]="true"
-                                       inputId="minmax-buttons"
-                                       [min]="1"
-                                       inputId="locale-us" mode="decimal"
-                                       locale="en-US"
-                                       [minFractionDigits]="3"></p-inputNumber>
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex-auto  card">
-                <div class="col">
-                    <div class="  fs-3 font-bold">
-                        <h5 class="text-bluegray-600 font-bold">Génération code barres</h5>
-                    </div>
-                    <label for="codebarre" class="font-bold fs-5">
-                        <span class="pi pi-qrcode text-success"></span>
-                        Code à barre
-                        <p-button (click)="imprimer(newProduct.dataqr)"
-                                  icon="pi pi-print"
-                                  styleClass="p-button-rounded p-button-text"></p-button>
-                    </label>
-                    <div class="flex">
-                        <app-generationcode [inputFromParent]="data" (DataCodeBarre)="setDataCode($event)"></app-generationcode>
-
-                    </div>
-                    <div [hidden]="true"
-                         class="p-3 PrimaryColorTitle fs-3 fw-bold">
-                        Génération code QR
-                    </div>
-                    <app-generationqr [hidden]="true"></app-generationqr>
-                    <input pInputText class="form-control" id="codebarreG"
-                           aria-describedby="codebarre-help"
-                           [(ngModel)]="newProduct.dataqr"
-                           (keyup)="confirm()"/>
-                    <small id="codebarre-help"> Vérifier bien que votre Code à barre</small>
-                    <div   class="flex flex-column ">
-                        <div  class="flex justify-content-center">
-                            <div id="barcode-container"  >
-                                <ngx-barcode6
-                                        [bc-format]="'CODE128'"
-                                        [bc-value]="newProduct.dataqr"
-                                        [bc-display-value]="true"
-
-
-
-                                >
-                                </ngx-barcode6>
+                    </p-inputGroup>
                             </div>
+
+                    </div>
+
+                </div>
+                <!-- ---------------- Prix & Quantité --------------------->
+                <div class="flex flex-column card ">
+                    <div class=" ">
+                        <h5 class="text-black-alpha-90 font-bold">Prix & Quantité</h5>
+                    </div>
+
+                    <div class ="flex flex-column gap-4">
+                        <div class="flex flex-column  justify-content-between sm:flex-row  justify-content-between gap-4">
+                            <div class="flex flex-column justify-content-between">
+                                <div class="flex flex-column gap-1 text-cyan-700">
+                                    <label class="form-label font-bold fs-5">Prix unitaire </label>
+                                    <p-inputNumber pTooltip="prix unitaire d'achat"
+                                                   [min]="0"
+                                                   [(ngModel)]="newProduct.prixUnitaire"
+                                                   (ngModelChange)="setprixgros()" mode="currency"
+                                                   inputId="currency-india" currency="TND"
+                                                   currencyDisplay="code" locale="en-IN"></p-inputNumber>
+                                </div>
+                                <div class="flex flex-column gap-1 text-cyan-700 ">
+                                    <label class="form-label font-bold fs-5"> Gain unitaire</label>
+                                    <p-inputNumber pTooltip="Gain de produit pour le prix unitaire d'achat"
+                                                   [(ngModel)]="newProduct.gainUnitaire"
+                                                   (ngModelChange)="setGain()"
+                                                   [min]="0"
+                                                   mode="currency"
+                                                   inputId="currency-india" currency="TND"
+                                                   currencyDisplay="code"
+                                                   locale="en-IN"></p-inputNumber>
+                                </div>
+                                <div class="flex flex-column gap-1 text-cyan-700">
+                                    <label class="form-label font-bold fs-5">Gain gros </label>
+                                    <p-inputNumber pTooltip="Gain de produit pour le prix gros"
+                                                   [(ngModel)]="newProduct.gainGros"
+                                                   [min]="0"
+                                                   mode="currency" inputId="currency-india" currency="TND"
+                                                   currencyDisplay="code"
+                                                   locale="en-IN"></p-inputNumber>
+                                </div>
+                                <div class="flex flex-column gap-1 text-cyan-700">
+                                    <label class="form-label font-bold fs-5">Tax (TVA) </label>
+
+                                    <p-inputNumber
+                                            [(ngModel)]="newProduct.taxe"
+                                            [min]="0"
+                                            inputId="percent"
+                                            prefix="%" />
+                                </div>
+                            </div>
+                            <div class=" flex flex-column justify-content-between">
+                                <div class="flex flex-column gap-2 text-cyan-700">
+                                    <label class="form-label font-bold fs-5">Quantité actuelle </label>
+                                    <p-inputNumber [(ngModel)]="newProduct.qantite"
+                                                   (ngModelChange)="setQtyGros()"
+                                                   [showButtons]="true"
+                                                   [min]="0"
+                                                   inputId="minmax-buttons" [min]="0" inputId="locale-us"
+                                                   mode="decimal"
+                                                   locale="en-US"
+                                                   [minFractionDigits]="3"></p-inputNumber>
+                                </div>
+                                <div class="flex flex-column gap-2 text-cyan-700">
+                                    <label class="form-label font-bold fs-5">Quantité min gros </label>
+                                    <p-inputNumber [(ngModel)]="newProduct.minQuantiteGros"
+
+                                                   [showButtons]="true" inputId="minmax-buttons" [min]="0"
+                                                   [min]="0"
+                                                   inputId="locale-us"
+                                                   mode="decimal" locale="en-US"
+                                                   [minFractionDigits]="3"></p-inputNumber>
+                                </div>
+                                <div class="flex flex-column gap-2 text-cyan-700">
+                                    <label class="form-label font-bold fs-5">Min niveau stock </label>
+                                    <p-inputNumber [(ngModel)]="newProduct.levelstock"
+                                                   [showButtons]="true"
+                                                   inputId="minmax-buttons"
+                                                   [min]="1"
+                                                   inputId="locale-us" mode="decimal"
+                                                   locale="en-US"
+                                                   [minFractionDigits]="3"></p-inputNumber>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="flex flex-column">
+
+                            <div class="PrimaryColorTitle fs-3 font-bold">
+                                <h5 class="text-black-alpha-90 font-bold">Images de produit</h5>
+                            </div>
+                            <div class=" flex">
+
+
+                                <div class="w-full " >
+                                    <p-fileUpload name="demo[]"
+                                                  url="{{produitService.apifilePrime}}"
+                                                  (onSelect)="onUpload($event)"
+                                                  [showUploadButton]="false" [multiple]="true"
+                                                  [showCancelButton]="false"
+                                                  [maxFileSize]="1000000"
+                                                  accept="image/*">
+                                        <ng-template pTemplate="content" >
+                                            <ul *ngIf="uploadedFiles.length">
+                                                <li *ngFor="let file of uploadedFiles">
+                                                    {{ file.name }} - {{ file.size }} bytes
+                                                </li>
+                                            </ul>
+                                        </ng-template>
+                                    </p-fileUpload>
+                                </div>
+                                <div class="ml-4">
+
+                                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="clearFiles()"></button>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+                <!---------------- Génération code barres ----------------->
+                <div class="flex flex-column card ">
+                    <div class="">
+                        <div class=" ">
+                            <h5 class="text-black-alpha-90 font-bold">Génération code barres</h5>
+                        </div>
+                        <div for="codebarre" class="font-bold fs-5 flex align-items-center justify-content-between mb-2">
+                           <div class="text-cyan-700">
+                               <span class="pi pi-qrcode mr-1"></span>
+                               <label>Code à barre</label>
+                           </div>
 
 
                         </div>
-                        <div class="flex justify-content-center  " style="font-size: 14px; text-align:center "> {{newProduct.nom}}</div>
 
-                    </div>
+                        <!--======== code QR-->
+                 <!--       <div [hidden]="true"
+                             class="p-3 PrimaryColorTitle fs-3 fw-bold">
+                            Génération code QR
+                        </div>
+                        <app-generationqr [hidden]="true"></app-generationqr>-->
+                        <!--======== code QR-->
+                        <div class="flex flex-column gap-3 align-items-center card">
 
-                </div>
-                <div class="flex-auto ">
-                    <label for="nomproduit" class="font-bold fs-5">
-                        Groupe Code à barre
-                    </label>
-                    <div class="flex">
-                        <div class="p-2 mt-2">
-                            <input pInputText class="form-control" id="codebarre"
-                                   aria-describedby="codebarre-help"
-                                   placeholder="Ajouter code barre"
-                                   [(ngModel)]="newCodeGroupe"
-                                   (keydown.enter)="addtolistCode()"/>
-                            <div class="p-2">
-                                <i (click)="cleartolistCode()"
-                                   class="pi pi-trash text-1xl text-danger float-end p-2"
-                                   style="cursor: pointer">tout effacer</i>
+
+                        <div class="flex flex-column gap-2 ">
+                            <app-generationcode [inputFromParent]="data" (DataCodeBarre)="setDataCode($event)"></app-generationcode>
+                            <div class="flex flex-column gap-1 ">
+                                <input pInputText class="form-control" id="codebarreG"
+                                       aria-describedby="codebarre-help"
+                                       [(ngModel)]="newProduct.dataqr"
+                                       (keyup)="confirm()"/>
+                                <small id="codebarre-help"> Vérifier bien que votre Code à barre</small>
                             </div>
                         </div>
-                        <div class="col-12 lg:col-4 lg:mb-0">
-					                    <span class="p-input-icon-right">
-						                <input type="text" pInputText class="form-control"
-                                               placeholder="Rechercher par code bar"
-                                               [(ngModel)]="searchCode"
-                                               (input)="dt11.filterGlobal(searchCode, 'contains')"/>
+
+
+                        <div   class="flex flex-column ">
+                            <div class="flex justify-content-end" *ngIf="newProduct.dataqr">
+                                <p-button (click)="imprimer(newProduct.dataqr)" styleClass="p-button-rounded p-button-text ">
+                                    <i class="pi pi-print" style="font-size: 2rem"></i></p-button>
+                            </div>
+
+                            <div  class="flex ">
+                                <div id="barcode-container"   >
+                                    <ngx-barcode6
+                                            [bc-format]="'CODE128'"
+                                            [bc-value]="newProduct.dataqr"
+                                            [bc-display-value]="true">
+                                    </ngx-barcode6>
+                                </div>
+                            </div>
+
+                        </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="flex-auto mt-3 text-cyan-700">
+                        <label for="nomproduit" class="font-bold fs-5 ">
+                            Groupe Code à barre
+                        </label>
+                        <div class="flex">
+                            <div class=" mt-2 w-full mb-2">
+                                <input pInputText class="form-control" id="codebarre"
+                                       aria-describedby="codebarre-help"
+                                       placeholder="Ajouter code barre et taper Entrée"
+                                       [(ngModel)]="newCodeGroupe"
+                                       (keydown.enter)="addtolistCode()"
+                                       [style]="{'width': '100%'}"/>
+
+                            </div>
+
+                        </div>
+
+                            <p-table #dt11 [value]="subdataqr"
+                                     responsiveLayout="scroll"
+                                     [scrollable]="true"
+                                     [scrollHeight]="'200px'"
+                                     [globalFilterFields]="['id','code']"
+                                     [rowHover]="true"
+                                     styleClass="p-datatable-gridlines"
+
+                            >
+                                <ng-template pTemplate="caption">
+
+                                    <div class="flex gap-1 align-items-center sm:flex-row justify-content-between align-items-center">
+
+
+                                        <div><span class=" p-input-icon-left">
                                         <i class="pi pi-search"></i>
-					                    </span>
+                                            <input pInputText type="text" (input)="onGlobalFilter(dt11, $event)" placeholder="recherche..." class="w-full sm:w-auto"/>
+                                        </span>
+                                        </div>
+                                        <div class="cursor-pointer">
+                                            <i (click)="cleartolistCode()"
+                                               class="pi pi-trash text-1xl text-danger " style="color: red">
+
+                                                <span class="font-bold text-black-alpha-90 ml-1">Tout Effacer</span>
+                                            </i>
+
+                                        </div>
+                                    </div>
+                                </ng-template>
+                                <ng-template pTemplate="header">
+                                    <tr>
+
+
+                                        <th>
+                                            Code
+                                        </th>
+                                        <th>Action
+                                        </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-code >
+
+                                    <tr >
+
+                                        <td>
+                                            <ngx-barcode6 class="fw-bold"
+                                                          [bc-width]="1"
+                                                          [bc-format]="'CODE128'"
+                                                          [bc-height]="27"
+                                                          id="{{code.code}}"
+                                                          [bc-value]="code.code"
+                                                          [bc-display-value]="true"></ngx-barcode6>
+                                        </td>
+                                        <td >
+                                            <p-button (click)="removeQR(code)"
+                                                      icon="pi pi-trash"
+                                                      styleClass="p-button-rounded p-button-text"></p-button>
+                                            <p-button (click)="imprimer(code.code)"
+                                                      icon="pi pi-print"
+                                                      styleClass="p-button-rounded p-button-text"></p-button>
+                                        </td>
+                                    </tr>
+
+                                </ng-template>
+                            </p-table>
+
                         </div>
                     </div>
-                    <div class="flex overflow-y-scroll shadow-lg p-2" style="max-height: 300px">
-                        <p-table #dt11 [value]="subdataqr"
-                                 [globalFilterFields]="['id','code']"
-                                 [loading]="loading">
-                            <ng-template pTemplate="body" let-code>
-                                <tr>
-                                    <td style="width:20%">
-                                        <p-button (click)="removeQR(code)"
-                                                  icon="pi pi-trash"
-                                                  styleClass="p-button-rounded p-button-text"></p-button>
-                                        <p-button (click)="imprimer(code.code)"
-                                                  icon="pi pi-print"
-                                                  styleClass="p-button-rounded p-button-text"></p-button>
-                                    </td>
-                                    <td>
-                                        <ngx-barcode6 class="fw-bold"
-                                                      [bc-width]="1"
-                                                      [bc-format]="'CODE128'"
-                                                      [bc-height]="27"
-                                                      id="{{code.code}}"
-                                                      [bc-value]="code.code"
-                                                      [bc-display-value]="true"></ngx-barcode6>
-                                    </td>
 
-                                </tr>
-                            </ng-template>
-                        </p-table>
-                    </div>
-                </div>
-
-            </div>                            <!-- ---------------- Image de produit ------------------- -->
-
-            <div class="flex-auto  card">
-                <div class="p-3 PrimaryColorTitle fs-3 fw-bold"> Images de produit
-                </div>
-                <div class="card flex justify-content-center ColorGradient2 shadow-lg p-2">
-                    <label for="nomproduit" class="fw-bold fs-5">
-                        <span class="pi pi-image text-success"></span>
-                        Images de produit
-                    </label>
-
-                    <div style="max-height:800px; overflow-y: auto">
-                        <p-fileUpload name="demo[]"
-                                      url="{{produitService.apifilePrime}}"
-                                      (onSelect)="onUpload($event)"
-                                      [showUploadButton]="false" [multiple]="true"
-                                      [maxFileSize]="100000"
-                                      accept="image/*">
-                            <ng-template pTemplate="content" class="ColorGradient2">
-                                <ul *ngIf="uploadedFiles.length">
-                                    <li *ngFor="let file of uploadedFiles">
-                                        {{ file.name }} - {{ file.size }} bytes
-                                    </li>
-                                </ul>
-                            </ng-template>
-                        </p-fileUpload>
-                    </div>
-                    <span class="bi bi-x-lg cursor-pointer p-2 text-danger"
-                          (click)="clearFiles()">Effacer les récents</span>
-                </div>
             </div>
 
+        <div class="flex justify-content-end align-items-center gap-3 mr-7 mb-4">
+            <p-button *ngIf="showButtunprod"
+                      label="Cancel"
+                      icon="pi pi-times"
+                      [outlined]="true"
+                      severity="danger"
+                      (click)="returnBack()" />
+
+
+            <p-button label="Save"
+                      icon="pi pi-check"
+                      [outlined]="true"
+                      icon="pi pi-check"
+                      (click)="ajouterProduit()"
+                      severity="success" />
+
         </div>
-
-
-     </ng-template>
-    <ng-template pTemplate="footer" >
-        <div class="flex justify-content-end align-items-end">
-            <button *ngIf="showButtunprod" pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="returnBack()"></button>
-            <button  pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="ajouterProduit()"></button>
-        </div>
-    </ng-template>
-</p-card>
-
+</div>
 
 
 <p-dialog [(visible)]="articleDialog" [style]="{height: '600px',width: '500px'}" header="Article Details" [modal]="true"
