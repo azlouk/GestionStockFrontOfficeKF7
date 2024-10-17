@@ -580,14 +580,15 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
 
     search(): void {
         if (this.searchTerm.trim() !== '') {
-            this.produitsFiltres = []
+
             this.produitService.getProduitByQrNom(this.searchTerm).subscribe((value: Produit) => {
                 if (value != null) {
-                    this.produitsFiltres.push(value);
-                    this.visible = this.IsvisiblePop;
+
+                    this.ajouterProduit(value);
+                }else {
+                    this.messageService.add({key: 'tc', severity: 'warn', summary: 'Warn', detail: 'Aucun produit a été trouvé'});
                 }
-                if (this.IsvisiblePop == false)
-                    this.ajouterProduit(value)
+
             });
         }
     }
@@ -597,6 +598,7 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
     }
 
     ajouterProduitSelectionne(produit: Produit): void {
+        console.log(produit);
         if (produit) {
             const produitSelectionne = produit;
 
@@ -649,10 +651,10 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
     }
 
     ajouterProduit(produit: Produit): void {
-        if (this.produitsFiltres.length > 0) {
+
             this.ajouterProduitSelectionne(produit);
             this.getTottalNbProduct()
-        }
+
     }
 
     getSommeTotale(): number {
@@ -752,8 +754,11 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
         const val = this.getSommeTotale() + this.getSommeTaxes() + this.frais;
         this.selectedVente.total = val;
         this.selectedVente.reglement=val;
-        this.reglement=val;
-        return this.selectedVente.total;
+
+
+        return typeof this.selectedVente.total === 'number' ? this.selectedVente.total : parseFloat(this.selectedVente.total);
+
+
     }
 
 
@@ -1067,6 +1072,10 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
 
     addUser() {
         this.dialogueService.openDialog();
+    }
+
+    setReglementToTotal() {
+        this.reglement=this.selectedVente.reglement;
     }
 }
 

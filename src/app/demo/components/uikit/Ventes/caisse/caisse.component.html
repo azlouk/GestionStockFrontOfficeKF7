@@ -164,12 +164,12 @@
                     <label >Réglement</label>
                     <p-inputNumber [(ngModel)]="reglement" pTooltip="reglement"
                                    mode="currency" inputId="currency-india" currency="TND" currencyDisplay="code"
-                                   locale="en-IN"></p-inputNumber>
+                                   locale="en-IN" (click)="setReglementToTotal()" ></p-inputNumber>
                 </div>
             </div>
             <!-- Total Vente Section -->
             <div class="flex-grow-1 flex-shrink-1 card bg-black-alpha-10 flex flex-column      align-items-center justify-content-center       font-bold p-4 m-3 border-round">
-                <h4 class="text-red-600 text-6xl">{{getTotalVente() | currency :'TND': ''  | number:'1.3-3'}}</h4>
+                <h4 class="text-red-600 text-6xl">{{getTotalVente() | number     }}</h4>
                 <h3 class="text-red-600">TND</h3>
             </div>
 
@@ -189,7 +189,7 @@
                 <ng-template pTemplate="header">
                     <tr  >
                         <th class="  text-primary font-bold">Nom Produit</th>
-                        <th class="  text-primary font-bold">Code Barre</th>
+                        <th class="  text-primary font-bold">Code</th>
                         <th class="  text-primary font-bold">Date</th>
                         <th class="  text-primary font-bold">Qty Min Gros</th>
                         <th class="  text-primary font-bold">Prix Vente (TND)</th>
@@ -220,7 +220,7 @@
                         <td >
                             {{ ligneVente.produit.minQuantiteGros }}
                         </td>
-                        <td >{{ ligneVente.prixVente  | number:'1.3-3' }}</td>
+                        <td >{{ ligneVente.prixVente| number    }}</td>
                         <td >
                             <p-inputNumber
                                     [(ngModel)]="ligneVente.venteQty"
