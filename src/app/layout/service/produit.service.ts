@@ -210,7 +210,7 @@ export class ProduitService {
     }
 
     getProduitByQrNom(data: string): Observable<Produit> {
-        const url = `${this.api}/findByDataqr`;
+        const url = `${this.api}/getProductByQrOrSubQr`;
 
         // Récupérer le token d'authentification depuis le stockage local (à adapter selon votre méthode d'authentification)
         const token = getToken();

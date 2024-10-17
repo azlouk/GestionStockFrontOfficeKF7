@@ -31,6 +31,7 @@ import {ArticleComponent} from "../../Articles/article/article.component";
 import {DialogService} from "../../../../../layout/service/dialogue-user.service";
 import {Historique} from "../../../../../models/historique";
 import html2canvas from "html2canvas";
+import {InputGroupModule} from "primeng/inputgroup";
 
 @Component({
     selector: 'app-produit-ajout',
@@ -58,9 +59,19 @@ import html2canvas from "html2canvas";
         CommonModule,
         CardModule,
         ConfirmDialogModule,
-        ArticleComponent
+        ArticleComponent,
+        InputGroupModule
     ],
     templateUrl: './produit-ajout.component.html',
+    styles: [`
+  :host ::ng-deep .p-fileupload-choose{
+    margin-bottom: 10px;
+  }
+  :host ::ng-deep .p-fileupload-cancel{
+    margin-bottom: 10px;
+  }
+
+`],
     styleUrl: './produit-ajout.component.scss'
 })
 export class ProduitAjoutComponent implements OnInit, AfterViewInit {
@@ -530,6 +541,9 @@ export class ProduitAjoutComponent implements OnInit, AfterViewInit {
 
     }
 
+    onGlobalFilter(table: Table, event: Event) {
+        table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+    }
 }
 
 
