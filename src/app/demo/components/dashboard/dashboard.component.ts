@@ -1,9 +1,15 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { Product } from '../../api/product';
-import { ProductService } from '../../service/product.service';
-import { Subscription, debounceTime } from 'rxjs';
+ import { Subscription } from 'rxjs';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
+import {StatistiquesService} from "../../../layout/service/statistiques.service";
+import {VenteService} from "../../../layout/service/vente.service";
+import {Router} from "@angular/router";
+import {getToken} from "../../../../main";
+import {Produit} from "../../../models/produit";
+import {Vente} from "../../../models/Vente";
+import { ChartType} from "chart.js";
 
 @Component({
     templateUrl: './dashboard.component.html',
@@ -14,92 +20,332 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     products!: Product[];
 
-    chartData: any;
 
-    chartOptions: any;
 
     subscription!: Subscription;
 
-    constructor(private productService: ProductService, public layoutService: LayoutService) {
-        this.subscription = this.layoutService.configUpdate$
-        .pipe(debounceTime(25))
-        .subscribe((config) => {
-            this.initChart();
-        });
+    produits: Produit[] = [];
+    ventes: Vente[] = []
+    data: any;
+    options: any;
+
+    chartDataVentes: any;
+    chartDataFactures:any;
+    chartOptions: any;
+    chartDataFacturesMois: any;
+    chartOptionsFactMois:any;
+    public chartDataVentesMois: any;
+    public chartOptionsMois: any;
+    public chartType: ChartType = 'bar'; // Type de graphique
+
+
+    chartDataCommande: any;
+    chartDataCommandeMois: any;
+    constructor( public layoutService: LayoutService,
+                private route: Router, public servicestatistic: StatistiquesService, private venteservice: VenteService) {
+
     }
 
     ngOnInit() {
-        this.initChart();
-        this.productService.getProductsSmall().then(data => this.products = data);
+        this.getFacturesEtGainsParMois();
+        this.getVenteDay();
+        this.getfactureByDay();
+        this.getVentesEtGainsParMois();
 
-        this.items = [
-            { label: 'Add New', icon: 'pi pi-fw pi-plus' },
-            { label: 'Remove', icon: 'pi pi-fw pi-minus' }
-        ];
+        this.venteservice.getVentes().subscribe(value => {
+            this.ventes = value;
+        })
+
+        const token = getToken();
+        //alert(token)
+        if (token == null || token === '404') {
+            this.route.navigate(['/auth/login'])
+        } else {
+            this.loadData();
+        }
+
     }
 
-    initChart() {
-        const documentStyle = getComputedStyle(document.documentElement);
-        const textColor = documentStyle.getPropertyValue('--text-color');
-        const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
-        const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
-
-        this.chartData = {
-            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-            datasets: [
-                {
-                    label: 'First Dataset',
-                    data: [65, 59, 80, 81, 56, 55, 40],
-                    fill: false,
-                    backgroundColor: documentStyle.getPropertyValue('--bluegray-700'),
-                    borderColor: documentStyle.getPropertyValue('--bluegray-700'),
-                    tension: .4
-                },
-                {
-                    label: 'Second Dataset',
-                    data: [28, 48, 40, 19, 86, 27, 90],
-                    fill: false,
-                    backgroundColor: documentStyle.getPropertyValue('--green-600'),
-                    borderColor: documentStyle.getPropertyValue('--green-600'),
-                    tension: .4
-                }
-            ]
-        };
-
-        this.chartOptions = {
-            plugins: {
-                legend: {
-                    labels: {
-                        color: textColor
-                    }
-                }
-            },
-            scales: {
-                x: {
-                    ticks: {
-                        color: textColorSecondary
-                    },
-                    grid: {
-                        color: surfaceBorder,
-                        drawBorder: false
-                    }
-                },
-                y: {
-                    ticks: {
-                        color: textColorSecondary
-                    },
-                    grid: {
-                        color: surfaceBorder,
-                        drawBorder: false
-                    }
-                }
-            }
-        };
-    }
 
     ngOnDestroy() {
         if (this.subscription) {
             this.subscription.unsubscribe();
         }
     }
+
+
+    getServiceStatisticTotalQuantityFormatted(): string {
+        const totalQuantiteProduitParUnite = this.servicestatistic.statistic.totalQuantiteProduitParUnite;
+
+
+        let formattedResult = '';
+
+        for (let i = 0; i < totalQuantiteProduitParUnite.length; i++) {
+            const unite = totalQuantiteProduitParUnite[i][0]; // Récupérer l'unité à partir du tableau imbriqué
+            const total = totalQuantiteProduitParUnite[i][1]; // Récupérer le total à partir du tableau imbriqué
+            formattedResult += `Unité: ${unite} \n Total: ${total}\n`;
+        }
+
+
+        return formattedResult.trim(); // Supprimer les espaces blancs supplémentaires à la fin
+    }
+
+
+    async loadData(): Promise<void> {
+        try {
+            const value = await this.servicestatistic.getStatistic().toPromise();
+
+            this.servicestatistic.statistic = value;
+            // this.chartProduitsParUnite();
+        } catch (error) {
+            console.error('Error loading data', error);
+        }
+    }
+
+    private sortDataByDate(data: any): any[] {
+        return Object.keys(data).sort().map(date => ({
+            date,
+            value: data[date]
+        }));
+    }
+
+//get ventes et gains par jour!
+    getVenteDay() {
+        this.servicestatistic.getVentesGainParJour().subscribe(data => {
+
+
+            if (data) {
+                const sortedVentesData = this.sortDataByDate(data['ventes']);
+                const sortedGainsData = this.sortDataByDate(data['gains']);
+
+                this.chartDataVentes = {
+                    labels: sortedVentesData.map(d => d.date),
+                    datasets: [
+                        {
+                            label: 'Ventes par Jour',
+                            data: sortedVentesData.map(d => d.value),
+                            fill: false,
+                            borderColor: '#0523cc'
+                        },
+                        {
+                            label: 'Gains par Jour',
+                            data: sortedGainsData.map(d => d.value),
+                            fill: false,
+                            borderColor: '#08c408'
+                        }
+                    ]
+                };
+
+                this.chartOptions = {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Date'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Montant'
+                            }
+                        }
+                    }
+                };
+            }
+        }, error => {
+            console.error('Erreur lors de la récupération des ventes et gains par jour :', error);
+        });
+    }
+
+//get factures et gains par jour!
+    getfactureByDay(): void {
+        this.servicestatistic.getFacturesGainParJour().subscribe(data => {
+
+
+            if (data) {
+                const sortedVentesData = this.sortDataByDate(data.ventes);
+                const sortedGainsData = this.sortDataByDate(data.gains);
+
+                this.chartDataFactures = {
+                    labels: sortedVentesData.map(d => d.date),
+                    datasets: [
+                        {
+                            label: 'Ventes par Jour',
+                            data: sortedVentesData.map(d => d.value),
+                            fill: false,
+                            borderColor: '#0523cc'
+                        },
+                        {
+                            label: 'Gains par Jour',
+                            data: sortedGainsData.map(d => d.value),
+                            fill: false,
+                            borderColor: '#66BB6A'
+                        }
+                    ]
+                };
+
+                this.chartOptions = {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Date'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Montant'
+                            },
+                            ticks: {
+                                min: 0,
+                                stepSize: 100
+                            }
+                        }
+                    }
+                };
+            }
+        }, error => {
+            console.error('Erreur lors de la récupération des factures et gains :', error);
+        });
+    }
+
+    //get ventes par mois!
+
+    getVentesEtGainsParMois(): void {
+        this.servicestatistic.getVentesEtGainsParMois().subscribe(data => {
+
+
+            if (data) {
+                const sortedVentesData = this.sortDataByDate(data['ventes']);
+                const sortedGainsData = this.sortDataByDate(data['gains']);
+
+                this.chartDataVentesMois = {
+                    labels: sortedVentesData.map(d => d.date),
+                    datasets: [
+                        {
+                            label: 'Ventes par Mois',
+                            data: sortedVentesData.map(d => d.value),
+                            backgroundColor: '#FFA726',
+                            stack: 'Stack 0'
+                        },
+                        {
+                            label: 'Gains par Mois',
+                            data: sortedGainsData.map(d => d.value),
+                            backgroundColor: '#66BB6A',
+                            stack: 'Stack 1'
+                        }
+                    ]
+                };
+
+                this.chartOptionsMois = {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y.toFixed(2);
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Mois'
+                            },
+                            stacked: true
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Montant'
+                            },
+                            stacked: true,
+                            ticks: {
+                                beginAtZero: true,
+                                stepSize: 100
+                            }
+                        }
+                    }
+                };
+            }
+        }, error => {
+            console.error('Erreur lors de la récupération des ventes et gains par mois :', error);
+        });
+    }
+
+    getFacturesEtGainsParMois(): void {
+        this.servicestatistic.getFacturesEtGainsParMois().subscribe(data => {
+
+
+            if (data) {
+                const sortedVentesData = this.sortDataByDate(data['ventes']);
+                const sortedGainsData = this.sortDataByDate(data['gains']);
+
+                this.chartDataFacturesMois = {
+                    labels: sortedVentesData.map(d => d.date),
+                    datasets: [
+                        {
+                            label: 'Factures par Mois',
+                            data: sortedVentesData.map(d => d.value),
+                            backgroundColor: '#FFA726',
+                            stack: 'stack0'
+                        },
+                        {
+                            label: 'Gains par Mois',
+                            data: sortedGainsData.map(d => d.value),
+                            backgroundColor: '#66BB6A',
+                            stack: 'stack1'
+                        }
+                    ]
+                };
+
+                this.chartOptionsFactMois = {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Mois'
+                            },
+                            stacked: false,
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Montant'
+                            },
+                            stacked: false,
+                            ticks: {
+                                beginAtZero: true,
+                                stepSize: 100
+                            }
+                        }
+                    }
+                };
+            }
+        }, error => {
+            console.error('Erreur lors de la récupération des factures et gains par mois :', error);
+        });
+    }
+
 }
+

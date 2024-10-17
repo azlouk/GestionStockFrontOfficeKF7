@@ -1,10 +1,10 @@
-import {booleanAttribute, Component, OnInit, ViewChild} from '@angular/core';
-import {Facture, FactureInterface, factureType} from "../../../../../models/Facture";
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {Facture, factureType} from "../../../../../models/Facture";
 import {User} from "../../../../../models/user";
 import {Produit} from "../../../../../models/produit";
 import {FactureService} from "../../../../../layout/service/facture.service";
 import {ActivatedRoute, Router} from "@angular/router";
-import {Table, TableModule} from "primeng/table";
+import {Table, TableModule, TableRowCollapseEvent, TableRowExpandEvent} from "primeng/table";
 import {AvatarModule} from "primeng/avatar";
 import {BadgeModule} from "primeng/badge";
 import {DialogModule} from "primeng/dialog";
@@ -12,9 +12,9 @@ import {DropdownModule} from "primeng/dropdown";
 import {FormsModule} from "@angular/forms";
 import {InputTextModule} from "primeng/inputtext";
 import {InputTextareaModule} from "primeng/inputtextarea";
-import {CurrencyPipe, DatePipe, NgClass, NgForOf, NgIf} from "@angular/common";
-import {ConfirmationService, MessageService, PrimeTemplate} from "primeng/api";
-import {Ripple, RippleModule} from "primeng/ripple";
+import {CurrencyPipe, DatePipe, DecimalPipe, NgClass, NgForOf, NgIf} from "@angular/common";
+import {ConfirmationService, MessageService} from "primeng/api";
+import {RippleModule} from "primeng/ripple";
 import {ToastModule} from "primeng/toast";
 import {ToolbarModule} from "primeng/toolbar";
 import {SliderModule} from "primeng/slider";
@@ -22,10 +22,8 @@ import {TagModule} from "primeng/tag";
 import {MultiSelectModule} from "primeng/multiselect";
 import {SplitButtonModule} from "primeng/splitbutton";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
-import {b} from "@fullcalendar/core/internal-common";
 import {TriStateCheckboxModule} from "primeng/tristatecheckbox";
 import {RadioButtonModule} from "primeng/radiobutton";
-import {Observable} from "rxjs/internal/Observable";
 import {OverlayPanelModule} from "primeng/overlaypanel";
 import {CheckboxModule} from "primeng/checkbox";
 import {AutoCompleteCompleteEvent, AutoCompleteModule} from "primeng/autocomplete";
@@ -33,6 +31,12 @@ import {UserService} from "../../../../../layout/service/user.service";
 import {FieldsetModule} from "primeng/fieldset";
 import {Tranche} from "../../../../../models/Tranche";
 import {TreeTableModule} from "primeng/treetable";
+import {TabViewModule} from "primeng/tabview";
+import {RatingModule} from "primeng/rating";
+import {ProduitService} from "../../../../../layout/service/produit.service";
+import {Historique} from "../../../../../models/historique";
+import {LigneFacture} from "../../../../../models/LigneFacture";
+import {Page} from "../../../../../models/page";
 
 @Component({
     selector: 'app-facture',
@@ -65,12 +69,29 @@ import {TreeTableModule} from "primeng/treetable";
         CheckboxModule,
         AutoCompleteModule,
         FieldsetModule,
-        TreeTableModule
+        TreeTableModule,
+        TabViewModule,
+        DecimalPipe,
+        RatingModule
     ],
     templateUrl: './facture.component.html',
     styleUrl: './facture.component.scss'
 })
 export class FactureComponent implements OnInit {
+
+    initTabFacture: Facture[]=[];
+    facturesPage: Page<Facture>={
+        content:this.initTabFacture,number:0,size:0,totalPages:0,totalElements:0
+
+    };
+    currentPage: number = 0;
+    pageSize: number = 10; //
+    loadingdata: boolean = false;
+    first = 0;
+    rows = 10;
+
+
+
 
     @ViewChild('dt2') table: Table;
     montantFiltreCalcule: boolean = false;
@@ -80,8 +101,8 @@ export class FactureComponent implements OnInit {
     activityValues: number[] = [0, 100];
     root: string | undefined;
     factures: Facture[] = [];
-    Facturefilred: FactureInterface[] = [];
-    FacturefilredSuplim: FactureInterface[] = [];
+    Facturefilred: Facture[] = [];
+    FacturefilredSuplim: Facture[] = [];
 
     client: User = new User();
     searchTerm: string = '';
@@ -90,7 +111,7 @@ export class FactureComponent implements OnInit {
     idf?: number;
     idd?: number;
     visibleTranche: boolean = false;
-    newFacture: FactureInterface;
+    newFacture: Facture;
 
     visible: boolean = false;
 
@@ -112,7 +133,6 @@ export class FactureComponent implements OnInit {
 
     items: any[] | undefined;
 
-    selectedItem: any;
 
     suggestions: any[] | undefined;
 
@@ -127,22 +147,35 @@ export class FactureComponent implements OnInit {
     header: string;
     public balance: any = 0;
 
+///p-dialogue deleteFactureAnd change prix
+
+    openDialogueChangedPrix:boolean=false;
+
+    produits!: Produit[];
+
+    expandedRows = {};
     showDialog() {
         this.visible = true;
     }
 
     constructor(
+
+
         public factureService: FactureService,
         public userService: UserService,
         private router: Router,
         private messageService: MessageService,
         private confirmationService: ConfirmationService,
-        public activatedRoute: ActivatedRoute) {
+        public activatedRoute: ActivatedRoute,
+    private produitService: ProduitService
+    ) {
     }
 
 
     ngOnInit(): void {
-        this.getAllFactures();
+        this.loadFacture(this.currentPage, this.pageSize);
+
+        // this.getAllFactures();
         this.calculateMontants();
         this.root = this.router.url.split('/')[1];
         const idpParam = <string>this.activatedRoute.snapshot.paramMap.get('idp')
@@ -153,8 +186,104 @@ export class FactureComponent implements OnInit {
         if (iddParam !== null) {
             this.idd = +iddParam;
         }
+
+
+
     }
 
+    loadFacture(page: number, size: number) {
+        this.loadingdata=true ;
+        this.factureService.LoadFactures(page, size).subscribe(
+            (data: Page<Facture>) => {
+                this.facturesPage = data;
+                this.loadingdata=false;
+            },
+            (error) => {
+                console.error('Erreur lors du chargement des factures', error);
+            }
+        );
+    }
+
+
+    onPageChange(event: any) {
+        this.currentPage = event.page==undefined?0:event.page;
+        this.pageSize = event.rows==undefined?10:event.rows
+        this.loadFacture(this.currentPage, this.pageSize);
+
+    }
+
+    next() {
+        if (!this.isLastPage()) {
+            this.currentPage++;
+            this.loadFacture(this.currentPage, this.pageSize);
+        }
+    }
+
+    prev() {
+        if (!this.isFirstPage()) {
+            this.currentPage--;
+            this.loadFacture(this.currentPage, this.pageSize);
+
+        }
+
+    }
+
+
+    reset() {
+
+        this.currentPage = 0; // Réinitialise à la première page
+        this.loadFacture(this.currentPage, 10);
+        this.totalMontantFiltre=0 ;
+    }
+
+    pageChange(event) {
+        this.first = event.first;
+        this.rows = event.rows;
+    }
+
+    isFirstPage() {
+        return this.currentPage === 0;
+    }
+
+    isLastPage() {
+        return (this.currentPage + 1) * this.pageSize >= this.produits.length;
+    }
+
+
+    getStatusSeverity(status: string) {
+        switch (status) {
+            case 'PENDING':
+                return 'warning';
+            case 'DELIVERED':
+                return 'success';
+            case 'CANCELLED':
+                return 'danger';
+            default:
+                return 'unknown'; // Or any other fallback value
+        }
+    }
+
+    onRowExpand(event: TableRowExpandEvent) {
+        // this.messageService.add({ severity: 'info', summary: 'Product Expanded', detail: event.data.name, life: 3000 });
+    }
+
+    onRowCollapse(event: TableRowCollapseEvent) {
+        // this.messageService.add({ severity: 'success', summary: 'Product Collapsed', detail: event.data.name, life: 3000 });
+    }
+
+
+    expandAll() {
+        this.expandedRows = this.produits.reduce((acc, p) => (acc[p.id] = true) && acc, {});
+    }
+
+    collapseAll() {
+        this.expandedRows = {};
+    }
+
+    onDialogClose() {
+        // Clear expanded rows when the dialog closes
+        this.expandedRows = {};
+    }
 
     searchFirstName(event: AutoCompleteCompleteEvent) {
         this.userService.getUsers().subscribe(users => {
@@ -199,18 +328,21 @@ export class FactureComponent implements OnInit {
 
     }
 
-    getAllFactures() {
-        this.loading = true;
-        this.factureService.getFactures().subscribe((value: FactureInterface[]) => {
-            this.factureService.FactureInter = [...value]
-            this.loading = false;
-            this.Facturefilred = [...value]
-            this.FacturefilredSuplim = [...value]
-        });
-    }
+    // getAllFactures() {
+    //     this.loading = true;
+    //     this.factureService.getFactures().subscribe((value: Facture[]) => {
+    //
+    //         console.error(value)
+    //
+    //         this.factureService.FactureInter = [...value]
+    //         this.loading = false;
+    //         this.Facturefilred = [...value]
+    //         this.FacturefilredSuplim = [...value]
+    //     });
+    // }
 
     goToFactureDetails(id: number): void {
-        this.router.navigate(['uikit/facture/', id]);
+        this.router.navigate(['uikit/facture/',id]);
     }
 
     editFacture(id: number) {
@@ -220,14 +352,14 @@ export class FactureComponent implements OnInit {
     addFacture() {
         this.router.navigate(['/uikit/add-facture']);
     }
-
-    onSearch(): void {
-        if (this.searchTerm.trim() !== '') {
-            this.factures = this.factureService.searchFacture(this.searchTerm.toLowerCase());
-        } else {
-            this.getAllFactures();
-        }
-    }
+    //
+    // onSearch(): void {
+    //     if (this.searchTerm.trim() !== '') {
+    //         this.factures = this.factureService.searchFacture(this.searchTerm.toLowerCase());
+    //     } else {
+    //         this.getAllFactures();
+    //     }
+    // }
 
     selectFacture(facture: Facture) {
         this.idf = facture.id;
@@ -259,7 +391,7 @@ export class FactureComponent implements OnInit {
     refrech() {
         this.resetForm()
 
-        this.getAllFactures();
+        this.loadFacture(this.currentPage,this.pageSize);
 
         this.totalFiltre = null
 
@@ -278,55 +410,71 @@ export class FactureComponent implements OnInit {
         this.valuetelephone = '';
         this.valueemail = '';
         this.valuepaye = null;
+        this.reset() ;
     }
 
-    deleteFacture(id: number): void {
+    deleteFacture(facture: Facture) {
+
+        this.factureDeleted = facture; // Store the facture that is going to be deleted
+
         this.confirmationService.confirm({
-            header: "Êtes-vous sûr ?",
-            message: "Vous ne pourrez pas revenir en arrière !",
-            icon: "pi pi-exclamation-triangle",
-            acceptLabel: "Oui, supprimer",
-            rejectLabel: "Annuler",
-            acceptButtonStyleClass: 'p-button-outlined p-button-danger',
-            rejectButtonStyleClass: 'p-button-outlined p-button-primary',
+            message: 'Êtes-vous sûr de vouloir supprimer cette facture?',
+            header: 'Confirmation de suppression',
+            icon: 'pi pi-exclamation-triangle',
             accept: () => {
-                this.factureService.deleteFacture(id).subscribe(
-                    (response) => {
-                        console.log('Facture supprimée avec succès:', response);
-                        this.messageService.add({
-                            severity: 'success',
-                            summary: 'Supprimée',
-                            detail: 'Votre facture a été supprimée avec succès!'
-                        });
-                        this.getAllFactures();
-                    },
-                    (error) => {
-                        console.error('Erreur lors de la suppression de la facture:', error);
-                        this.messageService.add({
-                            severity: 'error',
-                            summary: 'Erreur',
-                            detail: 'Une erreur est survenue lors de la suppression de la facture.'
-                        });
-                    }
-                );
+                if(facture.typeFacture==factureType.ENTREE)
+                {
+                    this.openDialogueChangedPrix = true;  // Show the confirmation dialog
+
+                }else {
+                    this.factureService.deleteFacture(facture.id).subscribe(value => {
+                        this.loadFacture(this.currentPage,this.pageSize)
+                    })
+                }
             },
             reject: () => {
                 this.messageService.add({
                     severity: 'error',
                     summary: 'Annuler!',
-                    detail: 'La supprission de facture est annuler!'
+                    detail: 'La suppression de la facture est annulée!',
                 });
-                this.getAllFactures();
+                this.loadFacture(this.currentPage,this.pageSize)
             }
         });
     }
 
-    public AjouterFcture() {
+
+
+    confirmDeleteFacture(facture:Facture) {
+        this.factureService.removeFactureWithUpdateProduct(facture).subscribe(
+            (response) => {
+                console.log('Facture supprimée avec succès:', response);
+
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Supprimée',
+                    detail: 'Votre facture a été supprimée avec succès!',
+                });
+                this.loadFacture(this.currentPage,this.pageSize)
+                // this.getAllFactures(); // Refresh the factures list after deletion
+            },
+            (error) => {
+                console.error('Erreur lors de la suppression de la facture:', error);
+
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Erreur',
+                    detail: 'Une erreur est survenue lors de la suppression de la facture.',
+                });
+            }
+        );
+        this.openDialogueChangedPrix = false;
 
     }
 
-    public deleteSelectedFacture() {
 
+    updateFacturePrix(ligneFacture: LigneFacture, historique: Historique) {
+         ligneFacture.produit.prixUnitaire = historique.prixHistoriqueAchat;
     }
 
     CalculeMontantFiltrer(): number {
@@ -337,7 +485,7 @@ export class FactureComponent implements OnInit {
     }
 
 
-    showDialogTranches(facture: FactureInterface) {
+    showDialogTranches(facture: Facture) {
         this.newFacture = facture;
         this.visibleTranche = true;
         this.calculateMontants();
@@ -347,6 +495,9 @@ export class FactureComponent implements OnInit {
     totalMontantTranches: number = 0;
     montantTranchesPayees: number = 0;
     montantTranchesNonPayees: number = 0;
+    public factureDeleted: Facture=new Facture();
+    public PrixChoisie: number;
+
 
 
     calculateMontants() {
@@ -375,91 +526,10 @@ export class FactureComponent implements OnInit {
     }
 
 
-    // public  rechecheAvancee() {
-    //
-    //     this.Facturefilred = this.FacturefilredSuplim.filter(fact => {
-    //         let match = true;
-    //         let typeMatch: boolean = false;
-    //         let notChecked:boolean=this.typeA != "FACTURE_ACHAT" && this.typeV != "FACTURE_VENTE"
-    //
-    //         if (notChecked||this.typeA == "FACTURE_ACHAT") {
-    //             typeMatch = typeMatch ||      ( fact.typeFacture === 'FACTURE_ACHAT')
-    //
-    //         }
-    //
-    //
-    //         if (notChecked||this.typeV == "FACTURE_VENTE") {
-    //             typeMatch = typeMatch || ( fact.typeFacture === 'FACTURE_VENTE');
-    //
-    //
-    //         }
-    //
-    //
-    //         match = match && typeMatch;
-    //
-    //     //   Vérifier les attributs du client, fournisseur, ou t ransporteur avec son match
-    //         if (match && (this.valuefirstname || this.valuelastname || this.valueemail || this.valuetelephone)) {
-    //             let entityMatch = false;
-    //
-    //             let tous:boolean=!this.clientRechercher&&!this.fournisseurrechercher&&!this.transporteurrechercher
-    //
-    //             if (tous || this.clientRechercher && this.clientRechercher.includes('client')) {
-    //                 entityMatch = entityMatch || this.matchFacture(fact.client);
-    //
-    //             }
-    //             if (tous || this.fournisseurrechercher && this.fournisseurrechercher.includes('fournisseur')) {
-    //                 entityMatch = entityMatch || this.matchFacture(fact.provider);
-    //
-    //             }
-    //             if (tous || this.transporteurrechercher && this.transporteurrechercher.includes('transporteur')) {
-    //                 entityMatch = entityMatch || this.matchFacture(fact.transporteur);
-    //
-    //             }
-    //             match = match && entityMatch;
-    //         }else {
-    //             console.log("no data")
-    //         }
-    //
-    //
-    //
-    //
-    //
-    //
-    //         //Vérifier le statut de paiement
-    //         if (match && this.valuepaye !== null && this.valuepaye !== undefined) {
-    //             match = match && (fact.paye === this.valuepaye);
-    //         }
-    //         console.log(match)
-    //         return match;
-    //     });
-    //
-    //     this.visible = false;
-    //     console.error(this.Facturefilred.length)
-    //     console.error(this.FacturefilredSuplim.length)
-    // }
-    //
-    // private matchFacture(entity: any): boolean {
-    //     if (!entity) return false;
-    //
-    //
-    //     let isVide:boolean=!this.valuefirstname && !this.valuelastname &&!this.valueemail &&!this.valuetelephone;
-    //
-    //     let firstnameMatch =  entity.firstname.toLowerCase().includes(this.valuefirstname?.toLowerCase());
-    //
-    //     let lastnameMatch =  entity.lastname.toLowerCase().includes(this.valuelastname?.toLowerCase());
-    //
-    //
-    //     let emailMatch =   entity.email.toLowerCase().includes(this.valueemail?.toLowerCase());
-    //
-    //     let telephoneMatch =  entity.telephone.includes(this.valuetelephone);
-    //
-    //
-    //     // Si un des critères correspond, alors l'entité correspond
-    //     return firstnameMatch || lastnameMatch || emailMatch || telephoneMatch || isVide;
-    // }
 
 
-    public rechecheAvancee() {
+
+    public rechercheAvancee() {
         this.Facturefilred = this.FacturefilredSuplim.filter(fact => {
             let match = true;
             let typeMatch: boolean = false;
@@ -516,14 +586,15 @@ export class FactureComponent implements OnInit {
         this.nbreTranche = this.calculeTrancheFiltre().totalTranches;
         this.totalTranchepaye = this.calculeTrancheFiltre().totalPaid;
         this.totalTrancheNonpaye = this.calculeTrancheFiltre().totalUnpaid;
-
+    this.facturesPage.content=[...this.Facturefilred] ;
+    this.CalculeMontantFiltrer() ;
     }
 
     private matchFacture(entity: any): boolean {
         if (!entity) return false;
 
-        let firstnameMatch = this.valuefirstname ? entity.firstname.toLowerCase().includes(this.valuefirstname.toLowerCase()) : true;
-        let lastnameMatch = this.valuelastname ? entity.lastname.toLowerCase().includes(this.valuelastname.toLowerCase()) : true;
+        let firstnameMatch = this.valuefirstname ? entity.firstname.toLowerCase().includes(this.valuefirstname.toLowerCase().trim()) : true;
+        let lastnameMatch = this.valuelastname ? entity.lastname.toLowerCase().includes(this.valuelastname.toLowerCase().trim()) : true;
         let emailMatch = this.valueemail ? entity.email.toLowerCase().includes(this.valueemail.toLowerCase()) : true;
         let telephoneMatch = this.valuetelephone ? entity.telephone.includes(this.valuetelephone) : true;
 
@@ -557,7 +628,6 @@ export class FactureComponent implements OnInit {
             } else {
             }
         });
-        console.log("Total totale tranche: " + totalTranches);
 
         return {
             totalTranches: totalTranches,

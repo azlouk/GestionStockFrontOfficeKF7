@@ -48,6 +48,7 @@ export class LigneVenteComponent implements OnInit {
 
     ngOnInit(): void {
         this.loadVentes();
+
     }
 
     loadVentes(): void {
@@ -57,7 +58,7 @@ export class LigneVenteComponent implements OnInit {
                 this.ventes = ventes;
                 this.loading=false ;
                 this.getAllTotal();
-                console.log('Ventes:', new JsonPipe().transform(ventes));
+
             },
             (error: any) => {
                 console.error('Error fetching ventes:', error);
@@ -72,26 +73,8 @@ export class LigneVenteComponent implements OnInit {
                 );})
     }
 
-    // loadVentes(): void {
-    //   this.loading = true;
-    //   this.venteService.getVentes().subscribe(
-    //     (ventes: Vente[]) => {
-    //       this.ventes = ventes;
-    //       this.loading = false;
-    //       this.getAllTotal();
-    //       console.log('Ventes:', JSON.stringify(ventes));
-    //     },
-    //     (error: any) => {
-    //       console.error('Error fetching ventes:', error);
-    //       this.displayusers = false;
-    //       Swal.fire({
-    //         icon: 'error',
-    //         title: 'Oops...',
-    //         text: "Vous n'avez pas la permission s'il vous plaît contacter l'administrateur."
-    //       });
-    //     }
-    //   );
-    // }
+
+
     goToClotures(): void {
         this.router.navigate(['/uikit/cloture']); // Redirection vers la page de modification avec l'ID du produit
     }
@@ -183,18 +166,9 @@ export class LigneVenteComponent implements OnInit {
         vente.visible = !vente.visible
     }
 
-    /*total:number=0;
-    DateStart: Date=new Date();
-    DateFin:Date=new Date();
-    getAllTotal() {
-        this.total=0  ;
-        this.ventes.forEach(value => {
-            console.log(value.dateVente)
-            if(new Date(value.dateVente+"").getTime()>=new Date(this.DateStart).getTime() && new Date(value.dateVente+"").getTime()<=new Date(this.DateFin).getTime() )
-                this.total+=value.total;
 
-        })
-    }*/
+
+
     total: number = 0;
     DateStart: Date = new Date();
     DateFin: Date = new Date();
@@ -204,35 +178,80 @@ export class LigneVenteComponent implements OnInit {
         const startTime = new Date(this.DateStart).getTime();
         const endTime = new Date(this.DateFin).getTime();
 
-        console.log("DateStart:", this.DateStart);
-        console.log("DateFin:", this.DateFin);
+
+
 
         this.ventes.forEach(value => {
-            console.log("Raw dateVente:", value.dateVente);
+
+
             // Convertir value.dateVente en objet Date
-            const parts = value.dateVente.split(' ');
+            const parts = value.dateVente.toString().split(' ');
             const dateParts = parts[0].split('-');
-            const timeParts = parts[1].split(':');
+
+            // Vérifiez si la partie horaire existe, sinon utilisez une heure par défaut
+            let timeParts = ['00', '00', '00']; // Valeur par défaut
+            if (parts.length > 1) {
+                timeParts = parts[1].split(':');
+            }
+
             const venteTime = new Date(
-                parseInt(dateParts[2]),  // year
-                parseInt(dateParts[1]) - 1,  // month (zero-indexed)
-                parseInt(dateParts[0]),  // day
-                parseInt(timeParts[0]),  // hours
+                parseInt(dateParts[2]),  // année
+                parseInt(dateParts[1]) - 1,  // mois (indexé à partir de zéro)
+                parseInt(dateParts[0]),  // jour
+                parseInt(timeParts[0]),  // heures
                 parseInt(timeParts[1]),  // minutes
-                parseInt(timeParts[2])   // seconds
+                parseInt(timeParts[2])   // secondes
             ).getTime();
 
-            console.log("venteTime:", venteTime, "startTime:", startTime, "endTime:", endTime);
+
+
             if (!isNaN(venteTime) && venteTime >= startTime && venteTime <= endTime) {
                 this.total += value.total;
             }
-            console.log("total after processing vente:", this.total);
+
         });
 
-        console.log("final total:", this.total);
+
     }
 
 
+    selectedVentes:Vente[] = [];
+    listTransfer:Vente[] = [];
+
+
+
+    transferSelected() {
+        if (this.selectedVentes && this.selectedVentes.length > 0) {
+
+                this.listTransfer.push(...this.selectedVentes);
+
+            //     // Appel au service pour le transfert
+
+
+            this.venteService.transferFacturation(this.listTransfer).subscribe({
+                    next: () => {
+                        Swal.fire({
+
+                            title: "Succès",
+                            text: "Transfert et collapes de factures réussi.",
+                            icon: "success"
+                        });
+                    },
+
+                    error: (err) => {
+                        console.error("Erreur de transfert de facturation: ", err);
+                        Swal.fire({
+                            title: "Erreur",
+                            text: `Une erreur est survenue lors du transfert de facturation : ${err.message || err.statusText}`,
+                            icon: "error"
+                        });
+                    }
+                });
+
+            this.router.navigate(['/uikit/facture']);
+
+        }
+    }
 
 
 }

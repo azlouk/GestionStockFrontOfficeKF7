@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
 import {ButtonModule} from "primeng/button";
 import {InputNumberModule} from "primeng/inputnumber";
 import {InputTextModule} from "primeng/inputtext";
@@ -29,6 +29,8 @@ import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {ArticleService} from "../../../../../layout/service/article.service";
 import {ArticleComponent} from "../../Articles/article/article.component";
 import {DialogService} from "../../../../../layout/service/dialogue-user.service";
+import {Historique} from "../../../../../models/historique";
+import html2canvas from "html2canvas";
 
 @Component({
     selector: 'app-produit-ajout',
@@ -61,7 +63,7 @@ import {DialogService} from "../../../../../layout/service/dialogue-user.service
     templateUrl: './produit-ajout.component.html',
     styleUrl: './produit-ajout.component.scss'
 })
-export class ProduitAjoutComponent implements OnInit {
+export class ProduitAjoutComponent implements OnInit, AfterViewInit {
     newProduct: Produit = (new Produit());
     selectedImage: any;
     SelectedFile: Blob = new Blob();
@@ -90,57 +92,59 @@ export class ProduitAjoutComponent implements OnInit {
     public submitted: boolean = false;
     article: Article = new Article();
     newArticleunite: string[] = ['G', 'CM', 'ML', 'PIECE'];
+    private historiques: Historique[];
 
     constructor(public produitService: ProduitService,
                 public articleService: ArticleService,
                 public dialogueService: DialogService,
                 private route: ActivatedRoute,
                 private sanitizer: DomSanitizer,
+                private renderer: Renderer2,
                 private router: Router, private messageService: MessageService, private confirmationService: ConfirmationService) {
         this.data = "kndjh";
 
     }
 
     async ngOnInit(): Promise<void> {
-        this.updateRootFromCurrentPath();
+            this.updateRootFromCurrentPath();
+            const id = this.route.snapshot.paramMap.get('id');
+            try {
+                if (id && !this.shouldStayOnSamePageFacture()) {
+                    // Attendre que les données du produit soient chargées
+                    const product = await this.produitService.getProduitById(Number(id)).toPromise();
+                    this.newProduct = product;
+                    this.newProduct._dateFabrication = new Date(product._dateFabrication);
+                    this.newProduct._dateExpiration = new Date(product._dateExpiration);
 
-        const id = this.route.snapshot.paramMap.get('id');
-        try {
-            if (id) {
-                // Attendre que les données du produit soient chargées
-                const product = await this.produitService.getProduitById(Number(id)).toPromise();
-                this.newProduct = product;
-                this.newProduct._dateFabrication = new Date(product._dateFabrication);
-                this.newProduct._dateExpiration = new Date(product._dateExpiration);
+                    // Check if _subdataqr is defined and is an array
+                    if (Array.isArray(product._subdataqr)) {
+                        product._subdataqr.forEach(value1 => {
+                            this.subdataqr.push({id: value1, code: value1});
+                        });
+                    } else {
+                        console.warn("Product _subdataqr is not an array or is undefined", product._subdataqr);
+                    }
 
-                // Check if _subdataqr is defined and is an array
-                if (Array.isArray(product._subdataqr)) {
-                    product._subdataqr.forEach(value1 => {
-                        this.subdataqr.push({id: value1, code: value1});
-                    });
-                } else {
-                    console.warn("Product _subdataqr is not an array or is undefined", product._subdataqr);
+                    // Ensure _filesList is properly handled
+                    if (Array.isArray(product._filesList)) {
+                        this.loadFile(product._filesList);
+                    } else {
+                        console.warn("Product _filesList is not an array or is undefined", product._filesList);
+                    }
                 }
 
-                // Ensure _filesList is properly handled
-                if (Array.isArray(product._filesList)) {
-                    this.loadFile(product._filesList);
-                } else {
-                    console.warn("Product _filesList is not an array or is undefined", product._filesList);
-                }
+                // Attendre que les articles soient chargés
+                const articles = await this.produitService.getArticles().toPromise();
+                this.articles = articles;
+
+            } catch (error) {
+                console.error("Erreur lors du chargement des données :", error);
             }
 
-            // Attendre que les articles soient chargés
-            const articles = await this.produitService.getArticles().toPromise();
-            this.articles = articles;
-            console.log("Produit récupéré !!", this.newProduct);
-        } catch (error) {
-            console.error("Erreur lors du chargement des données :", error);
-        }
+            this.produitService.getArticles().subscribe((value: Article[]) => {
+                this.articles = value;
+            });
 
-        this.produitService.getArticles().subscribe((value: Article[]) => {
-            this.articles = value;
-        });
     }
 
     ajouterProduit() {
@@ -190,7 +194,8 @@ export class ProduitAjoutComponent implements OnInit {
                     }
                 );
             } else {
-                // Add new product
+
+
                 this.produitService.addProduit(this.newProduct, this.uploadedFiles).subscribe(
                     response => {
                         if (response) {
@@ -218,6 +223,8 @@ export class ProduitAjoutComponent implements OnInit {
     }
 
 
+
+
     clear(table: Table) {
         table.clear();
     }
@@ -232,7 +239,7 @@ export class ProduitAjoutComponent implements OnInit {
     }
 
     confirm() {
-        console.log(this.newProduct._dataqr)
+
         this.codeISvalide = true;
         if (this.newProduct._dataqr.trim() !== '') {
             this.produitService.getProduitByQrNom(this.newProduct._dataqr).subscribe(value => {
@@ -268,7 +275,7 @@ export class ProduitAjoutComponent implements OnInit {
             this.produitService.getImageProduit(value.name).subscribe(
                 (data: Blob) => {
                     this.uploadedFiles.push(data)
-                    console.log(this.uploadedFiles)
+
                     const reader = new FileReader();
                     reader.onloadend = () => {
                         const blobUrl = URL.createObjectURL(data);
@@ -303,9 +310,8 @@ export class ProduitAjoutComponent implements OnInit {
 
 
     setDataCode($event: string) {
+         this.newProduct.dataqr = $event;
 
-        this.newProduct._dataqr = $event;
-        console.log(new JsonPipe().transform(this.subdataqr))
     }
 
     returnBack() {
@@ -329,7 +335,7 @@ export class ProduitAjoutComponent implements OnInit {
         this.subdataqr.forEach(value => {
             if (code.id !== value.code)
                 data.push(value)
-            console.log(value)
+
         });
         this.subdataqr = data;
     }
@@ -373,30 +379,62 @@ export class ProduitAjoutComponent implements OnInit {
     }
 
     imprimer(id: string): boolean {
-        /* Read more about handling dismissals below */
-        const contenuImprimer = document.getElementById(id);
+        const element = document.getElementById('barcode-container');
 
+        if (element) {
+            html2canvas(element, { scale: 2 }).then(canvas => { // Increased scale for better quality
+                const imgData = canvas.toDataURL('image/png');
+                const printWindow = window.open('', '', 'height=500,width=700'); // Size for 60mm x 30mm in pixels
 
-        if (contenuImprimer) {
-            // Ouvrez une nouvelle fenêtre avec des dimensions spécifiées
-            const fenetreImpression = window.open('', 'PRINT', 'width=1000,height=800');
+                if (printWindow) {
+                    printWindow.document.write(`
+            <html>
+            <head>
+              <title>Print Barcode</title>
+              <style>
+                @media print {
+                  @page {
+                    size: 38mm 25mm; /* Set the paper size */
+                    margin: 0; /* Remove default margins */
+                  }
+                  body {
+                    margin:0px;
+                    padding: 0px;
+                    width: 38mm;
+                    height: 25mm;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                  }
+                  img {
+                    width: 30mm; /* Set image width to 60mm */
+                    height: 25mm; /* Set image height to 30mm */
+                    object-fit: cover; /* Ensure image covers the area */
+                  }
+                  .custom-barcode svg text {
+        font-size: 12px; /* Adjust the font size */
+        fill: red; /* Change the text color */
+        font-family: Arial, sans-serif; /* Change the font family */
+    }
+                }
+              </style>
+            </head>
+            <body>
+              <img class="custom-barcode" src="${imgData}" />
+            </body>
+            </html>
+          `);
 
-            if (fenetreImpression) {
-                // Ajoutez le contenu à la fenêtre d'impression
-                fenetreImpression.document.write(contenuImprimer.innerHTML);
-
-                // Appelez la fonction d'impression
-                fenetreImpression.document.close();
-                fenetreImpression.print();
-                fenetreImpression.close();
-            } else {
-                // Gestion d'erreur si la fenêtre n'a pas pu être ouverte
-                console.error('La fenêtre d\'impression n\'a pas pu être ouverte.');
-                return false
-            }
+                    printWindow.document.close(); // Close the document stream
+                    printWindow.focus(); // Focus on the print window
+                    printWindow.onload = () => {
+                        printWindow.print(); // Trigger the print dialog
+                        printWindow.close(); // Close the print window after printing
+                    };
+                }
+            });
         }
-
-        return true;
+        return true
     }
 
     private updateShowButtun(): void {
@@ -406,7 +444,7 @@ export class ProduitAjoutComponent implements OnInit {
     private updateRootFromCurrentPath(): void {
         this.root = this.router.url; // Récupère le chemin actuel
         this.updateShowButtun();
-        console.log("root", this.root)
+
     }
 
     clearFiles() {
@@ -480,6 +518,18 @@ export class ProduitAjoutComponent implements OnInit {
     public addNewArticle() {
         this.dialogueService.openDialogueArticle();
     }
+
+
+    shouldStayOnSamePageFacture():boolean {
+        const currentUrl = this.router.url;
+        return currentUrl.includes('/update-facture');
+    }
+
+    ngAfterViewInit(): void {
+
+
+    }
+
 }
 
 

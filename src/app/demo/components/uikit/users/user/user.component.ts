@@ -19,9 +19,11 @@ import {FileUploadModule} from "primeng/fileupload";
 import {AvatarModule} from "primeng/avatar";
 import {BadgeModule} from "primeng/badge";
 import {RippleModule} from "primeng/ripple";
+import {Produit} from "../../../../../models/produit";
+import {Page} from "../../../../../models/page";
 @Component({
-  selector: 'app-user',
-  standalone: true,
+    selector: 'app-user',
+    standalone: true,
     imports: [
         ButtonModule,
         CurrencyPipe,
@@ -42,10 +44,25 @@ import {RippleModule} from "primeng/ripple";
         NgIf,
         RippleModule
     ],
-  templateUrl: './user.component.html',
-  styleUrl: './user.component.scss'
+    templateUrl: './user.component.html',
+    styleUrl: './user.component.scss'
 })
 export class UserComponent {
+
+    initTabUser: User[]=[];
+    UsersPage: Page<User>={
+        content:this.initTabUser,number:0,size:0,totalPages:0,totalElements:0
+
+    };
+    currentPage: number = 0;
+    pageSize: number = 10; // Nombre d'éléments par page
+    loadingdata: boolean = false;
+    first = 0;
+    rows = 10;
+
+
+
+
     users: User[] = [];
     searchTerm: string = '';
     user!:User;
@@ -62,16 +79,74 @@ export class UserComponent {
         this.displayusers=true;
     }
     ngOnInit(): void {
+        this.loadUsers(this.currentPage, this.pageSize);
+
         this.userService.exist("user")
         this.getUserById();
         this.getAllUsers();
     }
 
+    loadUsers(page: number, size: number) {
+        this.loadingdata=true ;
+        this.userService.LoadUsers(page, size).subscribe(
+            (data: Page<User>) => {
+                this.UsersPage = data;
+                this.loadingdata=false;
+            },
+            (error) => {
+                console.error('Erreur lors du chargement des Users', error);
+            }
+        );
+    }
+    onPageChange(event: any) {
+        this.currentPage = event.page==undefined?0:event.page;
+        this.pageSize = event.rows==undefined?10:event.rows
+        this.loadUsers(this.currentPage, this.pageSize);
+
+    }
+
+    next() {
+        if (!this.isLastPage()) {
+            this.currentPage++;
+            this.loadUsers(this.currentPage, this.pageSize);
+        }
+    }
+
+    prev() {
+        if (!this.isFirstPage()) {
+            this.currentPage--;
+            this.loadUsers(this.currentPage, this.pageSize);
+
+        }
+
+    }
+
+
+    reset() {
+        this.currentPage = 0; // Réinitialise à la première page
+        this.loadUsers(this.currentPage, 10);
+
+    }
+
+    pageChange(event) {
+        this.first = event.first;
+        this.rows = event.rows;
+    }
+
+    isFirstPage() {
+        return this.currentPage === 0;
+    }
+
+    isLastPage() {
+        return (this.currentPage + 1) * this.pageSize >= this.users.length;
+    }
+
+
     getAllUsers(){
         this.userService.getUsers().subscribe((value :User[])=>{
             this.users=value ;
-            console.error(""+new JsonPipe().transform(this.users))
-            console.log(value)
+
+
 
 
         },error => {
@@ -115,7 +190,7 @@ export class UserComponent {
     }
 
     editUser(user: User): void {
-        console.log('Utilisateur sélectionné pour modification :', user.id);
+
         this.router.navigate(['/uikit/Edit-user', user.id]);
     }
     // Importez les modules nécessaires
@@ -134,7 +209,7 @@ export class UserComponent {
                 this.userService.deleteUser(user).subscribe(
                     (response: any) => {
                         // Gestion de la réponse en tant que texte
-                        console.log( response)
+
                         if (response==true) {
                             Swal.fire('Supprimé', 'L\'utilisateur a été supprimé avec succès', 'success');
                             this.getAllUsers();
@@ -151,7 +226,7 @@ export class UserComponent {
                 Swal.fire('Annulé', 'La suppression a été annulée', 'info');
             }
         });
-        console.log("utilisateur" , this.user)
+
     }
 
     deleteService(userId: number): void {
@@ -186,4 +261,3 @@ export class UserComponent {
 
     }
 }
-

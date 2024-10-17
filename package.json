@@ -1,18 +1,17 @@
 {
-    "name": "sakai-ng",
+    "name": "kf7",
     "version": "17.0.0",
     "main": "main.js",
     "license": "MIT",
     "scripts": {
         "ng": "ng",
         "start": "ng serve",
-        "build": "ng build",
+        "build": "ng build --configuration=production",
         "test": "ng test",
         "lint": "ng lint",
         "e2e": "ng e2e",
         "electron": "electron .",
         "electron-build": "ng build && electron ."
-
     },
     "private": true,
     "dependencies": {
@@ -30,7 +29,8 @@
         "@fullcalendar/daygrid": "^6.0.3",
         "@fullcalendar/interaction": "^6.0.3",
         "@fullcalendar/timegrid": "^6.0.3",
-        "chart.js": "^3.3.2",
+        "chart.js": "^3.9.1",
+        "html2canvas": "^1.4.1",
         "jsbarcode": "^3.11.6",
         "jwt-decode": "^4.0.0",
         "ngx-barcode6": "^1.0.24",
@@ -49,14 +49,15 @@
         "@angular/cli": "^17.0.5",
         "@angular/compiler-cli": "^17.0.5",
         "@types/jasmine": "~4.3.1",
+        "compression-webpack-plugin": "^11.1.0",
+        "electron": "^29.1.0",
+        "electron-packager": "^17.1.2",
         "jasmine-core": "~4.6.0",
         "karma": "~6.4.2",
         "karma-chrome-launcher": "~3.2.0",
         "karma-coverage": "~2.2.0",
         "karma-jasmine": "~5.1.0",
         "karma-jasmine-html-reporter": "~2.1.0",
-        "electron": "^29.1.0",
-        "electron-packager": "^17.1.2",
         "typescript": "~5.2.2"
     }
 }

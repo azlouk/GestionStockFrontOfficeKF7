@@ -2,116 +2,157 @@
     <h1 class=" text-primary-600 font-bold mt-2">Ajouter un nouvel utilisateur</h1>
 
     <div class="flex flex-row gap-4">
-        <div class="card col-4 gap-1">
-            <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="p-grid">
+        <div class="card col-4 gap-3">
+            <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="p-grid  ">
                 <h4 class="text-primary-600 font-bold pi pi-user">Détails utilisateur</h4>
 
-                <div class="p-fluid p-formgrid p-grid">
-                    <div class="p-field p-col-12 p-md-6">
+                <div class="p-fluid p-formgrid p-grid mt-4 ">
+                    <div class="p-field p-col-12 p-md-6 mt-4">
                         <label for="nom">Nom</label>
-                        <input id="nom" pInputText formControlName="nom" />
+                        <input id="nom" pInputText formControlName="nom"/>
                     </div>
-                    <div class="p-field p-col-12 p-md-6">
+                    <div class="p-field p-col-12 p-md-6 mt-4">
                         <label class="mt-2" for="prenom">Prénom</label>
-                        <input id="prenom" pInputText formControlName="prenom" />
+                        <input id="prenom" pInputText formControlName="prenom"/>
                     </div>
                 </div>
 
-                <div class="p-fluid p-formgrid p-grid">
-                    <div class="p-field p-col-12 p-md-6">
+                <div class="p-fluid p-formgrid p-grid mt-4">
+                    <div class="p-field p-col-12 p-md-6 mt-4">
                         <label class="mt-2" for="email">Email</label>
-                        <input type="email" id="email" pInputText formControlName="email" placeholder="exemple@domaine" />
+                        <input type="email" id="email" pInputText formControlName="email"
+                               placeholder="exemple@domaine"/>
                     </div>
-                    <div class="p-field p-col-12 p-md-6">
+                    <div class="p-field p-col-12 mt-4">
                         <label class="mt-2" for="tel">Téléphone</label>
-                        <p-inputNumber id="tel" formControlName="tel" placeholder="123456789 ou +123456789"></p-inputNumber>
+                        <p-inputNumber id="tel" formControlName="tel"
+                                       placeholder="123456789 ou +123456789"></p-inputNumber>
                     </div>
                 </div>
 
-                <div class="p-fluid p-formgrid p-grid">
-                    <div class="p-field p-col-12 p-md-6">
+                <div class="p-fluid p-formgrid p-grid mt-4">
+                    <div class="p-field p-col-12 p-md-6 mt-4">
                         <label class="mt-2" for="adresse">Adresse</label>
-                        <input id="adresse" pInputText formControlName="adresse" laceholder="Taper adresse utilisateur"/>
+                        <textarea
+                                id="adresse"
+                                pInputTextarea
+                                formControlName="adresse"
+                                placeholder="Taper adresse utilisateur"
+                                rows="5"
+                                [autoResize]="true"
+
+                                cols="56">
+              </textarea>
                     </div>
-                    <div class="p-field p-col-12 p-md-6">
+
+                    <div class="p-field p-col-12 p-md-6 mt-4">
                         <label class="mt-2" for="role">Rôle:</label>
-                        <p-dropdown formControlName="role" id="role" [options]="roles" placeholder="Sélectionner rôle"></p-dropdown>
+                        <p-dropdown formControlName="role" id="role" [options]="roles"
+                                    placeholder="Sélectionner rôle"></p-dropdown>
+                    </div>
+                    <div class="card flex flex-column justify-content-center mt-4 "
+                      *ngIf="userForm.value.role==RoleEnum.EMPLOYER||userForm.value.role==RoleEnum.RESPONSABLE || userForm.value.role==RoleEnum.MANAGER|| userForm.value.role==RoleEnum.ADMIN">
+
+                        {{userForm.value.role}}
+
+                        <label class="bold text-3xl mt-3">Clé : <label
+                                class="text-2xl">{{secretKey == '' ? 'Pas de clé sécurité' : secretKey}}</label></label>
+                        <p class="text mt-3 text-color-secondary">
+                            <label class="bold text-2xl">NB:</label>
+                            Ne partager jamais votre clé de sécurité
+                        </p>
+                        <p-button (onClick)="load()" icon="pi pi-check" label="Générer clé de sécurité"/>
+
+
                     </div>
                 </div>
 
-                <div class="p-fluid p-formgrid p-grid" *ngIf="userForm.value.role.toLowerCase()=='employer'||userForm.value.role.toLowerCase()=='responsable' || userForm.value.role.toLowerCase()=='manager'|| userForm.value.role.toLowerCase()=='admin'">
-                    <div class="p-field p-col-12 p-md-6">
+                <div class="p-fluid p-formgrid p-grid mt-4"
+                     *ngIf="userForm.value.role==RoleEnum.EMPLOYER||userForm.value.role==RoleEnum.RESPONSABLE || userForm.value.role==RoleEnum.MANAGER|| userForm.value.role==RoleEnum.ADMIN">
+                    <div class="p-field p-col-12 p-md-6  mt-4">
                         <label class="mt-2" for="motdepasse">Mot de passe</label>
-                        <p-password id="motdepasse" formControlName="motdepasse" type="password" placeholder="Taper mot de passe" [toggleMask]="true"></p-password>
+                        <p-password id="motdepasse" formControlName="motdepasse" type="password"
+                                    placeholder="Taper mot de passe" [toggleMask]="true"></p-password>
                     </div>
-                    <div class="p-field p-col-12 p-md-6">
+                    <div class="p-field p-col-12 p-md-6 mt-4">
                         <label class="mt-2" for="motdepasseconfirm">Confirmer Mot de passe:</label>
-                        <p-password id="motdepasseconfirm" formControlName="motdepasseconfirm" type="password" placeholder="Confirmer mot de passe" [toggleMask]="true"></p-password>
+                        <p-password id="motdepasseconfirm" formControlName="motdepasseconfirm" type="password"
+                                    placeholder="Confirmer mot de passe" [toggleMask]="true"></p-password>
                     </div>
                 </div>
 
-                <div class="p-fluid p-formgrid p-grid" *ngIf="userForm.value.role === 'CLIENT'">
+                <div class="p-fluid p-formgrid p-grid mt-4" *ngIf="userForm.value.role === 'CLIENT'">
                     <div class="p-field p-col-12 p-md-6">
                         <label class="mt-2" for="solde">Solde Client</label>
-                        <p-inputNumber id="solde" formControlName="solde" placeholder="Taper solde client"></p-inputNumber>
+                        <p-inputNumber id="solde" formControlName="solde"
+                                       placeholder="Taper solde client"></p-inputNumber>
                     </div>
                     <div class="p-field p-col-12 p-md-6">
                         <label class="mt-2" for="typeClient">Type Client</label>
-                        <input id="typeClient" pInputText formControlName="typeClient" type="text" placeholder="Taper type client">
+                        <input id="typeClient" pInputText formControlName="typeClient" type="text"
+                               placeholder="Taper type client">
                     </div>
                 </div>
 
-                <div class="p-fluid p-formgrid p-grid" *ngIf="userForm.value.role === 'EMPLOYER'">
+                <div class="p-fluid p-formgrid p-grid mt-4" *ngIf="userForm.value.role === 'EMPLOYER'">
                     <div class="p-field p-col-12 p-md-6">
                         <label class="mt-2" for="typeEmployer">Type Employer</label>
-                        <input id="typeEmployer" pInputText formControlName="typeEmployer" placeholder="Taper type employer"/>
+                        <input id="typeEmployer" pInputText formControlName="typeEmployer"
+                               placeholder="Taper type employer"/>
                     </div>
                     <div class="p-field p-col-12 p-md-6">
                         <label class="mt-2" for="tacheEmployer">Tâche Employer</label>
-                        <input id="tacheEmployer" pInputText formControlName="tacheEmployer" placeholder="Taper tâche employer"/>
+                        <input id="tacheEmployer" pInputText formControlName="tacheEmployer"
+                               placeholder="Taper tâche employer"/>
                     </div>
                 </div>
 
-                <div class="p-fluid p-formgrid p-grid" *ngIf="userForm.value.role === 'FOURNISSEUR'">
+                <div class="p-fluid p-formgrid p-grid mt-4" *ngIf="userForm.value.role === 'FOURNISSEUR'">
                     <div class="p-field p-col-12 p-md-6">
                         <label class="mt-2" for="nomSociete">Nom Société</label>
                         <input id="nomSociete" pInputText formControlName="nomSociete" placeholder="Taper nom société"/>
                     </div>
                     <div class="p-field p-col-12 p-md-6">
                         <label class="mt-2" for="telephoneSociete">Tél Société</label>
-                        <p-inputNumber id="telephoneSociete" formControlName="telephoneSociete" placeholder="Taper téléphone société"></p-inputNumber>
+                        <p-inputNumber id="telephoneSociete" formControlName="telephoneSociete"
+                                       placeholder="Taper téléphone société"></p-inputNumber>
                     </div>
                 </div>
 
-                <div class="p-fluid p-formgrid p-grid" *ngIf="userForm.value.role === 'FOURNISSEUR'">
+                <div class="p-fluid p-formgrid p-grid mt-4" *ngIf="userForm.value.role === 'FOURNISSEUR'">
                     <div class="p-field p-col-12 p-md-6">
                         <label class="mt-2" for="adresseSociete">Adresse Société</label>
-                        <input id="adresseSociete" pInputText formControlName="adresseSociete" placeholder="Taper adresse société"/>
+                        <input id="adresseSociete" pInputText formControlName="adresseSociete"
+                               placeholder="Taper adresse société"/>
                     </div>
                     <div class="p-field p-col-12 p-md-6">
                         <label class="mt-2" for="emailSociete">Mail Société</label>
-                        <input id="emailSociete" pInputText formControlName="emailSociete" placeholder="Taper email société"/>
+                        <input id="emailSociete" pInputText formControlName="emailSociete"
+                               placeholder="Taper email société"/>
                     </div>
                 </div>
 
-                <div class="p-fluid p-formgrid p-grid" *ngIf="userForm.value.role === 'ADMIN'">
+                <div class="p-fluid p-formgrid p-grid mt-4" *ngIf="userForm.value.role === 'ADMIN'">
                     <div class="p-field p-col-12 p-md-6">
                         <label class="mt-2" for="pseudo">Pseudo Admin</label>
                         <input id="pseudo" pInputText formControlName="pseudo" placeholder="Taper pseudo admin"/>
                     </div>
                 </div>
 
-                <div class="p-fluid p-formgrid p-grid" *ngIf="userForm.value.role === 'MANAGER'">
+                <div class="p-fluid p-formgrid p-grid mt-4" *ngIf="userForm.value.role === 'MANAGER'">
                     <div class="p-field p-col-12 p-md-6">
                         <label class="mt-2" for="attributManager">Manager</label>
-                        <input id="attributManager" pInputText formControlName="attributManager" placeholder="Taper attribut manager"/>
+                        <input id="attributManager" pInputText formControlName="attributManager"
+                               placeholder="Taper attribut manager"/>
                     </div>
                 </div>
 
             </form>
+
+
         </div>
         <!--=================permission==================================-->
-        <div class="card col-8 p-3" >
+        <div class="card col-8 p-3">
             <h4 class="text-primary-600 font-bold pi pi-wrench">Permission</h4>
 
             <p-table [value]="permissions" [tableStyle]="{ 'min-width': '50rem' }">
@@ -122,16 +163,42 @@
                         <th>Ajouter</th>
                         <th>Modifier</th>
                         <th>Supprimer</th>
+                        <th>Multi-Sélection</th>
                     </tr>
                 </ng-template>
 
                 <ng-template let-permission pTemplate="body">
                     <tr>
                         <td [class]="permission.icon">{{permission.name}}</td>
-                        <td><p-checkbox (click)="getPermission(permission.tableName,permission.afficher==true?'read':'readn')" [(ngModel)]="permission.afficher" (ngModelChange)="permission.afficher==false?permission.ajouter=permission.modifier=permission.supprimer=false:permission.ajouter=false" [binary]="true" ></p-checkbox></td>
-                        <td><p-checkbox [disabled]="!permission.afficher" (click)="getPermission(permission.tableName,permission.ajouter==true?'create':'createn')" [(ngModel)]="permission.ajouter" [binary]="true" ></p-checkbox></td>
-                        <td><p-checkbox [disabled]="!permission.afficher" (click)="getPermission(permission.tableName,permission.modifier==true?'update':'updaten')"  [(ngModel)]="permission.modifier" [binary]="true" ></p-checkbox></td>
-                        <td><p-checkbox [disabled]="!permission.afficher" (click)="getPermission(permission.tableName,permission.supprimer==true?'delete':'deleten')"  [(ngModel)]="permission.supprimer" [binary]="true" ></p-checkbox></td>
+                        <td>
+                            <p-checkbox
+                                    (click)="getPermission(permission.tableName,permission.afficher==true?'read':'readn')"
+                                    [(ngModel)]="permission.afficher"
+                                    (ngModelChange)="permission.afficher==false?permission.ajouter=permission.modifier=permission.supprimer=false:permission.ajouter=false"
+                                    [binary]="true"></p-checkbox>
+                        </td>
+                        <td>
+                            <p-checkbox [disabled]="!permission.afficher"
+                                        (click)="getPermission(permission.tableName,permission.ajouter==true?'create':'createn')"
+                                        [(ngModel)]="permission.ajouter" [binary]="true"></p-checkbox>
+                        </td>
+                        <td>
+                            <p-checkbox [disabled]="!permission.afficher"
+                                        (click)="getPermission(permission.tableName,permission.modifier==true?'update':'updaten')"
+                                        [(ngModel)]="permission.modifier" [binary]="true"></p-checkbox>
+                        </td>
+                        <td>
+                            <p-checkbox [disabled]="!permission.afficher"
+                                        (click)="getPermission(permission.tableName,permission.supprimer==true?'delete':'deleten')"
+                                        [(ngModel)]="permission.supprimer" [binary]="true"></p-checkbox>
+                        </td>
+                        <td>
+                            <p-checkbox
+                                    [ngModel]="allSelected(permission)"
+                                    (ngModelChange)="toggleAll($event, permission)"
+                                    [binary]="true">
+                            </p-checkbox>
+                        </td>
                     </tr>
                 </ng-template>
 
@@ -147,4 +214,38 @@
         <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="onSubmit()"></button>
     </div>
 </div>
+<div>
+    <p-toast></p-toast>
+    <p-confirmDialog #cd>
+        <ng-template pTemplate="headless" let-message>
+            <div class="flex flex-column align-items-center p-5 surface-overlay border-round">
+                <div class="border-circle bg-primary inline-flex justify-content-center align-items-center h-6rem w-6rem">
+                    <i class="pi pi-key text-5xl"></i>
+                </div>
+                <span class="font-bold text-2xl block mb-2 mt-4">
+                {{ message.header }}
+            </span>
+                <p class="mb-0">
+                    {{ message.message }}
+                    <button pButton icon="pi pi-copy" class="p-button-rounded p-button-text"
+                            (click)="copyToClipboard(message.message)"></button>
+                </p>
+                <div class="flex align-items-center gap-2 mt-4">
+                    <button
+                            pButton
+                            label="Save"
+                            (click)="cd.accept()"
+                            class="w-8rem">
+                    </button>
+                    <button
+                            pButton
+                            label="Cancel"
+                            (click)="cd.reject()"
+                            class="p-button-outlined w-8rem ">
+                    </button>
+                </div>
+            </div>
+        </ng-template>
+    </p-confirmDialog>
 
+</div>

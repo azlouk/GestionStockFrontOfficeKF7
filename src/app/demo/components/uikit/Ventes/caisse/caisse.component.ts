@@ -1,4 +1,13 @@
-import {Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {
+    AfterViewChecked,
+    ChangeDetectorRef,
+    Component,
+    ElementRef,
+    HostListener,
+    OnInit,
+    Renderer2,
+    ViewChild
+} from '@angular/core';
 import Swal from "sweetalert2";
 import {Vente} from "../../../../../models/Vente";
 import {getUserDecodeID} from "../../../../../../main";
@@ -6,16 +15,15 @@ import {Produit} from "../../../../../models/produit";
 import {FormGroup, FormsModule} from "@angular/forms";
 import {Message} from "primeng/api/message";
 import {ProduitService} from "../../../../../layout/service/produit.service";
-import {VenteService} from "../../../../../layout/service/vente.service";
-import {ClotureService} from "../../../../service/cloture.service";
+import {ClotureService} from "../../../../../layout/service/cloture.service";
 import {Router} from "@angular/router";
-import {MessageService} from "primeng/api";
+import {ConfirmationService, MessageService} from "primeng/api";
 import {DomSanitizer, SafeUrl} from "@angular/platform-browser";
 import {SaveUrlFileProduct} from "../../../../../models/File";
 import {LigneVente} from "../../../../../models/LigneVente";
 import {Table, TableModule} from "primeng/table";
 import {DropdownModule} from "primeng/dropdown";
-import {CommonModule, CurrencyPipe, DatePipe, DecimalPipe, NgClass} from "@angular/common";
+import {CommonModule, CurrencyPipe, DatePipe, DecimalPipe, JsonPipe, NgClass} from "@angular/common";
 import {CheckboxModule} from "primeng/checkbox";
 import {InplaceModule} from "primeng/inplace";
 import {InputNumberModule} from "primeng/inputnumber";
@@ -29,10 +37,34 @@ import {InputGroupAddonModule} from "primeng/inputgroupaddon";
 import {InputTextModule} from "primeng/inputtext";
 import {ToggleButtonModule} from "primeng/togglebutton";
 import {AutoFocusModule} from "primeng/autofocus";
-import {Cloture} from "../../../../../models/Cloture";
 import {SidebarModule} from "primeng/sidebar";
 import {FactureComponent} from "../../Factures/facture/facture.component";
 import {FactureAjoutComponent} from "../../Factures/facture-ajout/facture-ajout.component";
+import {RippleModule} from "primeng/ripple";
+import {TabViewModule} from "primeng/tabview";
+import {ServiceComp} from "../../../../../models/ServiceComp";
+import {ServiceCompService} from "../../../../../layout/service/service-comp.service";
+import {CommandeServAjoutComponent} from "../../commandeServices/commande-serv-ajout/commande-serv-ajout.component";
+import {Cloture} from "../../../../../models/Cloture";
+import {DockModule} from "primeng/dock";
+import {User} from "../../../../../models/user";
+import {UserService} from "../../../../../layout/service/user.service";
+import {SelectButtonModule} from "primeng/selectbutton";
+import {ChipModule} from "primeng/chip";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {FieldsetModule} from "primeng/fieldset";
+import {RadioButtonModule} from "primeng/radiobutton";
+import {CalendarModule} from "primeng/calendar";
+import {Tranche} from "../../../../../models/Tranche";
+import {Facture, factureType} from "../../../../../models/Facture";
+import {TrancheService} from "../../../../../layout/service/tranche.service";
+import {FactureService} from "../../../../../layout/service/facture.service";
+import {LigneFacture} from "../../../../../models/LigneFacture";
+import {DialogService} from "../../../../../layout/service/dialogue-user.service";
+import {AjoutUserComponent} from "../../users/ajout-user/ajout-user.component";
+import {Page} from "../../../../../models/page";
+import {log} from "@angular-devkit/build-angular/src/builders/ssr-dev-server";
+
 
 @Component({
     selector: 'app-caisse',
@@ -54,55 +86,79 @@ import {FactureAjoutComponent} from "../../Factures/facture-ajout/facture-ajout.
         BadgeModule,
         InputGroupModule,
         InputGroupAddonModule, InputTextModule, TableModule,
-        CommonModule, ToggleButtonModule, AutoFocusModule, SidebarModule, FactureComponent, FactureAjoutComponent
+        CommonModule, ToggleButtonModule, AutoFocusModule, SidebarModule, FactureComponent, FactureAjoutComponent, RippleModule, TabViewModule, CommandeServAjoutComponent, DockModule, SelectButtonModule, ChipModule, ConfirmDialogModule, FieldsetModule, RadioButtonModule, CalendarModule, AjoutUserComponent
     ],
     templateUrl: './caisse.component.html',
     styleUrl: './caisse.component.scss'
 })
-export class CaisseComponent implements OnInit{
-    @ViewChild('dv') dv: DataView | undefined;
 
+
+export class CaisseComponent implements OnInit, AfterViewChecked  {
+    @ViewChild('dv') dv: DataView | undefined;
+    @ViewChild('searchInput') searchInput: ElementRef;
+    @ViewChild('dtProduitsFiltreservice') dtProduitsFiltreservice: any;
+    @ViewChild('dt3') table: Table;
     focusIndex = 0;
     searchTerm: string = '';
-    masquer = true;
+    searchTermFilter: string = '';
+    searchTermFilterService: string = '';
+
+     produits: Produit[] = [];
+    services: ServiceComp [] = []
+////Attribut of TableWithPagination
 
 
-    produits: Produit[] = [];
-    produitsFiltres: Produit [] = [];
-    cloture : Cloture = new Cloture();
+    initTabProduit: Produit[]=[];
+    produitsFiltres: Page<Produit>={
+        content:this.initTabProduit,number:0,size:0,totalPages:0,totalElements:0
 
-    listeVente : Vente[]=[];
+    };
 
-    selectedVente: Vente=new Vente() ;
+    currentPage: number = 0;
+    pageSize: number = 10;
+    first = 0;
+    rows = 10;
+
+
+    serviceFiltres: ServiceComp [] = [];
+
+    cloture: Cloture = new Cloture();
+
+    listeVente: Vente[] = [];
+
+    selectedVente: Vente = new Vente();
     checked: boolean = true;
     divVisible: boolean = true;
     visible: boolean = false;
-    show : boolean = false;
-    identifiant = 0;
+    show: boolean = false;
 
 
     position: string = 'top';
     loading: boolean = true;
     IsvisiblePop: boolean = false;
     layout: any = 'list';
-    searchproductselling: any = '';
-    autoimprimer: boolean = false;
-    DateCReation: Date = new Date();
-    visibleimage: boolean = false;
-    newCloture!: FormGroup;
-    frais: number=0;
-    reglement: number=0;
+     autoimprimer: boolean = false;
+     visibleimage: boolean = false;
+     frais: number = 0;
+    reglement: number = 0;
 
-
-
-
-    activityValues: number[] = [0, 100];
-    currentDate: string = this.formatDate(new Date());
+    sidebarVisibleFacture: boolean = false;
+    searchTable: boolean = false;
+    searchTableService: boolean = false;
 
 
     TotalProductNb: number = 0;
+    TotalAndReglement: any = {total: 0, reglement: 0};
 
-    TotalAndReglement:any={total:0,reglement:0};
+    utilisateursClients: User[] = [];
+    public PassClient: User;
+
+
+    stateOptions = [
+        {label: 'Client', TypeUserSelected: 'Client'},
+        {label: 'Passager', TypeUserSelected: 'Passager'}
+    ];
+    TypeUserSelected: string = "Passager";
 
     // Ajoutez cette méthode pour formater la date au format 'YYYY-MM-DD'
     formatDate(date: Date): string {
@@ -112,87 +168,210 @@ export class CaisseComponent implements OnInit{
         return `${year}-${month}-${day}`;
     }
 
-    @ViewChild('searchInput') searchInput!: ElementRef;
     @ViewChild('ajouterProduitButton') ajouterProduitButton!: ElementRef;
     messages1: Message[] = [];
 
     ngOnInit(): void {
-        this.getAllProduits();
+        this.loadProduits(this.currentPage, this.pageSize);
+        this.getAllServices();
+        this.getAllClient();
+        this.onValueChange();
         this.messages1 = [{severity: 'error', summary: 'Error', detail: 'Pas des images'}];
+        this.loadingdata=true ;
+      this.userConnect();
+    }
+userConnect(){
+        this.clotureService.getUserConnecte().subscribe(value => {
+            alert(value)
+        },error => {error})
+}
+
+    onPageChange(event: any) {
+        this.currentPage = event.page==undefined?0:event.page;
+        this.pageSize = event.rows==undefined?10:event.rows
+        this.loadProduits(this.currentPage, this.pageSize);
+
     }
 
+    next() {
+        if (!this.isLastPage()) {
+            this.currentPage++;
+            this.loadProduits(this.currentPage, this.pageSize);
+        }
+    }
+
+    prev() {
+        if (!this.isFirstPage()) {
+            this.currentPage--;
+            this.loadProduits(this.currentPage, this.pageSize);
+
+        }
+
+    }
+
+
+    reset() {
+        this.currentPage = 0; // Réinitialise à la première page
+        this.loadProduits(this.currentPage, 10);
+
+    }
+
+    pageChange(event) {
+        this.first = event.first;
+        this.rows = event.rows;
+    }
+
+    isFirstPage() {
+        return this.currentPage === 0;
+    }
+
+    isLastPage() {
+        return (this.currentPage + 1) * this.pageSize >= this.produits.length;
+    }
+
+
+
+
+    public ngAfterViewChecked(): void {
+         this.cdRef.detectChanges();
+
+    }
     toggleDivVisibility() {
         this.divVisible = !this.divVisible;
     }
 
     constructor(private produitService: ProduitService,
-                public venteService: VenteService,
-                private clotureService : ClotureService,
+                private serviceCompService: ServiceCompService,
+                public userService: UserService,
+                private clotureService: ClotureService,
                 private renderer: Renderer2,
                 private route: Router,
                 private messageService: MessageService,
-                private sanitizer: DomSanitizer
+                private sanitizer: DomSanitizer,
+                private confirmationService: ConfirmationService,
+                private trancheService: TrancheService,
+                private factureService: FactureService,
+                private router: Router,
+                private  cdRef:ChangeDetectorRef,
+                public dialogueService:DialogService
     ) {
-        const idrandom=1;
-        this.selectedVente=new Vente(idrandom,new Date().toString(),'client '+idrandom,0,0,[],getUserDecodeID());
+        const idrandom = 1;
+        // this.selectedVente = new Vente(idrandom, new Date(), new User() , 0, 0, [], getUserDecodeID());
         this.listeVente.push(this.selectedVente);
         this.reglement = this.selectedVente.total;
     }
 
-    SaveVente() {
-        if (this.selectedVente.lignesVente.length != 0) {
+    getAllClient() {
+        this.userService.getUsersClient().subscribe((value: User[]) => {
+            this.utilisateursClients = value
 
+        })
+    }
+
+
+
+    confirm1() {
+
+
+        this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'Vente Payeé avec Success' });
+        this.selectedVente.paye=true;
+        this.SaveVente();
+
+        this.showPay=false
+
+    }
+
+    confirm2() {
+
+
+        this.selectedVente.paye=false;
+       this.createNewFacture();
+
+
+        this.showPay=false
+
+
+    }
+    SaveVente() {
+
+
+
+        if (this.selectedVente.lignesVente.length != 0) {
             this.getTotalVente();
-            this.selectedVente.reglement=this.reglement ;
+            this.selectedVente.reglement = this.reglement;
+
+            this.clotureService.getUserConnecte();
+            this.clotureService.getUserConnecte().subscribe(value => {
+                // this.cloture.employer=value;
+            });
             this.produitService.SaveVente(this.selectedVente).subscribe(value => {
-                console.log("Result Vente :" + value);
-                if (value ) {
-                    this.showTopCenter("Votre Vente est bien enregistré ")
+                if (value) {
+
+
+                    this.messageService.add({
+                        key: 'tc',
+                        severity: 'success',
+                        summary: 'Succès',
+                        detail: 'Votre Vente est bien enregistrée'
+                    });
                     if (this.autoimprimer) {
-                        //let timerInterval: string | number | NodeJS.Timeout | undefined;
-                        Swal.fire({
-                            title: "Auto close alert!",
-                            html: "I will close in <b></b> milliseconds.",
-                            timer: 2000,
-                            timerProgressBar: true,
-                            didOpen: () => {
-                                Swal.showLoading();
-                                // @ts-ignore
-                                // const timer = Swal.getPopup().querySelector("b");
-                                // timerInterval = setInterval(() => {
-                                //     // @ts-ignore
-                                //     timer.textContent = `${Swal.getTimerLeft()}`;
-                                // }, 100);
-                            },
-                            /* willClose: () => {
-                                 clearInterval(timerInterval);
-                             }*/
-                        }).then((result) => {
-                            /* Read more about handling dismissals below */
-                            if (result.dismiss === Swal.DismissReason.timer) {
-                                console.log("I was closed by the timer");
-                                this.imprimer()
+                        // Remplacez Swal.fire par confirmationService pour l'alerte auto-close
+                        this.confirmationService.confirm({
+                            message: 'Votre vente est enregistrée. Voulez-vous imprimer le ticket ?',
+                            header: 'Confirmation',
+                            accept: () => {
+                                this.imprimer();
                             }
                         });
-
                     } else {
                         this.clearVente();
                     }
                 }
-            })
+            });
         } else {
-            Swal.fire({
-                title: "Pas de vente ?",
-                text: "SVP ajouter des produits ",
-                icon: "info"
+            this.messageService.add({
+                key: 'tc',
+                severity: 'error',
+                summary: 'Information',
+                detail: 'Pas de vente, SVP ajouter des produits'
             });
         }
     }
 
-    getAllProduits() {
-        this.produitService.getProduits().subscribe((value: any) => {
-            this.produits = value;
-        })
+
+    loadProduits(page: number, size: number) {
+        this.loadingdata=true ;
+        this.produitService.LoadProduits(page, size).subscribe(
+            (data: Page<Produit>) => {
+                this.produitsFiltres = data;
+                this.loadingdata=false;
+            },
+            (error) => {
+                console.error('Erreur lors du chargement des produits', error);
+            }
+        );
+    }
+
+    getAllServices(): void {
+        this.loading = true;
+        this.serviceCompService.getServices().subscribe(
+            (services: ServiceComp[]) => {
+                this.services = services;
+                this.loading = false;
+
+
+            },
+            (error: any) => {
+                console.error('Error fetching services:', error);
+                this.loading = false;
+                // this.displayusers = false;
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Oops...',
+                    detail: "Vous n'avez pas la permission, s'il vous plaît contactez l'administrateur."
+                });
+            }
+        );
     }
 
     clearVente() {
@@ -203,8 +382,6 @@ export class CaisseComponent implements OnInit{
     }
 
 
-
-
     @HostListener('document:keydown', ['$event'])
     handleKeyDown(event: KeyboardEvent): void {
 
@@ -212,14 +389,14 @@ export class CaisseComponent implements OnInit{
         switch (event.key) {
             case 'F1':
                 this.focusIndex = 1;
-                console.log(`Focus set to Button 0`);
+
                 this.sidebarVisibleFacture = true;
 
                 break;
             case 'F2':
                 this.focusIndex = 2;
                 event.preventDefault();
-                console.log(`Focus set to Button 1`);
+
                 // Déclencher le clic sur le bouton "Ajouter Produit"
                 if (this.ajouterProduitButton != undefined)
                     this.ajouterProduitButton.nativeElement.click();
@@ -232,29 +409,29 @@ export class CaisseComponent implements OnInit{
                 this.searchTerm = '';
                 this.focusIndex = 3;
                 event.preventDefault();
-                console.log(`Focus set to Button 2`);
+
                 this.focusOnSearchInput();
                 break;
             case 'F4':
                 this.focusIndex = 4;
                 event.preventDefault();
-                console.log(`Focus set to Button 3`);
+
                 this.showDialog();
                 break;
             case 'F5':
                 this.focusIndex = 5;
                 event.preventDefault();
-                console.log(`Focus set to Button 4`);
-                this.focusOnSupprimerButton();
+
+                this.searchTable = true;
                 break;
             case 'F6' :
                 this.focusIndex = 6;
-                this.route.navigate(["/home"])
+                this.route.navigate(["/"])
                 break;
             case 'F7':
                 this.focusIndex = 7;
                 event.preventDefault();
-                console.log(`Focus set to Button 6!`);
+
                 this.showClotureDIv();
                 break;
             case 'F8' :
@@ -262,9 +439,19 @@ export class CaisseComponent implements OnInit{
                 this.toggleDivVisibility();
                 break;
             case 'F10' :
+
+                alert(this.selectedVente.client.email)
+                if(this.newFacture.client.email==='Passager@client')
+                {
+                    this.selectedVente.paye=true;
+                    this.createNewFacture()
+                }
+                else {
                 this.focusIndex = 10;
-                this.SaveVente();
+                this.showPay=true;
+                }
                 break;
+
             case 'F9': {
 
                 this.focusIndex = 9;
@@ -306,13 +493,13 @@ export class CaisseComponent implements OnInit{
         switch (index) {
             case 1 :
                 this.focusIndex = 1;
-                this.sidebarVisibleFacture=true
+                this.sidebarVisibleFacture = true
                 break;
 
             case 2:
                 this.focusIndex = 2;
 
-                console.log(`Focus set to Button 1`);
+
                 // Déclencher le clic sur le bouton "Ajouter Produit"
                 if (this.ajouterProduitButton != undefined)
                     this.ajouterProduitButton.nativeElement.click();
@@ -323,26 +510,26 @@ export class CaisseComponent implements OnInit{
 
                 this.searchTerm = '';
                 this.focusIndex = 3;
-                console.log(`Focus set to Button 2`);
+
                 this.focusOnSearchInput();
                 break;
             case 4:
                 this.focusIndex = 4;
-                console.log(`Focus set to Button 3`);
+
                 this.showDialog();
                 break;
             case 5:
                 this.focusIndex = 5;
-                console.log(`Focus set to Button 4`);
+
                 this.focusOnSupprimerButton();
                 break;
             case 6 :
                 this.focusIndex = 6;
-                this.route.navigate(["/home"])
+                this.route.navigate(["/"])
                 break;
             case 7:
                 this.focusIndex = 7;
-                console.log(`Focus set to Button 6!`);
+
                 this.showClotureDIv();
                 break;
             case 8 :
@@ -350,14 +537,30 @@ export class CaisseComponent implements OnInit{
                 this.toggleDivVisibility();
                 break;
             case 10 :
-                this.focusIndex = 10;
-                this.SaveVente();
+                if(this.selectedVente.client.email==='Passager@client')
+                {
+                    this.selectedVente.paye=true;
+                    this.SaveVente();
+
+                }
+                else {
+                    this.focusIndex = 10;
+                    this.showPay=true
+                }
+
+
+                break;
+            case 11 :
+                this.focusIndex = 11;
+                this.searchTable = true;
+
+
                 break;
             case 9: {
                 if (this.selectedVente.lignesVente.length != 0) {
                     Swal.fire({
                         title: "Vous étes sur ?",
-                        text: "supprission définitif",
+                        text: "suprission définitif",
                         icon: "warning",
                         showCancelButton: true,
                         confirmButtonColor: "#3085d6",
@@ -431,7 +634,7 @@ export class CaisseComponent implements OnInit{
     loadFile(filesList: File[]): void {
         this.safeImageUrl = [];
         this.visibleimage = true;
-        console.error(filesList)
+
         filesList.forEach(value => {
             this.produitService.getImageProduit(value.name).subscribe(
                 (data: Blob) => {
@@ -451,28 +654,27 @@ export class CaisseComponent implements OnInit{
 
     }
 
-
     search(): void {
         if (this.searchTerm.trim() !== '') {
-            this.produitsFiltres = []
+            this.produitsFiltres.content = []
             this.produitService.getProduitByQrNom(this.searchTerm).subscribe((value: Produit) => {
                 if (value != null) {
-                    this.produitsFiltres.push(value);
+                    this.produitsFiltres.content.push(value);
                     this.visible = this.IsvisiblePop;
                 }
                 if (this.IsvisiblePop == false)
-                    this.ajouterProduit()
+                    this.ajouterProduit(value)
             });
         }
-        console.log('Produits filtrés: dATA', this.produitsFiltres);
     }
+
     showTopCenter(message: string) {
         this.messageService.add({key: 'tc', severity: 'warn', summary: 'Warn', detail: message});
     }
 
-    ajouterProduitSelectionne(index: number): void {
-        if (index >= 0 && index < this.produitsFiltres.length) {
-            const produitSelectionne = this.produitsFiltres[index];
+    ajouterProduitSelectionne(produit: Produit): void {
+        if (produit) {
+            const produitSelectionne = produit;
 
             const ligneExistante = this.selectedVente.lignesVente.find(ligne => ligne.produit.id === produitSelectionne.id);
 
@@ -522,10 +724,9 @@ export class CaisseComponent implements OnInit{
         })
     }
 
-    ajouterProduit(): void {
-
-        if (this.produitsFiltres.length > 0) {
-            this.ajouterProduitSelectionne(0);
+    ajouterProduit(produit: Produit): void {
+        if (this.produitsFiltres.content.length > 0) {
+            this.ajouterProduitSelectionne(produit);
             this.getTottalNbProduct()
         }
     }
@@ -553,6 +754,14 @@ export class CaisseComponent implements OnInit{
             // Remove the selected product from the list
             this.selectedVente.lignesVente.splice(index, 1);
             this.getTottalNbProduct()
+        }
+    }
+
+    supprimerService(index: number): void {
+        // Check if the index is valid
+        if (index >= 0 && index < this.selectedVente.lignesVente.length) {
+            // Remove the selected product from the list
+            this.selectedVente.lignesVente.splice(index, 1);
         }
     }
 
@@ -611,22 +820,20 @@ export class CaisseComponent implements OnInit{
 
     }
 
-    clear(table: Table) {
-        table.clear();
-    }
+
 
     getTotalVente(): number {
-        const val = this.getSommeTotale() + this.getSommeTaxes()+this.frais;
-        this.selectedVente.total=val;
-
+        const val = this.getSommeTotale() + this.getSommeTaxes() + this.frais;
+        this.selectedVente.total = val;
+         this.selectedVente.reglement=val;
+         this.reglement=val;
         return this.selectedVente.total;
     }
 
 
-
     private showClotureDIv() {
         this.clotureService.getTotalClotureNow(new Date()).subscribe(value => {
-            this.TotalAndReglement=value ;
+            this.TotalAndReglement = value;
         })
 
         this.show = !this.show
@@ -635,10 +842,13 @@ export class CaisseComponent implements OnInit{
     saveCloture() {
         this.cloture.employer.id = getUserDecodeID().id;
         this.cloture.dateCloture = new Date();
-
+        // this.clotureService.getUserConnecte();
+        //   this.clotureService.getUserConnecte().subscribe(value => {
+        //       this.cloture.employer=value;
+        //   });
         this.clotureService.SaveCloture(this.cloture).subscribe(
             value => {
-                console.log(value);
+
                 this.show = false;
 
                 // Utiliser SweetAlert pour afficher un message de succès
@@ -661,47 +871,283 @@ export class CaisseComponent implements OnInit{
             }
         );
     }
+
     async showDialog() {
         const {value: nomClient} = await Swal.fire({
-            title: "Client",
+            title: "Client Passager",
             input: "text",
-            inputValue:"client " +(this.listeVente.length +1) ,
+            inputValue: "Passager " + (this.listeVente.length + 1),
             inputLabel: "nom client!",
-            inputPlaceholder: "nom du clients"
+            inputPlaceholder: "nom du client passager",
+            showCancelButton: true,
+            confirmButtonText: 'Ajouter nouveau', // Texte du bouton de confirmation
+            cancelButtonText: 'Deja Existe' // Texte du bouton d'annulation
         });
-        if (nomClient) {
+
+
+        if (this.selectedVente.lignesVente.length != 0) {
+
+
+            // this.selectedVente = new Vente(this.listeVente.length + 1, new Date(), new User(), 0, 0, [], getUserDecodeID());
+            this.selectedVente = new Vente();
+            this.listeVente.push(this.selectedVente);
+            this.getTottalNbProduct()
 
 
 
-            if(this.selectedVente.lignesVente.length != 0){
+        } else {
+            Swal.fire({
+                title: "Vider  !",
+                text: "Votre vente est déja vidé",
+                icon: "error"
+            });
 
-
-
-                this.selectedVente=new Vente(this.listeVente.length +1,new Date().toString(),nomClient,0,0,[],getUserDecodeID()) ;
-                this.listeVente.push(this.selectedVente) ;
-                this.getTottalNbProduct()
-
-
-                console.log("ligne Ventes:",this.listeVente);
-            }
-            else {
-                Swal.fire({
-                    title: "Vider  !",
-                    text: "Votre vente est déja vidé",
-                    icon: "error"
-                });        }
         }
     }
-    switchVente(vente:Vente){
+
+    switchVente(vente: Vente) {
         this.getTottalNbProduct()
 
         this.selectedVente = vente;
 
-        console.log("SelectedVente",this.selectedVente)
+
 
     }
 
 
     protected readonly top = top;
-    sidebarVisibleFacture: boolean=false;
+    public showDialogueClient: boolean = false;
+    public showPay: boolean=false;
+    public showDialogTranche: boolean=false;
+    Newtranche: Tranche = new Tranche();
+    montantFiltreCalcule: boolean = false;
+    totalMontantFiltre: number = 0;
+    newFacture = new Facture();
+    public selectedProduct: Produit;
+    public loadingdata: boolean=false;
+
+    deleteTrancheNewFacture(index: number) {
+        if (index > -1) {
+            const trancheToRemove = this.newFacture.tranches[index];
+            this.removeTranche(trancheToRemove, index);
+        }
+    }
+
+    removeTranche(tranche: Tranche, index: number) {
+        this.confirmationService.confirm({
+            message: "Vous ne pourrez pas revenir en arrière !",
+            header: "Es-tu sûr ?",
+            icon: "pi pi-exclamation-triangle",
+            acceptLabel: "Oui, supprimez-le !",
+            rejectLabel: "Non",
+            acceptButtonStyleClass: "custom-accept-button",
+            rejectButtonStyleClass: "custom-reject-button",
+            accept: () => {
+                this.trancheService.deleteTranche(tranche.id).subscribe({
+                    next: () => {
+                        this.messageService.add({
+                            severity: 'success',
+                            summary: 'Supprimé',
+                            detail: 'Votre tranche a été supprimée!',
+                            life: 2000
+                        });
+                        // Mettre à jour la liste locale après la suppression réussie
+                        this.newFacture.tranches.splice(index, 1);
+                    },
+                    error: (err) => {
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Erreur',
+                            detail: 'Il y a eu un problème lors de la suppression.',
+                            life: 2000
+                        });
+                    }
+                });
+            },
+            reject: () => {
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Annuler',
+                    detail: 'La supprission de tranche est annuler!.',
+                    life: 1000
+                });
+            }
+        });
+    }
+
+    public resetMontantFiltreCalcule() {
+
+    }
+    CalculeMontantFiltrer() {
+        const filteredTranche = this.table.filteredValue || this.newFacture.tranches;
+        this.totalMontantFiltre = filteredTranche.reduce((acc, tranche) => acc + tranche.montantTranche, 0);
+        this.montantFiltreCalcule = true;
+    }
+
+
+    AddTrancheToNewFacture() {
+        this.Newtranche.user = new User()
+        this.newFacture.tranches.push(this.Newtranche);
+        this.Newtranche = new Tranche()
+    }
+
+
+
+    returnBack() {
+        this.factureService.returnBack();
+    }
+
+
+    createNewFacture(): void {
+
+
+        this.saveFactureWithVente();
+
+
+
+    }
+
+
+      saveFactureWithVente() {
+
+        this.newFacture.reglement=this.selectedVente.reglement;
+        this.newFacture.client=this.selectedVente.client;
+        this.newFacture.lignesFacture=this.selectedVente.lignesVente.map(value => new LigneFacture(0,value.venteQty,value.prixVente*value.venteQty,value.produit,value.produit.prixUnitaire,value.prixVente,'NoAction'))
+        this.newFacture.montant=this.getTotalVente();
+        this.newFacture.typeFacture=factureType.SORTIE ;
+        this.newFacture.montantTaxe=0 ;
+        this.newFacture.dateCreation=this.selectedVente.dateVente ;
+        this.factureService.addFacture(this.newFacture).subscribe(value => {
+             if (value){
+                 this.messageService.add({ severity: 'info', summary: 'Facture est bien enregistré', detail: 'Vente Non Payeé' });
+                 this.clearVente();
+
+
+             }
+        },error => {
+            this.messageService.add({ severity: 'error', summary: 'Rejected', detail: error });
+        })
+
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+    validateFacture(): boolean {
+        if (this.newFacture.depot.id == 0) {
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Erreur',
+                detail: 'Aucun Dépot n\'a été sélectionné pour la facture',
+                life: 3000
+
+            });
+            return false;
+        } else if (this.newFacture.lignesFacture.length == 0) {
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Erreur',
+                detail: 'Aucun produit n\'a été sélectionné pour la facture',
+                life: 3000
+
+            });
+            return false;
+        } else if (this.newFacture.client.id == 0 && this.newFacture.typeFacture !== 'FACTURE_ACHAT') {
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Erreur',
+                detail: 'Aucun client n\'a été sélectionné pour la facture',
+                life: 3000
+
+            });
+            return false;
+        } else if (this.newFacture.provider.id == 0 && this.newFacture.typeFacture == 'FACTURE_ACHAT') {
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Erreur',
+                detail: 'Aucun Fournisseur n\'a été sélectionné pour la facture',
+                life: 3000
+
+            });
+            return false;
+
+        }
+        return true;
+    }
+
+
+    filterProduits() {
+        if (!this.searchTermFilter) {
+            this.produitsFiltres.content = [...this.produits];
+        } else {
+
+            this.produitsFiltres.content = this.produits.filter(produit =>
+                produit.id.toString().includes(this.searchTermFilter) ||
+                produit.nom.includes(this.searchTermFilter) ||
+                produit.description.includes(this.searchTermFilter) ||
+                produit.dataqr.includes(this.searchTermFilter) ||
+                produit.dateExpiration.toString().includes(this.searchTermFilter) ||
+                produit.dateFabrication.toString().includes(this.searchTermFilter)
+            );
+
+
+        }
+    }
+
+    filterServices() {
+        if (this.searchTermFilterService) {
+            this.serviceFiltres = this.services.filter(service =>
+                service.id.toString().includes(this.searchTermFilter) ||
+                service.nomServiceComp.includes(this.searchTermFilter) ||
+                service.descriptionServiceComp.includes(this.searchTermFilter) ||
+                service.dateDebutService.toString().includes(this.searchTermFilter) ||
+                service.dateFinService.toString().includes(this.searchTermFilter)
+            );
+        } else {
+            this.serviceFiltres = [...this.services];
+        }
+    }
+
+    onValueChange() {
+          if (this.TypeUserSelected == 'Passager') {
+            this.userService.getUserByEmail("Passager@client").subscribe(value => {
+                this.selectedVente.client = value;
+
+            })
+
+        } else if(this.TypeUserSelected == 'CLient'){
+            this.showDialogueClient = true;
+        }else {
+             this.TypeUserSelected='Passager'
+         }
+
+    }
+
+    public SelectedClient() {
+        this.onValueChange()
+    }
+
+    public selectClient() {
+         this.showDialogueClient = false;
+    }
+
+
+    addUser() {
+        this.dialogueService.openDialog();
+    }
+
+    onGlobalFilter(table: Table, event: Event) {
+        table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+    }
 }
+

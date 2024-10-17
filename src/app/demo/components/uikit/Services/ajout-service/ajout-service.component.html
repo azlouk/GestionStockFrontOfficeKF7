@@ -1,0 +1,134 @@
+<p-confirmDialog></p-confirmDialog>
+<p-toast ></p-toast>
+
+<p-card>
+    <ng-template pTemplate="header" >
+        <div class="flex justify-content-between align-items-center ">
+                <h2 class="text-primary-600 font-bold m-3">{{getTitleService()}}Service</h2>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="content">
+
+                                    <!-- ---------------- Information de service ------------------- -->
+                                    <div class="flex-auto  card col-12">
+                                            <h5 class="text-bluegray-600 font-bold">Information de service</h5>
+                                        <div class="flex justify-content-between flex-wrap">
+                                            <div class="flex flex-column gap-2 p-3 div  p-col-12 p-md-6 p-lg-4 p-xl-3">
+                                                <label for="nomservice" class="font-bold fs-5">
+                                                    <span class="pi pi-tags text-success font-bold"></span> Nom service
+                                                </label>
+                                                <input class="form-control" pInputText id="nomservice"
+                                                       aria-describedby="username-help"
+                                                       [(ngModel)]="newService.nomServiceComp"/>
+                                                <small id="nomproduit-help">Vérifier bien que votre nom est
+                                                    significatif
+                                                </small>
+                                            </div>
+                                            <div class="flex flex-column gap-2 p-3">
+
+                                                <label class="form-label font-bold fs-5">Coût service </label>
+                                                <p-inputNumber pTooltip="Coût service"
+                                                               [min]="0"
+                                                               [(ngModel)]="newService.coutService"
+                                                               inputId="currency-india" currency="TND"
+                                                               currencyDisplay="code" locale="en-IN"></p-inputNumber>
+                                            </div>
+                                            <p-fieldset legend="État du service">
+                                                <div class="p-d-flex p-ai-center">
+                                                    <p-radioButton
+                                                            name="etatService"
+                                                            [value]="true"
+                                                            [(ngModel)]="newService.etatService"
+                                                            inputId="active"
+                                                    ></p-radioButton>
+                                                    <label [for]="newService.etatService" class="m-2 font-bold text-red-600">Activer</label>
+
+                                                    <p-radioButton
+                                                            name="etatService"
+                                                            [value]="false"
+                                                            [(ngModel)]="newService.etatService"
+                                                            inputId="inactive"
+                                                    ></p-radioButton>
+                                                    <label [for]="newService.etatService" class="ml-2 font-bold text-red-600">Désactiver</label>
+                                                </div>
+                                            </p-fieldset>
+
+                                            <p-fieldset legend="Entré Sortie">
+                                                <div class="p-d-flex p-ai-center">
+                                                    <p-radioButton
+                                                            name="outService"
+                                                            [value]="true"
+                                                            [(ngModel)]="newService.outService"
+                                                            inputId="entry"
+                                                    ></p-radioButton>
+                                                    <label [for]="newService.outService" class="m-2 font-bold text-red-600">Entrer</label>
+                                                    <p-radioButton
+                                                            name="outService"
+                                                            [value]="false"
+                                                            [(ngModel)]="newService.outService"
+                                                            inputId="exit"
+                                                    ></p-radioButton>
+                                                    <label [for]="newService.outService" class="ml-2 font-bold text-red-600">Sortie</label>
+                                                </div>
+                                            </p-fieldset>
+                                        </div>
+                                        <div class="flex flex-column gap-2 p-3">
+                                            <label class="font-bold fs-5">
+                                                <span class="pi pi-info-circle text-success font-bold fs-5"></span>
+                                                Déscription
+                                            </label>
+                                            <textarea rows="5" cols="30"
+                                                      [(ngModel)]="newService.descriptionServiceComp"
+                                                      pInputTextarea
+                                                      [autoResize]="true"></textarea>
+                                        </div>
+                                        <div class="flex g-3 p-2 justify-content-center flex-wrap">
+                                            <div class="flex-auto ">
+                                                <label class="font-bold fs-5 block m-2"> Date debut</label>
+                                                <p-calendar [(ngModel)]="newService.dateDebutService"
+                                                            [touchUI]="true"
+                                                            [readonlyInput]="true"
+                                                dateFormat="yy-mm-dd"></p-calendar>
+                                            </div>
+                                            <div class="flex-auto ">
+                                                <label class="font-bold block mb-2"> Date fin
+                                                </label>
+                                                <p-calendar [(ngModel)]="newService.dateFinService"
+                                                            [touchUI]="true"
+                                                            [readonlyInput]="true"
+                                                            dateFormat="yy-mm-dd"></p-calendar>
+                                            </div>
+                                            <div class=" flex-auto text-primary-600  font-bold">
+                                                <label class="font-bold block mb-2">  Sélection d'utilisateur </label>
+                                                <p-multiSelect
+                                                        [options]="users"
+                                                        [(ngModel)]="newService.users"
+                                                        optionLabel="firstname"
+                                                        [filter]="true"
+                                                        filterBy="nom"
+                                                        [showClear]="true"
+                                                        placeholder="Select Users"
+                                                        [disabled]="newService.id?true : false">
+                                                    <ng-template let-user pTemplate="item">
+                                                        <div class="flex align-items-center gap-2">
+                                                            <p>{{ user.firstname }}</p>
+                                                        </div>
+                                                    </ng-template>
+                                                    <ng-template let-user pTemplate="selectedItem">
+                                                        <div class="flex align-items-center gap-2">
+                                                            <p>{{ user.firstname }}</p>
+                                                        </div>
+                                                    </ng-template>
+                                                </p-multiSelect>
+                                            </div>
+                                        </div>
+            </div>
+    </ng-template>
+    <ng-template pTemplate="footer" >
+        <div class="flex justify-content-end">
+            <button  pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text p-button-danger" (click)="returnBack()"></button>
+            <button  pButton pRipple label="{{getTitleService()}}" icon="pi pi-check" class="p-button-text p-button-success" (click)="ajouterService()"></button>
+        </div>
+    </ng-template>
+</p-card>
+

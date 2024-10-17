@@ -1,93 +1,182 @@
-<div class="col-lg pe-4 ps-4 card-forms m-1" style="min-width: 900px">
-    <div class=" d-flex flex-column mb-3 position-relative">
-        <p-toolbar>
-            <ng-template pTemplate="left">
-                <button pRipple pButton class="m-2" label="Actualiser" icon="pi pi-refresh"
-                          styleClass="p-button-raised p-button-outlined" (click)="refrech()"></button>
-                <button pButton pRipple icon="pi pi-key" (click)="goToClotures()" Class="p-button-outlined p-button-primary"
-                        label="Clotures"></button>
-            </ng-template>
-            <ng-template pTemplate="right">
-                <p-button icon="pi pi-eye" (click)="toggleTable()" styleClass="p-button-outlined  "
-                          label="Afficher listes ventes"></p-button>
-                <p-avatar *ngIf="displayusers " class="m-2" icon="pi pi-shopping-cart" pBadge styleClass="mr-5"
-                          [value]="ventes.length+''" size="large"
-                          [style]="{ 'background-color': '#b9c7ce', color: '#1a1717' }"></p-avatar>
-            </ng-template>
-        </p-toolbar>
-        <div class="row  m-2  p-2 ">
+<div class="flex flex-wrap ">
+            <p-toolbar class="w-full ">
+                <div class="flex flex-wrap w-full justify-content-between align-items-center gap-2 p-2 ">
+
+                <div class="flex-auto " >
+                        <button
+                                pRipple
+                                pButton
+                                class="m-2"
+                                label="Actualiser"
+                                icon="pi pi-refresh"
+                                styleClass="p-button-raised p-button-outlined"
+                                (click)="refrech()"
+                        ></button>
+                        </div>
+
+                    <div class=" flex-auto ">
+
+                        <p-button
+                                icon="pi pi-eye"
+                                (click)="toggleTable()"
+                                styleClass="p-button-outlined"
+                                label="Afficher listes ventes"
+                        ></p-button>
+                    </div>
+                    <div class=" flex-auto  ">
+
+                    <p-avatar
+                                *ngIf="displayusers"
+                                class="m-2"
+                                icon="pi pi-shopping-cart"
+                                pBadge
+                                [value]="ventes.length + ''"
+                                size="large"
+                                [style]="{ 'background-color': '#b9c7ce', color: '#1a1717' }"
+                        ></p-avatar>
+                    </div>
+                </div>
+            </p-toolbar>
+
+
+        <div class="  w-full    ">
             <div class="text-3xl font-bold">Total Ventes</div>
             <div class="text-3xl text-green-500 w-25 shadow-1 m-2 p-2">
-                {{total.toFixed(3)}} TND
+                {{total.toFixed(3)  | number:'1.3-3'}} TND
             </div>
-            <div class=" p-2  flex justify-content-right">
+            <div class="   flex justify-content-between flex-wrap  ">
+                <div class="flex-auto">
                 Date Debut : <input type="datetime-local" class="border-1 border-gray-200 p-2 rounded-2"
                                     [(ngModel)]="DateStart ">
+                </div>
+
+                <div class="flex-auto">
+
                 Date Fin : <input type="datetime-local" class="border-1 border-gray-200 p-2 rounded-2"
                                   [(ngModel)]="DateFin">
+                </div>
+                <div class="flex-auto">
+
                 <p-button class="me-2 ms-2" icon="pi pi-boxes" (onClick)="getAllTotal()"
                           styleClass="p-button-outlined p-button-primary  " label="Calculer"></p-button>
-
+                </div>
             </div>
-            <div *ngIf="displayusers">
+            <div *ngIf="displayusers" class=" card flex flex-wrap">
                 <p-table #dt
                          [scrollable]="true"
                          [value]="ventes"
-                         [globalFilterFields]="['id','nomClient','dateVente','total', 'reglement', 'employer.lastname','employer.firstname','produit.nom','ligneVente.produit.dataQr']"
+                         [(selection)]="selectedVentes"
+                         [globalFilterFields]="['paye', 'client.firstname', 'client.lastname', 'dateVente', 'total', 'reglement', 'employer.lastname', 'employer.firstname', 'lignesVente.produit.nom', 'lignesVente.produit.dataQr']"
                          [rows]="10"
                          [showCurrentPageReport]="true"
-                         [rowsPerPageOptions]="[10, 25, 50]"
+                         [rowsPerPageOptions]="[5,10, 25, 50]"
                          [loading]="loading"
                          [paginator]="true"
                          currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords} éléments"
                          [sortField]="'dateVente'"
-                         [sortOrder]="-1">
+                         [sortOrder]="-1"
+                         dataKey="id">
 
                     <ng-template pTemplate="caption">
-                        <div class="flex">
+                        <div class="flex flex-wrap justify-content-between">
+                            <div class="flex justify-content-start">
+
             <span class="p-input-icon-left" style="justify-content: flex-end;">
                 <i class="pi pi-search"></i>
                 <input pInputText type="text" [(ngModel)]="searchTerm" (input)="dt.filterGlobal(searchTerm, 'contains')"
-                       placeholder="Rechercher ... " class="p-inputtext"/>
+                       placeholder="Rechercher ..." class="p-inputtext"/>
             </span>
+                            </div>
+
+                            <div class="flex justify-content-end">
+                            <p-button label="Collapes to Facture" icon="pi pi-file-check" (click)="transferSelected()" class="ml-2"></p-button>
+                            </div>
                         </div>
                     </ng-template>
 
                     <ng-template pTemplate="header">
                         <tr class="fs-4">
-                            <th pSortableColumn="id" style="width: 10%; color:#0056b3">
-                                <p-sortIcon field="id"></p-sortIcon>
-                                ID
+                            <th style="">
+                                <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                             </th>
-                            <th pSortableColumn="dateVente" style="width: 10%; color:#0056b3">
-                                <p-sortIcon field="dateVente"></p-sortIcon>
-                                Date de Vente
+                            <th pSortableColumn="paye">Payé<p-sortIcon field="paye"></p-sortIcon></th>
+                            <th pSortableColumn="dateVente">Date Vente <p-sortIcon field="dateVente"></p-sortIcon></th>
+                            <th pSortableColumn="client.firstname"> Client<p-sortIcon field="client.firstname"></p-sortIcon></th>
+                            <th pSortableColumn="total" style=" color:#0056b3">
+                                <p-sortIcon field="total"></p-sortIcon>Total
                             </th>
-                            <th pSortableColumn="nomClient" style="width: 10%; color:#0056b3">
-                                <p-sortIcon field="nomClient"></p-sortIcon>
-                                Nom du Client
+                            <th pSortableColumn="reglement" style=" color:#0056b3">
+                                <p-sortIcon field="reglement"></p-sortIcon>Reglement
                             </th>
-                            <th pSortableColumn="total" style="width: 10%; color:#0056b3">
-                                <p-sortIcon field="total"></p-sortIcon>
-                                Total
+                            <th pSortableColumn="employer.lastname" style=" color:#0056b3">
+                                <p-sortIcon field="employer.lastname"></p-sortIcon>Employé
                             </th>
-                            <th pSortableColumn="employer.lastname" style="width: 10%; color:#0056b3">
-                                <p-sortIcon field="employer.lastname"></p-sortIcon>
-                                Employé
+                            <th style=" color:#0056b3">Lignes de Vente</th>
+                            <th style=""></th>
+                        </tr>
+                        <tr>
+                            <th>
+
                             </th>
-                            <th style="width: 35%; color:#0056b3">Lignes de Vente</th>
-                            <th style="width: 5%"></th>
+                            <th>
+                                <p-columnFilter type="boolean" field="paye"/>
+                            </th>
+                        <th>
+                            <p-columnFilter
+                                    type="text"
+                                    field="dateVente"
+                                    placeholder="by dateVente"
+                                    ariaLabel="Filter dateVente"/>
+                        </th>
+
+                            <th>
+                                <p-columnFilter
+                                        type="text"
+                                        field="client.firstname"
+                                        placeholder="by client.firstname"
+                                        ariaLabel="Filter client.firstname"/>
+                            </th>
+                            <th>
+                                <p-columnFilter
+                                        type="text"
+                                        field="total"
+                                        placeholder="by total"
+                                        ariaLabel="Filter total"/>
+                            </th>
+
+                            <th>
+                                <p-columnFilter
+                                        type="text"
+                                        field="reglement"
+                                        placeholder="by reglement"
+                                        ariaLabel="Filter reglement"/>
+                            </th>
+
+                            <th>
+                                <p-columnFilter
+                                        type="text"
+                                        field="employer.lastname"
+                                        placeholder="by employer.lastname"
+                                        ariaLabel="Filter employer.lastname"/>
+                            </th>
+
                         </tr>
                     </ng-template>
-
                     <ng-template pTemplate="body" let-vente let-rowIndex="rowIndex">
                         <tr [ngClass]="{'row-even': (rowIndex % 2 === 0), 'row-odd': (rowIndex % 2 !== 0)}">
-                            <td style="width: 10%" class="fw-bold">{{ vente.id }}</td>
-                            <td style="width: 10%" class="fw-bold">{{ vente.dateVente }}</td>
-                            <td style="width: 10%" class="fw-bold">{{ vente.nomClient }}</td>
-                            <td style="width: 10%" class="text-success fw-bold">{{ vente.total }} TND</td>
-                            <td style="width: 10%" class="fw-bold">{{ vente.employer.lastname }} {{ vente.employer.firstname }}</td>
-                            <td style="width: 35%">
+                            <td>
+                                <p-tableCheckbox [value]="vente"></p-tableCheckbox>
+                            </td>
+                            <td>
+
+                                <i class="pi"
+                                   [ngClass]="{ 'text-green-500 pi-check-circle': vente.paye==true, 'text-red-500 pi-times-circle': vente.paye==false }"></i>
+                            </td>                            <td style="" class="fw-bold">{{ vente.dateVente }}</td>
+                            <td style="" class="fw-bold">{{ vente.client.firstname }} {{ vente.client.lastname }}</td>
+                            <td style="" class="text-success fw-bold">{{ vente.total   | number:'1.3-3'}} TND</td>
+                            <td style="" class="text-success fw-bold">{{ vente.reglement  | number:'1.3-3' }} TND</td>
+                            <td style="" class="fw-bold">{{ vente.employer.firstname }} {{ vente.employer.firstname }}</td>
+                            <td style="">
                                 <p-table [value]="vente.lignesVente" class="shadow-lg m-2 rounded-2 w-100">
                                     <ng-template pTemplate="header">
                                         <tr>
@@ -108,8 +197,9 @@
                                                           styleClass="p-button-rounded p-button-primary p-button-text"></p-button>
                                             </td>
                                             <td>{{ ligneVente.qtyV }}</td>
-                                            <td class="text-success">{{ ligneVente.prixVente | currency: 'TND': 'TND' }}</td>
+                                            <td class="text-success">{{ ligneVente.prixVente | number:'1.3-3'}} TND</td>
                                         </tr>
+
                                     </ng-template>
                                 </p-table>
                             </td>
@@ -120,6 +210,7 @@
                         </tr>
                     </ng-template>
                 </p-table>
+
 
 
             </div>
@@ -218,5 +309,4 @@
                 <p *ngIf="displayusers">Aucune vente disponible.</p>
             </div>
         </div>
-    </div>
 </div>

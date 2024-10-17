@@ -25,8 +25,8 @@ import {Router} from "@angular/router";
 import {User} from "../../../../../models/user";
 import {forkJoin} from "rxjs/internal/observable/forkJoin";
 import {Table, TableModule} from "primeng/table";
-import {POSService} from "../../../../service/pos.service";
-import {ClotureService} from "../../../../service/cloture.service";
+import {POSService} from "../../../../../layout/service/pos.service";
+import {ClotureService} from "../../../../../layout/service/cloture.service";
 import {InputNumberModule} from "primeng/inputnumber";
 import {ButtonModule} from "primeng/button";
 import {DropdownModule} from "primeng/dropdown";
@@ -51,6 +51,8 @@ import {File} from "../../../../../models/File";
 import {GalleriaModule} from "primeng/galleria";
 import {environment} from "../../../../../../environments/environment";
 import {RippleModule} from "primeng/ripple";
+import {TooltipModule} from "primeng/tooltip";
+import {Page} from "../../../../../models/page";
 
 @Component({
     selector: 'app-pos',
@@ -81,7 +83,8 @@ import {RippleModule} from "primeng/ripple";
         RatingModule,
         ToolbarModule,
         CommonModule,
-        RippleModule
+        RippleModule,
+        TooltipModule
     ],
     templateUrl: './pos.component.html',
     styleUrl: './pos.component.scss'
@@ -93,14 +96,27 @@ export class POSComponent implements OnInit,OnDestroy {
     searchTerm: string = '';
     searchTerm1: string = '';
     searchText: string = '';
-    produits: Produit[] = [];
+
+    initTabProduit: Produit[]=[];
+    produits: Page<Produit>={
+        content:this.initTabProduit,number:0,size:0,totalPages:0,totalElements:0
+    };
+
+
+    currentPage: number = 0;
+    pageSize: number = 10;
+    first = 0;
+    rows = 10;
+
+
     produitsOrderBy: Produit[] = [];
-    produitsFiltres: Produit [] = [];
+
     cloture: Cloture = new Cloture();
     listeVente: Vente[] = [];
     visibleDetails: boolean=false;
 
     selectedVente: Vente = new Vente();
+
     divVisible: boolean = true;
     visible: boolean = false;
     show: boolean = false;
@@ -128,8 +144,7 @@ export class POSComponent implements OnInit,OnDestroy {
     produit: Produit = new Produit();
     calculateValue: string='0';
 
-    rows = 10; // Number of rows to be fetched initially
-    lazyLoad = true; // Set to true for lazy loading
+
     public widthWindow:any ;
     public heigthWindow:any ;
 
@@ -145,21 +160,13 @@ export class POSComponent implements OnInit,OnDestroy {
         this.heigthWindow=window.innerHeight/2 ;
         this.messages1 = [{severity: 'error', summary: 'Error', detail: 'Pas des images'}];
         this.getAllArticles();
-        this.getAllProduits() ;
+        this.loadProduits(this.currentPage, this.pageSize);
+        this.loading=true;
     }
 
-    onResize($event:any) {
-        this.widthWindow=window.innerWidth ;
-        this.heigthWindow=window.innerHeight/2 ;
 
-    }
 
-    formatDate(date: Date): string {
-        const year = date.getFullYear();
-        const month = ('0' + (date.getMonth() + 1)).slice(-2);
-        const day = ('0' + date.getDate()).slice(-2);
-        return `${year}-${month}-${day}`;
-    }
+
     getTitle(){
         return getTitleTicket()==''?'pas de titre':getTitleTicket()
     }
@@ -178,9 +185,7 @@ export class POSComponent implements OnInit,OnDestroy {
 
         }
     }
-    toggleDivVisibility() {
-        this.divVisible = !this.divVisible;
-    }
+
 
     constructor(private produitService: ProduitService,
                 public venteService: VenteService,
@@ -194,7 +199,7 @@ export class POSComponent implements OnInit,OnDestroy {
                 private ngZone: NgZone
     ) {
         const idrandom = 1;
-        this.selectedVente = new Vente(idrandom, new Date().toString(), 'client ' + idrandom, 0, 0, [], getUserDecodeID());
+        // this.selectedVente = new Vente(idrandom, new Date(), new User(), 0, 0, [], getUserDecodeID());
         this.listeVente.push(this.selectedVente);
         this.reglement = this.selectedVente.total;
     }
@@ -206,15 +211,15 @@ export class POSComponent implements OnInit,OnDestroy {
         if (this.selectedVente.lignesVente.length != 0) {
             this.getTotalVente();
             this.selectedVente.reglement = this.reglement==0?this.selectedVente.total:this.reglement;
-            // alert(new JsonPipe().transform(this.selectedVente))
             this.selectedVente.employer=new User(getUserDecodeID().id)
-            const nameclient=this.selectedVente.nomClient
-            this.selectedVente.nomClient=getTitleTicket();
-            this.selectedVente.dateVente=new Date().toString();
+            const nameclient=this.selectedVente.client.firstname
+            this.selectedVente.client.firstname=getTitleTicket();
+            this.selectedVente.dateVente=new Date();
             this.produitService.SaveVente(this.selectedVente).subscribe(value => {
                 if (value) {
                     this.clearVente();
-                    this.getAllProduits()
+                    this.loadProduits(this.currentPage, this.pageSize);
+
                     this.showTopCenter("Votre Vente est bien enregistré ")
                     if (this.selectedVente.isPrint) {
                         Swal.fire({
@@ -224,9 +229,9 @@ export class POSComponent implements OnInit,OnDestroy {
                             timerProgressBar: true,
 
                         }).then((result) => {
-                            /* Read more about handling dismissals below */
+
                             if (result.dismiss === Swal.DismissReason.timer) {
-                                // console.log("I was closed by the timer");
+
                             }
                         });
 
@@ -263,7 +268,7 @@ export class POSComponent implements OnInit,OnDestroy {
             this.selectedVente.employer = new User(getUserDecodeID().id);
 
             // Sauvegarder la vente via le service produit
-            const nameclient = this.selectedVente.nomClient;
+            const nameclient = this.selectedVente.client.firstname;
 
             this.produitService.SaveVente(this.selectedVente).subscribe(value => {
                 // Vérifier si la sauvegarde a réussi
@@ -303,18 +308,37 @@ export class POSComponent implements OnInit,OnDestroy {
             });
         }
         this.clearVente();
-        // Afficher dans la console les détails de la vente sélectionnée (pour vérification)
-        console.log('selected vente', this.selectedVente);
+
+
     }
-    getAllProduits() {
+    // getAllProduits() {
+    //     this.loading=true ;
+    //     this.produitService.getProduits().subscribe((value: Produit[]) => {
+    //         this.produits.content = value;
+    //         this.loading=false ;
+    //         // this.cdr.detectChanges();
+    //
+    //     })
+    // }
+    loadProduits(page: number, size: number) {
         this.loading=true ;
-        this.produitService.getProduits().subscribe((value: Produit[]) => {
-            this.produits = value;
-            this.loading=false ;
-            this.cdr.detectChanges();
-            console.table(this.produits)
-        })
+        this.produitService.LoadProduits(page, size).subscribe(
+            (data: Page<Produit>) => {
+                this.produits = data;
+                this.loading=false ;
+            },
+            (error) => {
+                console.error('Erreur lors du chargement des produits', error);
+            }
+        );
     }
+    onPageChange(event: any) {
+        this.currentPage = event.page==undefined?0:event.page;
+        this.pageSize = event.rows==undefined?10:event.rows
+        this.loadProduits(this.currentPage, this.pageSize);
+
+    }
+
     getProduitByQtyventeOrder(){
         this.produitService.getProduitOrderByQtyVDesc().subscribe((value: Produit[]) => {
             value.forEach((value1:Produit) => {
@@ -323,7 +347,7 @@ export class POSComponent implements OnInit,OnDestroy {
             this.produitsOrderBy = value;
             this.changeTable();
         })
-        // console.log("produits recants:",this.produitsOrderBy)
+
     }
     goHome(){
         this.route.navigate([""])
@@ -431,10 +455,10 @@ export class POSComponent implements OnInit,OnDestroy {
     search(): void {
         // Filtrer les produits en fonction du terme de recherche
         if (this.searchTerm.trim() !== '') {
-            this.produitsFiltres = []
+            this.produits.content = []
             this.produitService.getProduitByQrNom(this.searchTerm).subscribe((value: Produit) => {
                 if (value != null) {
-                    this.produitsFiltres.push(value);
+                    this.produits.content.push(value);
 
                     this.visible = this.IsvisiblePop;
                 }
@@ -451,8 +475,8 @@ export class POSComponent implements OnInit,OnDestroy {
     }
 
     ajouterProduitSelectionne(index: number): void {
-        if (index >= 0 && index < this.produitsFiltres.length) {
-            const produitSelectionne = this.produitsFiltres[index];
+        if (index >= 0 && index < this.produits.content.length) {
+            const produitSelectionne = this.produit[index];
             const ligneExistante = this.selectedVente.lignesVente.find(ligne => ligne.produit.id === produitSelectionne.id);
             if (ligneExistante) {
                 // Si une ligne existe déjà, incrémenter la quantité si elle n'a pas atteint la limite
@@ -501,7 +525,7 @@ export class POSComponent implements OnInit,OnDestroy {
     }
 
     ajouterProduit(): void {
-        if (this.produitsFiltres.length > 0) {
+        if (this.produits.content.length > 0) {
             this.ajouterProduitSelectionne(0);
             this.getTottalNbProduct()
         }
@@ -565,7 +589,7 @@ export class POSComponent implements OnInit,OnDestroy {
     getAllArticles() {
         this.produitService.getArticles().subscribe((value: Article[]) => {
             this.articles = value;
-            console.table(this.articles)
+
 
         }, error => {
             // this.displayusers = false;
@@ -659,7 +683,7 @@ export class POSComponent implements OnInit,OnDestroy {
     showClotureDIv() {
         this.clotureService.getTotalClotureNow(new Date()).subscribe(value => {
             this.TotalAndReglement = value;
-            console.error(value)
+
         })
 
         this.show = !this.show
@@ -670,7 +694,7 @@ export class POSComponent implements OnInit,OnDestroy {
         this.cloture.dateCloture = new Date();
         this.clotureService.SaveCloture(this.cloture).subscribe(
             value => {
-                // console.log(value);
+
                 this.show = false;
 
                 // Utiliser SweetAlert pour afficher un message de succès
@@ -704,11 +728,11 @@ export class POSComponent implements OnInit,OnDestroy {
         });
         if (nomClient) {
             if (this.selectedVente.lignesVente.length != 0) {
-                this.selectedVente = new Vente(this.listeVente.length + 1, new Date().toString(), nomClient, 0, 0, [], getUserDecodeID());
+                // this.selectedVente = new Vente(this.listeVente.length + 1, new Date(), nomClient, 0, 0, [], getUserDecodeID());
                 this.listeVente.push(this.selectedVente);
                 this.getTottalNbProduct()
 
-                // console.log("ligne Ventes:", this.listeVente);
+
             } else {
                 Swal.fire({
                     title: "Vider  !",
@@ -722,8 +746,8 @@ export class POSComponent implements OnInit,OnDestroy {
 
     calculatorInput(value: string) {
         try {
-            // console.log("Value Data : "+this.calculateValue)
-            // console.log("Data pressed: "+value)
+
+
             if(this.calculateValue=='0'){
                 this.calculateValue='' ;
             }
@@ -755,7 +779,8 @@ export class POSComponent implements OnInit,OnDestroy {
                     break;
 
                 case 'R': {
-                    // console.log(typeof this.calculateValue)
+
+
                     const newCalcule: string = this.calculateValue.toString().slice(0, -1);
                     this.calculateValue = newCalcule;
                     if (this.calculateValue === '') {
@@ -772,7 +797,8 @@ export class POSComponent implements OnInit,OnDestroy {
                     } catch (error) {
                         this.calculateValue = '0'
                         this.calculatorScreenValue = '0'
-                        // console.log(error)
+
+
                     }
 
 
@@ -792,7 +818,8 @@ export class POSComponent implements OnInit,OnDestroy {
                     } catch (error) {
                         this.calculatorScreenValue='0' ;
                         this.calculateValue='0' ;
-                        //  console.log(error)
+
+
                     }
                     break;
 
@@ -809,20 +836,22 @@ export class POSComponent implements OnInit,OnDestroy {
                         }
                     } catch (e) {
 
-                        // console.log(e)
+
+
                     }
             }
             this.getTotalOperation();
         } catch (e) {
             this.calculatorScreenValue='0' ;
             this.calculateValue='0' ;
-            // console.log('log : error ch')
+
+
         }
 
 
     }
     evaluateCalculator(value :string):boolean {
-        //  console .log((this.calculateValue.match(/[\+\-\*\/]/g) || []).length < 1)
+
         return (this.calculateValue.match(/[\+\-\*\/]/g) || []).length < 1 ;
     }
 
@@ -853,13 +882,13 @@ export class POSComponent implements OnInit,OnDestroy {
 
     changeTable() {
         if (this.searchText.trim() !== ''){
-            this.getAllProduits()
+            this.loadProduits(this.currentPage, this.pageSize);
         }
         else {
             this.produitsOrderBy.forEach((value1:Produit) => {
                 this.loadFile(value1) ;
             })
-            this.produits=this.produitsOrderBy;
+            this.produits.content=this.produitsOrderBy;
 
         }
     }
@@ -880,8 +909,7 @@ export class POSComponent implements OnInit,OnDestroy {
 
         if (product && product.files && product.files.length > 0) {
 
-            console.log(safeImages)
-            return this.sanitizer.bypassSecurityTrustUrl(`http://localhost:8081/img/${product.files[0].name}`);
+            return this.sanitizer.bypassSecurityTrustUrl(`http://localhost:8082/img/${product.files[0].name}`);
         }
 
         return this.defaultImageUrl ;
@@ -930,7 +958,7 @@ export class POSComponent implements OnInit,OnDestroy {
         } else if (product.levelstock < product.qantite) {
             return 'ENSTOCK';
         } else {
-            return 'STOCKLIMITE';
+            return 'LIMITE';
         }
     }
     getUnite(product: Produit): string {
@@ -950,13 +978,13 @@ export class POSComponent implements OnInit,OnDestroy {
         const {value: nomClient} = await Swal.fire({
             title: "Client",
             input: "text",
-            inputValue:  this.selectedVente.nomClient,
+            inputValue:  this.selectedVente.client.firstname,
             inputLabel: "nom client!",
             inputPlaceholder: "nom du clients"
         });
         if (nomClient) {
 
-            this.selectedVente.nomClient=nomClient ;
+            this.selectedVente.client.firstname=nomClient ;
             this.listeVente=[...this.listeVente]
 
         }

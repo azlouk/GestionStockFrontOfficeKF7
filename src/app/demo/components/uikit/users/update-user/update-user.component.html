@@ -3,50 +3,66 @@
     <div class="flex flex-row gap-4">
         <div class="card col-4 gap-1">
             <h4 class="text-primary-600 font-bold pi pi-user"> Détails utilisateur</h4>
-            <div class="p-fluid p-formgrid p-grid">
-                <div class="p-field p-col-12 p-md-6">
+            <div class="p-fluid p-formgrid p-grid mt-4 ">
+                <div class="p-field p-col-12 p-md-6 mt-4">
                     <label>Nom</label>
                     <input pInputText [(ngModel)]="user.firstname" name="nom" type="text">
                 </div>
-                <div class="p-field p-col-12 p-md-6">
+                <div class="p-field p-col-12 p-md-6  mt-4">
                     <label>Prénom:</label>
                     <input pInputText [(ngModel)]="user.lastname" name="prenom" type="text">
                 </div>
             </div>
             <div class="p-fluid p-formgrid p-grid">
-                <div class="p-field p-col-12 p-md-6">
+                <div class="p-field p-col-12 p-md-6  mt-4">
                     <label>Email</label>
                     <input pInputText [(ngModel)]="user.email" name="email" type="email">
                 </div>
-                <div class="p-field p-col-12 p-md-6">
+                <div class="p-field p-col-12 p-md-6  mt-4">
                     <label>Téléphone</label>
                     <p-inputNumber [(ngModel)]="user.telephone" name="telephone" type="number"/>
                 </div>
             </div>
             <div class="p-fluid p-formgrid p-grid">
-                <div class="p-field p-col-12 p-md-6">
-                    <label>Adresse</label>
-                    <input pInputText  [(ngModel)]="user.adresse">
+                <div class="p-fluid p-formgrid p-grid">
+                    <div class="p-field p-col-12 p-md-6 mt-4">
+                        <label>Adresse</label>
+                        <textarea
+                                pInputTextarea
+                                rows="5"
+                                cols="56"
+                                [autoResize]="true"
+                                [(ngModel)]="user.adresse"
+                                   >
+        </textarea>
+                    </div>
                 </div>
-                <div class="p-field p-col-12 p-md-6">
+
+                <div class="p-field p-col-12 p-md-6  mt-4">
                     <label>Rôle:</label>
                     <p-dropdown [(ngModel)]="user.role" [options]="roles" name="role" [disabled]="true"/>
                 </div>
             </div>
-            <div class="card">
-                <span class="text-primary-600 font-bold pi pi-key"> Securité </span>
-                <div class="p-fluid p-formgrid p-grid">
-                    <div class="p-field p-col-12 p-md-6">
-                        <label>Ancien mot de passe</label>
-                        <p-password [(ngModel)]="user.pwed" [toggleMask]="true"></p-password>
-                    </div>
-                    <div class="p-field p-col-12 p-md-6">
+            <div class="card mt-4"
+                 *ngIf="user.role==RoleEnum.ADMIN||user.role==RoleEnum.EMPLOYER||user.role==RoleEnum.RESPONSABLE||user.role==RoleEnum.MANAGER">
+                <span class="text-primary-600 font-bold pi pi-key "> Securité </span>
+                <div class="p-fluid p-formgrid p-grid mt-2">
+                    <!--                    <div class="p-field p-col-12 p-md-6">-->
+                    <!--                        <label>Ancien mot de passe</label>-->
+                    <!--                        <p-password [(ngModel)]="user.pwed" [toggleMask]="true"></p-password>-->
+                    <!--                    </div>-->
+                    <div class="p-field p-col-12 p-md-6" mt-4>
                         <label>Nouvelle Mot de passe</label>
                         <p-password [(ngModel)]="user.passwordConfirm" [toggleMask]="true"></p-password>
                     </div>
-                    <div class="p-field p-col-12 p-md-6">
+                    <div class="p-field p-col-12 p-md-6 mt-4">
                         <label>Confimer mot de passe </label>
                         <p-password [(ngModel)]="user.passwordConfirm1" [toggleMask]="true"></p-password>
+                    </div>
+                    <div class="p-field p-col-12 p-md-6 mt-4">
+                        <p-button (onClick)="loadUp()" icon="pi pi-check" label="Générer clé de sécurité"/>
+
+
                     </div>
                 </div>
             </div>
@@ -69,25 +85,26 @@
                         <td [class]="permission.icon">{{permission.name}}</td>
                         <td>
                             <p-checkbox
-                                (click)="getPermission(permission.tableName,permission.ajouter==true?'create':'createn')"
-                                [(ngModel)]="permission.ajouter" [binary]="true"></p-checkbox>
+                                    (click)="getPermission(permission.tableName,permission.ajouter==true?'create':'createn')"
+                                    [(ngModel)]="permission.ajouter" [binary]="true"></p-checkbox>
                         </td>
                         <td>
                             <p-checkbox
-                                (click)="getPermission(permission.tableName,permission.afficher==true?'read':'readn')"
-                                [(ngModel)]="permission.afficher" [binary]="true"></p-checkbox>
+                                    (click)="getPermission(permission.tableName,permission.afficher==true?'read':'readn')"
+                                    [(ngModel)]="permission.afficher" [binary]="true"></p-checkbox>
                         </td>
                         <td>
                             <p-checkbox
-                                (click)="getPermission(permission.tableName,permission.modifier==true?'update':'updaten')"
-                                [(ngModel)]="permission.modifier" [binary]="true"></p-checkbox>
+                                    (click)="getPermission(permission.tableName,permission.modifier==true?'update':'updaten')"
+                                    [(ngModel)]="permission.modifier" [binary]="true"></p-checkbox>
                         </td>
                         <td>
                             <p-checkbox
-                                (click)="getPermission(permission.tableName,permission.supprimer==true?'delete':'deleten')"
-                                [(ngModel)]="permission.supprimer" [binary]="true"></p-checkbox>
+                                    (click)="getPermission(permission.tableName,permission.supprimer==true?'delete':'deleten')"
+                                    [(ngModel)]="permission.supprimer" [binary]="true"></p-checkbox>
                         </td>
                     </tr>
+
                 </ng-template>
             </p-table>
         </div>
@@ -95,6 +112,37 @@
     </div>
     <div class="flex justify-content-end align-items-end mt-3">
         <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="returnBack()"></button>
-        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="sauvegarderModification()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text"
+                (click)="sauvegarderModification()"></button>
     </div>
+</div>
+<div>
+    <p-toast/>
+    <p-confirmDialog #cd>
+        <ng-template pTemplate="headless" let-message>
+            <div class="flex flex-column align-items-center p-5 surface-overlay border-round">
+                <div class="border-circle bg-primary inline-flex justify-content-center align-items-center h-6rem w-6rem">
+                    <i class="pi pi-key text-5xl"></i>
+                </div>
+                <span class="font-bold text-2xl block mb-2 mt-4">
+                                           {{ message.header }}
+                                    </span>
+                <p class="mb-0">{{ message.message }}</p>
+                <div class="flex align-items-center gap-2 mt-4">
+                    <button
+                            pButton
+                            label="Save"
+                            (click)="cd.accept()"
+                            class="w-8rem">
+                    </button>
+                    <button
+                            pButton
+                            label="Cancel"
+                            (click)="cd.reject()"
+                            class="p-button-outlined w-8rem ">
+                    </button>
+                </div>
+            </div>
+        </ng-template>
+    </p-confirmDialog>
 </div>

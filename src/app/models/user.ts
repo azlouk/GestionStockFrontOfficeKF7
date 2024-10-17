@@ -21,14 +21,15 @@ export class User {
     adresse: string;
     role: RoleEnum;
     password: string;
+    secretKey:string;
     passwordConfirm: string;
     passwordConfirm1: string;
-    authentifications:any[]=[] ;
+    authentifications:any[] ;
     userSelected:boolean=false;
-    permission:IPermission[]=[];
+    permission:IPermission[];
     pwed:string  ;
 
-    constructor(_id: number = 0, _firstname: string = "", _lastname: string = "", _email: string = "", _telephone: number = 0, _adresse: string = "", _role: RoleEnum = RoleEnum.EMPLOYER, _password: string = "", _authentification: Authentification[] = [], _permission: Permission[] = [], _pwed: string = "") {
+    constructor(_id: number = 0, _firstname: string = "", _lastname: string = "", _email: string = "", _telephone: number = 0, _adresse: string = "", _role: RoleEnum = RoleEnum.EMPLOYER, _password: string = "", _authentification: Authentification[] = [], _permission: Permission[] = [], _pwed: string = "",_secretKey: string = "") {
         this.id = _id;
         this.firstname = _firstname;
         this.lastname = _lastname;
@@ -37,11 +38,20 @@ export class User {
         this.adresse = _adresse;
         this.role = _role;
         this.password = _password;
+        this.secretKey = _secretKey;
         this.authentifications = _authentification;
         this.permission = _permission;
         this.pwed = _pwed;
     }
 
+
+    public get _secretKey(): string {
+        return this.secretKey;
+    }
+
+    public set _secretKey(value: string) {
+        this.secretKey = value;
+    }
 
     public get _id(): number {
         return this.id;

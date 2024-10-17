@@ -23,7 +23,7 @@ export class DepotService {
 
     getdepots(): Observable<Depot[]> {
         const token = getToken();
-        console.log(token)
+
 
         if (token) {
             // Ajouter le token à l'en-tête de la requête
@@ -38,7 +38,7 @@ export class DepotService {
 
     getAvailableResponsable(): Observable<User[]> {
         const token = getToken();
-        console.log(token)
+
 
         if (token) {
             // Ajouter le token à l'en-tête de la requête
@@ -53,7 +53,7 @@ export class DepotService {
 
     getDepotById(id: number): Observable<Depot> {
         const token = getToken();
-        console.log(token)
+
 
         if (token) {
             // Ajouter le token à l'en-tête de la requête
@@ -66,7 +66,7 @@ export class DepotService {
     }
     getDepotByIdRes(id: number): Observable<Depot> {
         const token = getToken();
-        console.log(token)
+
 
         if (token) {
             // Ajouter le token à l'en-tête de la requête
@@ -80,8 +80,8 @@ export class DepotService {
 
     deleteDepot(id: number ): Observable<any> {
         const token = getToken();
-        console.log("Call Function Depot Delete : " +id)
-        console.log(token)
+
+
 
         if (token) {
             // Ajouter le token à l'en-tête de la requête
@@ -95,8 +95,8 @@ export class DepotService {
 
     updateDepot(updatedDepot: Depot): Observable<any> {
         const token = getToken();
-        console.log("Call Function Depot Update  Responsable role: " +new JsonPipe().transform(updatedDepot.responsable.id))
-        console.log(token)
+
+
 
         if (token) {
             // Ajouter le token à l'en-tête de la requête
@@ -126,7 +126,7 @@ export class DepotService {
 
     addDepot(nouveauDepot : Depot):Observable<any> {
         const token = getToken();
-        console.log(token)
+        console.log(nouveauDepot)
         if (token) {
             // Ajouter le token à l'en-tête de la requête
             const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type", "application/json; charset=utf8");
@@ -139,7 +139,7 @@ export class DepotService {
     }
 
     returnBack() {
-        console.log('Bouton cliqué');
+
         Swal.fire({
             title: 'Vous êtes sûr?',
             icon: 'warning',
@@ -150,10 +150,10 @@ export class DepotService {
             cancelButtonText: 'Annuler'
         }).then((result) => {
             if (result.isConfirmed) {
-                console.log('Confirmation reçue');
+
                 this.router.navigate(['/depot']);
             } else {
-                console.log('Annulation reçue');
+
                 Swal.fire({
                     title: 'Annulation',
                     icon: 'info',
@@ -164,7 +164,7 @@ export class DepotService {
     }
     exist(tableName:String) {
         const token = getToken();
-        console.log(token)
+
 
         if (token) {
             // Ajouter le token à l'en-tête de la requête
@@ -178,7 +178,7 @@ export class DepotService {
             }
             this.http.post<boolean>(environment.apiUrl + '/permission/checkpermission', data, { headers }).subscribe(value => {
                 this.permission=value ;
-                console.log("=======1111111>><>>>>>> "+new JsonPipe().transform(this.permission));
+
             })
 
         }else {

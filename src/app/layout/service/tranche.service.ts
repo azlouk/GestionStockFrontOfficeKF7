@@ -22,7 +22,7 @@ export class TrancheService {
     getTranches(): Observable<Tranche[]> {
         // @ts-ignore
         const token = getToken();
-        console.log(token)
+
 
         if (token) {
             // Ajouter le token à l'en-tête de la requête
@@ -38,7 +38,7 @@ export class TrancheService {
     getTrancheById(id: number): Observable<Tranche> {
         const url = `${this.api}/getTrancheById/${id}`; // Corrected URL path
         const token = getToken();
-        console.log(token);
+
 
         if (token) {
             // Add the token to the request header
@@ -62,9 +62,9 @@ export class TrancheService {
     addTranche(newTranche: Tranche): Observable<Tranche> {
         this.tranches.push(newTranche);
 
-        console.log("Data tranche"+new JsonPipe().transform(newTranche))
+
         const token = getToken();
-        console.log(token);
+
         if (token) {
             // Ajouter le token à l'en-tête de la requête
             const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type", "application/json; charset=utf8");
@@ -119,7 +119,7 @@ export class TrancheService {
                     "id": tranche.user.id
                 },
             }
-            console.error(new JsonPipe().transform(datatranche))
+
 
             return this.http.put<Tranche>(url, datatranche, { headers });
         } else {
@@ -148,7 +148,7 @@ export class TrancheService {
                     "id": newtranche.user.id
                 },
             }
-            console.error(new JsonPipe().transform(datatranche))
+
 
             return this.http.post<Tranche>(url, datatranche, { headers });
         } else {
@@ -182,7 +182,7 @@ export class TrancheService {
 
     exist(tableName:String) {
         const token = getToken();
-        console.log(token)
+
 
         if (token) {
             // Ajouter le token à l'en-tête de la requête
@@ -196,7 +196,7 @@ export class TrancheService {
             }
             this.http.post<boolean>(environment.apiUrl + '/permission/checkpermission', data, { headers }).subscribe(value => {
                 this.permission=value ;
-                console.log("=======1111111>><>>>>>> "+new JsonPipe().transform(this.permission=value));
+
             })
 
         }else {

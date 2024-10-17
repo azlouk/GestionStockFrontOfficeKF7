@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {environment} from "../../../environments/environment";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Router} from "@angular/router";
@@ -10,55 +10,77 @@ import {Vente} from "../../models/Vente";
 import {Article} from "../../models/Article";
 import {Produit} from "../../models/produit";
 import Swal from "sweetalert2";
+import {Historique} from "../../models/historique";
+import {Page} from "../../models/page";
+import {Tranche} from "../../models/Tranche";
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class ProduitService {
 
+    listvente: Vente[] = [];
+
     produits: Produit[] = [];
-    private api = environment.apiUrl+'/produit'
-    private apiarticle = environment.apiUrl+'/articles'
-    private apivente = environment.apiUrl+'/vente'
-    private apilignevente = environment.apiUrl+'/ligneVente'
+    private api = environment.apiUrl + '/produit'
+    private apiarticle = environment.apiUrl + '/articles'
+    private apivente = environment.apiUrl + '/vente'
+    private apilignevente = environment.apiUrl + '/ligneVente'
 
-    public apifile = environment.apiUrl+'/api/'
-    public apifilePrime = environment.apiUrl+'/api/uploadFilesIntoDB'
-    produitsFactures:Produit[] = [];
-    nbProduit : number= 0;
-    public permission: any ;
-    public permissionArticle: any ;
-    public CodeBarreSharing:string='' ;
+    public apifile = environment.apiUrl + '/api/'
+    public apifilePrime = environment.apiUrl + '/api/uploadFilesIntoDB'
+
+    produitsFactures: Produit[] = [];
+    nbProduit: number = 0;
+    public permission: any;
+    public permissionArticle: any;
+    public CodeBarreSharing: string = '';
 
 
-
-    constructor(private http :HttpClient,
-                private router:Router,
+    constructor(private http: HttpClient,
+                private router: Router,
                 private datePipe: DatePipe,
                 private confirmationService: ConfirmationService,
-                private messageService: MessageService,
-                ) {
+    ) {
     }
+
 
     getProduits(): Observable<Produit[]> {
         const url = `${this.api}/DtoRead`;
         const token = getToken();
         if (token) {
-            const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type","application/json; charset=utf8" );
-            return this.http.get<Produit[]>(url, {headers} );
+            const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type", "application/json; charset=utf8");
+            return this.http.get<Produit[]>(url, {headers});
 
         } else {
             return new Observable();
         }
     }
+
+    LoadProduits(page: number, size: number): Observable<Page<Produit>> {
+        const url = `${this.api}/DtoReadPage?page=${page}&size=${size}`;
+        const token = getToken();
+
+        if (token) {
+            const headers = new HttpHeaders()
+                .set('Authorization', `Bearer ${token}`)
+                .set('Content-Type', 'application/json; charset=utf-8');
+
+            return this.http.get<Page<Produit>>(url, {headers});
+        } else {
+            return new Observable();
+        }
+    }
+
+
     getProduitById(id: number): Observable<Produit> {
         const url = `${this.api}/findById`;
         const token = getToken();
-        console.log(token)
-        if (token) {
-            const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type","application/json; charset=utf8" );
 
-            return this.http.get<Produit>(url+'/'+id,{headers} );
+        if (token) {
+            const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type", "application/json; charset=utf8");
+
+            return this.http.get<Produit>(url + '/' + id, {headers});
         } else {
             return new Observable();
         }
@@ -68,13 +90,13 @@ export class ProduitService {
         const url = `${this.api}/getAllProductByArticle`;
 
         const token = getToken();
-        console.log(token)
+
         if (token) {
             // Ajouter le token à l'en-tête de la requête
-            const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type","application/json; charset=utf8" );
+            const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type", "application/json; charset=utf8");
 
             // Utiliser les headers dans la requête
-            return this.http.get<Produit[]>(url+'/'+articleId,{headers} );
+            return this.http.get<Produit[]>(url + '/' + articleId, {headers});
         } else {
             // Gérer le cas où le token n'est pas disponible
             return new Observable(); // Vous pouvez également renvoyer une erreur ou effectuer d'autres actions
@@ -86,41 +108,41 @@ export class ProduitService {
         const token = getToken();
         if (token) {
             // Ajouter le token à l'en-tête de la requête
-            const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type","application/json; charset=utf8" );
+            const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type", "application/json; charset=utf8");
 
             // Utiliser les headers dans la requête
-            return this.http.get<Produit[]>(url, {headers} );
+            return this.http.get<Produit[]>(url, {headers});
         } else {
             // Gérer le cas où le token n'est pas disponible
             return new Observable(); // Vous pouvez également renvoyer une erreur ou effectuer d'autres actions
         }
     }
 
-    searchProduit(term: string , pr :Produit[]): Produit[] {
+    searchProduit(term: string, pr: Produit[]): Produit[] {
         term = term.toLowerCase();
-        return pr.filter((produit :Produit) =>
-            produit._nom.toLowerCase().indexOf(term)!==-1 || produit._description.indexOf(term) !==-1
+        return pr.filter((produit: Produit) =>
+            produit._nom.toLowerCase().indexOf(term) !== -1 || produit._description.indexOf(term) !== -1
         );
     }
 
-    addProduit(nouveauProduit: Produit, uploadFiles: any[] )  {
+    addProduit(nouveauProduit: Produit, uploadFiles: any[]) {
         const token = getToken();
 
         if (token) {
             const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
             let formData = new FormData();
-            const produit=nouveauProduit
-            formData.append('produit',  new Blob([JSON
-                .stringify(produit)], {
+            const produit = nouveauProduit
+            formData.append('produit', new Blob([JSON
+                .stringify(produit.toJSON())], {
                 type: 'application/json'
             }));
             for (let i = 0; i < uploadFiles.length; i++) {
                 formData.append('file', uploadFiles[i]);
             }
 
-
+            console.log(produit.toJSON())
             // Utiliser les headers dans la require
-            return this.http.post<any>(this.api + '/create', formData,{headers} );
+            return this.http.post<any>(this.api + '/create', formData, {headers});
         } else {
             // Gérer le cas où le token n'est pas disponible
             return new Observable(); // Vous pouvez également renvoyer une erreur ou effectuer d'autres actions
@@ -128,24 +150,30 @@ export class ProduitService {
 
     }
 
-    modifierProduit(nouveauProduit: Produit ,uploadFiles :any[]): any {
+    shouldStayOnSamePageOrder(): boolean {
+        const currentUrl = this.router.url;
+        return currentUrl.includes('/edit-produit');
+    }
+
+    modifierProduit(nouveauProduit: Produit, uploadFiles: any[]): any {
         const token = getToken();
 
         if (token) {
+
             // Ajouter le token à l'en-tête de la requête
             const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
             let formData = new FormData();
-            const produit=nouveauProduit
-            formData.append('produit',  new Blob([JSON
+            const produit = nouveauProduit
+            formData.append('produit', new Blob([JSON
                 .stringify(produit)], {
                 type: 'application/json'
             }));
             for (let i = 0; i < uploadFiles.length; i++) {
                 formData.append('file', uploadFiles[i]);
             }
-
+            console.log(nouveauProduit)
             // Utiliser les headers dans la require
-            return this.http.put<any>(this.api + '/update', formData,{headers} );
+            return this.http.put<any>(this.api + '/update', formData, {headers});
         } else {
             // Gérer le cas où le token n'est pas disponible
             return new Observable(); // Vous pouvez également renvoyer une erreur ou effectuer d'autres actions
@@ -169,29 +197,29 @@ export class ProduitService {
 
     }
 
-    getImageProduit(name :string) :Observable<Blob> {
+    getImageProduit(name: string): Observable<Blob> {
         const token = getToken();
         if (token) {
             const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type", "application/json; charset=utf8");
 
             // Utiliser les headers dans la requête
-            return this.http.get(this.apifile + 'getFileByName/' + name, {headers,responseType: 'blob'});
+            return this.http.get(this.apifile + 'getFileByName/' + name, {headers, responseType: 'blob'});
         } else {
             return new Observable(); // Vous pouvez également renvoyer une erreur ou effectuer d'autres actions
         }
     }
 
-    getProduitByQrNom(data:string):Observable<Produit> {
+    getProduitByQrNom(data: string): Observable<Produit> {
         const url = `${this.api}/findByDataqr`;
 
         // Récupérer le token d'authentification depuis le stockage local (à adapter selon votre méthode d'authentification)
         const token = getToken();
         if (token) {
             // Ajouter le token à l'en-tête de la requête
-            const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type","application/json; charset=utf8" );
+            const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type", "application/json; charset=utf8");
 
             // Utiliser les headers dans la requête
-            return this.http.get<Produit>(url+'/'+data,{headers} );
+            return this.http.get<Produit>(url + '/' + data, {headers});
         } else {
             // Gérer le cas où le token n'est pas disponible
             return new Observable(); // Vous pouvez également renvoyer une erreur ou effectuer d'autres actions
@@ -199,13 +227,11 @@ export class ProduitService {
     }
 
 
+    SaveVente(vente: Vente) {
 
 
-    SaveVente(vente:Vente )  {
         const token = getToken();
 
-        // vente.dateVente=new Date();
-        // vente.dateVente = vente.dateVente.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
 
         if (token) {
             // Ajouter le token à l'en-tête de la requête
@@ -213,7 +239,7 @@ export class ProduitService {
             // Ajouter le token à l'en-tête de la requête
             const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
-            let ligneventes : any[]  =[];
+            let ligneventes: any[] = [];
             vente.lignesVente.forEach(value => {
 
                     ligneventes.push(
@@ -224,33 +250,29 @@ export class ProduitService {
                                 "id": value.produit.id
                             }
                         }
-
                     )
                 }
             )
 
-            const venteSave={
-                "dateVente":  this.datePipe.transform(vente.dateVente,'dd-MM-yyyy HH:mm:ss'),
-                "nomClient": vente.nomClient,
+            const venteSave = {
+                "paye": vente.paye,
+                "dateVente": this.datePipe.transform(vente.dateVente, 'dd-MM-yyyy'),
+                "client": {"id": vente.client.id},
                 "total": vente.total,
                 "reglement": vente.reglement,
                 "lignesVente": ligneventes,
-                "employer":{"id":vente.employer.id}
+                "employer": {"id": vente.employer.id}
             }
 
 
-            console.error(venteSave)
-
             // Utiliser les headers dans la require
-            return this.http.post<any>(this.apivente + '/create', venteSave,{headers} );
+            return this.http.post<any>(this.apivente + '/create', venteSave, {headers});
         } else {
             // Gérer le cas où le token n'est pas disponible
             return new Observable(); // Vous pouvez également renvoyer une erreur ou effectuer d'autres actions
         }
 
     }
-
-
 
 
     getArticles(): Observable<Article[]> {
@@ -259,10 +281,10 @@ export class ProduitService {
         const token = getToken();
         if (token) {
             // Ajouter le token à l'en-tête de la requête
-            const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type","application/json; charset=utf8" );
+            const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type", "application/json; charset=utf8");
 
             // Utiliser les headers dans la requête
-            return this.http.get<Article[]>(url, {headers} );
+            return this.http.get<Article[]>(url, {headers});
         } else {
             // Gérer le cas où le token n'est pas disponible
             return new Observable(); // Vous pouvez également renvoyer une erreur ou effectuer d'autres actions
@@ -270,85 +292,88 @@ export class ProduitService {
     }
 
 
-    deleteArticle(article: Article)  :Observable<any>{
-        const url = `${this.apiarticle}/delete/`+article.id;
+    deleteArticle(article: Article): Observable<any> {
+        const url = `${this.apiarticle}/delete/` + article.id;
 
         // Récupérer le token d'authentification depuis le stockage local (à adapter selon votre méthode d'authentification)
         const token = getToken();
         if (token) {
             // Ajouter le token à l'en-tête de la requête
-            const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type","application/json; charset=utf8" );
+            const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type", "application/json; charset=utf8");
 
             // Utiliser les headers dans la requête
-            return this.http.delete<any>(url, {headers} );
+            return this.http.delete<any>(url, {headers});
         } else {
             // Gérer le cas où le token n'est pas disponible
             return new Observable(); // Vous pouvez également renvoyer une erreur ou effectuer d'autres actions
         }
     }
 
-    addArticle(article: Article)  :Observable<any>{
+    addArticle(article: Article): Observable<any> {
         const url = `${this.apiarticle}/create`;
 
         // Récupérer le token d'authentification depuis le stockage local (à adapter selon votre méthode d'authentification)
         const token = getToken();
         if (token) {
             // Ajouter le token à l'en-tête de la requête
-            const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type","application/json; charset=utf8" );
+            const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type", "application/json; charset=utf8");
 
             // Utiliser les headers dans la requête
 
-            return this.http.post<any>(url,article ,{headers} );
+            return this.http.post<any>(url, article, {headers});
         } else {
 
             // Gérer le cas où le token n'est pas disponible
             return new Observable(); // Vous pouvez également renvoyer une erreur ou effectuer d'autres actions
         }
     }
-    exist(tableName:String) {
+
+    exist(tableName: String) {
         const token = getToken();
 
         if (token) {
             // Ajouter le token à l'en-tête de la requête
             const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type", "application/json; charset=utf8");
-            let data :any={
+            let data: any = {
                 "user": {
                     "id": getUserDecodeID().id
                 },
                 "tableName": tableName,
 
             }
-            this.http.post<boolean>(environment.apiUrl + '/permission/checkpermission', data, { headers }).subscribe(value => {
-                this.permission=value ;
+            this.http.post<boolean>(environment.apiUrl + '/permission/checkpermission', data, {headers}).subscribe(value => {
+                this.permission = value;
             })
 
-        }else {
-            this.permission =false ;
+        } else {
+            this.permission = false;
 
         }
     }
+
 //   =====================article============
-    existArticle(tableName:String) {
+    existArticle(tableName: String) {
         const token = getToken();
 
         if (token) {
             const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type", "application/json; charset=utf8");
-            let data :any={
+            let data: any = {
                 "user": {
                     "id": getUserDecodeID().id
                 },
                 "tableName": tableName,
 
             }
-            this.http.post<boolean>(environment.apiUrl + '/permission/checkpermission', data, { headers }).subscribe(value => {
-                this.permissionArticle=value ;
+            this.http.post<boolean>(environment.apiUrl + '/permission/checkpermission', data, {headers}).subscribe(value => {
+                this.permissionArticle = value;
             })
 
-        }else {
-            this.permissionArticle =false ;
+        } else {
+            this.permissionArticle = false;
 
         }
     }
+
     returnBack() {
         Swal.fire({
             title: 'Vous êtes sûr?',
@@ -373,5 +398,64 @@ export class ProduitService {
         });
     }
 
-//   ============article==================
+//   ============historique==================
+
+    getHistoriques(id: Number): Observable<Historique[]> {
+        const url = `${this.api}/historiques`;
+        const token = getToken();
+        if (token) {
+            const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type", "application/json; charset=utf8");
+            return this.http.get<Historique[]>(url + '/' + id, {headers});
+
+        } else {
+            return new Observable();
+        }
+    }
+
+
+    getProduitByNom(nom: string): Observable<Produit[]> {
+        const url = `${this.api}/findByNom/${nom}`; // Corrected URL path
+        const token = getToken();
+
+
+        if (token) {
+            // Add the token to the request header
+            const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type", "application/json; charset=utf8");
+
+            return this.http.get<Produit[]>(url, { headers });
+        } else {
+            return new Observable<Produit[]>();
+        }
+    }
+
+    getProduitByQrCode(code: string): Observable<Produit[]> {
+        const url = `${this.api}/findByDataqr/${code}`; // Corrected URL path
+        const token = getToken();
+
+
+        if (token) {
+            // Add the token to the request header
+            const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type", "application/json; charset=utf8");
+
+            return this.http.get<Produit[]>(url, { headers });
+        } else {
+            return new Observable<Produit[]>();
+        }
+    }
+
+
+    getListeNomProduit(): Observable<string[]> {
+        const url = `${this.api}/getListNomProduit`; // Corrected URL path
+        const token = getToken();
+
+
+        if (token) {
+            // Add the token to the request header
+            const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set("Content-Type", "application/json; charset=utf8");
+
+            return this.http.get<string[]>(url, { headers });
+        } else {
+            return new Observable<string[]>();
+        }
+    }
 }

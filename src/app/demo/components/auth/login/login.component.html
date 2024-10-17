@@ -1,31 +1,86 @@
 <div class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
     <div class="flex flex-column align-items-center justify-content-center">
-        <img src="assets/layout/images/img.png" alt="Sakai logo" class="mb-5 w-6rem flex-shrink-0">
         <div style="border-radius:56px; padding:0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%);">
             <div class="w-full surface-card py-8 px-5 sm:px-8" style="border-radius:53px">
                 <div class="text-center mb-5">
-                    <img src="assets/demo/images/login/avatar.png" alt="Image" height="50" class="mb-3">
-                    <div class="text-900 text-3xl font-medium mb-3">Welcome!</div>
-                    <span class="text-600 font-medium">Sign in to continue</span>
+                    <img src="assets/layout/images/img.png" alt="Sakai logo" class="mb-5 w-6rem flex-shrink-0">
+                    <div class="text-900 text-3xl font-medium mb-3">Bienvenue!</div>
+                    <span class="text-600 font-medium"></span>
                 </div>
 
                 <div>
                     <label for="email1" class="block text-900 text-xl font-medium mb-2">Email</label>
                     <input id="email1" type="text" placeholder="Email address" pInputText class="w-full md:w-30rem mb-5" style="padding:1rem"  [(ngModel)]="username">
 
-                    <label for="password1" class="block text-900 font-medium text-xl mb-2">Password</label>
+                    <label for="password1" class="block text-900 font-medium text-xl mb-2">Mot de passe</label>
                     <p-password id="password1" [(ngModel)]="password" placeholder="Password" [toggleMask]="true" styleClass="mb-5" inputStyleClass="w-full p-3 md:w-30rem"></p-password>
 
                     <div class="flex align-items-center justify-content-between mb-5 gap-5">
                         <div class="flex align-items-center">
                             <p-checkbox id="rememberme1" [binary]="true" styleClass="mr-2"></p-checkbox>
-                            <label for="rememberme1">Remember me</label>
+                            <label for="rememberme1">Se rappeler de moi</label>
                         </div>
-                        <a class="font-medium no-underline ml-2 text-right cursor-pointer" style="color: var(--primary-color)">Forgot password?</a>
-                    </div>
-                    <button pButton pRipple label="Sign In" class="w-full p-3 text-xl" (click)="onClicked()" ></button>
+                        <a class="font-medium no-underline ml-2 text-right cursor-pointer"
+                           style="color: var(--primary-color)"
+                           (click)="showDialogVerif()">
+                            Mot de passe oublié?
+                        </a>                    </div>
+                    <button pButton pRipple label="Connectez-vous" class="w-full p-3 text-xl" (click)="onClicked()" ></button>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<p-dialog header="Saisir vos informations" [modal]="true" [(visible)]="showVerif" [style]="{ width: '25rem' }">
+    <div class="flex align-items-center gap-3 mb-3">
+        <label for="email" class="font-semibold w-6rem">Email</label>
+        <input pInputText id="email" class="flex-auto" autocomplete="off" [(ngModel)]="emailverif" />
+    </div>
+    <div class="flex align-items-center gap-3 mb-5">
+        <label for="secretKey" class="font-semibold w-6rem">Secret Key</label>
+        <input pInputText id="secretKey" class="flex-auto" autocomplete="off"  [(ngModel)]="secretKeyverif"/>
+    </div>
+    <div class="flex justify-content-end gap-2">
+        <p-button label="Cancel" severity="secondary" (onClick)="showVerif = false" />
+        <p-button label="Verifier" (onClick)="verifForget()" />
+    </div>
+</p-dialog>
+
+
+<p-dialog header="Saisissez un nouveau mot de passe" [modal]="true" [(visible)]="visibleConfirmPass" [style]="{ width: '25rem' }">
+    <form (ngSubmit)="saveNewPassword(userId)">
+        <div class="flex align-items-center gap-3 mb-3">
+            <label for="new-password" class="font-semibold w-6rem">Nouveau mot de passe</label>
+            <input pInputText type="password" id="new-password" class="flex-auto" [(ngModel)]="newPassword" name="newPassword" autocomplete="off" />
+        </div>
+        <div class="flex align-items-center gap-3 mb-5">
+            <label for="confirm-password" class="font-semibold w-6rem">Confirmez le mot de passe</label>
+            <input pInputText type="password" id="confirm-password" [(ngModel)]="confirmPassword" name="confirmPassword" autocomplete="off" />
+        </div>
+        <div class="flex justify-content-end gap-2">
+            <p-button label="Annuler" (onClick)="visibleConfirmPass = false" class="p-button-secondary" />
+            <p-button label="Enregistrer" type="submit" />
+        </div>
+    </form>
+</p-dialog>
+
+<p-dialog header="Erreur" [(visible)]="visibleError" [modal]="true" [closable]="false" [style]="{ width: '25rem' }">
+    <div class="p-d-flex p-ai-center p-jc-center">
+        <span class="p-text-secondary">{{ errorMessage }}</span>
+    </div>
+    <div class="p-d-flex p-jc-end p-mt-3">
+        <p-button label="OK" (onClick)="visibleError = false" />
+    </div>
+</p-dialog>
+
+
+
+<p-dialog header="Succès" [(visible)]="visibleSuccess" [modal]="true" [closable]="true" [style]="{ width: '25rem' }">
+    <div class="p-d-flex p-ai-center p-jc-center">
+        <span class="p-text-secondary">{{ successMessage }}</span>
+    </div>
+    <div class="p-d-flex p-jc-end p-mt-3">
+        <p-button label="OK" (onClick)="navigateToLogin()" />
+    </div>
+</p-dialog>

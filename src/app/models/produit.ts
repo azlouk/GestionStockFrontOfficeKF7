@@ -1,97 +1,69 @@
 import {Article} from "./Article";
 import {File} from "./File";
-/*
-export interface ProduitInterface {
-    id?: number;
-    nom?: string;
-    prixUnitaire?: number;
-    prixGros?: number;
-    description?: string;
-    qantite?: number;
-    imageData?: File;
-    gainUnitaire?: number;
-    gainGros?: number;
-    dateExpiration?: Date;
-    dateFabrication?: Date;
-    minQuantiteGros?: number;
-    taxe?: number;
-    enable?: boolean;
-    dataqr?: string;
-    filesList?: File[];
-    image:File ;
-    checkedService?: boolean ;
-    subdataqr?:string[] ;
-    article:Article;
-    levelstock?:number;
-    prixVente? :number;
-}
-*/
+import {Historique} from "./historique";
+import Swal from "sweetalert2";
 
 
-export interface CodeModel{
-    id?:string;
-    code?:string;
+export interface CodeModel {
+    id?: string;
+    code?: string;
 }
 
 export class Produit {
-            id: number;
-            nom: string;
-            prixUnitaire: number;
-            typeCalcule: string;
-            prixGros: number;
-            description: string;
-            qantite: number;
-            image: Blob;
-            gainUnitaire: number;
-            gainGros: number;
-            files:File[];
-            dateExpiration: Date;
+    id: number;
+    nom: string;
+    prixUnitaire: number;
+
+    prixGros: number;
+    description: string;
+    qantite: number;
+    image: Blob;
+    gainUnitaire: number;
+    gainGros: number;
+    files: File[];
+    dateExpiration: Date;
     dateFabrication: Date;
-            minQuantiteGros: number;
-            taxe: number;
-            enable: boolean;
-            dataqr: string;
-            qantiteFacture:number;
-            article:Article;
-            levelstock:number ;
-            showDetails:boolean ;
-            checkedService: boolean ;
-            subdataqr :string[]
+    minQuantiteGros: number;
+    taxe: number;
+    enable: boolean;
+    dataqr: string;
+    qantiteFacture: number;
+    article: Article;
+    levelstock: number;
+    showDetails: boolean;
+    checkedService: boolean;
+    subdataqr: string[];
+    historiques: Historique [];
 
 
-    constructor(_id: number=0, _nom: string="",  _typeCalcule: string="",_prixUnitaire: number=0, _prixGros: number=0, _description: string="", _qantite: number=0, _image: Blob=new Blob(), _gainUnitaire: number=0, _gainGros: number=0, _files: File[]=[], _dateExpiration: Date=new Date(), _dateFabrication:Date=new Date(), _minQuantiteGros: number=0, _taxe: number=0, _enable: boolean=false, _dataqr: string="", _qantiteFacture: number=0, _article: Article=new Article(), _levelstock: number=0, _showDetails: boolean=false, _checkedService: boolean=false, _subdataqr: string[]=[]) {
-        this.id = _id ;
-        this.nom = _nom ;
-        this.typeCalcule = _typeCalcule ;
-        this.prixUnitaire = _prixUnitaire ;
-        this.prixGros = _prixGros ;
-        this.description = _description ;
-        this.qantite = _qantite ;
-        this.image = _image ;
-        this.gainUnitaire = _gainUnitaire ;
-        this.gainGros = _gainGros ;
-        this.files= _files;
-        this.dateExpiration = _dateExpiration ;
-        this.dateFabrication = _dateFabrication ;
-        this.minQuantiteGros = _minQuantiteGros ;
-        this.taxe = _taxe ;
-        this.enable = _enable ;
-        this.dataqr = _dataqr ;
-        this.qantiteFacture = _qantiteFacture ;
-        this.article = _article ;
-        this.levelstock = _levelstock ;
-        this.showDetails = _showDetails ;
-        this.checkedService = _checkedService ;
-        this.subdataqr = _subdataqr ;
+    constructor(_id: number = 0, _nom: string = "", _prixUnitaire: number = 0, _prixGros: number = 0, _description: string = "", _qantite: number = 0, _image: Blob = new Blob(), _gainUnitaire: number = 0, _gainGros: number = 0, _files: File[] = [], _dateExpiration: Date = new Date(), _dateFabrication: Date = new Date(), _minQuantiteGros: number = 0, _taxe: number = 0, _enable: boolean = false, _dataqr: string = "", _qantiteFacture: number = 0, _article: Article = new Article(), _levelstock: number = 0, _showDetails: boolean = false, _checkedService: boolean = false, _subdataqr: string[] = [], _historiques: Historique [] = []) {
+        this.id = _id;
+        this.nom = _nom;
+        this.prixUnitaire = _prixUnitaire;
+        this.prixGros = _prixGros;
+        this.description = _description;
+        this.qantite = _qantite;
+        this.image = _image;
+        this.gainUnitaire = _gainUnitaire;
+        this.gainGros = _gainGros;
+        this.files = _files;
+        this.dateExpiration = _dateExpiration;
+        this.dateFabrication = _dateFabrication;
+
+        this.minQuantiteGros = _minQuantiteGros;
+        this.taxe = _taxe;
+        this.enable = _enable;
+        this.dataqr = _dataqr;
+        this.qantiteFacture = _qantiteFacture;
+        this.article = _article;
+        this.levelstock = _levelstock;
+        this.showDetails = _showDetails;
+        this.checkedService = _checkedService;
+        this.subdataqr = _subdataqr;
+        this.historiques = _historiques;
     }
 
-     get _typeCalcule(): string {
-        return this.typeCalcule;
-    }
 
-     set _typeCalcule(value: string) {
-        this.typeCalcule = value;
-    }
 
     get _id(): number {
         return this.id;
@@ -268,12 +240,100 @@ export class Produit {
     set _subdataqr(value: string[]) {
         this.subdataqr = value;
     }
+
+    get _files(): File[] {
+        return this.files;
+    }
+
+    set _files(value: File[]) {
+        this.files = value;
+    }
+
+    get _historiques(): Historique[] {
+        return this.historiques;
+    }
+
+    set _historiques(value: Historique[]) {
+        this.historiques = value;
+    }
+
+    // toJSON() {
+    //     return {
+    //         ...this,
+    //         dateExpiration: this.dateExpiration ? this.dateExpiration.toISOString().split('T')[0] : null,
+    //         dateFabrication: this.dateFabrication ? this.dateFabrication.toISOString().split('T')[0] : null
+    //     };
+    // }
+
+    static copy(produit: Produit): Produit {
+        const newProduit = new Produit();
+
+        newProduit.id = produit.id;
+        newProduit.nom = produit.nom;
+        newProduit.prixUnitaire = produit.prixUnitaire;
+        newProduit.prixGros = produit.prixGros;
+        newProduit.description = produit.description;
+        newProduit.qantite = produit.qantite;
+        newProduit.image = produit.image;
+        newProduit.gainUnitaire = produit.gainUnitaire;
+        newProduit.gainGros = produit.gainGros;
+        newProduit.files = produit.files ? [...produit.files] : [];
+        newProduit.dateExpiration = produit.dateExpiration;
+        newProduit.dateFabrication = produit.dateFabrication;
+        newProduit.minQuantiteGros = produit.minQuantiteGros;
+        newProduit.taxe = produit.taxe;
+        newProduit.enable = produit.enable;
+        newProduit.dataqr = produit.dataqr;
+        newProduit.qantiteFacture = produit.qantiteFacture;
+        newProduit.article = produit.article;
+        newProduit.levelstock = produit.levelstock;
+        newProduit.showDetails = produit.showDetails;
+        newProduit.checkedService = produit.checkedService;
+        newProduit.subdataqr = produit.subdataqr ? [...produit.subdataqr] : [];
+        newProduit.historiques = produit.historiques ? [...produit.historiques] : [];
+
+        return newProduit;
+    }
+
     toJSON() {
         return {
-            ...this,
-            dateExpiration: this.dateExpiration ? this.dateExpiration.toISOString().split('T')[0] : null,
-            dateFabrication: this.dateFabrication ? this.dateFabrication.toISOString().split('T')[0] : null
+            id: this.id,
+            nom: this.nom,
+            prixUnitaire: this.prixUnitaire,
+            prixGros: this.prixGros,
+            description: this.description,
+            qantite: this.qantite,
+            gainUnitaire: this.gainUnitaire,
+            gainGros: this.gainGros,
+            dateExpiration: this.formatDate(this.dateExpiration), // Format as needed
+            dateFabrication: this.formatDate(this.dateFabrication), // Format as needed
+            minQuantiteGros: this.minQuantiteGros,
+            taxe: this.taxe,
+            enable: this.enable,
+            dataqr: this.dataqr,
+            qantiteFacture: this.qantiteFacture,
+            article: this.article,
+            levelstock: this.levelstock,
+            showDetails: this.showDetails,
+            checkedService: this.checkedService,
+            subdataqr: this.subdataqr,
+            historiques: this.historiques,
+            files: this.files // If needed, you might want to convert these to a format suitable for sending
         };
+    }
+
+    private formatDate(date: Date): string {
+        if (!(date instanceof Date)) {
+            date = new Date(date); // Convert it to a Date object if it's not already
+        }
+
+        // Ensure it's a valid date
+        if (!isNaN(date.getTime())) {
+            return date.toISOString().split('T')[0]; // e.g., "2024-10-06"
+        } else {
+            throw new Error('Invalid date');
+
+        }
     }
 
 }

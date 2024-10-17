@@ -76,7 +76,6 @@ export class DepotComponent implements OnInit{
       this.getAllDepots();
 
         this.depotService.exist("depot");
-        console.log("=======***********>>>> "+new JsonPipe().transform(this.depotService.permission))
 
         this.getDataResponsable()
 
@@ -86,7 +85,6 @@ export class DepotComponent implements OnInit{
         this.depotService.getdepots().subscribe((value: Depot[]) => {
             this.depots = value;
             this.depotService.depots=value ;
-            console.log('List of Depost:'+ new JsonPipe().transform(this.depots));
         }, error => {
             // RedirectToLogin(this.router) ;
 
@@ -103,7 +101,6 @@ export class DepotComponent implements OnInit{
     getDataResponsable(){
         this.depotService.getAvailableResponsable().subscribe((value :User[])=>{
             this.listReponsable=value
-             console.log("List RESPONSABLE AIVAILBLE"+this.listReponsable)
         })
     }
 
@@ -121,7 +118,6 @@ export class DepotComponent implements OnInit{
 
     selectDepot(depot : Depot) {
         this.idd = depot.id;
-        console.log('idf:' ,this.idd)
         this.router.navigate(['/ajout-service/',this.idp,this.idf,this.idd]);
     }
 
@@ -137,7 +133,7 @@ export class DepotComponent implements OnInit{
             if (result.isConfirmed) {
                 this.depotService.deleteDepot(id).subscribe(
                     (response: any) => {
-                        console.log("response :"+response)
+                        this.refrech();
                         if (response) {
                             this.refrech();0
                             Swal.fire('Supprimé', response.message, 'success');
@@ -198,7 +194,8 @@ export class DepotComponent implements OnInit{
     }
 
     refrech() {
-        this.getAllDepots()
+        this.getAllDepots();
+        this.getDataResponsable();
         this.router.navigate(['/uikit/depots']);
     }
 
@@ -220,20 +217,18 @@ export class DepotComponent implements OnInit{
 
     ajouterDepot() {
         if (this.depot.nom) {
-            console.log(new JsonPipe().transform(this.depot))
             this.depotService.addDepot(this.depot).subscribe(value => {
-                console.log("Res of Add depot :"+ value)
                 Swal.fire('Succès', 'Le dêpot a été ajouté avec succès !', 'success');
-
+                this.refrech();
             }); // Ajout du produit via le service
             this.depot = new Depot(0,'', '', 0, 0, ''); // Réinitialisation du formulaire après l'ajout
-            console.log('nouveauResponsableId :',this.depot.responsable.id)
+
             if (Response) {
                 this.refrech();
             }
         } else {
             Swal.fire('Erreur', 'Veuillez remplir tous les champs', 'error');
-            console.log('nouveauDepot :',this.depot)
+
 
         }
         this.hideDialog();

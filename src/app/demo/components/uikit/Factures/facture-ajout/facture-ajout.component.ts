@@ -1,9 +1,9 @@
 import {ChangeDetectorRef, Component, Input, OnInit, ViewChild} from '@angular/core';
 import {Facture, factureType} from "../../../../../models/Facture";
 import {Depot} from "../../../../../models/Depot";
-import {CodeModel, Produit} from "../../../../../models/produit";
-import {RoleEnum, User} from "../../../../../models/user";
-import {FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
+import {Produit} from "../../../../../models/produit";
+import {User} from "../../../../../models/user";
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {LigneFacture} from "../../../../../models/LigneFacture";
 import {FactureService} from "../../../../../layout/service/facture.service";
 import {DepotService} from "../../../../../layout/service/depot.service";
@@ -28,7 +28,6 @@ import {InputTextModule} from "primeng/inputtext";
 import {Tranche} from "../../../../../models/Tranche";
 import {AjoutUserComponent} from "../../users/ajout-user/ajout-user.component";
 import {TrancheService} from "../../../../../layout/service/tranche.service";
-import {Article} from "../../../../../models/Article";
 import {ProduitAjoutComponent} from "../../Products/produit-ajout/produit-ajout.component";
 import {RadioButtonModule} from "primeng/radiobutton";
 import {ConfirmationService, MessageService} from "primeng/api";
@@ -42,6 +41,8 @@ import {GenerationqrComponent} from "../../../utilities/generationqr/generationq
 import {InputTextareaModule} from "primeng/inputtextarea";
 import {NgxBarcode6Module} from "ngx-barcode6";
 import {DialogService} from "../../../../../layout/service/dialogue-user.service";
+import {Historique} from "../../../../../models/historique";
+import {Page} from "../../../../../models/page";
 
 @Component({
     selector: 'app-facture-ajout',
@@ -86,19 +87,14 @@ export class FactureAjoutComponent implements OnInit {
     newFacture = new Facture();
     depots: Depot[] = [];
     produits: Produit[] = [];
-    utilisateurs: User[] = [];
     utilisateursClients: User[] = [];
     providers: User[] = [];
     produitsFiltres: Produit[];
     tranches: Tranche[] = [];
-    newProduct: Produit = new Produit();
     rechercheProduit: string = '';
     userForm: FormGroup;
-    roles = Object.values(RoleEnum);
-    autoReference: boolean = true;
     composantBVisible = false;
     utilisateursTransporteur: User[] = [];
-
     @ViewChild('dt3') table: Table;
     montantFiltreCalcule: boolean = false;
     totalMontantFiltre: number = 0;
@@ -108,15 +104,28 @@ export class FactureAjoutComponent implements OnInit {
 
     root: string;
     showButtun: boolean = true;
-    showAddUser: boolean = false;
-    showAddProduit: boolean = false;
+     showAddProduit: boolean = false;
     isUpdateValide = false;
-    private Tranchefilred: Tranche[];
+     produit: Produit; // Assurez-vous de définir correctement ce produit
 
 
-    clear(table: Table) {
-        table.clear();
-    }
+    initTabProduit: Produit[]=[];
+    produitsPage: Page<Produit>={
+        content:this.initTabProduit,number:0,size:0,totalPages:0,totalElements:0
+
+    };
+    currentPage: number = 0;
+    pageSize: number = 10; // Nombre d'éléments par page
+
+
+     first = 0;
+     rows = 10;
+
+
+    public newPrix: number=0;
+    fuctureId:any
+    private loadingdata: boolean=false;
+
 
     constructor(
         private cdr: ChangeDetectorRef,
@@ -146,25 +155,27 @@ export class FactureAjoutComponent implements OnInit {
     }
 
     async ngOnInit(): Promise<void> {
+
+
+ this.getToTalFacture() ;
+
         this.updateRootFromCurrentPath();
-        const id = this.route.snapshot.paramMap.get('id');
+      this.fuctureId = this.route.snapshot.paramMap.get('id');
         try {
-            if (id) {
-                try {
-                    this.newFacture = await this.factureService.getFactureById(Number(id)).toPromise()
+
+
+            if(this.fuctureId){
+                this.factureService.getFactureById(this.fuctureId).subscribe(value => {
+                    this.newFacture = value;
                     this.isUpdateValide = true
                     if (Array.isArray(this.newFacture.lignesFacture)) {
                         this.newFacture.lignesFacture = this.newFacture.lignesFacture;
                     } else {
                         console.warn("Facture _lignesFacture is not an array or is undefined", this.newFacture.lignesFacture);
                     }
-                } catch (e) {
-                    this.router.navigate(['uikit/facture']);
-                }
-
+                },error => console.log(error))
             }
 
-            this.newFacture.typeFacture = factureType.SORTIE;
             this.getAllTranches();
             this.getAllClient();
             this.getAllTrans();
@@ -172,7 +183,7 @@ export class FactureAjoutComponent implements OnInit {
             this.getAllProduits();
             this.getAllDepots();
 
-            console.log("Facture récupérée !!", this.newFacture);
+
         } catch (error) {
             console.error("Erreur lors du chargement des données :", error);
         }
@@ -185,13 +196,13 @@ export class FactureAjoutComponent implements OnInit {
     getAllDepots() {
         this.depotService.getdepots().subscribe((value: Depot[]) => {
             this.depots = value;
-            console.log(this.depots);
-            //console.log('List of services:', this.services);
+
+
         });
     }
 
     filtrerProduits(recherche: string) {
-        console.log(recherche)
+
         this.produitsFiltres = this.produits.filter((produit: Produit) => {
             return produit.nom.includes(recherche) ||
                 produit.dataqr.includes(recherche)
@@ -201,14 +212,14 @@ export class FactureAjoutComponent implements OnInit {
     getAllClient() {
         this.userService.getUsersClient().subscribe((value: User[]) => {
             this.utilisateursClients = value
-            // console.log(new JsonPipe().transform(this.utilisateurs) )
+
         })
     }
 
     getAllTranches() {
         this.trancheService.getTranches().subscribe((value: Tranche[]) => {
             this.tranches = value
-            // console.log(new JsonPipe().transform(this.tranches) )
+
         })
     }
 
@@ -225,10 +236,7 @@ export class FactureAjoutComponent implements OnInit {
     }
 
     getAllProduits() {
-        this.produitService.getProduits().subscribe((value: any) => {
-            this.produits = value;
-            // console.error(""+new JsonPipe().transform(this.produits))
-        })
+        this.loadProduits(0,10);
     }
 
     createNewFacture(): void {
@@ -239,7 +247,7 @@ export class FactureAjoutComponent implements OnInit {
             return;
         }
 
-        console.log('Contenu de la facture à enregistrer :', this.newFacture);
+
 
         this.confirmationService.confirm({
             header: "facture est entièrement réglée  ?",
@@ -260,8 +268,10 @@ export class FactureAjoutComponent implements OnInit {
     }
 
     private saveFacture() {
-        this.newFacture.montant = this.getToTalFacture();
+        this.getToTalFacture();
+        this.newFacture.reglement=this.reglementFacture;
         if (this.newFacture.id) {
+
             // Mise à jour de la facture existante
             this.factureService.updateFacture(this.newFacture).subscribe(
                 (response) => {
@@ -283,6 +293,7 @@ export class FactureAjoutComponent implements OnInit {
                 }
             );
         } else {
+            console.log(this.newFacture.reglement)
             // Création d'une nouvelle facture
             this.factureService.addFacture(this.newFacture).subscribe(
                 (response) => {
@@ -313,7 +324,7 @@ export class FactureAjoutComponent implements OnInit {
     }
 
     validateFacture(): boolean {
-        if (this.newFacture.depot.id == 0) {
+        if ( this.newFacture.typeFacture==factureType.ENTREE && this.newFacture.depot.id == 0 ) {
             this.messageService.add({
                 severity: 'error',
                 summary: 'Erreur',
@@ -349,15 +360,7 @@ export class FactureAjoutComponent implements OnInit {
 
             });
             return false;
-        } else if (this.newFacture.transporteur.id == 0) {
-            this.messageService.add({
-                severity: 'error',
-                summary: 'Erreur',
-                detail: 'Aucun transporteur n\'a été sélectionné pour la facture',
-                life: 3000
 
-            });
-            return false;
         }
         return true;
     }
@@ -376,39 +379,31 @@ export class FactureAjoutComponent implements OnInit {
             if (value.quantite < value.produit.minQuantiteGros) {
                 this.newFacture.montant += value.quantite * (value.produit.prixUnitaire + value.produit.gainUnitaire);
                 value.montantTotal = value.quantite * (value.produit.prixUnitaire + value.produit.gainUnitaire);
-                console.log(value.montantTotal);
+
             } else {
                 this.newFacture.montant += value.quantite * (value.produit.prixGros + value.produit.gainGros);
                 value.montantTotal = value.quantite * (value.produit.prixGros + value.produit.gainGros)
-                console.log(value.montantTotal);
+
             }
         })
     }
 
     calaculateFactureTotalAcht() {
+
         this.newFacture.montant = 0;
         this.newFacture.lignesFacture.forEach(value => {
             if (this.newFacture.typeFacture === 'FACTURE_ACHAT') {
                 this.newFacture.montant += value.quantite * value.prixAchat;
             } else {
 
-                if (value.quantite <= value.produit.qantite) {
-                    this.newFacture.montant += value.quantite * this.getPrixCalculateVente(value);
 
-                } else {
-                    this.messageService.add({
-                        severity: 'error',
-                        summary: 'Produit epiusé',
-                        detail: 'Le quantité insufisant !',
-                        life: 3000
-                    });
-                    value.quantite = value.produit.qantite
 
-                }
-                this.newFacture.montant += value.quantite * this.getPrixCalculateVente(value);
+                    this.newFacture.montant += value.quantite * value.prixVente;
+
             }
-            console.log(this.newFacture.montant);  // Vous pouvez aussi afficher montantTotal si nécessaire
+
         });
+       this.getToTalFacture()
     }
 
     getPrixCalculateVente(l: LigneFacture): number {
@@ -424,13 +419,7 @@ export class FactureAjoutComponent implements OnInit {
         return l.produit.prixUnitaire;
     }
 
-    getPrixCalculate(l: LigneFacture): number {
-        if (l.quantite < l.produit.minQuantiteGros) {
-            return l.produit.prixUnitaire + l.produit.gainUnitaire;
-        } else {
-            return l.produit.prixUnitaire + l.produit.gainGros;
-        }
-    }
+
 
     changeType() {
         this.newFacture.typeFacture = this.newFacture.typeFacture === factureType.SORTIE
@@ -438,7 +427,7 @@ export class FactureAjoutComponent implements OnInit {
             : factureType.SORTIE;
         // Manually trigger change detection
         this.cdr.detectChanges();
-        console.log(this.newFacture.typeFacture)
+
     }
 
     returnBack() {
@@ -446,49 +435,47 @@ export class FactureAjoutComponent implements OnInit {
     }
 
     addToFacture(produitInterface: Produit) {
+
         const existingProduct = this.newFacture.lignesFacture.findIndex(product => product.produit.id === produitInterface.id);
-        console.table(produitInterface)
-        if (produitInterface.qantite > 0) {
 
-            if (existingProduct >= 0) {
-                if (this.newFacture.lignesFacture[existingProduct].quantite < this.newFacture.lignesFacture[existingProduct].produit.qantite) {
-                    this.newFacture.lignesFacture[existingProduct].quantite += 1;
 
-                } else {
-                    this.messageService.add({
-                        severity: 'error',
-                        summary: 'Produit epiusé',
-                        detail: 'Le quantité insufisant !',
-                        life: 3000
-                    });
-                }
 
-            } else {
-                // si le produit n'existe pas créer une nouvelle ligne de facture
-                const ligneFacture: LigneFacture = new LigneFacture(new Date().getTime(), 1, 0, produitInterface, produitInterface.prixUnitaire, produitInterface.prixUnitaire + produitInterface.gainUnitaire);
-                // ligneFacture.produit = produitInterface;
-                // ligneFacture.quantite = 1;
-                ligneFacture.montantTotal = ligneFacture.prixAchat * ligneFacture.quantite
-                this.newFacture.lignesFacture.push(ligneFacture);
-                this.messageService.add({
-                    severity: 'success',
-                    summary: 'Produit ajouté à la facture',
-                    detail: 'Le produit a été ajouté avec succès à la facture !',
-                    life: 3000
-                });
-            }
-            this.calaculateFactureTotalAcht();
-        } else {
+        if (produitInterface.qantite > 0 || this.newFacture.typeFacture=='FACTURE_ACHAT'  ) {
+                        if (existingProduct >= 0) {
+                                    if (this.newFacture.lignesFacture[existingProduct].quantite < this.newFacture.lignesFacture[existingProduct].produit.qantite  || this.newFacture.typeFacture=='FACTURE_ACHAT') {
+                                        this.newFacture.lignesFacture[existingProduct].quantite += 1;
+                                    } else {
+                                        this.messageService.add({
+                                            severity: 'error',
+                                            summary: 'Produit epiusé',
+                                            detail: 'Le quantité insufisant !',
+                                            life: 3000
+                                        });
+                                    }
+                        }
+                        else {
+                                        const ligneFacture: LigneFacture = new LigneFacture(new Date().getTime(), 1, 0, Produit.copy(produitInterface), produitInterface.prixUnitaire, produitInterface.prixUnitaire + produitInterface.gainUnitaire,'');
+                                        ligneFacture.montantTotal = ligneFacture.prixAchat * ligneFacture.quantite
+                                        this.newFacture.lignesFacture.push(ligneFacture);
+                                        this.messageService.add({
+                                            severity: 'success',
+                                            summary: 'Produit ajouté à la facture',
+                                            detail: 'Le produit a été ajouté avec succès à la facture !',
+                                            life: 3000
+                                        });
+                        }
+                        this.calaculateFactureTotalAcht();
+        }
+       else {
             this.messageService.add({
                 severity: 'error',
                 summary: 'Produit epiusé',
                 detail: 'Le quantité insufisant !',
                 life: 3000
             });
-            if (this.newFacture.typeFacture === 'FACTURE_ACHAT')
-                this.newFacture.lignesFacture[existingProduct].quantite = this.newFacture.lignesFacture[existingProduct].produit.qantite
-
         }
+         this.getToTalFacture() ;
+
     }
 
     private updateRootFromCurrentPath(): void {
@@ -504,7 +491,7 @@ export class FactureAjoutComponent implements OnInit {
     }
 
     AddTrancheToNewFacture() {
-        this.Newtranche.user = new User()
+         this.Newtranche.user = this.newFacture.typeFacture==factureType.ENTREE?this.newFacture.provider:this.newFacture.client
         this.newFacture.tranches.push(this.Newtranche);
         this.Newtranche = new Tranche()
     }
@@ -593,11 +580,8 @@ export class FactureAjoutComponent implements OnInit {
 
     protected readonly factureType = factureType;
     protected readonly confirm = confirm;
-    public typeCalculeDialogue: boolean = false;
 
-    public modifierProduit(id) {
-        this.router.navigate(['/uikit/edit-produit', id]);
-    }
+
 
     public onRowEditCancel(l: LigneFacture) {
         // this.newFacture.lignesFacture[index] = this.clonedLignesFactures[l.id as string];
@@ -606,33 +590,58 @@ export class FactureAjoutComponent implements OnInit {
 
     }
 
-    public onRowEditSave(l: any) {
+    public onRowEditSave(l: LigneFacture) {
+
         if (this.newFacture.typeFacture === 'FACTURE_ACHAT')
             if (l.prixAchat !== l.produit.prixUnitaire) {
-                this.typeCalculeDialogue = true;
+
+                l.IsshowingDiolog=true;
+
             }
 
-    }
-
-
-    public onRowEditInit(l: any) {
-
 
     }
 
-    public hideDialog() {
 
-        this.typeCalculeDialogue = false;
+    public onRowEditInit(l: LigneFacture) {
+
+        //  teste si l'update ou ajout////////////////
+        this.produitService.getProduitById(l.produit.id).subscribe(value => {
+            l.produit=value ;
+
+        })
     }
+
+
+
+    confirmerRecalculPrix(ligne: LigneFacture): void {
+        if (ligne.typeCalcule) {
+
+            ligne.produit.prixUnitaire = this.calculerNouveauPrix(ligne.typeCalcule, ligne);
+        } else {
+            console.warn('Veuillez sélectionner un type de calcul.');
+        }
+
+         ligne.IsshowingDiolog = false;
+    }
+
 
     onQuantiteChange(newValue: number, item: any) {
 
-        if (newValue > item.produit.qantite) {
-            item.quantite = 0; // Réinitialisez la valeur si elle dépasse la quantité
+        if (newValue > item.produit.qantite && this.newFacture.typeFacture==factureType.SORTIE) {
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Produit epiusé',
+                detail: 'Le quantité insufisant !',
+                life: 3000
+            });
+            item.quantite =item.produit.qantite;
         } else {
-            item.quantite = newValue; // Sinon, mettez à jour la valeur normalement
-        }
-        this.calaculateFactureTotalAcht(); // Appeler la méthode de recalcul si nécessaire
+            item.quantite = newValue;
+
+         }
+        this.updatePrixVente(item);
+        this.calaculateFactureTotalAcht();
     }
 
     public getMontantLigne(l: LigneFacture) {
@@ -640,16 +649,18 @@ export class FactureAjoutComponent implements OnInit {
 
     }
 
-    total: number = 0;
 
-    public getToTalFacture(): number {
 
-        this.total = 0;
+    public getToTalFacture(){
+        let  total: number = 0;
+
         this.newFacture.lignesFacture.map(value => {
-            this.total += this.getMontantLigne(value)
+             total += this.getMontantLigne(value)
         })
-        this.total += this.total * (this.newFacture.montantTaxe / 100);
-        return this.total
+           total += total * (this.newFacture.montantTaxe / 100);
+
+        this.newFacture.montant=total;
+        this.reglementFacture=total ;
     }
 
     CalculeMontantFiltrer() {
@@ -659,6 +670,140 @@ export class FactureAjoutComponent implements OnInit {
     }
 
     public resetMontantFiltreCalcule() {
+
+    }
+
+    updatePrixVente(ligneFacture: LigneFacture): void {
+        const produit = ligneFacture.produit;
+
+        if (ligneFacture.quantite >= produit.minQuantiteGros) {
+            ligneFacture.prixVente = produit.prixUnitaire + produit.gainGros;
+
+        }
+        else {
+            ligneFacture.prixVente = produit.prixUnitaire + produit.gainUnitaire;
+        }
+        this.getTottalNbProduct()
+
+    }
+    TotalProductNb: number = 0;
+    selectedFacture: Facture = new Facture();
+     public reglementFacture: number=0;
+    getTottalNbProduct() {
+        this.TotalProductNb = 0;
+
+        this.selectedFacture.lignesFacture.forEach(value => {
+            this.TotalProductNb += value.quantite;
+        })
+    }
+    calculerNouveauPrix(typeCalcule: string, ligneFacture: LigneFacture): number {
+        const historiques: Historique[] = ligneFacture.produit.historiques;
+
+        let nouveauPrix: number = 0;
+
+
+        switch (typeCalcule) {
+            case 'MaxValue':
+                nouveauPrix = Math.max(ligneFacture.prixAchat,ligneFacture.produit.prixUnitaire);
+                break;
+            case 'MinValue':
+                nouveauPrix = Math.min(ligneFacture.prixAchat,ligneFacture.produit.prixUnitaire);
+                break;
+            case 'MoyenValue':
+
+                nouveauPrix=(((ligneFacture.prixAchat*ligneFacture.quantite)+(ligneFacture.produit.prixUnitaire*ligneFacture.produit.qantite))/(ligneFacture.quantite+ligneFacture.produit.qantite));
+                break;
+
+            default:
+                console.log(`Type de calcul inconnu: ${typeCalcule}`);
+        }
+
+
+
+        return nouveauPrix;
+    }
+
+
+    public getTitleFacture() {
+        const id = this.route.snapshot.paramMap.get('id');
+        return id
+            ?this.newFacture.typeFacture=="FACTURE_VENTE"
+                ?"Update facture vente"
+                :"Update facture achat"
+            :this.newFacture.typeFacture=="FACTURE_VENTE"
+                ?"Ajouter facture vente"
+                :"Ajouter facture achat"
+    }
+
+
+
+    onPageChange(event: any) {
+        this.currentPage = event.page==undefined?0:event.page;
+        this.pageSize = event.rows==undefined?10:event.rows
+        this.loadProduits(this.currentPage, this.pageSize);
+
+    }
+
+    next() {
+        if (!this.isLastPage()) {
+            this.currentPage++;
+            this.loadProduits(this.currentPage, this.pageSize);
+        }
+    }
+
+    prev() {
+        if (!this.isFirstPage()) {
+            this.currentPage--;
+            this.loadProduits(this.currentPage, this.pageSize);
+
+        }
+
+    }
+
+
+    reset() {
+        this.currentPage = 0; // Réinitialise à la première page
+        this.loadProduits(this.currentPage, 10);
+
+    }
+
+    pageChange(event) {
+        this.first = event.first;
+        this.rows = event.rows;
+    }
+
+    isFirstPage() {
+        return this.currentPage === 0;
+    }
+
+    isLastPage() {
+        return (this.currentPage + 1) * this.pageSize >= this.produits.length;
+    }
+
+
+    clear(table: Table) {
+        table.clear();
+     }
+
+
+
+    loadProduits(page: number, size: number) {
+        this.loadingdata=true ;
+        this.produitService.LoadProduits(page, size).subscribe(
+            (data: Page<Produit>) => {
+                this.produitsPage = data;
+                this.loadingdata=false;
+            },
+            (error) => {
+                console.error('Erreur lors du chargement des produits', error);
+            }
+        );
+    }
+
+
+    public getChangeReglement(reglement:number) {
+        this.reglementFacture=reglement ;
+        console.log(reglement)
 
     }
 }

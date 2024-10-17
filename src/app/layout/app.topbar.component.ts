@@ -2,7 +2,7 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { LayoutService } from "./service/app.layout.service";
 import {getToken} from "../../main";
-import {AuthentificationService} from "../demo/service/authentification.service";
+import {AuthentificationService} from "./service/authentification.service";
 
 @Component({
     selector: 'app-topbar',
@@ -25,6 +25,5 @@ export class AppTopBarComponent {
 
     logout() {
         this.authService.logout();
-        console.log('Token after logout:', getToken());
     }
 }

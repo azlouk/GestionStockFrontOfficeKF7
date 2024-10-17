@@ -1,51 +1,59 @@
 import {Produit} from "./produit";
+import {ServiceComp} from "./ServiceComp";
 
 export class LigneVente{
-    private _id : number;
-    private _venteQty :number;
-    private _prixVente : number;
-    private _produit : Produit;
-    public focus : boolean = false;
+      id : number;
+      venteQty :number;
+      prixVente : number;
+      produit : Produit;
+      focus : boolean = false;
 
-    constructor(id?: number, venteQty?: number, prixVente?: number, produit? : Produit ) {
-        this._id = id || 0;
-        this._venteQty = venteQty || 0;
-        this._prixVente = prixVente || 0;
-        this._produit = produit || new Produit();
-        this.focus=false;
+
+    constructor(_id?: number, _venteQty?: number, _prixVente?: number, _produit?: Produit, _focus?: boolean) {
+        this.id = _id||0;
+        this.venteQty = _venteQty||0;
+        this.prixVente = _prixVente||0;
+        this.produit = _produit|| new Produit();
+        this.focus = _focus||false;
     }
 
-
-
-    get id(): number {
-        return this._id;
+    public get _id(): number {
+        return this.id;
     }
 
-    set id(value: number) {
-        this._id = value;
+    public set _id(value: number) {
+        this.id = value;
     }
 
-    get venteQty(): number {
-        return this._venteQty;
+    public get _venteQty(): number {
+        return this.venteQty;
     }
 
-    set venteQty(value: number) {
-        this._venteQty = value;
+    public set _venteQty(value: number) {
+        this.venteQty = value;
     }
 
-    get prixVente(): number {
-        return this._prixVente;
+    public get _prixVente(): number {
+        return this.prixVente;
     }
 
-    set prixVente(value: number) {
-        this._prixVente = value;
+    public set _prixVente(value: number) {
+        this.prixVente = value;
     }
 
-    get produit(): Produit {
-        return this._produit;
+    public get _produit(): Produit {
+        return this.produit;
     }
 
-    set produit(value: Produit) {
-        this._produit = value;
+    public set _produit(value: Produit) {
+        this.produit = value;
+    }
+
+    public get _focus(): boolean {
+        return this.focus;
+    }
+
+    public set _focus(value: boolean) {
+        this.focus = value;
     }
 }

@@ -1,4 +1,5 @@
-import {Component, OnInit} from '@angular/core';
+
+import {Component, Injectable, OnInit} from '@angular/core';
 import Swal from "sweetalert2";
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {RoleEnum, User} from "../../../../../models/user";
@@ -21,7 +22,13 @@ import {DropdownModule} from "primeng/dropdown";
 import {PasswordModule} from "primeng/password";
 import {RippleModule} from "primeng/ripple";
 import {DialogService} from "../../../../../layout/service/dialogue-user.service";
-
+import {ToastModule} from "primeng/toast";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {ConfirmationService, MessageService} from "primeng/api";
+import {InputTextareaModule} from "primeng/inputtextarea";
+@Injectable({
+    providedIn: 'root'
+})
 @Component({
     selector: 'app-ajout-user',
     standalone: true,
@@ -37,7 +44,10 @@ import {DialogService} from "../../../../../layout/service/dialogue-user.service
         MultiSelectModule,
         DropdownModule,
         PasswordModule,
-        RippleModule
+        RippleModule,
+        ToastModule,
+        ConfirmDialogModule,
+        InputTextareaModule
     ],
     templateUrl: './ajout-user.component.html',
     styleUrl: './ajout-user.component.scss'
@@ -54,12 +64,14 @@ export class AjoutUserComponent implements OnInit {
     SelectedServiceId: any = 0;
     ListService: SERVICE[] = [];
     SelectedServcie: SERVICE;
-
+     secretKey="";
+    selectedRole: string;
 
     constructor(private formBuilder: FormBuilder,
                 private userService: UserService,
                 private dialogueUser: DialogService,
-                private router: Router, private depotService: DepotService, private serviceSERVICE: ServiceService) {
+                private router: Router, private depotService: DepotService, private serviceSERVICE: ServiceService,
+                private confirmationService: ConfirmationService, private messageService: MessageService) {
 
         this.SelectedDepot = new Depot();
         this.SelectedServcie = new SERVICE();
@@ -70,8 +82,9 @@ export class AjoutUserComponent implements OnInit {
             email: ['', [Validators.required, Validators.email]],
             tel: [],
             adresse: ['', Validators.required],
-            role: ['', Validators.required],
+            role: ['EMPLOYER', Validators.required],
             motdepasse: [''],
+            secretKey:[''],
             motdepasseconfirm: [''],
             typeClient: [''],
             solde: [],
@@ -152,6 +165,15 @@ export class AjoutUserComponent implements OnInit {
             icon: 'bi-tools'
         },
         {
+            name: 'Statistiques',
+            tableName: 'statistique',
+            afficher: false,
+            modifier: false,
+            supprimer: false,
+            ajouter: false,
+            icon: 'bi-tools'
+        },
+        {
             name: 'Payement',
             tableName: 'tranche',
             afficher: false,
@@ -167,13 +189,40 @@ export class AjoutUserComponent implements OnInit {
     ngOnInit() {
         // this.getAllDepotList() ;
         // this.getAllServiceList() ;
-         this.userService.getUsers();
+        this.userService.getUsers();
+    }
+
+    loading: boolean = false;
+
+    load(): string {
+        this.secretKey = this.userService.generateUUID();
+        this.confirmationService.confirm({
+            header: 'Remember your Secret key?',
+            message: `${this.secretKey}`,
+            accept: () => {
+
+                this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted your secret Key', life: 3000 });
+            },
+            reject: () => {
+                this.secretKey = "";
+                this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'Secret Key rejected', life: 3000 });
+
+            }
+        });
+        return this.secretKey;
+    }
+    copyToClipboard(text: string): void {
+        navigator.clipboard.writeText(text).then(() => {
+            this.messageService.add({ severity: 'success', summary: 'Copied', detail: 'Secret Key copied to clipboard', life: 3000 });
+        }).catch(err => {
+            console.error('Could not copy text: ', err);
+        });
     }
 
     onSubmit(): void {
         if (this.userForm.valid) {
             const userData = this.userForm.value;
-            let user: any = {
+            let user:any = {
                 username: "",
                 firstname: userData.nom,
                 lastname: userData.prenom,
@@ -189,16 +238,20 @@ export class AjoutUserComponent implements OnInit {
                     user.pseudo = 'admin';
                     user.responsableDepotNo = ''
                     user.password = userData.motdepasseconfirm;
+                    user.secretKey=this.secretKey;
+
                     user.pseudo = userData.pseudo;
-                    console.log("error data" + user)
+
                     break
                 }
                 case 'manager': {
                     user.pseudo = 'manager';
                     user.responsableDepotNo = ''
                     user.password = userData.motdepasseconfirm;
+                    user.secretKey=this.secretKey;
+
                     user.attributManager = userData.attributManager;
-                    console.log("error data" + user)
+
 
                     break
                 }
@@ -206,7 +259,9 @@ export class AjoutUserComponent implements OnInit {
                     user.pseudo = 'responsable';
                     user.responsableDepotNo = ''
                     user.password = userData.motdepasseconfirm;
-                    console.log("error data" + user)
+                    user.secretKey=this.secretKey;
+
+
                     break;
                 }
                 case  'client' : {
@@ -215,23 +270,24 @@ export class AjoutUserComponent implements OnInit {
                     user.password = "client";
                     user.soldeClient = userData.solde;
                     user.typeClient = userData.typeClient;
-                    console.log("error data" + user)
+
                     break
                 }
                 case 'employer' : {
                     user.pseudo = 'employer';
                     user.responsableDepotNo = ''
                     user.password = userData.motdepasseconfirm;
+                    user.secretKey=this.secretKey;
                     user.typeEmployer = userData.typeEmployer;
                     user.tacheEmployer = userData.tacheEmployer;
-                    console.log("error data" + user)
+
                     break;
                 }
                 case 'transporteur' : {
                     user.pseudo = 'transporteur';
                     user.responsableDepotNo = ''
                     user.password = "trasporteur";
-                    console.log("error data" + user)
+
                     break;
                 }
                 case  'fournisseur' : {
@@ -243,18 +299,18 @@ export class AjoutUserComponent implements OnInit {
                     user.adresseSociete = userData.adresseSociete;
                     user.telephoneSociete = userData.telephoneSociete;
                     user.role = "PROVIDER"
-                    console.log("error data" + user)
+
                     break;
                 }
             }
             this.userService.addUser(user).subscribe(
                 (response) => {
-                    console.log("===========>>>>>>>>>>>" + response)
+
                     if (response) {
 
                         this.userForm.reset();
                         if (this.shouldStayOnSamePage()) {
-                            console.log(this.shouldStayOnSamePage())
+
                             this.dialogueUser.closeDialog();
                             this.userService.getUsers();
 
@@ -277,7 +333,7 @@ export class AjoutUserComponent implements OnInit {
                 text: 'Vérifiez bien les champs!'
             });
         }
-        this.userForm.reset();
+        //this.userForm.reset();
     }
 
     dispalyDepot() {
@@ -285,13 +341,11 @@ export class AjoutUserComponent implements OnInit {
         if (depotfound !== undefined)
             this.SelectedDepot = depotfound;
     }
-
     dispalyService() {
         const Servicefound: SERVICE | undefined = this.ListService.find(value => value.id == this.SelectedServiceId);
         if (Servicefound !== undefined)
             this.SelectedServcie = Servicefound;
     }
-
     ViewDetailResponsable(responsable: User) {
         if (responsable != null) {
             Swal.fire({
@@ -328,13 +382,10 @@ export class AjoutUserComponent implements OnInit {
         }
 
     }
-
     deleteService(SelectedServcie: SERVICE) {
     }
-
     editService(SelectedServcie: SERVICE) {
     }
-
     returnBack() {
         this.userService.returnBack()
     }
@@ -348,12 +399,12 @@ export class AjoutUserComponent implements OnInit {
                     tab.push(value)
                 }
             })
-            //console.log("Table Permisiion  after delete :"+ new JsonPipe().transform(tab))
+
             this.userPermission = tab;
         } else {
             this.userPermission.push({api: apiT, tableName: tablename})
         }
-        console.log("Table Permisiion :" + new JsonPipe().transform(this.userPermission))
+
     }
 
     getAPI(name: string | undefined): string {
@@ -368,12 +419,45 @@ export class AjoutUserComponent implements OnInit {
         }
     }
 
+    onAfficherChange(permission: any): void {
+        if (!permission.afficher) {
+            permission.ajouter = false;
+            permission.modifier = false;
+            permission.supprimer = false;
+        }
+    }
+
+    toggleAllPermissions(permission: any): void {
+        const allChecked = permission.afficher && permission.ajouter && permission.modifier && permission.supprimer;
+        permission.afficher = !allChecked;
+        permission.ajouter = !allChecked;
+        permission.modifier = !allChecked;
+        permission.supprimer = !allChecked;
+    }
+
 
     shouldStayOnSamePage(): boolean {
         const currentUrl = this.router.url;
 
         return currentUrl.includes('/uikit/add-facture');
     }
+    allSelected(permission: any): boolean {
+        return permission.afficher && permission.ajouter && permission.modifier && permission.supprimer;
+    }
 
+    toggleAll(isSelected: boolean, permission: any) {
+        permission.afficher = isSelected;
+        permission.ajouter = isSelected;
+        permission.modifier = isSelected;
+        permission.supprimer = isSelected;
+
+        this.getPermission(permission.tableName, isSelected ? 'read' : 'readn');
+        this.getPermission(permission.tableName, isSelected ? 'create' : 'createn');
+        this.getPermission(permission.tableName, isSelected ? 'update' : 'updaten');
+        this.getPermission(permission.tableName, isSelected ? 'delete' : 'deleten');
+    }
+
+    protected readonly RoleEnum = RoleEnum;
 
 }
+
