@@ -7,7 +7,7 @@ import {getToken, getUserDecodeID} from "../../../main";
 import {catchError} from "rxjs/internal/operators/catchError";
 import {throwError} from "rxjs/internal/observable/throwError";
 import {Cloture} from "../../models/Cloture";
-import {Page} from "../../models/page";
+import {Page} from "../../models/Page";
 import {User} from "../../models/user";
 
 @Injectable({

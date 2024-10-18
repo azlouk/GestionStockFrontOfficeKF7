@@ -11,8 +11,7 @@ import {Article} from "../../models/Article";
 import {Produit} from "../../models/produit";
 import Swal from "sweetalert2";
 import {Historique} from "../../models/historique";
-import {Page} from "../../models/page";
-import {Tranche} from "../../models/Tranche";
+import {Page} from "../../models/Page";
 
 @Injectable({
     providedIn: 'root'

@@ -14,14 +14,12 @@ import {RoleEnum, User} from "../../models/user";
 import {UserService} from "./user.service";
 import {TrancheService} from "./tranche.service";
 import {ConfirmationService, MessageService} from "primeng/api";
-import {Page} from "../../models/page";
-import {Produit} from "../../models/produit";
+import {Page} from "../../models/Page";
 
 @Injectable({
   providedIn: 'root'
 })
 export class FactureService {
-    FactureInter : Facture[]=[];
     factures: Facture[] = []; // Initialisation du tableau de factures
     // @ts-ignore
     depots: Depot[] = this.getAllDepots();

@@ -7,7 +7,7 @@ import {Router} from "@angular/router";
 import {environment} from "../../../environments/environment";
 import {getToken, getUserDecodeID} from "../../../main";
 import {RoleEnum, User} from "../../models/user";
-import {Page} from "../../models/page";
+import {Page} from "../../models/Page";
 import {Produit} from "../../models/produit";
 
 

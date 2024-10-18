@@ -30,7 +30,7 @@ import {log} from "@angular-devkit/build-angular/src/builders/ssr-dev-server";
 import {AvatarModule} from "primeng/avatar";
 import {BadgeModule} from "primeng/badge";
 import {Historique} from "../../../../../models/historique";
-import {Page} from "../../../../../models/page";
+import {Page} from "../../../../../models/Page";
 import {Article} from "../../../../../models/Article";
 import {PaginatorModule} from "primeng/paginator";
 import {RadioButtonModule} from "primeng/radiobutton";

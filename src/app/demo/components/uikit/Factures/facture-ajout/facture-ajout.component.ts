@@ -42,7 +42,7 @@ import {InputTextareaModule} from "primeng/inputtextarea";
 import {NgxBarcode6Module} from "ngx-barcode6";
 import {DialogService} from "../../../../../layout/service/dialogue-user.service";
 import {Historique} from "../../../../../models/historique";
-import {Page} from "../../../../../models/page";
+import {Page} from "../../../../../models/Page";
 
 @Component({
     selector: 'app-facture-ajout',

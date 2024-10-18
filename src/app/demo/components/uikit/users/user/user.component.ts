@@ -20,7 +20,7 @@ import {AvatarModule} from "primeng/avatar";
 import {BadgeModule} from "primeng/badge";
 import {RippleModule} from "primeng/ripple";
 import {Produit} from "../../../../../models/produit";
-import {Page} from "../../../../../models/page";
+import {Page} from "../../../../../models/Page";
 @Component({
     selector: 'app-user',
     standalone: true,

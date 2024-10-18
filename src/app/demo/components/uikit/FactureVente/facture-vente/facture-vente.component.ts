@@ -1,86 +1,71 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
+import {AvatarModule} from "primeng/avatar";
+import {BadgeModule} from "primeng/badge";
+import {ButtonModule} from "primeng/button";
+import {CheckboxModule} from "primeng/checkbox";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {CurrencyPipe, DatePipe, DecimalPipe, NgClass, NgIf} from "@angular/common";
+import {DialogModule} from "primeng/dialog";
+import {FieldsetModule} from "primeng/fieldset";
+import {FormsModule} from "@angular/forms";
+import {InputTextModule} from "primeng/inputtext";
+import {OverlayPanelModule} from "primeng/overlaypanel";
+import {RippleModule} from "primeng/ripple";
+import {ConfirmationService, MessageService, SharedModule} from "primeng/api";
+import {Table, TableModule, TableRowCollapseEvent, TableRowExpandEvent} from "primeng/table";
+import {TagModule} from "primeng/tag";
+import {ToastModule} from "primeng/toast";
+import {ToolbarModule} from "primeng/toolbar";
+import {TriStateCheckboxModule} from "primeng/tristatecheckbox";
 import {Facture, factureType} from "../../../../../models/Facture";
+import {Page} from "../../../../../models/Page";
 import {User} from "../../../../../models/user";
 import {Produit} from "../../../../../models/produit";
 import {FactureService} from "../../../../../layout/service/facture.service";
-import {ActivatedRoute, Router} from "@angular/router";
-import {Table, TableModule, TableRowCollapseEvent, TableRowExpandEvent} from "primeng/table";
-import {AvatarModule} from "primeng/avatar";
-import {BadgeModule} from "primeng/badge";
-import {DialogModule} from "primeng/dialog";
-import {DropdownModule} from "primeng/dropdown";
-import {FormsModule} from "@angular/forms";
-import {InputTextModule} from "primeng/inputtext";
-import {InputTextareaModule} from "primeng/inputtextarea";
-import {CurrencyPipe, DatePipe, DecimalPipe, NgClass, NgForOf, NgIf} from "@angular/common";
-import {ConfirmationService, MessageService} from "primeng/api";
-import {RippleModule} from "primeng/ripple";
-import {ToastModule} from "primeng/toast";
-import {ToolbarModule} from "primeng/toolbar";
-import {SliderModule} from "primeng/slider";
-import {TagModule} from "primeng/tag";
-import {MultiSelectModule} from "primeng/multiselect";
-import {SplitButtonModule} from "primeng/splitbutton";
-import {ConfirmDialogModule} from "primeng/confirmdialog";
-import {TriStateCheckboxModule} from "primeng/tristatecheckbox";
-import {RadioButtonModule} from "primeng/radiobutton";
-import {OverlayPanelModule} from "primeng/overlaypanel";
-import {CheckboxModule} from "primeng/checkbox";
-import {AutoCompleteCompleteEvent, AutoCompleteModule} from "primeng/autocomplete";
 import {UserService} from "../../../../../layout/service/user.service";
-import {FieldsetModule} from "primeng/fieldset";
-import {Tranche} from "../../../../../models/Tranche";
-import {TreeTableModule} from "primeng/treetable";
-import {TabViewModule} from "primeng/tabview";
-import {RatingModule} from "primeng/rating";
+import {ActivatedRoute, Router} from "@angular/router";
 import {ProduitService} from "../../../../../layout/service/produit.service";
-import {Historique} from "../../../../../models/historique";
+import {AutoCompleteCompleteEvent} from "primeng/autocomplete";
 import {LigneFacture} from "../../../../../models/LigneFacture";
-import {Page} from "../../../../../models/Page";
+import {Historique} from "../../../../../models/historique";
+import {Tranche} from "../../../../../models/Tranche";
+import {FactureVente} from "../../../../../models/FactureVente";
+import {FactureVenteService} from "../../../../../layout/service/facture-vente.service";
 
 @Component({
-    selector: 'app-facture',
-    standalone: true,
+  selector: 'app-facture-vente',
+  standalone: true,
     imports: [
         AvatarModule,
         BadgeModule,
+        ButtonModule,
+        CheckboxModule,
+        ConfirmDialogModule,
+        CurrencyPipe,
+        DatePipe,
+        DecimalPipe,
         DialogModule,
-        DropdownModule,
+        FieldsetModule,
         FormsModule,
         InputTextModule,
-        InputTextareaModule,
         NgIf,
-        TableModule,
-        ToolbarModule,
-        SliderModule,
-        TagModule,
-        MultiSelectModule,
-        SplitButtonModule,
-        NgClass,
-        RippleModule,
-        ToastModule,
-        ConfirmDialogModule,
-        NgForOf,
-        DatePipe,
-        CurrencyPipe,
-        TriStateCheckboxModule,
-        RadioButtonModule,
         OverlayPanelModule,
-        CheckboxModule,
-        AutoCompleteModule,
-        FieldsetModule,
-        TreeTableModule,
-        TabViewModule,
-        DecimalPipe,
-        RatingModule
+        RippleModule,
+        SharedModule,
+        TableModule,
+        TagModule,
+        ToastModule,
+        ToolbarModule,
+        TriStateCheckboxModule,
+        NgClass
     ],
-    templateUrl: './facture.component.html',
-    styleUrl: './facture.component.scss'
+  templateUrl: './facture-vente.component.html',
+  styleUrl: './facture-vente.component.scss'
 })
-export class FactureComponent implements OnInit {
+export class FactureVenteComponent implements OnInit{
 
-    initTabFacture: Facture[]=[];
-    facturesPage: Page<Facture>={
+    initTabFacture: FactureVente[]=[];
+    facturesPage: Page<FactureVente>={
         content:this.initTabFacture,number:0,size:0,totalPages:0,totalElements:0
 
     };
@@ -100,9 +85,9 @@ export class FactureComponent implements OnInit {
     loading: boolean = true;
     activityValues: number[] = [0, 100];
     root: string | undefined;
-    factures: Facture[] = [];
-    Facturefilred: Facture[] = [];
-    FacturefilredSuplim: Facture[] = [];
+    factures: FactureVente[] = [];
+    Facturefilred: FactureVente[] = [];
+    FacturefilredSuplim: FactureVente[] = [];
 
     client: User = new User();
     searchTerm: string = '';
@@ -161,13 +146,12 @@ export class FactureComponent implements OnInit {
     constructor(
 
 
-        public factureService: FactureService,
+        public factureVenteService: FactureVenteService,
         public userService: UserService,
         private router: Router,
         private messageService: MessageService,
         private confirmationService: ConfirmationService,
         public activatedRoute: ActivatedRoute,
-    private produitService: ProduitService
     ) {
     }
 
@@ -193,8 +177,8 @@ export class FactureComponent implements OnInit {
 
     loadFacture(page: number, size: number) {
         this.loadingdata=true ;
-        this.factureService.LoadFactures(page, size).subscribe(
-            (data: Page<Facture>) => {
+        this.factureVenteService.LoadFactures(page, size).subscribe(
+            (data: Page<FactureVente>) => {
                 this.facturesPage = data;
                 this.loadingdata=false;
             },
@@ -342,15 +326,15 @@ export class FactureComponent implements OnInit {
     // }
 
     goToFactureDetails(id: number): void {
-        this.router.navigate(['uikit/facture/',id]);
+        this.router.navigate(['uikit/factureVente/',id]);
     }
 
     editFacture(id: number) {
-        this.router.navigate(['uikit/update-facture/', id]);
+        this.router.navigate(['uikit/update-factureVente/', id]);
     }
 
     addFacture() {
-        this.router.navigate(['/uikit/add-facture']);
+        this.router.navigate(['/uikit/add-factureVente']);
     }
     //
     // onSearch(): void {
@@ -427,7 +411,7 @@ export class FactureComponent implements OnInit {
                     this.openDialogueChangedPrix = true;  // Show the confirmation dialog
 
                 }else {
-                    this.factureService.deleteFacture(facture.id).subscribe(value => {
+                    this.factureVenteService.deleteFacture(facture.id).subscribe(value => {
                         this.loadFacture(this.currentPage,this.pageSize)
                     })
                 }
@@ -446,7 +430,7 @@ export class FactureComponent implements OnInit {
 
 
     confirmDeleteFacture(facture:Facture) {
-        this.factureService.removeFactureWithUpdateProduct(facture).subscribe(
+        this.factureVenteService.removeFactureWithUpdateProduct(facture).subscribe(
             (response) => {
                 console.log('Facture supprimée avec succès:', response);
 
@@ -474,7 +458,7 @@ export class FactureComponent implements OnInit {
 
 
     updateFacturePrix(ligneFacture: LigneFacture, historique: Historique) {
-         ligneFacture.produit.prixUnitaire = historique.prixHistoriqueAchat;
+        ligneFacture.produit.prixUnitaire = historique.prixHistoriqueAchat;
     }
 
     CalculeMontantFiltrer(): number {
@@ -525,38 +509,19 @@ export class FactureComponent implements OnInit {
         else return rechercheFacture
     }
 
-
-
-
-
     public rechercheAvancee() {
         this.Facturefilred = this.FacturefilredSuplim.filter(fact => {
             let match = true;
-            let typeMatch: boolean = false;
-
-            let notChecked: boolean = this.typeA != "FACTURE_ACHAT" && this.typeV != "FACTURE_VENTE"
-
-            if (notChecked || this.typeA == "FACTURE_ACHAT") {
-                typeMatch = typeMatch || (fact.typeFacture === 'FACTURE_ACHAT')
-
-            }
+            console.log(this.Facturefilred.length)
 
 
-            if (notChecked || this.typeV == "FACTURE_VENTE") {
-                typeMatch = typeMatch || (fact.typeFacture === 'FACTURE_VENTE');
+            match = match;
 
-
-            }
-
-
-            match = match && typeMatch;
-
-
-            // Check client, provider, transporter based on selected checkboxes and fields
             if (match && (this.valuefirstname || this.valuelastname || this.valueemail || this.valuetelephone)) {
                 let entityMatch = false;
                 let searchAll = !this.clientRechercher && !this.fournisseurrechercher && !this.transporteurrechercher;
 
+                // Si on recherche un client, fournisseur ou transporteur
                 if (searchAll || this.clientRechercher) {
                     entityMatch = entityMatch || this.matchFacture(fact.client);
                 }
@@ -570,7 +535,7 @@ export class FactureComponent implements OnInit {
                 match = match && entityMatch;
             }
 
-            // Check payment status
+            // Vérifier le statut de paiement
             if (match && this.valuepaye !== null && this.valuepaye !== undefined) {
                 match = match && (fact.paye === this.valuepaye);
             }
@@ -579,16 +544,82 @@ export class FactureComponent implements OnInit {
         });
 
         this.visible = false;
-        this.totalFiltre = this.CalculeMontantFiltrer()
+        this.totalFiltre = this.CalculeMontantFiltrer();
 
+        // Calculer les montants des tranches
+        const trancheFiltre = this.calculeTrancheFiltre();
+        this.nbreTranche = trancheFiltre.totalTranches;
+        this.totalTranchepaye = trancheFiltre.totalPaid;
+        this.totalTrancheNonpaye = trancheFiltre.totalUnpaid;
 
-        // this.calculateMontants();
-        this.nbreTranche = this.calculeTrancheFiltre().totalTranches;
-        this.totalTranchepaye = this.calculeTrancheFiltre().totalPaid;
-        this.totalTrancheNonpaye = this.calculeTrancheFiltre().totalUnpaid;
-    this.facturesPage.content=[...this.Facturefilred] ;
-    this.CalculeMontantFiltrer() ;
+        // Mettre à jour la pagination avec les factures filtrées
+        this.facturesPage.content = [...this.Facturefilred];
+        this.CalculeMontantFiltrer();
     }
+
+
+
+
+    // public rechercheAvancee() {
+    //     this.Facturefilred = this.FacturefilredSuplim.filter(fact => {
+    //         let match = true;
+    //         let typeMatch: boolean = false;
+    //
+    //         let notChecked: boolean = this.typeA != "FACTURE_ACHAT" && this.typeV != "FACTURE_VENTE"
+    //
+    //         if (notChecked || this.typeA == "FACTURE_ACHAT") {
+    //             typeMatch = typeMatch || (fact.typeFacture === 'FACTURE_ACHAT')
+    //
+    //         }
+    //
+    //
+    //         if (notChecked || this.typeV == "FACTURE_VENTE") {
+    //             typeMatch = typeMatch || (fact.typeFacture === 'FACTURE_VENTE');
+    //
+    //
+    //         }
+    //
+    //
+    //         match = match && typeMatch;
+    //
+    //
+    //         // Check client, provider, transporter based on selected checkboxes and fields
+    //         if (match && (this.valuefirstname || this.valuelastname || this.valueemail || this.valuetelephone)) {
+    //             let entityMatch = false;
+    //             let searchAll = !this.clientRechercher && !this.fournisseurrechercher && !this.transporteurrechercher;
+    //
+    //             if (searchAll || this.clientRechercher) {
+    //                 entityMatch = entityMatch || this.matchFacture(fact.client);
+    //             }
+    //             if (searchAll || this.fournisseurrechercher) {
+    //                 entityMatch = entityMatch || this.matchFacture(fact.provider);
+    //             }
+    //             if (searchAll || this.transporteurrechercher) {
+    //                 entityMatch = entityMatch || this.matchFacture(fact.transporteur);
+    //             }
+    //
+    //             match = match && entityMatch;
+    //         }
+    //
+    //         // Check payment status
+    //         if (match && this.valuepaye !== null && this.valuepaye !== undefined) {
+    //             match = match && (fact.paye === this.valuepaye);
+    //         }
+    //
+    //         return match;
+    //     });
+    //
+    //     this.visible = false;
+    //     this.totalFiltre = this.CalculeMontantFiltrer()
+    //
+    //
+    //     // this.calculateMontants();
+    //     this.nbreTranche = this.calculeTrancheFiltre().totalTranches;
+    //     this.totalTranchepaye = this.calculeTrancheFiltre().totalPaid;
+    //     this.totalTrancheNonpaye = this.calculeTrancheFiltre().totalUnpaid;
+    //     this.facturesPage.content=[...this.Facturefilred] ;
+    //     this.CalculeMontantFiltrer() ;
+    // }
 
     private matchFacture(entity: any): boolean {
         if (!entity) return false;
@@ -636,6 +667,4 @@ export class FactureComponent implements OnInit {
         };
     }
 
-
 }
-

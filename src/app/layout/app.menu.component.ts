@@ -30,6 +30,8 @@ export class AppMenuComponent implements OnInit {
                     { label: 'Articles', icon: 'pi pi-fw pi-bars', routerLink: ['/uikit/article'] },
                     { label: 'Depôts', icon: 'pi pi-fw pi-database', routerLink: ['/uikit/depots'] },
                     { label: 'Factures', icon: 'pi pi-fw pi-file-o', routerLink: ['/uikit/facture'] },
+                    { label: 'Factures Ventes', icon: 'pi pi-fw pi-file-o', routerLink: ['/uikit/factureVente'] },
+                    { label: 'Factures Achats', icon: 'pi pi-fw pi-file-o', routerLink: ['/uikit/factureAchat'] },
                     { label: 'Ventes', icon: 'pi pi-fw pi-cart-plus', routerLink: ['/uikit/Ventes'] },
                     { label: 'POS', icon: 'pi pi-fw pi-calculator', routerLink: ['/uikit/POS'] },
                     { label: 'Caisse', icon: 'pi pi-fw pi-wallet', routerLink: ['/uikit/caisse'] },
