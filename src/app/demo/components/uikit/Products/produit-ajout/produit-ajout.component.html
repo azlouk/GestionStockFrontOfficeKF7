@@ -24,6 +24,20 @@
 
                         <small id="nomproduit-help">Vérifier bien que votre nom est significatif</small>
                     </div>
+                    <div class="flex flex-column gap-2 ">
+                        <label class="font-bold fs-5 text-cyan-700">
+                            <span class="pi pi-tags  font-bold"></span> UGS
+                        </label>
+                            <span [hidden]="true">   {{newProduct.generateUGS()}}</span>
+                        <input class=" w-full"
+                               pInputText
+                               pTooltip="Unité de gestion des stocks"
+                               tooltipPosition="right"
+                               aria-describedby="username-help"
+                               [(ngModel)]="newProduct.ugs"/>
+
+<!--                        <small id="nomproduit-help">Vérifier bien que votre nom est significatif</small>-->
+                    </div>
 
                     <div class="flex flex-column gap-2 text-cyan-700">
                         <label class="font-bold fs-5">
@@ -82,18 +96,19 @@
                     </div>
 
                     <div class ="flex flex-column gap-4">
-                        <div class="flex flex-column  justify-content-between sm:flex-row  justify-content-between gap-4">
-                            <div class="flex flex-column justify-content-between">
-                                <div class="flex flex-column gap-1 text-cyan-700">
+                        <div class="flex flex-column  justify-content-between sm:flex-row  justify-content-evenly  sm:col-12">
+                            <div class="flex flex-column justify-content-between col-5">
+                                <div class="flex flex-column gap-1 text-cyan-700 w-full">
                                     <label class="form-label font-bold fs-5">Prix unitaire </label>
                                     <p-inputNumber pTooltip="prix unitaire d'achat"
                                                    [min]="0"
                                                    [(ngModel)]="newProduct.prixUnitaire"
                                                    (ngModelChange)="setprixgros()" mode="currency"
                                                    inputId="currency-india" currency="TND"
-                                                   currencyDisplay="code" locale="en-IN"></p-inputNumber>
+                                                   currencyDisplay="code" locale="en-IN"
+                                    [style]="{'width':'100%'}"></p-inputNumber>
                                 </div>
-                                <div class="flex flex-column gap-1 text-cyan-700 ">
+                                <div class="flex flex-column gap-1 text-cyan-700 w-full">
                                     <label class="form-label font-bold fs-5"> Gain unitaire</label>
                                     <p-inputNumber pTooltip="Gain de produit pour le prix unitaire d'achat"
                                                    [(ngModel)]="newProduct.gainUnitaire"
@@ -102,29 +117,32 @@
                                                    mode="currency"
                                                    inputId="currency-india" currency="TND"
                                                    currencyDisplay="code"
-                                                   locale="en-IN"></p-inputNumber>
+                                                   locale="en-IN"
+                                                   [style]="{'width':'100%'}"></p-inputNumber>
                                 </div>
-                                <div class="flex flex-column gap-1 text-cyan-700">
+                                <div class="flex flex-column gap-1 text-cyan-700 w-full">
                                     <label class="form-label font-bold fs-5">Gain gros </label>
                                     <p-inputNumber pTooltip="Gain de produit pour le prix gros"
                                                    [(ngModel)]="newProduct.gainGros"
                                                    [min]="0"
                                                    mode="currency" inputId="currency-india" currency="TND"
                                                    currencyDisplay="code"
-                                                   locale="en-IN"></p-inputNumber>
+                                                   locale="en-IN"
+                                                   [style]="{'width':'100%'}"></p-inputNumber>
                                 </div>
-                                <div class="flex flex-column gap-1 text-cyan-700">
+                                <div class="flex flex-column gap-1 text-cyan-700 w-full">
                                     <label class="form-label font-bold fs-5">Tax (TVA) </label>
 
                                     <p-inputNumber
                                             [(ngModel)]="newProduct.taxe"
                                             [min]="0"
                                             inputId="percent"
-                                            prefix="%" />
+                                            prefix="%"
+                                            [style]="{'width':'100%'}"/>
                                 </div>
                             </div>
-                            <div class=" flex flex-column justify-content-between">
-                                <div class="flex flex-column gap-2 text-cyan-700">
+                            <div class=" flex flex-column justify-content-between col-6">
+                                <div class="flex flex-column gap-2 text-cyan-700 w-full">
                                     <label class="form-label font-bold fs-5">Quantité actuelle </label>
                                     <p-inputNumber [(ngModel)]="newProduct.qantite"
                                                    (ngModelChange)="setQtyGros()"
@@ -133,9 +151,10 @@
                                                    inputId="minmax-buttons" [min]="0" inputId="locale-us"
                                                    mode="decimal"
                                                    locale="en-US"
-                                                   [minFractionDigits]="3"></p-inputNumber>
+                                                   [minFractionDigits]="3"
+                                    [style]="{'width':'100%'}"></p-inputNumber>
                                 </div>
-                                <div class="flex flex-column gap-2 text-cyan-700">
+                                <div class="flex flex-column gap-2 text-cyan-700w-full">
                                     <label class="form-label font-bold fs-5">Quantité min gros </label>
                                     <p-inputNumber [(ngModel)]="newProduct.minQuantiteGros"
 
@@ -143,9 +162,10 @@
                                                    [min]="0"
                                                    inputId="locale-us"
                                                    mode="decimal" locale="en-US"
-                                                   [minFractionDigits]="3"></p-inputNumber>
+                                                   [minFractionDigits]="3"
+                                    [style]="{'width':'100%'}"></p-inputNumber>
                                 </div>
-                                <div class="flex flex-column gap-2 text-cyan-700">
+                                <div class="flex flex-column gap-2 text-cyan-700w-full">
                                     <label class="form-label font-bold fs-5">Min niveau stock </label>
                                     <p-inputNumber [(ngModel)]="newProduct.levelstock"
                                                    [showButtons]="true"
@@ -153,7 +173,8 @@
                                                    [min]="1"
                                                    inputId="locale-us" mode="decimal"
                                                    locale="en-US"
-                                                   [minFractionDigits]="3"></p-inputNumber>
+                                                   [minFractionDigits]="3"
+                                    [style]="{'width':'100%'}"></p-inputNumber>
                                 </div>
                             </div>
                         </div>
@@ -225,6 +246,7 @@
                             <div class="flex flex-column gap-1 ">
                                 <input pInputText class="form-control" id="codebarreG"
                                        aria-describedby="codebarre-help"
+
                                        [(ngModel)]="newProduct.dataqr"
                                        (keyup)="confirm()"/>
                                 <small id="codebarre-help"> Vérifier bien que votre Code à barre</small>

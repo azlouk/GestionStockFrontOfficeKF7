@@ -1,7 +1,6 @@
 import {Article} from "./Article";
 import {File} from "./File";
 import {Historique} from "./historique";
-import Swal from "sweetalert2";
 
 
 export interface CodeModel {
@@ -34,9 +33,9 @@ export class Produit {
     checkedService: boolean;
     subdataqr: string[];
     historiques: Historique [];
+    ugs:string;
 
-
-    constructor(_id: number = 0, _nom: string = "", _prixUnitaire: number = 0, _prixGros: number = 0, _description: string = "", _qantite: number = 0, _image: Blob = new Blob(), _gainUnitaire: number = 0, _gainGros: number = 0, _files: File[] = [], _dateExpiration: Date = new Date(), _dateFabrication: Date = new Date(), _minQuantiteGros: number = 0, _taxe: number = 0, _enable: boolean = false, _dataqr: string = "", _qantiteFacture: number = 0, _article: Article = new Article(), _levelstock: number = 0, _showDetails: boolean = false, _checkedService: boolean = false, _subdataqr: string[] = [], _historiques: Historique [] = []) {
+    constructor(_id: number=0, _nom: string="", _prixUnitaire: number=0, _prixGros: number=0, _description: string="", _qantite: number=0, _image: Blob=new Blob(), _gainUnitaire: number=0, _gainGros: number=0, _files: File[]=[], _dateExpiration: Date=new Date(), _dateFabrication: Date=new Date(), _minQuantiteGros: number=0, _taxe: number=0, _enable: boolean=false, _dataqr: string="", _qantiteFacture: number=0, _article: Article=new Article(), _levelstock: number=0, _showDetails: boolean=false, _checkedService: boolean=false, _subdataqr: string[]=[], _historiques: Historique[]=[], _ugs: string="") {
         this.id = _id;
         this.nom = _nom;
         this.prixUnitaire = _prixUnitaire;
@@ -49,7 +48,6 @@ export class Produit {
         this.files = _files;
         this.dateExpiration = _dateExpiration;
         this.dateFabrication = _dateFabrication;
-
         this.minQuantiteGros = _minQuantiteGros;
         this.taxe = _taxe;
         this.enable = _enable;
@@ -61,9 +59,30 @@ export class Produit {
         this.checkedService = _checkedService;
         this.subdataqr = _subdataqr;
         this.historiques = _historiques;
+        this.ugs = _ugs;
+    }
+
+    generateUGS(): string {
+        if(this.article && this.dataqr){
+
+
+            const firstNumber = this.dataqr.substring(0,2) ;
+            const lastNumber = this.dataqr.substring(this.dataqr.length-2,this.dataqr.length);
+            const firstTwoLetters = this.article.nom.substring(0, 2).toUpperCase();
+            const ugs = `PR-${firstNumber}-${lastNumber}-${firstTwoLetters}`;
+            this.ugs = ugs;
+            return ugs;
+        }else return "";
     }
 
 
+    public get _ugs(): string {
+        return this.ugs;
+    }
+
+    public set _ugs(value: string) {
+        this.ugs = value;
+    }
 
     get _id(): number {
         return this.id;
@@ -318,7 +337,8 @@ export class Produit {
             checkedService: this.checkedService,
             subdataqr: this.subdataqr,
             historiques: this.historiques,
-            files: this.files // If needed, you might want to convert these to a format suitable for sending
+            files: this.files, // If needed, you might want to convert these to a format suitable for sending
+            ugs:this.ugs
         };
     }
 

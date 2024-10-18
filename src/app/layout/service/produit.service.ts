@@ -13,6 +13,7 @@ import Swal from "sweetalert2";
 import {Historique} from "../../models/historique";
 import {Page} from "../../models/page";
 import {Tranche} from "../../models/Tranche";
+import {LoginService} from "./login.service";
 
 @Injectable({
     providedIn: 'root'
@@ -125,22 +126,26 @@ export class ProduitService {
         );
     }
 
-    addProduit(nouveauProduit: Produit, uploadFiles: any[]) {
+    addProduit(produit: Produit, uploadFiles: any[]) {
+        console.log(produit.ugs)
+        console.error(produit)
         const token = getToken();
 
         if (token) {
+
             const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
             let formData = new FormData();
-            const produit = nouveauProduit
+
             formData.append('produit', new Blob([JSON
-                .stringify(produit.toJSON())], {
+                .stringify(produit)], {
                 type: 'application/json'
             }));
             for (let i = 0; i < uploadFiles.length; i++) {
                 formData.append('file', uploadFiles[i]);
             }
 
-            console.log(produit.toJSON())
+
+            console.log(formData)
             // Utiliser les headers dans la require
             return this.http.post<any>(this.api + '/create', formData, {headers});
         } else {
