@@ -290,14 +290,14 @@
                                     <p-sortIcon field="nom"></p-sortIcon>
                                 </th>
                                 <th pSortableColumn="quantite">
-                                    Quantité {{newFacture.typeFacture == 'FACTURE_VENTE' ? 'vente' : 'achat'}}
+                                    Quantité achat
                                     <p-sortIcon field="quantite"></p-sortIcon>
                                 </th>
                                 <th>
-                                    Prix {{newFacture.typeFacture == 'FACTURE_VENTE' ? 'vente' : 'achat'}} (TND)
+                                    Prix achat (TND)
                                 </th>
                                 <th pSortableColumn="montantTotal">
-                                    Total {{newFacture.typeFacture == 'FACTURE_VENTE' ? 'vente' : 'achat'}}(TND)
+                                    Total achat(TND)
                                     <p-sortIcon field="price"></p-sortIcon>
                                 </th>
                                 <th>Action</th>
@@ -567,7 +567,7 @@
                                 <td>
 
                                     <i class="pi"
-                                       [ngClass]="{ 'text-green-500 pi-check-circle': tr.statutPayement=='true', 'text-red-500 pi-times-circle': tr.statutPayement=='false' } "  ></i>
+                                       [ngClass]="{ 'text-green-500 pi-check-circle': tr.statutPayement===true, 'text-red-500 pi-times-circle': tr.statutPayement===false } "  ></i>
                                 </td>
                                 <td>
                                     <p-button icon="pi pi-trash" [rounded]="true" severity="danger" [outlined]="true"

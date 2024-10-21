@@ -277,8 +277,8 @@
                     <div class="p-card mt-3" style="width: 45%; float: right;">
                         <p-table *ngIf="newFacture?.tranches?.length" [value]="[
                                                         {label: 'Total des Tranches', value: totalMontantTranches},
-                                                        {label: 'Montant Payées', value: montantTranchesPayees},
-                                                        {label: 'Reste à payer', value: montantTranchesNonPayees}
+                                                        {label: 'Montant Tranches Payées', value: montantTranchesPayees},
+                                                        {label: 'Reste Tranches à payer', value: montantTranchesNonPayees}
                                                        ]">
                             <ng-template pTemplate="body" let-row>
                                 <tr>
@@ -400,6 +400,7 @@
 
     </p-overlayPanel>
 </div>
+<div class="card">
 <p-dialog
         [(visible)]="dialogTrancheDVisible"
         header="Listes des tranches"
@@ -475,7 +476,7 @@
         <p-button label="Cancel" icon="pi pi-check" (onClick)="dialogTrancheDVisible = false"/>
     </ng-template>
 </p-dialog>
-
+</div>
 <p-dialog
         [(visible)]="openDialogueChangedPrix"
         header="Listes des produits à vérifier"

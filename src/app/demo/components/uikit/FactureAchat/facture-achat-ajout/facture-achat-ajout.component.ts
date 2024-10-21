@@ -271,7 +271,7 @@ export class FactureAchatAjoutComponent implements OnInit{
 
             // Attendez que le toast disparaisse avant de rediriger
             setTimeout(() => {
-              this.router.navigate(['uikit/facture']);
+              this.router.navigate(['uikit/factureAchat']);
             }, 1000);
           },
           (error) => {
@@ -279,7 +279,7 @@ export class FactureAchatAjoutComponent implements OnInit{
           }
       );
     } else {
-      console.log(this.newFacture.reglement)
+
       // Création d'une nouvelle facture
       this.factureAchatService.addFacture(this.newFacture).subscribe(
           (response) => {
@@ -454,7 +454,7 @@ export class FactureAchatAjoutComponent implements OnInit{
   }
 
   AddTrancheToNewFacture() {
-    this.Newtranche.user =this.newFacture.client
+    this.Newtranche.user =this.newFacture.provider
     this.newFacture.tranches.push(this.Newtranche);
     this.Newtranche = new Tranche()
   }
@@ -590,18 +590,10 @@ export class FactureAchatAjoutComponent implements OnInit{
 
   onQuantiteChange(newValue: number, item: any) {
 
-    if (newValue > item.produit.qantite ) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Produit epiusé',
-        detail: 'Le quantité insufisant !',
-        life: 3000
-      });
-      item.quantite =item.produit.qantite;
-    } else {
+
       item.quantite = newValue;
 
-    }
+
     this.updatePrixVente(item);
     this.calaculateFactureTotalAcht();
   }
@@ -689,13 +681,10 @@ export class FactureAchatAjoutComponent implements OnInit{
   public getTitleFacture() {
     const id = this.route.snapshot.paramMap.get('id');
     return id
-        ?this.newFacture.typeFacture=="FACTURE_VENTE"
-            ?"Update facture vente"
-            :"Update facture achat"
-        :this.newFacture.typeFacture=="FACTURE_VENTE"
-            ?"Ajouter facture vente"
-            :"Ajouter facture achat"
+        ? "Update facture achat"
+        : "Ajouter facture achat";
   }
+
 
 
 

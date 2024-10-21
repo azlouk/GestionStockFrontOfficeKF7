@@ -406,15 +406,11 @@ export class FactureVenteComponent implements OnInit{
             header: 'Confirmation de suppression',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
-                if(facture.typeFacture==factureType.ENTREE)
-                {
-                    this.openDialogueChangedPrix = true;  // Show the confirmation dialog
 
-                }else {
                     this.factureVenteService.deleteFacture(facture.id).subscribe(value => {
                         this.loadFacture(this.currentPage,this.pageSize)
                     })
-                }
+
             },
             reject: () => {
                 this.messageService.add({

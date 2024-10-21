@@ -258,6 +258,7 @@ export class FactureVenteAjoutComponent implements OnInit{
   }
 
   private saveFacture() {
+    console.log("tranche"+this.newFacture.tranches)
     this.getToTalFacture();
     this.newFacture.reglement=this.reglementFacture;
     if (this.newFacture.id) {
@@ -457,6 +458,7 @@ export class FactureVenteAjoutComponent implements OnInit{
 
   AddTrancheToNewFacture() {
     this.Newtranche.user =this.newFacture.client
+
     this.newFacture.tranches.push(this.Newtranche);
     this.Newtranche = new Tranche()
   }
@@ -556,10 +558,9 @@ export class FactureVenteAjoutComponent implements OnInit{
 
   public onRowEditSave(l: LigneFacture) {
 
-    if (this.newFacture.typeFacture === 'FACTURE_ACHAT')
       if (l.prixAchat !== l.produit.prixUnitaire) {
 
-        l.IsshowingDiolog=true;
+        l.IsshowingDiolog=false;
 
       }
 
@@ -691,13 +692,10 @@ export class FactureVenteAjoutComponent implements OnInit{
   public getTitleFacture() {
     const id = this.route.snapshot.paramMap.get('id');
     return id
-        ?this.newFacture.typeFacture=="FACTURE_VENTE"
-            ?"Update facture vente"
-            :"Update facture achat"
-        :this.newFacture.typeFacture=="FACTURE_VENTE"
-            ?"Ajouter facture vente"
-            :"Ajouter facture achat"
+        ? "Update facture Vente"
+        : "Ajouter facture Vente";
   }
+
 
 
 

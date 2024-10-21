@@ -277,8 +277,8 @@
                     <div class="p-card mt-3" style="width: 45%; float: right;">
                         <p-table *ngIf="newFacture?.tranches?.length" [value]="[
                                                         {label: 'Total des Tranches', value: totalMontantTranches},
-                                                        {label: 'Montant Payées', value: montantTranchesPayees},
-                                                        {label: 'Reste à payer', value: montantTranchesNonPayees}
+                                                        {label: 'Montant tranches Payées', value: montantTranchesPayees},
+                                                        {label: 'Reste Tranches à payer', value: montantTranchesNonPayees}
                                                        ]">
                             <ng-template pTemplate="body" let-row>
                                 <tr>
