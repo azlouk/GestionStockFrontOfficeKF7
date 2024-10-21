@@ -235,7 +235,7 @@ export class FactureAchatService {
       cancelButtonText: 'Annuler'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.router.navigate(['/uikit/facture']);
+        this.router.navigate(['/uikit/factureAchat']);
         ;
       } else {
         // Handle the case where the user cancels the return

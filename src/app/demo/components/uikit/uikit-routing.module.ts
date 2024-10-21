@@ -4,15 +4,13 @@ import {ProduitsComponent} from "./Products/produits/produits.component";
 import {ProduitAjoutComponent} from "./Products/produit-ajout/produit-ajout.component";
 import {ArticleComponent} from "./Articles/article/article.component";
 import {DepotComponent} from "./Depot/depot/depot.component";
-import {FactureComponent} from "./Factures/facture/facture.component";
-import {FactureAjoutComponent} from "./Factures/facture-ajout/facture-ajout.component";
+
 import { AjoutUserComponent } from './users/ajout-user/ajout-user.component';
 import { POSComponent } from './Ventes/pos/pos.component';
 import { LigneVenteComponent } from './Ventes/ligne-vente/ligne-vente.component';
 import { CaisseComponent } from './Ventes/caisse/caisse.component';
 import { UpdateUserComponent } from './users/update-user/update-user.component';
 import { UserComponent } from './users/user/user.component'
-import {FactureDetailsComponent} from "./Factures/facture-details/facture-details.component";
 import {ClotureComponent} from "./Ventes/cloture/cloture.component";
 import {TrancheComponent} from "./tranche/tranche.component";
 import {ServiceComponent} from "./Services/service/service.component";
@@ -48,10 +46,6 @@ import {FactureAchatDetailsComponent} from "./FactureAchat/facture-achat-details
         { path: 'article', component:ArticleComponent },
         { path: 'caisse', component:CaisseComponent },
 
-        { path: 'facture', component:FactureComponent },
-        { path: 'add-facture', component:FactureAjoutComponent },
-        { path: 'update-facture/:id', component:FactureAjoutComponent },
-        { path: 'facture/:id', component:FactureDetailsComponent },
 
         { path: 'factureVente', component:FactureVenteComponent },
         { path: 'add-factureVente', component:FactureVenteAjoutComponent },

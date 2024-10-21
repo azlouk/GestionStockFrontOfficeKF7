@@ -1,6 +1,5 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {Facture} from "../../../../../models/Facture";
-import {FactureService} from "../../../../../layout/service/facture.service";
+
 import {ProduitService} from "../../../../../layout/service/produit.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {CommandeServ} from "../../../../../models/CommandeServ ";

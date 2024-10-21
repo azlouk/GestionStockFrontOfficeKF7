@@ -108,8 +108,11 @@ export class FactureAchatDetailsComponent implements OnInit{
   }
 
   public getNewPrice(l: LigneFacture) {
+    return l.quantite<l.produit.minQuantiteGros?l.prixAchat+l.produit.gainUnitaire:l.prixAchat+l.produit.gainGros;
+  }
 
+  public getNewTotal(l: LigneFacture) {
+    return l.quantite<l.produit.minQuantiteGros?(l.produit.prixUnitaire + l.produit.gainUnitaire) * l.quantite:(l.produit.prixUnitaire + l.produit.gainGros) * l.quantite;
 
-    return this.facture.typeFacture!="FACTURE_VENTE"?l.prixAchat:l.prixVente;
   }
 }

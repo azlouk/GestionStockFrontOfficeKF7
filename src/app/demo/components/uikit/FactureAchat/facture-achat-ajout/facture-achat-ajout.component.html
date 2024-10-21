@@ -479,7 +479,7 @@
 
                 <div class="flex flex-column col-12 md:col-4 align-items-center">
                     <label class="block font-bold text-2xl m-2">Réglement :</label>
-                    <p-inputNumber  [(ngModel)]="reglementFacture"   (ngModelChange)="getChangeReglement($event)"  inputId="currency-us" mode="currency"
+                    <p-inputNumber  [(ngModel)]="reglementFacture"   (click)="getChangeReglement()"  inputId="currency-us" mode="currency"
                                     currency="TND" locale="en-US"></p-inputNumber>
                 </div>
             </div>

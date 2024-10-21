@@ -311,18 +311,6 @@ export class FactureAchatComponent implements OnInit{
 
   }
 
-  // getAllFactures() {
-  //     this.loading = true;
-  //     this.factureService.getFactures().subscribe((value: Facture[]) => {
-  //
-  //         console.error(value)
-  //
-  //         this.factureService.FactureInter = [...value]
-  //         this.loading = false;
-  //         this.Facturefilred = [...value]
-  //         this.FacturefilredSuplim = [...value]
-  //     });
-  // }
 
   goToFactureDetails(id: number): void {
     this.router.navigate(['uikit/factureAchat/',id]);
@@ -343,9 +331,7 @@ export class FactureAchatComponent implements OnInit{
     this.router.navigate(['/ajout-service/', this.idp, this.idf, this.idd]);
   }
 
-  getPayeLabel(paye: boolean): string {
-    return paye ? 'Oui' : 'Non';
-  }
+
 
   getSeverity(status: boolean) {
     switch (status) {
@@ -389,7 +375,7 @@ export class FactureAchatComponent implements OnInit{
     this.reset() ;
   }
 
-  deleteFacture(facture: Facture) {
+  deleteFacture(facture: FactureAchat) {
 
     this.factureDeleted = facture; // Store the facture that is going to be deleted
 
@@ -471,7 +457,7 @@ export class FactureAchatComponent implements OnInit{
   totalMontantTranches: number = 0;
   montantTranchesPayees: number = 0;
   montantTranchesNonPayees: number = 0;
-  public factureDeleted: Facture=new Facture();
+  public factureDeleted: FactureAchat=new FactureAchat();
   public PrixChoisie: number;
 
 

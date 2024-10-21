@@ -4,7 +4,6 @@ import {CurrencyPipe} from "@angular/common";
 import {RippleModule} from "primeng/ripple";
 import {SharedModule} from "primeng/api";
 import {TableModule} from "primeng/table";
-import {FactureService} from "../../../../../layout/service/facture.service";
 import {ProduitService} from "../../../../../layout/service/produit.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {LigneFacture} from "../../../../../models/LigneFacture";
@@ -108,10 +107,12 @@ export class FactureVenteDetailsComponent implements OnInit{
   }
 
   public getNewPrice(l: LigneFacture) {
-
-
-    return this.facture.typeFacture!="FACTURE_VENTE"?l.prixAchat:l.prixVente;
+    return l.quantite<l.produit.minQuantiteGros?l.prixAchat+l.produit.gainUnitaire:l.prixAchat+l.produit.gainGros;
   }
 
 
+  public getNewTotal(l: LigneFacture) {
+    return l.quantite<l.produit.minQuantiteGros?(l.produit.prixUnitaire + l.produit.gainUnitaire) * l.quantite:(l.produit.prixUnitaire + l.produit.gainGros) * l.quantite;
+
+  }
 }

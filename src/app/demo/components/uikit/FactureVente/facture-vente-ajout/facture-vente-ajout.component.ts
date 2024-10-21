@@ -20,13 +20,11 @@ import {SliderModule} from "primeng/slider";
 import {Table, TableModule} from "primeng/table";
 import {ToastModule} from "primeng/toast";
 import {ToggleButtonModule} from "primeng/togglebutton";
-import {Facture} from "../../../../../models/Facture";
 import {Depot} from "../../../../../models/Depot";
 import {Produit} from "../../../../../models/produit";
 import {User} from "../../../../../models/user";
 import {Tranche} from "../../../../../models/Tranche";
 import {Page} from "../../../../../models/Page";
-import {FactureService} from "../../../../../layout/service/facture.service";
 import {DepotService} from "../../../../../layout/service/depot.service";
 import {UserService} from "../../../../../layout/service/user.service";
 import {ProduitService} from "../../../../../layout/service/produit.service";
@@ -118,7 +116,6 @@ export class FactureVenteAjoutComponent implements OnInit{
 
   constructor(
       private cdr: ChangeDetectorRef,
-      private factureService: FactureService,
       private factureVenteService: FactureVenteService,
       private depotService: DepotService,
       private userService: UserService,
@@ -258,7 +255,6 @@ export class FactureVenteAjoutComponent implements OnInit{
   }
 
   private saveFacture() {
-    console.log("tranche"+this.newFacture.tranches)
     this.getToTalFacture();
     this.newFacture.reglement=this.reglementFacture;
     if (this.newFacture.id) {
@@ -625,7 +621,6 @@ export class FactureVenteAjoutComponent implements OnInit{
     total += total * (this.newFacture.montantTaxe / 100);
 
     this.newFacture.montant=total;
-    this.reglementFacture=total ;
   }
 
   CalculeMontantFiltrer() {
@@ -763,10 +758,8 @@ export class FactureVenteAjoutComponent implements OnInit{
   }
 
 
-  public getChangeReglement(reglement:number) {
-    this.reglementFacture=reglement ;
-    console.log(reglement)
-
+  public getChangeReglement() {
+    this.reglementFacture=this.newFacture.montant ;
   }
 
 

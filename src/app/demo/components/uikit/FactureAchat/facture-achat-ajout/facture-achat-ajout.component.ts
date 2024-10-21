@@ -614,7 +614,6 @@ export class FactureAchatAjoutComponent implements OnInit{
     total += total * (this.newFacture.montantTaxe / 100);
 
     this.newFacture.montant=total;
-    this.reglementFacture=total ;
   }
 
   CalculeMontantFiltrer() {
@@ -752,9 +751,8 @@ export class FactureAchatAjoutComponent implements OnInit{
   }
 
 
-  public getChangeReglement(reglement:number) {
-    this.reglementFacture=reglement ;
-    console.log(reglement)
+  public getChangeReglement() {
+    this.reglementFacture=this.newFacture.montant  ;
 
   }
 

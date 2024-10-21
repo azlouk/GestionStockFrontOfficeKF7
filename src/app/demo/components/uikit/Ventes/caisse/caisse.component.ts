@@ -23,7 +23,7 @@ import {SaveUrlFileProduct} from "../../../../../models/File";
 import {LigneVente} from "../../../../../models/LigneVente";
 import {Table, TableModule} from "primeng/table";
 import {DropdownModule} from "primeng/dropdown";
-import {CommonModule, CurrencyPipe, DatePipe, DecimalPipe, JsonPipe, NgClass} from "@angular/common";
+import {CommonModule, CurrencyPipe, DatePipe, DecimalPipe, NgClass} from "@angular/common";
 import {CheckboxModule} from "primeng/checkbox";
 import {InplaceModule} from "primeng/inplace";
 import {InputNumberModule} from "primeng/inputnumber";
@@ -38,8 +38,7 @@ import {InputTextModule} from "primeng/inputtext";
 import {ToggleButtonModule} from "primeng/togglebutton";
 import {AutoFocusModule} from "primeng/autofocus";
 import {SidebarModule} from "primeng/sidebar";
-import {FactureComponent} from "../../Factures/facture/facture.component";
-import {FactureAjoutComponent} from "../../Factures/facture-ajout/facture-ajout.component";
+
 import {RippleModule} from "primeng/ripple";
 import {TabViewModule} from "primeng/tabview";
 import {ServiceComp} from "../../../../../models/ServiceComp";
@@ -58,10 +57,12 @@ import {CalendarModule} from "primeng/calendar";
 import {Tranche} from "../../../../../models/Tranche";
 import {Facture, factureType} from "../../../../../models/Facture";
 import {TrancheService} from "../../../../../layout/service/tranche.service";
-import {FactureService} from "../../../../../layout/service/facture.service";
 import {LigneFacture} from "../../../../../models/LigneFacture";
 import {DialogService} from "../../../../../layout/service/dialogue-user.service";
 import {AjoutUserComponent} from "../../users/ajout-user/ajout-user.component";
+import {FactureVenteService} from "../../../../../layout/service/facture-vente.service";
+import {FactureVenteComponent} from "../../FactureVente/facture-vente/facture-vente.component";
+import {FactureVenteAjoutComponent} from "../../FactureVente/facture-vente-ajout/facture-vente-ajout.component";
 
 
 @Component({
@@ -84,7 +85,7 @@ import {AjoutUserComponent} from "../../users/ajout-user/ajout-user.component";
         BadgeModule,
         InputGroupModule,
         InputGroupAddonModule, InputTextModule, TableModule,
-        CommonModule, ToggleButtonModule, AutoFocusModule, SidebarModule, FactureComponent, FactureAjoutComponent, RippleModule, TabViewModule, CommandeServAjoutComponent, DockModule, SelectButtonModule, ChipModule, ConfirmDialogModule, FieldsetModule, RadioButtonModule, CalendarModule, AjoutUserComponent
+        CommonModule, ToggleButtonModule, AutoFocusModule, SidebarModule, FactureVenteComponent,FactureVenteAjoutComponent, RippleModule, TabViewModule, CommandeServAjoutComponent, DockModule, SelectButtonModule, ChipModule, ConfirmDialogModule, FieldsetModule, RadioButtonModule, CalendarModule, AjoutUserComponent
     ],
     templateUrl: './caisse.component.html',
     styleUrl: './caisse.component.scss'
@@ -145,13 +146,6 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
     ];
     TypeUserSelected: string = "Passager";
 
-    // Ajoutez cette méthode pour formater la date au format 'YYYY-MM-DD'
-    formatDate(date: Date): string {
-        const year = date.getFullYear();
-        const month = ('0' + (date.getMonth() + 1)).slice(-2);
-        const day = ('0' + date.getDate()).slice(-2);
-        return `${year}-${month}-${day}`;
-    }
 
     @ViewChild('ajouterProduitButton') ajouterProduitButton!: ElementRef;
     messages1: Message[] = [];
@@ -184,13 +178,12 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
                 private sanitizer: DomSanitizer,
                 private confirmationService: ConfirmationService,
                 private trancheService: TrancheService,
-                private factureService: FactureService,
+                private factureVenteService: FactureVenteService,
                 private router: Router,
                 private  cdRef:ChangeDetectorRef,
                 public dialogueService:DialogService
     ) {
         const idrandom = 1;
-        // this.selectedVente = new Vente(idrandom, new Date(), new User() , 0, 0, [], getUserDecodeID());
         this.listeVente.push(this.selectedVente);
         this.reglement = this.selectedVente.total;
     }
@@ -921,7 +914,7 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
 
 
     returnBack() {
-        this.factureService.returnBack();
+        this.factureVenteService.returnBack();
     }
 
 
@@ -945,7 +938,7 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
         this.newFacture.typeFacture=factureType.SORTIE ;
         this.newFacture.montantTaxe=0 ;
         this.newFacture.dateCreation=this.selectedVente.dateVente ;
-        this.factureService.addFacture(this.newFacture).subscribe(value => {
+        this.factureVenteService.addFacture(this.newFacture).subscribe(value => {
             if (value){
                 this.messageService.add({ severity: 'info', summary: 'Facture est bien enregistré', detail: 'Vente Non Payeé' });
                 this.clearVente();

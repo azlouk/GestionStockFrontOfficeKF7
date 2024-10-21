@@ -57,7 +57,7 @@
                         <td>{{ l.produit.nom }}</td>
                         <td>{{ l.quantite }}</td>
                         <td>{{ getNewPrice(l) }}</td>
-                        <td>{{ (l.produit.prixUnitaire + l.produit.gainUnitaire) * l.quantite }}</td>
+                        <td>{{getNewTotal(l)}}</td>
                     </tr>
                 </ng-template>
             </p-table>
