@@ -23,11 +23,11 @@ export class UserService {
 
 
     constructor(private http : HttpClient, private router : Router) {
-        if(getToken()!==undefined && getToken()!=="404")
-            this.getUsers().subscribe(users => {
-                this.users = users;
-                this.filteredUsers = users;
-            });
+        // if(getToken()!==undefined && getToken()!=="404")
+        //     this.getUsers().subscribe(users => {
+        //         this.users = users;
+        //         this.filteredUsers = users;
+        //     });
 
     }
 
@@ -184,16 +184,16 @@ export class UserService {
             return new Observable<string>();
         }
     }
-    searchUsers(term: string): void {
-        term = term.toLowerCase();
-        this.filteredUsers = this.users.filter(user =>
-            user.firstname.toLowerCase().includes(term) ||
-            user.lastname.toLowerCase().includes(term) ||
-            user.adresse.toLowerCase().includes(term) ||
-            user.email.toLowerCase().includes(term) ||
-            user.telephone.toString().includes(term)
-        );
-    }
+    // searchUsers(term: string): void {
+    //     term = term.toLowerCase();
+    //     this.filteredUsers = this.users.filter(user =>
+    //         user.firstname.toLowerCase().includes(term) ||
+    //         user.lastname.toLowerCase().includes(term) ||
+    //         user.adresse.toLowerCase().includes(term) ||
+    //         user.email.toLowerCase().includes(term) ||
+    //         user.telephone.toString().includes(term)
+    //     );
+    // }
 
     getFilteredUsers(): User[] {
         return this.filteredUsers;
@@ -251,10 +251,10 @@ export class UserService {
         else  { return  new Observable<any>()}
 
     }
-    getUsersByRole(role: RoleEnum): User[] {
-        const data=role.toLowerCase()=='fournisseur'?'provider':role ;
-        return this.users.filter((user) => user.role.toLowerCase() === data.toLowerCase()  );
-    }
+    // getUsersByRole(role: RoleEnum): User[] {
+    //     const data=role.toLowerCase()=='fournisseur'?'provider':role ;
+    //     return this.users.filter((user) => user.role.toLowerCase() === data.toLowerCase()  );
+    // }
 
 
 

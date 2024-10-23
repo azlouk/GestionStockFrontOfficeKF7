@@ -293,8 +293,10 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
     }
 
     clearVente() {
-        this.selectedVente.lignesVente = [];
-        this.selectedVente.reglement = 0;
+
+        this.selectedVente = new Vente();
+        this.reglement=0
+        this.frais=0;
         this.TotalProductNb = 0;
 
     }
@@ -609,7 +611,7 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
                 const ligneVente = new LigneVente();
                 ligneVente.id = produitSelectionne.id;
                 ligneVente.venteQty = 1; // Vous pouvez ajuster la quantité initiale ici
-                ligneVente.prixVente = produitSelectionne.prixUnitaire + produitSelectionne.gainUnitaire;
+                ligneVente.prixVente = (produitSelectionne.prixUnitaire + produitSelectionne.gainUnitaire)+(produitSelectionne.prixUnitaire + produitSelectionne.gainUnitaire)*(produitSelectionne.taxe/100);
 
                 ligneVente.produit = produitSelectionne;
 
@@ -658,13 +660,6 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
         return sommeTotale;
     }
 
-    getSommeTaxes(): number {
-        let sommeTaxes = 0;
-        for (const ligneVente of this.selectedVente.lignesVente) {
-            sommeTaxes += ligneVente.produit.taxe * ligneVente.venteQty; // Utilisez l'opérateur d'addition pour accumuler les taxes
-        }
-        return sommeTaxes;
-    }
 
 
     supprimerProduit(index: number): void {
@@ -744,7 +739,7 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
     }
 
     getTotalVente(): number {
-        const val = this.getSommeTotale() + this.getSommeTaxes() + this.frais;
+        const val = this.getSommeTotale() + this.frais;
         this.selectedVente.total = val;
         this.selectedVente.reglement=val;
 

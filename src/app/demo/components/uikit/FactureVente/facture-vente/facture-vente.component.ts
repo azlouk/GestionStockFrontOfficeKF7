@@ -504,9 +504,9 @@ export class FactureVenteComponent implements OnInit{
     }
 
     public rechercheAvancee() {
+
         this.Facturefilred = this.FacturefilredSuplim.filter(fact => {
             let match = true;
-            console.log(this.Facturefilred.length)
 
 
             match = match;

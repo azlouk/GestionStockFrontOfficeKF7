@@ -21,6 +21,7 @@ import {BadgeModule} from "primeng/badge";
 import {RippleModule} from "primeng/ripple";
 import {Produit} from "../../../../../models/produit";
 import {Page} from "../../../../../models/Page";
+import {PaginatorModule} from "primeng/paginator";
 @Component({
     selector: 'app-user',
     standalone: true,
@@ -42,7 +43,8 @@ import {Page} from "../../../../../models/Page";
         AvatarModule,
         BadgeModule,
         NgIf,
-        RippleModule
+        RippleModule,
+        PaginatorModule
     ],
     templateUrl: './user.component.html',
     styleUrl: './user.component.scss'
@@ -83,8 +85,8 @@ export class UserComponent {
 
         this.userService.exist("user")
         this.getUserById();
-        this.getAllUsers();
     }
+
 
     loadUsers(page: number, size: number) {
         this.loadingdata=true ;
@@ -95,13 +97,17 @@ export class UserComponent {
             },
             (error) => {
                 console.error('Erreur lors du chargement des Users', error);
+                this.loadingdata=false;
+
             }
         );
     }
     onPageChange(event: any) {
+        console.log( new JsonPipe().transform(event ))
         this.currentPage = event.page==undefined?0:event.page;
         this.pageSize = event.rows==undefined?10:event.rows
-        this.loadUsers(this.currentPage, this.pageSize);
+
+        this.loadUsers(this.currentPage,this.pageSize  );
 
     }
 
@@ -142,22 +148,22 @@ export class UserComponent {
     }
 
 
-    getAllUsers(){
-        this.userService.getUsers().subscribe((value :User[])=>{
-            this.users=value ;
-
-
-
-
-        },error => {
-            this.displayusers=false;
-            Swal.fire({
-                icon: "error",
-                title: "Oops...",
-                text: "Vous n'avez pas la permission s'il vous plait  contacter l'administrateur.  ",
-
-            });})
-    }
+    // getAllUsers(){
+    //     this.userService.getUsers().subscribe((value :User[])=>{
+    //         this.users=value ;
+    //
+    //
+    //
+    //
+    //     },error => {
+    //         this.displayusers=false;
+    //         Swal.fire({
+    //             icon: "error",
+    //             title: "Oops...",
+    //             text: "Vous n'avez pas la permission s'il vous plait  contacter l'administrateur.  ",
+    //
+    //         });})
+    // }
     getUserById(){
         this.route.params.subscribe((params) => {
             const userId = params['id']; // Supposons que vous utilisez 'id' comme nom du paramètre dans votre route
@@ -180,14 +186,14 @@ export class UserComponent {
     addUser(){
         this.router.navigate(['/uikit/Add-user']);
     }
-    onSearch(): void {
-        if (this.searchTerm.trim() !== '') {
-            this.userService.searchUsers(this.searchTerm.toLowerCase());
-            this.users = this.userService.getFilteredUsers();
-        } else {
-            this.getAllUsers();
-        }
-    }
+    // onSearch(): void {
+    //     if (this.searchTerm.trim() !== '') {
+    //         this.userService.searchUsers(this.searchTerm.toLowerCase());
+    //         this.users = this.userService.getFilteredUsers();
+    //     } else {
+    //         this.getAllUsers();
+    //     }
+    // }
 
     editUser(user: User): void {
 
@@ -212,7 +218,7 @@ export class UserComponent {
 
                         if (response==true) {
                             Swal.fire('Supprimé', 'L\'utilisateur a été supprimé avec succès', 'success');
-                            this.getAllUsers();
+                            this.loadUsers(this.currentPage, this.pageSize);
                         } else {
                             Swal.fire('Erreur', 'La suppression annulé, User lié par un autre entité ', 'error');
                         }
@@ -229,21 +235,20 @@ export class UserComponent {
 
     }
 
-    deleteService(userId: number): void {
-        this.users = this.users.filter(user => user.id !== userId);
-    }
+    // deleteService(userId: number): void {
+    //     this.users = this.users.filter(user => user.id !== userId);
+    // }
 
-    filterUsersByRole(): void {
-        if (this.selectedRole !==RoleEnum.ALL) {
-            this.users = this.userService.getUsersByRole(this.selectedRole);
-        } else {
-            this.getAllUsers();
-        }
-    }
+    // filterUsersByRole(): void {
+    //     if (this.selectedRole !==RoleEnum.ALL) {
+    //         this.users = this.userService.getUsersByRole(this.selectedRole);
+    //     } else {
+    //         this.getAllUsers();
+    //     }
+    // }
 
     refrech() {
-        this.getAllUsers();
-        //this.router.navigate(['/uikit/Users']);
+        this.loadUsers(this.currentPage, this.pageSize);
     }
     clear(table: Table) {
         table.clear();

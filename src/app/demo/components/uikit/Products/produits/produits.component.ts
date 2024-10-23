@@ -475,4 +475,8 @@ export class ProduitsComponent implements OnInit {
             .filter((nomProduit) => nomProduit.toLowerCase().includes(query)); // Pas besoin de .map() si on travaille déjà avec les noms
     }
 
+    public getPriceWithTva(product: Produit) {
+
+        return(product.prixUnitaire + product.gainUnitaire)+(product.prixUnitaire + product.gainUnitaire)/100
+    }
 }
