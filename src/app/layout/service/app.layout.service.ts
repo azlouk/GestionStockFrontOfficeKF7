@@ -19,6 +19,23 @@ interface LayoutState {
     menuHoverActive: boolean;
 }
 
+function initScale() {
+    const width = window.innerWidth;
+    return calculateScale(width, [8,10,12, 13, 14, 15, 16]);
+}
+
+function calculateScale(width: number, scales: number[]): number {
+    const baseWidth = 1266;
+
+    // Calculate the proportional scale based on the base width
+    const proportionalScale = (width / baseWidth) * 8;
+
+    // Find the closest value from the predefined scales array
+    return scales.reduce((prev, curr) =>
+        Math.abs(curr - proportionalScale) < Math.abs(prev - proportionalScale) ? curr : prev
+    );
+}
+
 @Injectable({
     providedIn: 'root',
 })
@@ -29,7 +46,7 @@ export class LayoutService {
         menuMode: 'static',
         colorScheme: 'light',
         theme: 'lara-light-indigo',
-        scale: 14,
+        scale: initScale(),
     };
 
     config = signal<AppConfig>(this._config);

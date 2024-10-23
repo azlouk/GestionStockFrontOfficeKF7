@@ -103,6 +103,9 @@
                 <th pSortableColumn="nom">Nom
                     <p-sortIcon field="nom"></p-sortIcon>
                 </th>
+                <th pSortableColumn="ugs">UGS
+                    <p-sortIcon field="ugs"></p-sortIcon>
+                </th>
                 <!--                        <th>Image</th>-->
                 <th pSortableColumn="prixUnitaire">Prix
                     <p-sortIcon field="prixUnitaire"></p-sortIcon>
@@ -128,6 +131,8 @@
                         class="p-column-title">Code</span>{{ product.dataqr }}
                 </td>
                 <td  ><span class="p-column-title">Nom</span>{{ product.nom }}
+                </td>
+                <td  ><span class="p-column-title">UGS</span>{{ product.ugs }}
                 </td>
                 <td >
                     <span class="p-column-title">Prix</span>

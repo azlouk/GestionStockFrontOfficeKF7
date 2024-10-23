@@ -32,6 +32,7 @@ import {DialogService} from "../../../../../layout/service/dialogue-user.service
 import {Historique} from "../../../../../models/historique";
 import html2canvas from "html2canvas";
 import {InputGroupModule} from "primeng/inputgroup";
+import {TooltipModule} from "primeng/tooltip";
 
 @Component({
     selector: 'app-produit-ajout',
@@ -60,7 +61,8 @@ import {InputGroupModule} from "primeng/inputgroup";
         CardModule,
         ConfirmDialogModule,
         ArticleComponent,
-        InputGroupModule
+        InputGroupModule,
+        TooltipModule
     ],
     templateUrl: './produit-ajout.component.html',
     styles: [`
@@ -75,7 +77,7 @@ import {InputGroupModule} from "primeng/inputgroup";
     styleUrl: './produit-ajout.component.scss'
 })
 export class ProduitAjoutComponent implements OnInit, AfterViewInit {
-    newProduct: Produit = (new Produit());
+    newProduct: Produit = new Produit() ;
     selectedImage: any;
     SelectedFile: Blob = new Blob();
     uploadedFiles: any[] = [];
@@ -159,6 +161,7 @@ export class ProduitAjoutComponent implements OnInit, AfterViewInit {
     }
 
     ajouterProduit() {
+        alert(this.newProduct.ugs)
         if (!this.newProduct.nom?.trim()) {
             this.messageService.add({severity: 'error', summary: 'Nom produit !', detail: 'Nom de produit invalide'});
             return;
@@ -544,6 +547,10 @@ export class ProduitAjoutComponent implements OnInit, AfterViewInit {
     onGlobalFilter(table: Table, event: Event) {
         table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
     }
+
+
+
+
 }
 
 
