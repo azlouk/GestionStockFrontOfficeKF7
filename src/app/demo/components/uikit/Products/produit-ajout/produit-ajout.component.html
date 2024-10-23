@@ -7,7 +7,7 @@
 
         </div>
 
-            <div class=" flex flex-column sm:flex-row justify-content-between sm:col-12 ">
+            <div class=" flex flex-column  sm:flex-row justify-content-between sm:col-12 ">
                 <!---------------- Information de produit ----------------->
                 <div class="flex flex-column gap-2 card sm:flex flex-column gap-2 card  sm:col-2">
                     <div class="">
@@ -96,8 +96,8 @@
                     </div>
 
                     <div class ="flex flex-column gap-4">
-                        <div class="flex flex-column  justify-content-between sm:flex-row  justify-content-evenly  sm:col-12">
-                            <div class="flex flex-column justify-content-between col-5">
+                        <div class="flex flex-column  justify-content-between col-12  sm:flex-row   justify-content-evenly  sm:col-12">
+                            <div class="flex flex-column justify-content-between col-12 sm:col-5">
                                 <div class="flex flex-column gap-1 text-cyan-700 w-full">
                                     <label class="form-label font-bold fs-5">Prix unitaire </label>
                                     <p-inputNumber pTooltip="prix unitaire d'achat"
@@ -141,8 +141,8 @@
                                             [style]="{'width':'100%'}"/>
                                 </div>
                             </div>
-                            <div class=" flex flex-column justify-content-between col-6">
-                                <div class="flex flex-column gap-2 text-cyan-700 w-full">
+                            <div class=" flex flex-column justify-content-between col-12 sm:col-5">
+                                <div class="flex flex-column gap-2 text-cyan-700 ">
                                     <label class="form-label font-bold fs-5">Quantité actuelle </label>
                                     <p-inputNumber [(ngModel)]="newProduct.qantite"
                                                    (ngModelChange)="setQtyGros()"
@@ -154,7 +154,7 @@
                                                    [minFractionDigits]="3"
                                     [style]="{'width':'100%'}"></p-inputNumber>
                                 </div>
-                                <div class="flex flex-column gap-2 text-cyan-700w-full">
+                                <div class="flex flex-column gap-2 text-cyan-700 w-full">
                                     <label class="form-label font-bold fs-5">Quantité min gros </label>
                                     <p-inputNumber [(ngModel)]="newProduct.minQuantiteGros"
 
@@ -165,7 +165,7 @@
                                                    [minFractionDigits]="3"
                                     [style]="{'width':'100%'}"></p-inputNumber>
                                 </div>
-                                <div class="flex flex-column gap-2 text-cyan-700w-full">
+                                <div class="flex flex-column gap-2 text-cyan-700 w-full">
                                     <label class="form-label font-bold fs-5">Min niveau stock </label>
                                     <p-inputNumber [(ngModel)]="newProduct.levelstock"
                                                    [showButtons]="true"
