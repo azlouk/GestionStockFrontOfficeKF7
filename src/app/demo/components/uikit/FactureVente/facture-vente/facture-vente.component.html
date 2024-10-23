@@ -277,8 +277,8 @@
                     <div class="p-card mt-3" style="width: 45%; float: right;">
                         <p-table *ngIf="newFacture?.tranches?.length" [value]="[
                                                         {label: 'Total des Tranches', value: totalMontantTranches},
-                                                        {label: 'Montant Payées', value: montantTranchesPayees},
-                                                        {label: 'Reste à payer', value: montantTranchesNonPayees}
+                                                        {label: 'Montant Tranches Payées', value: montantTranchesPayees},
+                                                        {label: 'Reste Tranches à payer', value: montantTranchesNonPayees}
                                                        ]">
                             <ng-template pTemplate="body" let-row>
                                 <tr>
@@ -322,16 +322,7 @@
         <!-- Filter Section -->
         <div class="flex flex-column gap-3 mb-4">
             <!-- Facture Types -->
-            <div class="flex gap-2 mb-3">
-                <div class="flex align-items-center">
-                    <p-checkbox name="ACHAT" value="FACTURE_ACHAT" [(ngModel)]="typeA" inputId="achat"/>
-                    <label class="ml-2">FACTURE ACHAT</label>
-                </div>
-                <div class="flex align-items-center">
-                    <p-checkbox name="VENTE" value="FACTURE_VENTE" [(ngModel)]="typeV" inputId="vente"/>
-                    <label class="ml-2">FACTURE VENTE</label>
-                </div>
-            </div>
+
 
             <!-- Client Types -->
             <div class="flex gap-2 mb-4">
@@ -387,13 +378,13 @@
                     <span *ngIf="valuepaye === false">Non Payé</span>
                     <span *ngIf="valuepaye === null">Payé et Non Payé</span>
                 </div>
-         <div class="flex align-items-center gap-3 mb-3">
-                            <label for="paye" class="font-semibold w-6rem">Montant Total</label>
-                        <span  class="font-semibold w-6rem bolder ">
+                <div class="flex align-items-center gap-3 mb-3">
+                    <label for="paye" class="font-semibold w-6rem">Montant Total</label>
+                    <span  class="font-semibold w-6rem bolder ">
                              {{ totalMontantFiltre | number }}
                         </span>
 
-                        </div>
+                </div>
 
             </div>
         </div>
@@ -409,6 +400,7 @@
 
     </p-overlayPanel>
 </div>
+<div class="card">
 <p-dialog
         [(visible)]="dialogTrancheDVisible"
         header="Listes des tranches"
@@ -484,7 +476,7 @@
         <p-button label="Cancel" icon="pi pi-check" (onClick)="dialogTrancheDVisible = false"/>
     </ng-template>
 </p-dialog>
-
+</div>
 <p-dialog
         [(visible)]="openDialogueChangedPrix"
         header="Listes des produits à vérifier"
@@ -568,7 +560,7 @@
                                             <td>
                                                 <div class="flex align-items-center">
 
-                                                   <input type="radio" name="{{'group'+ligneFacture.id}}" value="{{historique.id}}"  id="{{ligneFacture.id}}" (change)="updateFacturePrix(ligneFacture,historique)">
+                                                    <input type="radio" name="{{'group'+ligneFacture.id}}" value="{{historique.id}}"  id="{{ligneFacture.id}}" (change)="updateFacturePrix(ligneFacture,historique)">
 
                                                 </div>
                                             </td>

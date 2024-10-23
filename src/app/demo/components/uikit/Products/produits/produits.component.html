@@ -3,189 +3,206 @@
         <h5 class="font-bold text-2xl">Liste des produits</h5>
 
         <p-toast></p-toast>
-      <div class="flex flex-wrap w-full">
-<!--////////////table Paginator//////////////////-->
+        <div class="flex flex-wrap w-full">
+            <!--////////////table Paginator//////////////////-->
 
 
-    <div class="card w-full" >
+            <div class="card w-full">
 
 
+                <p-table
+                    #ds
+                    [value]="produitsPage.content"
+
+                    [loading]="loadingdata"
+                    [totalRecords]="produitsPage.totalElements"
+                    [first]="first"
+                    [globalFilterFields]="['id', 'nom', 'description', 'quantite', 'article.nom', 'dataqr', 'prixUnitaire','gainUnitaire','taxe', 'dateFabrication', 'dateExpiration']"
+                    [showCurrentPageReport]="true"
+                    selectionMode="multiple"
+                    [rowHover]="true"
+                    [scrollable]="true" scrollHeight="400px"
+                    dataKey="id"
+                >
+
+                    <ng-template pTemplate="caption">
+                        <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                            <div class=" flex gap-2">
+                                <button pButton pRipple label="Ajouter" icon="pi pi-plus"
+                                        class="p-button-success p-button-outlined mr-2"
+                                        (click)="newProduit()"></button>
+                                <button pButton pRipple label="Actualiser" icon="pi pi-refresh"
+                                        class="p-button-primary p-button-outlined"
+                                        (click)="refresh()"></button>
+                                <p-avatar *ngIf="displayusers" class="float-end" icon="pi pi-box" pBadge
+                                          styleClass="mr-5"
+                                          [value]="produitsPage.totalElements+''" size="large"
+                                          [style]="{ 'background-color': '#b9c7ce', color: '#1a1717' }"></p-avatar>
+
+                            </div>
+                            <div class="block mt-2 md:mt-0 p-input-icon-left">
+
+                                <div class="block mt-2 md:mt-0 p-input-icon-left">
+                                    <div class="card flex flex-column gap-3 justify-content-center">
+                                        <!-- Section des boutons radio en ligne -->
+                                        <div class="flex flex-row gap-4 align-items-center">
+                                            <div class="flex align-items-center">
+                                                <p-radioButton
+                                                        name="choixRech"
+                                                        value="nom"
+                                                        [(ngModel)]="typeRecherche"
+                                                        inputId="ingredient1"
+                                                />
+                                                <label class="ml-2">Nom Produit</label>
+                                            </div>
+
+                                            <div class="flex align-items-center">
+                                                <p-radioButton
+                                                        name="choixRech"
+                                                        value="dataqr"
+                                                        [(ngModel)]="typeRecherche"
+                                                        inputId="ingredient2"
+                                                />
+                                                <label class="ml-2">Qr Code</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex flex-column align-items-center">
+                                            <div>
+                                                <p-autoComplete
+                                                        [(ngModel)]="selectedItem"
+                                                        [suggestions]="suggestions"
+                                                        (keydown.enter)="rechercheProduit($event)"
+                                                        (completeMethod)="search($event)"
+                                                        class="w-full sm:w-auto"
+                                                        placeholder="Recherche dans la page">
+                                                </p-autoComplete>
+                                            </div>
+                                            <div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
 
 
-    <p-table
-            #ds
-            [value]="produitsPage.content"
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 3rem">
+                                <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                            </th>
+                            <th pSortableColumn="id">Code
+                                <p-sortIcon field="id"></p-sortIcon>
+                            </th>
+                            <th pSortableColumn="nom">Nom
+                                <p-sortIcon field="nom"></p-sortIcon>
+                            </th>
+                            <!--                        <th>Image</th>-->
+                            <th pSortableColumn="prixUnitaire">Prix HT
+                                <p-sortIcon field="prixUnitaire"></p-sortIcon>
+                            </th>
+                            <th pSortableColumn="taxe">TVA %
+                                <p-sortIcon field="taxe"></p-sortIcon>
+                            </th>
+                            <th pSortableColumn="Gain Unitaire">Gain Unit
+                                <p-sortIcon field="gainUnitaire"></p-sortIcon>
+                            </th>
+                            <th pSortableColumn="Gain Gros">Gain Gros
+                                <p-sortIcon field="gainGros"></p-sortIcon>
+                            </th>
 
-            [loading]="loadingdata"
-            [totalRecords]="produitsPage.totalElements"
-            [first]="first"
-            [globalFilterFields]="['id', 'nom', 'description', 'quantite', 'article.nom', 'dataqr', 'prixUnitaire', 'dateFabrication', 'dateExpiration']"
-            [showCurrentPageReport]="true"
-             selectionMode="multiple"
-            [rowHover]="true"
-            [scrollable]="true" scrollHeight="400px"
-            dataKey="id"
-    >
+                            <th pSortableColumn="article.nom">Article
+                                <p-sortIcon field="article.nom"></p-sortIcon>
+                            </th>
+                            <th pSortableColumn="qantite">Quantité
+                                <p-sortIcon field="qantite"></p-sortIcon>
+                            </th>
+                            <th pSortableColumn="inventoryStatus">Etat de Stock
+                                <p-sortIcon field="inventoryStatus"></p-sortIcon>
+                            </th>
+                            <th alignFrozen="right" class="text-center" pFrozenColumn [frozen]="true">Action</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-product>
+                        <tr>
+                            <td>
+                                <p-tableCheckbox [value]="product"></p-tableCheckbox>
+                            </td>
+                            <td><span
+                                    class="p-column-title">Code</span>{{ product.dataqr }}
+                            </td>
+                            <td><span class="p-column-title">Nom</span>{{ product.nom }}
+                            </td>
+                            <td>
+                                <span class="p-column-title">Prix HT</span>
+                                {{ product.prixUnitaire  | number:'1.3-3' }} TND
+                            </td>
+                            <td>
+                                <span class="p-column-title">TVA %</span>
+                                {{ product.taxe  | number }}
+                            </td>
+                            <td>
+                                <span class="p-column-title">Gain Unit</span>
+                                {{ product.gainUnitaire  | number:'1.3-3' }} TND
+                            </td>
+                            <td>
+                                <span class="p-column-title">Gain Gros</span>
+                                {{ product.gainGros  | number:'1.3-3' }} TND
+                            </td>
 
-        <ng-template pTemplate="caption">
-            <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
-                <div class=" flex gap-2">
-                    <button pButton pRipple label="Ajouter" icon="pi pi-plus"
-                            class="p-button-success p-button-outlined mr-2"
-                            (click)="newProduit()"></button>
-                    <button pButton pRipple label="Actualiser" icon="pi pi-refresh"
-                            class="p-button-primary p-button-outlined"
-                            (click)="refresh()"></button>
-                    <p-avatar *ngIf="displayusers" class="float-end" icon="pi pi-box" pBadge styleClass="mr-5"
-                              [value]="produitsPage.totalElements+''" size="large"
-                              [style]="{ 'background-color': '#b9c7ce', color: '#1a1717' }"></p-avatar>
-
-                </div>
-                <div class="block mt-2 md:mt-0 p-input-icon-left">
-
-                    <div class="block mt-2 md:mt-0 p-input-icon-left">
-                    <div class="card flex flex-column gap-3 justify-content-center">
-                <!-- Section des boutons radio en ligne -->
-                <div class="flex flex-row gap-4 align-items-center">
-                    <div class="flex align-items-center">
-                        <p-radioButton
-                                name="choixRech"
-                                value="nom"
-                                [(ngModel)]="typeRecherche"
-                                inputId="ingredient1"
-                        />
-                        <label  class="ml-2">Nom Produit</label>
-                    </div>
-
-                    <div class="flex align-items-center">
-                        <p-radioButton
-                                name="choixRech"
-                                value="dataqr"
-                                [(ngModel)]="typeRecherche"
-                                inputId="ingredient2"
-                        />
-                        <label  class="ml-2">Qr Code</label>
-                    </div>
-                </div>
-
-                <div class="flex flex-column align-items-center">
-                    <div>
-                        <p-autoComplete
-                                [(ngModel)]="selectedItem"
-                                [suggestions]="suggestions"
-                                (keydown.enter)="rechercheProduit($event)"
-                                (completeMethod)="search($event)"
-                                class="w-full sm:w-auto"
-                                placeholder="Recherche dans la page">
-                        </p-autoComplete>
-                    </div>
-                    <div>
-                    </div>
-                </div>
-            </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-        </ng-template>
-        <ng-template pTemplate="header">
-            <tr>
-                <th style="width: 3rem">
-                    <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-                </th>
-                <th pSortableColumn="id">Code
-                    <p-sortIcon field="id"></p-sortIcon>
-                </th>
-                <th pSortableColumn="nom">Nom
-                    <p-sortIcon field="nom"></p-sortIcon>
-                </th>
-                <th pSortableColumn="ugs">UGS
-                    <p-sortIcon field="ugs"></p-sortIcon>
-                </th>
-                <!--                        <th>Image</th>-->
-                <th pSortableColumn="prixUnitaire">Prix
-                    <p-sortIcon field="prixUnitaire"></p-sortIcon>
-                </th>
-                                        <th pSortableColumn="article.nom">Article
-                                            <p-sortIcon field="article.nom"></p-sortIcon>
-                                        </th>
-                                        <th pSortableColumn="qantite">Quantité
-                                            <p-sortIcon field="qantite"></p-sortIcon>
-                                        </th>
-                                        <th pSortableColumn="inventoryStatus">Etat de Stock
-                                            <p-sortIcon field="inventoryStatus"></p-sortIcon>
-                                        </th>
-                                        <th alignFrozen="right" class="text-center" pFrozenColumn [frozen]="true">Action</th>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-product>
-            <tr>
-                <td>
-                    <p-tableCheckbox [value]="product"></p-tableCheckbox>
-                </td>
-                <td  ><span
-                        class="p-column-title">Code</span>{{ product.dataqr }}
-                </td>
-                <td  ><span class="p-column-title">Nom</span>{{ product.nom }}
-                </td>
-                <td  ><span class="p-column-title">UGS</span>{{ product.ugs }}
-                </td>
-                <td >
-                    <span class="p-column-title">Prix</span>
-                    {{ (product.prixUnitaire + product.gainUnitaire) | number:'1.3-3' }} TND
-                </td>
-
-                                        <td style="width:14%; min-width:10rem;"><span
-                                                class="p-column-title">Article</span>{{product.article.nom }}</td>
-                                        <td style="width:14%; min-width: 10rem;"><span
-                                                class="p-column-title">Quantité</span>{{product.qantite}}
-                                        </td>
-                                        <td style="width:14%; min-width: 10rem;"><span class="p-column-title">Etat de Stock</span>
-                                            <span [ngClass]="{
+                            <td ><span
+                                    class="p-column-title">Article</span>{{product.article.nom }}</td>
+                            <td ><span
+                                    class="p-column-title">Quantité</span>{{product.qantite}}
+                            </td>
+                            <td ><span class="p-column-title">Etat de Stock</span>
+                                <span [ngClass]="{
                                             'instock': product.qantite > product.levelstock,
                                             'lowstock': product.qantite > 0 && product.qantite <= product.levelstock,
                                             'outofstock': product.qantite == 0}">
                                                 {{ product.qantite > product.levelstock ? 'INSTOCK' : product.qantite == 0 ? 'OUTOFSTOCK' : 'LOWSTOCK' }}
                                             </span>
 
-                                        </td>
-                                        <td  alignFrozen="right" pFrozenColumn [frozen]="true">
-                                            <div class="flex">
-                                                <button pButton pRipple icon="pi pi-pencil"
-                                                        class="p-button-rounded p-button-success mr-2"
-                                                        (click)="modifierProduit(product.id)"></button>
-                                                <button pButton pRipple icon="pi pi-trash"
-                                                        class="p-button-rounded p-button-danger mr-2"
+                            </td>
+                            <td alignFrozen="right" pFrozenColumn [frozen]="true">
+                                <div class="flex">
+                                    <button pButton pRipple icon="pi pi-pencil"
+                                            class="p-button-rounded p-button-success mr-2"
+                                            (click)="modifierProduit(product.id)"></button>
+                                    <button pButton pRipple icon="pi pi-trash"
+                                            class="p-button-rounded p-button-danger mr-2"
 
-                                                        (click)="supprimerProduit(product.id)"></button>
-                                                <button pButton pRipple icon="pi pi-eye" class="p-button-rounded p-button-green mr-2"
-                                                        (click)="showDetail(product.id)"></button>
-                                            </div>
-                                        </td>
-            </tr>
-        </ng-template>
+                                            (click)="supprimerProduit(product.id)"></button>
+                                    <button pButton pRipple icon="pi pi-eye"
+                                            class="p-button-rounded p-button-green mr-2"
+                                            (click)="showDetail(product.id)"></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
 
-        <!-- The rest of your template (caption, header, body) stays the same -->
-    </p-table>
-        <div class="flex justify-content-center w-full">
-            <p-paginator
-                    [first]="currentPage * pageSize"
-                    [rows]="pageSize"
-                    [totalRecords]="produitsPage.totalElements"
-                    [rowsPerPageOptions]="[10, 20, 30, 100, 500]"
-                    (onPageChange)="onPageChange($event)">
-            </p-paginator>
+                    <!-- The rest of your template (caption, header, body) stays the same -->
+                </p-table>
+                <div class="flex justify-content-center w-full">
+                    <p-paginator
+                            [first]="currentPage * pageSize"
+                            [rows]="pageSize"
+                            [totalRecords]="produitsPage.totalElements"
+                            [rowsPerPageOptions]="[10, 20, 30, 100, 500]"
+                            (onPageChange)="onPageChange($event)">
+                    </p-paginator>
+                </div>
+            </div>
+
+            <!--//////////////////////table Paginator//////////////////-->
+
+
         </div>
-    </div>
-
-<!--//////////////////////table Paginator//////////////////-->
-
-
-</div>
     </div>
 
 </div>
@@ -246,7 +263,8 @@
                 <td style="width:14%; min-width:10rem;">
 
 
-                    <p-button *ngIf="historique.idFactRefToHist" label="{{ historique.idFactRefToHist }}" [link]="true"   [routerLink]="['/uikit/update-facture', historique.idFactRefToHist]"/>
+                    <p-button *ngIf="historique.idFactRefToHist" label="{{ historique.idFactRefToHist }}" [link]="true"
+                              [routerLink]="['/uikit/update-facture', historique.idFactRefToHist]"/>
 
 
                 </td>

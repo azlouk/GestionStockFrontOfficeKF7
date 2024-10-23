@@ -1,54 +1,54 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ButtonModule} from "primeng/button";
-import {Facture, factureType} from "../../../../../models/Facture";
-import {FactureService} from "../../../../../layout/service/facture.service";
-import {ActivatedRoute, Router} from "@angular/router";
-import {ProduitService} from "../../../../../layout/service/produit.service";
-import {CurrencyPipe, DatePipe, NgForOf} from "@angular/common";
+import {CurrencyPipe} from "@angular/common";
 import {RippleModule} from "primeng/ripple";
-import {ToolbarModule} from "primeng/toolbar";
+import {SharedModule} from "primeng/api";
 import {TableModule} from "primeng/table";
+import {FactureVente} from "../../../../../models/FactureVente";
+import {ProduitService} from "../../../../../layout/service/produit.service";
+import {ActivatedRoute, Router} from "@angular/router";
 import {LigneFacture} from "../../../../../models/LigneFacture";
+import {FactureAchatService} from "../../../../../layout/service/facture-achat.service";
 
 @Component({
-  selector: 'app-facture-details',
+  selector: 'app-facture-achat-details',
   standalone: true,
   imports: [
     ButtonModule,
-    DatePipe,
+    CurrencyPipe,
     RippleModule,
-    ToolbarModule,
-    TableModule,
-    NgForOf,
-    CurrencyPipe
+    SharedModule,
+    TableModule
   ],
-  templateUrl: './facture-details.component.html',
-  styleUrl: './facture-details.component.scss'
+  templateUrl: './facture-achat-details.component.html',
+  styleUrl: './facture-achat-details.component.scss'
 })
-export class FactureDetailsComponent implements OnInit {
-  facture: Facture = new Facture(); // Initialisez votre objet Facture
+export class FactureAchatDetailsComponent implements OnInit{
+
+
+  facture: FactureVente = new FactureVente(); // Initialisez votre objet FactureVente
 
   @ViewChild('factureContent') factureContent!: ElementRef;
   constructor(
-      private factureService: FactureService,
+      private factureAchatService: FactureAchatService,
       private produitService : ProduitService,
       private route: ActivatedRoute,
       private router : Router,
   ) {}
 
   ngOnInit(): void {
-    this.getCommandeDetails(); // Appelez la méthode pour récupérer les détails de la facture
+    this.getCommandeDetails(); // Appelez la méthode pour récupérer les détails de la FactureVente
   }
 
   getCommandeDetails(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.factureService.getFactureById(id)?.subscribe((value: Facture) => {
-      this.facture = value; // Mettez à jour l'objet facture avec les détails récupérés
+    this.factureAchatService.getFactureById(id)?.subscribe((value: FactureVente) => {
+      this.facture = value; // Mettez à jour l'objet FactureVente avec les détails récupérés
     });
   }
 
   returnBack(): void {
-    this.factureService.returnBack()
+    this.factureAchatService.returnBack()
   }
 
   saveFacture(): void {
@@ -90,7 +90,7 @@ export class FactureDetailsComponent implements OnInit {
       iframeDoc.write(`
       <html>
         <head>
-          <title>Facture</title>
+          <title>FactureAchat</title>
           <style>${styleSheets}</style>
         </head>
         <body>${printContent}</body>
@@ -107,10 +107,12 @@ export class FactureDetailsComponent implements OnInit {
     }
   }
 
-    public getNewPrice(l: LigneFacture) {
+  public getNewPrice(l: LigneFacture) {
+    return l.quantite<l.produit.minQuantiteGros?l.prixAchat+l.produit.gainUnitaire:l.prixAchat+l.produit.gainGros;
+  }
 
+  public getNewTotal(l: LigneFacture) {
+    return l.quantite<l.produit.minQuantiteGros?(l.produit.prixUnitaire + l.produit.gainUnitaire) * l.quantite:(l.produit.prixUnitaire + l.produit.gainGros) * l.quantite;
 
-    return this.facture.typeFacture!="FACTURE_VENTE"?l.prixAchat:l.prixVente;
-    }
+  }
 }
-

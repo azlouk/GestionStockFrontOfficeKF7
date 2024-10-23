@@ -1,17 +1,17 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-
-import {ProduitService} from "../../../../../layout/service/produit.service";
-import {ActivatedRoute, Router} from "@angular/router";
-import {CommandeServ} from "../../../../../models/CommandeServ ";
-import {CommandeServiceService} from "../../../../../layout/service/commande-service.service";
 import {ButtonModule} from "primeng/button";
 import {CurrencyPipe} from "@angular/common";
 import {RippleModule} from "primeng/ripple";
 import {SharedModule} from "primeng/api";
 import {TableModule} from "primeng/table";
+import {ProduitService} from "../../../../../layout/service/produit.service";
+import {ActivatedRoute, Router} from "@angular/router";
+import {LigneFacture} from "../../../../../models/LigneFacture";
+import {FactureVente} from "../../../../../models/FactureVente";
+import {FactureVenteService} from "../../../../../layout/service/facture-vente.service";
 
 @Component({
-  selector: 'app-commande-serv-details',
+  selector: 'app-facture-vente-details',
   standalone: true,
   imports: [
     ButtonModule,
@@ -20,30 +20,38 @@ import {TableModule} from "primeng/table";
     SharedModule,
     TableModule
   ],
-  templateUrl: './commande-serv-details.component.html',
-  styleUrl: './commande-serv-details.component.scss'
+  templateUrl: './facture-vente-details.component.html',
+  styleUrl: './facture-vente-details.component.scss'
 })
-export class CommandeServDetailsComponent implements OnInit{
+export class FactureVenteDetailsComponent implements OnInit{
 
-  commandeSer:CommandeServ = new CommandeServ(); // Initialisez votre objet Facture
+  facture: FactureVente = new FactureVente(); // Initialisez votre objet FactureVente
 
   @ViewChild('factureContent') factureContent!: ElementRef;
   constructor(
-      private commandeService: CommandeServiceService,
+      private factureVenteService: FactureVenteService,
       private produitService : ProduitService,
       private route: ActivatedRoute,
       private router : Router,
   ) {}
 
   ngOnInit(): void {
-    this.getFactureDetails(); // Appelez la méthode pour récupérer les détails de la facture
+    this.getCommandeDetails(); // Appelez la méthode pour récupérer les détails de la FactureVente
   }
 
-  getFactureDetails(): void {
+  getCommandeDetails(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.commandeService.getCommandeById(id)?.subscribe((value: CommandeServ) => {
-      this.commandeSer = value; // Mettez à jour l'objet facture avec les détails récupérés
+    this.factureVenteService.getFactureById(id)?.subscribe((value: FactureVente) => {
+      this.facture = value; // Mettez à jour l'objet FactureVente avec les détails récupérés
     });
+  }
+
+  returnBack(): void {
+    this.factureVenteService.returnBack()
+  }
+
+  saveFacture(): void {
+    // Implémentez la logique pour sauvegarder la facture
   }
 
   printFacture() {
@@ -81,7 +89,7 @@ export class CommandeServDetailsComponent implements OnInit{
       iframeDoc.write(`
       <html>
         <head>
-          <title>Facture</title>
+          <title>FactureVente</title>
           <style>${styleSheets}</style>
         </head>
         <body>${printContent}</body>
@@ -98,7 +106,13 @@ export class CommandeServDetailsComponent implements OnInit{
     }
   }
 
-      returnBack(): void {
-        this.router.navigate(['/uikit/Commandes'])  }
+  public getNewPrice(l: LigneFacture) {
+    return l.quantite<l.produit.minQuantiteGros?l.prixAchat+l.produit.gainUnitaire:l.prixAchat+l.produit.gainGros;
+  }
 
+
+  public getNewTotal(l: LigneFacture) {
+    return l.quantite<l.produit.minQuantiteGros?(l.produit.prixUnitaire + l.produit.gainUnitaire) * l.quantite:(l.produit.prixUnitaire + l.produit.gainGros) * l.quantite;
+
+  }
 }

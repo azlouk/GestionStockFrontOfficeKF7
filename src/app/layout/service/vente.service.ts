@@ -18,7 +18,7 @@ import {User} from "../../models/user";
 export class VenteService {
     private api =environment.apiUrl+'/vente';
     public show: boolean = false;
-    private apiFact=environment.apiUrl+'/facture';
+    private apiFact=environment.apiUrl+'/factureVente';
 
 
     constructor(private http: HttpClient) {
@@ -61,7 +61,7 @@ export class VenteService {
     }
 
     transferFacturation(listVente: Vente[]) {
-        const url = `${this.apiFact}/convertVenteToFacture`;
+        const url = `${this.apiFact}/convertVenteToFactureVente`;
         const token = getToken(); // Assurez-vous que getToken() est une fonction qui récupère le token JWT
 
         const headers = new HttpHeaders()

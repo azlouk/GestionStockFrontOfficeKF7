@@ -85,6 +85,7 @@ export class ServiceComponent implements OnInit{
   }
 
   modifierService(service: ServiceComp) {
+    console.log(service.outService)
       this.router.navigate(['/uikit/edit-service', service.id]); // Redirection vers la page de modification avec l'ID du produit
     }
 

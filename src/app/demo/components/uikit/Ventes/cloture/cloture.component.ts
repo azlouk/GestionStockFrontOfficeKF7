@@ -13,7 +13,7 @@ import { CommonModule } from "@angular/common";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { RippleModule } from "primeng/ripple";
 import {Cloture} from "../../../../../models/Cloture";
-import {Page} from "../../../../../models/page";
+import {Page} from "../../../../../models/Page";
 
 @Component({
   selector: 'app-cloture',

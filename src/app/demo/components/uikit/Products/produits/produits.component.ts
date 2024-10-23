@@ -30,7 +30,7 @@ import {log} from "@angular-devkit/build-angular/src/builders/ssr-dev-server";
 import {AvatarModule} from "primeng/avatar";
 import {BadgeModule} from "primeng/badge";
 import {Historique} from "../../../../../models/historique";
-import {Page} from "../../../../../models/page";
+import {Page} from "../../../../../models/Page";
 import {Article} from "../../../../../models/Article";
 import {PaginatorModule} from "primeng/paginator";
 import {RadioButtonModule} from "primeng/radiobutton";
@@ -475,4 +475,8 @@ export class ProduitsComponent implements OnInit {
             .filter((nomProduit) => nomProduit.toLowerCase().includes(query)); // Pas besoin de .map() si on travaille déjà avec les noms
     }
 
+    public getPriceWithTva(product: Produit) {
+
+        return(product.prixUnitaire + product.gainUnitaire)+(product.prixUnitaire + product.gainUnitaire)/100
+    }
 }

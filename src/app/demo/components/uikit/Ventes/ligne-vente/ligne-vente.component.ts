@@ -248,7 +248,7 @@ export class LigneVenteComponent implements OnInit {
                     }
                 });
 
-            this.router.navigate(['/uikit/facture']);
+            this.router.navigate(['/uikit/factureVente']);
 
         }
     }
