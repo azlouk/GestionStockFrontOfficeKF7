@@ -618,10 +618,10 @@ export class FactureVenteAjoutComponent implements OnInit{
     this.newFacture.lignesFacture.map(value => {
       total += this.getMontantLigne(value)
     })
-    total += total * (this.newFacture.montantTaxe / 100);
 
     this.newFacture.montant=total;
   }
+
 
   CalculeMontantFiltrer() {
     const filteredTranche = this.table.filteredValue || this.newFacture.tranches;

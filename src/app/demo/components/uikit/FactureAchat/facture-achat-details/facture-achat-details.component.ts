@@ -115,4 +115,5 @@ export class FactureAchatDetailsComponent implements OnInit{
     return l.quantite<l.produit.minQuantiteGros?(l.produit.prixUnitaire + l.produit.gainUnitaire) * l.quantite:(l.produit.prixUnitaire + l.produit.gainGros) * l.quantite;
 
   }
+
 }

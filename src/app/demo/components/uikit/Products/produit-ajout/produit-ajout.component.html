@@ -122,6 +122,15 @@
                                             inputId="percent"
                                             prefix="%" />
                                 </div>
+                                <div class="flex flex-column gap-1 text-cyan-700">
+                                    <label class="form-label font-bold fs-5">Remise </label>
+
+                                    <p-inputNumber
+                                            [(ngModel)]="newProduct.remise"
+                                            [min]="0"
+                                            inputId="percent"
+                                            prefix="%" />
+                                </div>
                             </div>
                             <div class=" flex flex-column justify-content-between">
                                 <div class="flex flex-column gap-2 text-cyan-700">

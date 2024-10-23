@@ -25,6 +25,8 @@ export class Produit {
     dateFabrication: Date;
     minQuantiteGros: number;
     taxe: number;
+     remise: number;
+
     enable: boolean;
     dataqr: string;
     qantiteFacture: number;
@@ -36,7 +38,7 @@ export class Produit {
     historiques: Historique [];
 
 
-    constructor(_id: number = 0, _nom: string = "", _prixUnitaire: number = 0, _prixGros: number = 0, _description: string = "", _qantite: number = 0, _image: Blob = new Blob(), _gainUnitaire: number = 0, _gainGros: number = 0, _files: File[] = [], _dateExpiration: Date = new Date(), _dateFabrication: Date = new Date(), _minQuantiteGros: number = 0, _taxe: number = 0, _enable: boolean = false, _dataqr: string = "", _qantiteFacture: number = 0, _article: Article = new Article(), _levelstock: number = 0, _showDetails: boolean = false, _checkedService: boolean = false, _subdataqr: string[] = [], _historiques: Historique [] = []) {
+    constructor(_id: number = 0, _nom: string = "", _prixUnitaire: number = 0, _prixGros: number = 0, _description: string = "", _qantite: number = 0, _image: Blob = new Blob(), _gainUnitaire: number = 0, _gainGros: number = 0, _files: File[] = [], _dateExpiration: Date = new Date(), _dateFabrication: Date = new Date(), _minQuantiteGros: number = 0, _taxe: number = 0,_remise: number = 0, _enable: boolean = false, _dataqr: string = "", _qantiteFacture: number = 0, _article: Article = new Article(), _levelstock: number = 0, _showDetails: boolean = false, _checkedService: boolean = false, _subdataqr: string[] = [], _historiques: Historique [] = []) {
         this.id = _id;
         this.nom = _nom;
         this.prixUnitaire = _prixUnitaire;
@@ -52,6 +54,7 @@ export class Produit {
 
         this.minQuantiteGros = _minQuantiteGros;
         this.taxe = _taxe;
+        this.remise = _remise;
         this.enable = _enable;
         this.dataqr = _dataqr;
         this.qantiteFacture = _qantiteFacture;
@@ -64,6 +67,13 @@ export class Produit {
     }
 
 
+     get _remise(): number {
+        return this.remise;
+    }
+
+     set _remise(value: number) {
+        this.remise = value;
+    }
 
     get _id(): number {
         return this.id;
