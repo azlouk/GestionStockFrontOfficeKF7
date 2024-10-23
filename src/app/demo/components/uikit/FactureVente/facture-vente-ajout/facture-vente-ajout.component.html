@@ -459,11 +459,7 @@
         </p-fieldset>
         <p-fieldset legend="Somme facture" [toggleable]="true">
             <div class="flex flex-column md:flex-row align-items-center justify-content-between">
-                <div class="flex flex-column col-12 md:col-4 align-items-center">
-                    <label class="font-bold text-2xl block m-2">Tax :</label>
-                    <p-inputNumber [(ngModel)]="newFacture.montantTaxe" (ngModelChange)="getToTalFacture()" [disabled]="false" inputId="percent"
-                                   prefix="%"></p-inputNumber>
-                </div>
+
 
                 <div class="flex flex-column col-12 md:col-4 align-items-center">
                     <label class="block font-bold mb-2PrimaryColorTitle ml-2 text-2xl">Total :</label>

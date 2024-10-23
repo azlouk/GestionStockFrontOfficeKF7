@@ -10,6 +10,8 @@ import {LigneFacture} from "../../../../../models/LigneFacture";
 import {FactureVente} from "../../../../../models/FactureVente";
 import {FactureVenteService} from "../../../../../layout/service/facture-vente.service";
 
+
+
 @Component({
   selector: 'app-facture-vente-details',
   standalone: true,
@@ -115,4 +117,24 @@ export class FactureVenteDetailsComponent implements OnInit{
     return l.quantite<l.produit.minQuantiteGros?(l.produit.prixUnitaire + l.produit.gainUnitaire) * l.quantite:(l.produit.prixUnitaire + l.produit.gainGros) * l.quantite;
 
   }
+
+    public getTotalettc(l: LigneFacture) {
+
+      return (l.quantite<l.produit.minQuantiteGros?(l.produit.prixUnitaire + l.produit.gainUnitaire) * l.quantite:(l.produit.prixUnitaire + l.produit.gainGros) * l.quantite)+this.calculTax(l);
+
+    }
+
+  private calculTax(l: LigneFacture) {
+    return (this.getNewTotal(l)/100)*l.produit.taxe;
+  }
+  public getTotalTvaFacture(){
+    let  totalTva: number = 0;
+
+    this.facture.lignesFacture.map(value => {
+      totalTva += this.calculTax(value);
+    })
+
+    return totalTva;
+  }
+
 }
