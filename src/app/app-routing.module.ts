@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { NotfoundComponent } from './demo/components/notfound/notfound.component';
 import { AppLayoutComponent } from "./layout/app.layout.component";
 import {authGuard} from "./demo/guard/auth.guard";
+import {CaisseComponent} from "./demo/components/uikit/Ventes/caisse/caisse.component";
 
 @NgModule({
     imports: [
@@ -20,6 +21,8 @@ import {authGuard} from "./demo/guard/auth.guard";
             { path: 'auth', loadChildren: () => import('./demo/components/auth/auth.module').then(m => m.AuthModule) },
             { path: 'landing', loadChildren: () => import('./demo/components/landing/landing.module').then(m => m.LandingModule) },
             { path: 'notfound', component: NotfoundComponent },
+            { path: 'caisse', component:CaisseComponent },
+
             { path: '**', redirectTo: '/notfound' },
         ])
     ],

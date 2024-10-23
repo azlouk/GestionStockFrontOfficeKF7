@@ -44,31 +44,21 @@ import {FactureAchatDetailsComponent} from "./FactureAchat/facture-achat-details
         { path: 'Ventes', component: LigneVenteComponent },
         { path: 'depots', component:DepotComponent },
         { path: 'article', component:ArticleComponent },
-        { path: 'caisse', component:CaisseComponent },
-
-
+        { path: 'caisse', redirectTo: '/caisse' },
         { path: 'factureVente', component:FactureVenteComponent },
         { path: 'add-factureVente', component:FactureVenteAjoutComponent },
         { path: 'update-factureVente/:id', component:FactureVenteAjoutComponent },
         { path: 'factureVente/:id', component:FactureVenteDetailsComponent },
-
         { path: 'factureAchat', component:FactureAchatComponent },
         { path: 'add-factureAchat', component:FactureAchatAjoutComponent },
         { path: 'update-factureAchat/:id', component:FactureAchatAjoutComponent },
         { path: 'factureAchat/:id', component:FactureAchatDetailsComponent },
-
-
-
-
         { path: 'cloture', component:ClotureComponent },
-
         { path: 'tranches', component:TrancheComponent },
-
         { path: 'Commandes', component:CommandeServiceComponent },
         { path: 'Ajout-Commande', component:CommandeServAjoutComponent },
         { path: 'Edit-Commande/:id', component:CommandeServAjoutComponent },
         { path: 'CommandeServ/:id', component:CommandeServDetailsComponent },
-
         { path: 'menu', data: { breadcrumb: 'Menu' }, loadChildren: () => import('./menus/menus.module').then(m => m.MenusModule) },
         { path: '**', redirectTo: '/notfound' },
 

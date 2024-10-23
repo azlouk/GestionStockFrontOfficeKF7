@@ -1,6 +1,6 @@
 
 
-<div class="card flex flex-column justify-content-between  gap-2">
+<div class="card flex flex-column justify-content-between  gap-2 max-h-screen">
     <!-- Buttons -->
     <div class="p-toolbar  flex flex-wrap justify-content-between   align-items-center" *ngIf="divVisible">
         <div class="flex flex-column p-ai-center ">
@@ -35,7 +35,6 @@
                     class="p-button-outlined p-button-success " [ngClass]="{'active': isButtonFocused(10)}"
                     (click)="onButtonClick(10)" accesskey="F6"></button>
         </div>
-
         <div class="flex flex-column align-items-center gap-2 font-bold">
             <span class="  flex pi pi-print fs-5 text-primary font-bold">Auto </span>
 
@@ -54,10 +53,6 @@
                             styleClass="mr-2">
             </p-toggleButton>
         </div>
-
-
-
-
         <div class="flex flex-column align-items-center">
             <label class="mb-2 font-bold">Masquer</label>
             <button pButton type="button" label="F 8" icon="pi pi-eye-slash" class="p-button-outlined p-button-danger "
@@ -75,116 +70,19 @@
         </div>
     </div>
 
-    <div class="card flex align-items-center flex-column w-full   gap-2 m-auto">
-
-        <div class=" flex overflow-hidden flex-wrap w-full  card">
-
-            <!-- Search Input Section -->
-            <div class="flex-grow-1 flex-shrink-1 card  flex-row align-items-center justify-content-center  font-bold p-4 m-3 border-round">
-                <div class="flex-row w-full ">
-                    <div class="flex-auto mb-2">
-                        <p-checkbox label="Afficher détails" [(ngModel)]="IsvisiblePop" data-bs-toggle="tooltip" [binary]="true"
-                                    inputId="binary"></p-checkbox>
-                    </div>
-                    <div class="flex-auto mb-4">
-                        <p-inputGroup>
-                            <p-inputGroupAddon>
-                                <i class="pi pi-barcode" style="font-size: 2rem; color:#3737d4"></i>
-                            </p-inputGroupAddon>
-                            <input #searchInput pInputText placeholder="Code à barre" [(ngModel)]="searchTerm"
-                                   (ngModelChange)="search()" type="text">
-                        </p-inputGroup>
-                    </div>
-
-
-                </div>
-
-                <div class="flex align-items-center mb-2">
-                    <label class="font-bold mr-2">Type Client</label>
-                    <button pButton pRipple label="Ajouter" icon="pi pi-user-plus"
-                            class="p-button-text p-button-success" (click)="addUser()"></button>
-                </div>
-
-                <div class="flex align-items-center justify-content-between gap-3">
-
-                    <div class=" flex  flex-column gap-3 mt-2   card  p-2">
-
-                        <div class="flex flex-wrap gap-3 ">
-                            <div class="flex align-items-center">
-                                <p-radioButton
-                                        name="Passager"
-                                        value="Passager"
-                                        [(ngModel)]="TypeUserSelected"
-                                        inputId="pass1" />
-                                <label   class="ml-2">
-                                    Passager
-                                </label>
-                            </div>
-
-                            <div class="flex align-items-center gap-2">
-                                <p-radioButton
-                                        name="Client"
-                                        value="Client"
-                                        [(ngModel)]="TypeUserSelected"
-                                        inputId="ingredient2" />
-                                <label  class="ml-2">
-                                    Client
-                                </label>
-                                <span *ngIf="TypeUserSelected=='Client'" class=" pi pi-eye  cursor-pointer text-blue-500 " (click)="showDialogueClient=!showDialogueClient"></span>
-                            </div>
-                        </div>
-                        <div class=" flex justify-content-center   gap-2 flex-wrap" *ngIf="TypeUserSelected == 'Client'" >
-                            <p-chip label="{{selectedVente.client.firstname.toString()}}" icon="pi pi-user" [removable]="false" [styleClass]="'custom-green-chip'" />
-                        </div>
-                    </div>
-
-                </div>
-
-
-
-
-
-            </div>
-            <!-- Frais and Reglement Section -->
-            <div class="flex-shrink-0  flex-column  flex align-items-center justify-content-center  font-bold p-4 m-3 border-round gap-3">
-                <div class="flex flex-column  ">
-                    <label htmlFor="frais">Frais</label>
-                    <p-inputNumber
-                            pTooltip="Frais supp"
-                            [(ngModel)]="frais"
-                            mode="currency"
-                            inputId="currency-tunisia"
-                            currency="TND"
-                            currencyDisplay="code"
-                            locale="en-IN">
-                    </p-inputNumber>
-                </div>
-
-                <div class="flex flex-column">
-                    <label >Réglement</label>
-                    <p-inputNumber [(ngModel)]="reglement" pTooltip="reglement"
-                                   mode="currency" inputId="currency-india" currency="TND" currencyDisplay="code"
-                                   locale="en-IN" (click)="setReglementToTotal()" ></p-inputNumber>
-                </div>
-            </div>
-            <!-- Total Vente Section -->
-            <div class="flex-grow-1 flex-shrink-1 card bg-black-alpha-10 flex flex-column      align-items-center justify-content-center       font-bold p-4 m-3 border-round">
-                <h4 class="text-red-600 text-6xl">{{getTotalVente() | number     }}</h4>
-                <h3 class="text-red-600">TND</h3>
-            </div>
-
-
-
-
-        </div>
-        <div class=" card flex flex-column w-full">
+    <div class="card flex align-items-center flex-column w-full   gap-2 ">
+        <div class="  flex flex-column w-full mb-3 ">
             <p-table
                     [value]="selectedVente.lignesVente"
                     selectionMode="single"
                     [(selection)]="selectedProduct"
                     [metaKeySelection]="true" dataKey="id"
-                    class="w-wrap "   [tableStyle]="{'min-width': '50rem'}"
-                    styleClass="p-datatable-striped" >
+                    class="w-wrap "
+                    responsiveLayout="scroll"
+                    [scrollable]="true"
+                    [tableStyle]="{'min-height':'200px'}"
+                    [scrollHeight]="'200px'"
+                    styleClass="p-datatable-gridlines" >
                 <!-- Header -->
                 <ng-template pTemplate="header">
                     <tr  >
@@ -245,6 +143,137 @@
                 </ng-template>
             </p-table>
         </div>
+
+        <div class=" flex overflow-hidden flex-wrap w-full  ">
+
+            <!-- Search Input Section -->
+            <div class="flex-grow-1 flex-shrink-1 card  flex-row align-items-center justify-content-center mr-3  font-bold ">
+                <div class="flex-row w-full ">
+                    <div class="flex-auto mb-2">
+                        <p-checkbox label="Afficher détails" [(ngModel)]="IsvisiblePop" data-bs-toggle="tooltip" [binary]="true"
+                                    inputId="binary"></p-checkbox>
+                    </div>
+                    <div class="flex-auto mb-4">
+                        <p-inputGroup>
+                            <p-inputGroupAddon>
+                                <i class="pi pi-barcode" style="font-size: 2rem; color:#3737d4"></i>
+                            </p-inputGroupAddon>
+                            <input #searchInput pInputText placeholder="Code à barre" [(ngModel)]="searchTerm"
+                                   (ngModelChange)="search()" type="text">
+                        </p-inputGroup>
+                    </div>
+
+
+                </div>
+
+                <div class="flex align-items-center justify-content-between">
+                    <div class="flex gap-2 align-items-center">
+                    <label class="font-bold ">Type Client :</label>
+                        <div class="flex align-items-center">
+                            <p-radioButton
+                                    name="Passager"
+                                    value="Passager"
+                                    [(ngModel)]="TypeUserSelected"
+                                    inputId="pass1" />
+                            <label   class="ml-2">
+                                Passager
+                            </label>
+                        </div>
+
+                        <div class="flex align-items-center gap-2">
+                            <p-radioButton
+                                    name="Client"
+                                    value="Client"
+                                    [(ngModel)]="TypeUserSelected"
+                                    inputId="ingredient2" />
+                            <label  class="ml-2">
+                                Client
+                            </label>
+                            <span *ngIf="TypeUserSelected=='Client'" class=" pi pi-eye  cursor-pointer text-blue-500 " (click)="showDialogueClient=!showDialogueClient"></span>
+                        </div>
+                    </div>
+                    <button pButton pRipple label="Ajouter" icon="pi pi-user-plus"
+                            class="p-button-text p-button-success" (click)="addUser()"></button>
+                </div>
+
+                <div class="flex align-items-center justify-content-between gap-3">
+
+                    <div class=" flex  flex-column gap-3      ">
+
+                        <div class="flex  ">
+
+                            <div class=" flex justify-content-center   gap-2 flex-wrap" *ngIf="TypeUserSelected == 'Client'" >
+                                <p-chip label="{{selectedVente.client.firstname.toString()}}" icon="pi pi-user" [removable]="false" [styleClass]="'custom-green-chip'" />
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+
+
+            </div>
+            <!-- Frais and Reglement Section -->
+<!--            <div class="  flex-column  flex align-items-center justify-content-center  font-bold   border-round gap-3">-->
+<!--                <div class="flex flex-column  ">-->
+<!--                    <label htmlFor="frais">Frais</label>-->
+<!--                    <p-inputNumber-->
+<!--                            pTooltip="Frais supp"-->
+<!--                            [(ngModel)]="frais"-->
+<!--                            mode="currency"-->
+<!--                            inputId="currency-tunisia"-->
+<!--                            currency="TND"-->
+<!--                            currencyDisplay="code"-->
+<!--                            locale="en-IN">-->
+<!--                    </p-inputNumber>-->
+<!--                </div>-->
+
+<!--                <div class="flex flex-column">-->
+<!--                    <label >Réglement</label>-->
+<!--                    <p-inputNumber [(ngModel)]="reglement" pTooltip="reglement"-->
+<!--                                   mode="currency" inputId="currency-india" currency="TND" currencyDisplay="code"-->
+<!--                                   locale="en-IN" (click)="setReglementToTotal()" ></p-inputNumber>-->
+<!--                </div>-->
+<!--            </div>-->
+            <!-- Total Vente Section -->
+            <div class="flex-grow-1 card ">
+                <div class="  bg-gray-100 flex flex-column   card   align-items-center justify-content-center   ">
+                    <h3 class="text-red-600">TOTAL</h3>
+                    <h4 class="text-red-600 text-6xl">{{getTotalVente() | number     }}</h4>
+                    <h3 class="text-red-600">TND</h3>
+                </div>
+                <div class="  flex align-items-center justify-content-between  gap-3">
+                                    <div class="flex flex-column  ">
+                                        <label htmlFor="frais">Frais</label>
+                                        <p-inputNumber
+                                                pTooltip="Frais supp"
+                                                [(ngModel)]="frais"
+                                                mode="currency"
+                                                inputId="currency-tunisia"
+                                                currency="TND"
+                                                currencyDisplay="code"
+                                                locale="en-IN">
+                                        </p-inputNumber>
+                                    </div>
+
+                                    <div class="flex flex-column">
+                                        <label >Réglement</label>
+                                        <p-inputNumber [(ngModel)]="reglement" pTooltip="reglement"
+                                                       mode="currency" inputId="currency-india" currency="TND" currencyDisplay="code"
+                                                       locale="en-IN" (click)="setReglementToTotal()" ></p-inputNumber>
+                                    </div>
+                                </div>
+            </div>
+
+
+
+
+
+        </div>
+
         <p-dialog
                 header="Produits"
                 [modal]="true"
@@ -430,6 +459,11 @@
         </p-dialog>
 
     </div>
+
+
+
+
+
 
 
     <p-dialog

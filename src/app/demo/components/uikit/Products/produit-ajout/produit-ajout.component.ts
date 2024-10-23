@@ -161,7 +161,6 @@ export class ProduitAjoutComponent implements OnInit, AfterViewInit {
     }
 
     ajouterProduit() {
-        alert(this.newProduct.ugs)
         if (!this.newProduct.nom?.trim()) {
             this.messageService.add({severity: 'error', summary: 'Nom produit !', detail: 'Nom de produit invalide'});
             return;
