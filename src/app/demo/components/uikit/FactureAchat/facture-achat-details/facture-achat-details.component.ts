@@ -116,4 +116,37 @@ export class FactureAchatDetailsComponent implements OnInit{
 
   }
 
+  public getTotalettc(l: LigneFacture) {
+
+    return (l.quantite<l.produit.minQuantiteGros?(l.produit.prixUnitaire + l.produit.gainUnitaire) * l.quantite:(l.produit.prixUnitaire + l.produit.gainGros) * l.quantite)+this.calculTax(l);
+
+  }
+
+  private calculTax(l: LigneFacture) {
+    return (this.getNewTotal(l)/100)*l.produit.taxe;
+  }
+  public getTotalTvaFacture(){
+    let  totalTva: number = 0;
+
+    this.facture.lignesFacture.map(value => {
+      totalTva += this.calculTax(value);
+    })
+
+    return totalTva;
+  }
+
+  public getTotalRemise() {
+    let  totalRemise: number = 0;
+
+    this.facture.lignesFacture.map(value => {
+      totalRemise += this.calculRemise(value);
+    })
+
+    return totalRemise;
+  }
+
+  private calculRemise(l: LigneFacture) {
+    return (this.getNewTotal(l)/100)*l.produit.remise;
+
+  }
 }

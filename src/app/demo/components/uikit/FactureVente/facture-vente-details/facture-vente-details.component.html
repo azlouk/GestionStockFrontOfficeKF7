@@ -25,12 +25,7 @@
                     <div class="p-col">TEL: {{ facture.client.telephone }}</div>
                 </div>
             </div>
-            <div class="font-bold">
-                <h3>Livré par:</h3>
-                <h3>{{ facture.transporteur.firstname + " " + facture.transporteur.lastname }}</h3>
-                <div class="p-col">Adresse: {{ facture.transporteur.adresse }}</div>
-                <div class="p-col">TEL: {{facture.transporteur.telephone }}</div>
-            </div>
+
             <div class="font-bold">
                 <h3>{{ facture.reference }}</h3>
                 <div class="p-col">Date:{{ facture.date }}</div>
@@ -49,6 +44,7 @@
                         <th>Quantité</th>
                         <th>Prix</th>
                         <th> HT</th>
+                        <th> Remise</th>
                         <th>TVA %</th>
                         <th> TTC</th>
                     </tr>
@@ -60,6 +56,7 @@
                         <td>{{ l.quantite }}</td>
                         <td>{{ getNewPrice(l) }}</td>
                         <td>{{ getNewTotal(l)}}</td>
+                        <td>{{ l.produit.remise}}%</td>
                         <td>{{ l.produit.taxe }}%</td>
                         <td>{{ getTotalettc(l)}}</td>
 
@@ -77,6 +74,10 @@
                             <td class="font-bold">{{ facture.montant | currency:'':'TND ' }}</td>
                         </tr>
                         <tr>
+                            <td class="xl:font-bold p-2">Total Remise</td>
+                            <td class="font-bold">{{ getTotalRemise() | currency:'':'TND ' }}</td>
+                        </tr>
+                        <tr>
                             <td class="xl:font-bold p-2">Total TVA</td>
                             <td class="font-bold">{{ getTotalTvaFacture() | currency:'':'TND '}}</td>
                         </tr>
@@ -91,7 +92,7 @@
                         </tr>
                         <tr>
                             <td class="text-2xl text-red-600 font-bold p-2">Total à payer</td>
-                            <td class="text-2xl text-red-600 font-bold">{{ facture.montant+getTotalTvaFacture() | currency:'':'TND ' }}</td>
+                            <td class="text-2xl text-red-600 font-bold">{{ facture.montant+getTotalTvaFacture()-getTotalRemise() | currency:'':'TND ' }}</td>
                         </tr>
                     </ng-template>
                 </p-table>

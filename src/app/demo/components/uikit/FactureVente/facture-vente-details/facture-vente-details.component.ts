@@ -137,4 +137,18 @@ export class FactureVenteDetailsComponent implements OnInit{
     return totalTva;
   }
 
+  public getTotalRemise() {
+    let  totalRemise: number = 0;
+
+    this.facture.lignesFacture.map(value => {
+      totalRemise += this.calculRemise(value);
+    })
+
+    return totalRemise;
+  }
+
+  private calculRemise(l: LigneFacture) {
+    return (this.getNewTotal(l)/100)*l.produit.remise;
+
+  }
 }
