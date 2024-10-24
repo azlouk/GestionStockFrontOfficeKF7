@@ -1065,5 +1065,7 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
     setReglementToTotal() {
         this.reglement=this.selectedVente.reglement;
     }
+
+
 }
 

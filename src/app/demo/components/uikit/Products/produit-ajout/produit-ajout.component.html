@@ -28,7 +28,7 @@
                         <label class="font-bold fs-5 text-cyan-700">
                             <span class="pi pi-tags  font-bold"></span> UGS
                         </label>
-                            <span [hidden]="true">   {{newProduct.generateUGS()}}</span>
+<!--                            <span [hidden]="true" *ngIf="newProduct.id!==0">   {{newProduct.generateUGS()}}</span>-->
                         <input class=" w-full"
                                pInputText
                                pTooltip="Unité de gestion des stocks"
@@ -73,6 +73,7 @@
 
                         <p-dropdown [options]="articles"
                                     [(ngModel)]="newProduct.article"
+                                    (ngModelChange)="newProduct.generateUGS()"
                                     optionLabel="nom"
                                     [filter]="true"
                                     filterBy="nom"
@@ -256,7 +257,6 @@
                             <div class="flex flex-column gap-1 ">
                                 <input pInputText class="form-control" id="codebarreG"
                                        aria-describedby="codebarre-help"
-
                                        [(ngModel)]="newProduct.dataqr"
                                        (keyup)="confirm()"/>
                                 <small id="codebarre-help"> Vérifier bien que votre Code à barre</small>

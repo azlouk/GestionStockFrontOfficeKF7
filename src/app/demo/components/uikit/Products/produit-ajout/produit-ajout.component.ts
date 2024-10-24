@@ -324,7 +324,7 @@ export class ProduitAjoutComponent implements OnInit, AfterViewInit {
 
     setDataCode($event: string) {
          this.newProduct.dataqr = $event;
-
+        this.newProduct.generateUGS();
     }
 
     returnBack() {
