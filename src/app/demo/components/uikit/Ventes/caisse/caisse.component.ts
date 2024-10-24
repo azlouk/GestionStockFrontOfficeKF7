@@ -106,6 +106,7 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
     produits: Produit[] = [];
     services: ServiceComp [] = []
     produitsFiltres: Produit [] = [];
+    produitsFiltresDetais: Produit [] = [];
     serviceFiltres: ServiceComp [] = [];
 
     cloture: Cloture = new Cloture();
@@ -116,6 +117,7 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
     checked: boolean = true;
     divVisible: boolean = true;
     visible: boolean = false;
+    IsDetaisProduct: boolean = false;
     show: boolean = false;
 
 
@@ -574,12 +576,19 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
     }
 
     search(): void {
+
         if (this.searchTerm.trim() !== '') {
 
             this.produitService.getProduitByQrNom(this.searchTerm).subscribe((value: Produit) => {
                 if (value != null) {
+                    if(this.IsDetaisProduct==true){
+                        this.produitsFiltresDetais=[]
+                        this.produitsFiltresDetais.push(value)
+                        this.IsvisiblePop=true;
+                    }else {
 
                     this.ajouterProduit(value);
+                    }
                 }else {
                     this.messageService.add({key: 'tc', severity: 'warn', summary: 'Warn', detail: 'Aucun produit a été trouvé'});
                 }
@@ -593,7 +602,6 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
     }
 
     ajouterProduitSelectionne(produit: Produit): void {
-        console.log(produit);
         if (produit) {
             const produitSelectionne = produit;
 
@@ -611,9 +619,10 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
                 const ligneVente = new LigneVente();
                 ligneVente.id = produitSelectionne.id;
                 ligneVente.venteQty = 1; // Vous pouvez ajuster la quantité initiale ici
-                ligneVente.prixVente = (produitSelectionne.prixUnitaire + produitSelectionne.gainUnitaire)+(produitSelectionne.prixUnitaire + produitSelectionne.gainUnitaire)*(produitSelectionne.taxe/100);
+                // ligneVente.prixVente = (produitSelectionne.prixUnitaire + produitSelectionne.gainUnitaire)+(produitSelectionne.prixUnitaire + produitSelectionne.gainUnitaire)*(produitSelectionne.taxe/100);
 
                 ligneVente.produit = produitSelectionne;
+                this.updatePrixVente(ligneVente)
 
                 // Ajouter la ligne de vente à la liste
                 this.selectedVente.lignesVente.unshift(ligneVente);
@@ -629,10 +638,13 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
         const produit = ligneVente.produit;
 
         if (ligneVente.venteQty >= produit.minQuantiteGros) {
-            ligneVente.prixVente = produit.prixUnitaire + produit.gainGros;
+            ligneVente.prixVente = ((produit.prixUnitaire + produit.gainGros)+(produit.prixUnitaire + produit.gainGros)*(produit.taxe/100))-(produit.prixUnitaire + produit.gainGros)*(produit.remise/100);
+
         } else {
-            ligneVente.prixVente = produit.prixUnitaire + produit.gainUnitaire;
+            ligneVente.prixVente = ((produit.prixUnitaire + produit.gainUnitaire)+(produit.prixUnitaire + produit.gainUnitaire)*(produit.taxe/100))-(produit.prixUnitaire + produit.gainUnitaire)*(produit.remise/100);
+
         }
+
         this.getTottalNbProduct()
 
     }
@@ -1064,6 +1076,20 @@ export class CaisseComponent implements OnInit, AfterViewChecked  {
 
     setReglementToTotal() {
         this.reglement=this.selectedVente.reglement;
+    }
+
+
+    public handleKeyUp(ligneVente: LigneVente) {
+        if( ligneVente.venteQty>ligneVente.produit.qantite){
+             ligneVente.venteQty=ligneVente.produit.qantite;
+        }
+    }
+
+    public getHeight() {
+    const heightScreen=window.innerHeight;
+     const newHieght=   heightScreen*0.7;
+        console.log(newHieght)
+        return newHieght+"px";
     }
 
 
